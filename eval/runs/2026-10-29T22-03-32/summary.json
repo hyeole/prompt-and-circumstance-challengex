@@ -1,0 +1,395 @@
+{
+  "run": "eval/runs/2026-10-29T22-03-32",
+  "cases": 16,
+  "variantCases": 12,
+  "baseCases": 4,
+  "modelFailures": [
+    "C001-M3",
+    "C001-MC",
+    "C003",
+    "C003-AMB",
+    "C003-M3",
+    "C012-M2"
+  ],
+  "recall": {
+    "all": "69% (9/13)",
+    "dev": "69% (9/13)",
+    "heldout": "n/a",
+    "missing_element": "0% (0/3)",
+    "inconsistency": "75% (3/4)",
+    "citation": "100% (3/3)",
+    "human_review": "100% (3/3)"
+  },
+  "incorrectFlagProportion": "20% (2/10)",
+  "humanReviewRouting": "100% (3/3)",
+  "evidenceValidity": "100% (17/17)",
+  "baseCaseObservations": [
+    {
+      "id": "C001",
+      "citation": "consistent",
+      "humanReview": true,
+      "findings": [
+        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+        "I-1 inconsistency: Entry facts conflict with form fields"
+      ]
+    },
+    {
+      "id": "C003",
+      "citation": "not_checked",
+      "humanReview": true,
+      "findings": []
+    },
+    {
+      "id": "C012",
+      "citation": "consistent",
+      "humanReview": true,
+      "findings": [
+        "I-1 inconsistency: Entry date conflict"
+      ]
+    },
+    {
+      "id": "C013",
+      "citation": "consistent",
+      "humanReview": true,
+      "findings": []
+    }
+  ],
+  "latency": {
+    "p50": "51.9s",
+    "p90": "55.1s",
+    "max": "55.3s",
+    "over60s": 0,
+    "failed": 0
+  },
+  "rows": [
+    {
+      "id": "C001",
+      "split": "dev",
+      "base": "C001",
+      "ms": 30707,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+        "I-1 inconsistency: Entry facts conflict with form fields"
+      ],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C001-CIT",
+      "split": "dev",
+      "base": "C001",
+      "ms": 41180,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C001-M3",
+      "split": "dev",
+      "base": "C001",
+      "ms": 55330,
+      "ok": false,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": false
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true
+    },
+    {
+      "id": "C001-MC",
+      "split": "dev",
+      "base": "C001",
+      "ms": 55025,
+      "ok": false,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true
+    },
+    {
+      "id": "C001-X1",
+      "split": "dev",
+      "base": "C001",
+      "ms": 29339,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": true
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true
+    },
+    {
+      "id": "C003",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55080,
+      "ok": false,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [],
+      "citation": "not_checked",
+      "humanReview": true
+    },
+    {
+      "id": "C003-AMB",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55030,
+      "ok": false,
+      "plants": 2,
+      "detected": 1,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        },
+        {
+          "type": "inconsistency",
+          "hit": false
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true
+    },
+    {
+      "id": "C003-CIT",
+      "split": "dev",
+      "base": "C003",
+      "ms": 54847,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C003-M3",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55037,
+      "ok": false,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": false
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true
+    },
+    {
+      "id": "C012",
+      "split": "dev",
+      "base": "C012",
+      "ms": 47769,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "I-1 inconsistency: Entry date conflict"
+      ],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C012-M2",
+      "split": "dev",
+      "base": "C012",
+      "ms": 55040,
+      "ok": false,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": false
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true
+    },
+    {
+      "id": "C012-MC",
+      "split": "dev",
+      "base": "C012",
+      "ms": 44416,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "I-1 inconsistency: Entry date inconsistency"
+      ],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true
+    },
+    {
+      "id": "C012-X1",
+      "split": "dev",
+      "base": "C012",
+      "ms": 33735,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": true
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C013",
+      "split": "dev",
+      "base": "C013",
+      "ms": 39025,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C013-CIT",
+      "split": "dev",
+      "base": "C013",
+      "ms": 33177,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "I-1 inconsistency: Entry facts conflict with form fields"
+      ],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C013-X1",
+      "split": "dev",
+      "base": "C013",
+      "ms": 51893,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": true
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true
+    }
+  ]
+}

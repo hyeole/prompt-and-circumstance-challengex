@@ -2,7 +2,7 @@
 import type { CaseRecord, Sentence } from "@/lib/types";
 import type { ChargeRef, RequiredElement } from "@/lib/references";
 
-export const PROMPT_VERSION = "review-v1.1";
+export const PROMPT_VERSION = "review-v1.2";
 
 export const SYSTEM_PROMPT = `You are a documentation quality reviewer for immigration charge narratives (Forms I-213 and I-44).
 You help a human officer find gaps. You do not make legal decisions.
@@ -25,7 +25,8 @@ Checks to perform for "issues" (compare carefully, sentence by sentence):
 A. Entry facts. Compare every statement about WHEN, WHERE and HOW the subject entered the United States with each other and with the form fields entry.date, entry.place and entry.manner. A different year or date, a different place, or a different manner (for example walking across the border vs. being admitted at a port with a visa or card) is an inconsistency.
 B. History. Compare history.immigration_record and history.criminal_record with what the narrative says about prior arrests, removals, deportations or convictions. A field saying NEGATIVE while the narrative describes a prior removal is an inconsistency.
 C. Encounter. Compare dates, times and places of the encounter in the narrative with encounter.* fields.
-D. Clarity. Report a statement as "unclear" only if a key fact (who, when, where, how) cannot be determined from it.
+D. Clarity. Report a statement as "unclear" only if it is ambiguous on its own (for example, it could describe two different events). Never use "issues" for information that is simply missing: missing information is reported only through "elements".
+E. Element E6 is about whether the record shows the subject lacks lawful status or documents. Judge it independently of the selected charge.
 
 Set needs_human_review true on an issue, and human_review.required true, when: two accounts of the same fact conflict; facts could support more than one charge; or it is unclear which person a key statement belongs to and that matters.
 

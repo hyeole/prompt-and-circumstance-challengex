@@ -30,6 +30,9 @@ function matches(r: ReviewResult, f: Finding, p: Plant): boolean {
   }
 }
 function detected(r: ReviewResult, p: Plant): boolean {
+  // A review whose model check failed only earns credit for what the rules decide on their own (multi-charge routing).
+  // Routing a failed review to a person is correct behavior, but it is not detection.
+  if (r.modelStatus !== "ok") return p.type === "human_review" && r.findings.some((f) => f.source === "rule" && f.category === "human_review");
   switch (p.type) {
     case "missing_element": return ["absent", "unclear"].includes(r.elements.find((e) => e.elementId === p.elementId)?.status ?? "") || r.findings.some((f) => matches(r, f, p));
     case "inconsistency": return r.findings.some((f) => matches(r, f, p));
@@ -37,8 +40,8 @@ function detected(r: ReviewResult, p: Plant): boolean {
     case "human_review": return r.humanReview.required;
   }
 }
-/** Signature used to recognise a finding that already existed on the unmodified base case. */
-const sig = (r: ReviewResult, f: Finding) => [f.category, ...f.evidence.map((e) => e.fieldPath ?? e.elementId ?? (r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "").slice(0, 60))].join("|");
+/** Evidence keys used to recognise a finding that already existed on the unmodified base case (same category + any shared source). */
+const keys = (r: ReviewResult, f: Finding) => f.evidence.map((e) => `${f.category}:${e.fieldPath ?? e.elementId ?? (r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "").slice(0, 60)}`);
 
 function evidenceValid(c: CaseRecord, r: ReviewResult) {
   let ok = 0, total = 0;
@@ -67,12 +70,12 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
     for (const p of ex.plants) { const hit = detected(r, p); row.plantResults.push({ type: p.type, hit }); if (hit) row.detected++; }
     if (ex.plants.length) {
       const baseRun = load(ex.base);
-      const baseSigs = new Set(baseRun ? baseRun.findings.map((f) => sig(baseRun, f)) : []);
+      const baseKeys = new Set(baseRun ? baseRun.findings.flatMap((f) => keys(baseRun, f)) : []);
       const used = new Set<number>();
       for (const f of r.findings) {
         const pi = ex.plants.findIndex((p) => matches(r, f, p));
         if (pi >= 0) { if (used.has(pi)) row.dup++; else { used.add(pi); row.tp++; } }
-        else if (baseSigs.has(sig(r, f))) row.inherited++;
+        else if (keys(r, f).some((k) => baseKeys.has(k))) row.inherited++;
         else row.unexpected.push(`${f.id} ${f.category}: ${f.title}`);
       }
     } else row.unexpected = r.findings.map((f) => `${f.id} ${f.category}: ${f.title}`); // base cases: unadjudicated observations

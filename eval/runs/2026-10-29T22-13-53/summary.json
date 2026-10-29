@@ -1,0 +1,382 @@
+{
+  "run": "eval/runs/2026-10-29T22-13-53",
+  "cases": 16,
+  "variantCases": 12,
+  "baseCases": 4,
+  "modelFailures": [],
+  "recall": {
+    "all": "77% (10/13)",
+    "dev": "77% (10/13)",
+    "heldout": "n/a",
+    "missing_element": "100% (3/3)",
+    "inconsistency": "25% (1/4)",
+    "citation": "100% (3/3)",
+    "human_review": "100% (3/3)"
+  },
+  "incorrectFlagProportion": "18% (2/11)",
+  "humanReviewRouting": "100% (3/3)",
+  "evidenceValidity": "100% (17/17)",
+  "baseCaseObservations": [
+    {
+      "id": "C001",
+      "citation": "consistent",
+      "humanReview": true,
+      "findings": [
+        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative"
+      ]
+    },
+    {
+      "id": "C003",
+      "citation": "consistent",
+      "humanReview": false,
+      "findings": []
+    },
+    {
+      "id": "C012",
+      "citation": "consistent",
+      "humanReview": false,
+      "findings": []
+    },
+    {
+      "id": "C013",
+      "citation": "consistent",
+      "humanReview": false,
+      "findings": []
+    }
+  ],
+  "latency": {
+    "p50": "9.2s",
+    "p90": "21.0s",
+    "max": "55.0s",
+    "over60s": 0,
+    "failed": 0
+  },
+  "rows": [
+    {
+      "id": "C001",
+      "split": "dev",
+      "base": "C001",
+      "ms": 8892,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative"
+      ],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C001-CIT",
+      "split": "dev",
+      "base": "C001",
+      "ms": 9743,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C001-M3",
+      "split": "dev",
+      "base": "C001",
+      "ms": 9008,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": true
+        }
+      ],
+      "citation": "insufficient_information",
+      "humanReview": true
+    },
+    {
+      "id": "C001-MC",
+      "split": "dev",
+      "base": "C001",
+      "ms": 7409,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true
+    },
+    {
+      "id": "C001-X1",
+      "split": "dev",
+      "base": "C001",
+      "ms": 8283,
+      "ok": true,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 1,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": false
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true
+    },
+    {
+      "id": "C003",
+      "split": "dev",
+      "base": "C003",
+      "ms": 9171,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C003-AMB",
+      "split": "dev",
+      "base": "C003",
+      "ms": 20342,
+      "ok": true,
+      "plants": 2,
+      "detected": 2,
+      "tp": 1,
+      "dup": 1,
+      "inherited": 0,
+      "unexpected": [
+        "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)"
+      ],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        },
+        {
+          "type": "inconsistency",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C003-CIT",
+      "split": "dev",
+      "base": "C003",
+      "ms": 12611,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C003-M3",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55025,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": true
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C012",
+      "split": "dev",
+      "base": "C012",
+      "ms": 8887,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C012-M2",
+      "split": "dev",
+      "base": "C012",
+      "ms": 10231,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "missing_element",
+          "hit": true
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C012-MC",
+      "split": "dev",
+      "base": "C012",
+      "ms": 20968,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [
+        "I-1 inconsistency: Entry date mismatch"
+      ],
+      "plantResults": [
+        {
+          "type": "human_review",
+          "hit": true
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true
+    },
+    {
+      "id": "C012-X1",
+      "split": "dev",
+      "base": "C012",
+      "ms": 6414,
+      "ok": true,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": false
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C013",
+      "split": "dev",
+      "base": "C013",
+      "ms": 7432,
+      "ok": true,
+      "plants": 0,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [],
+      "citation": "consistent",
+      "humanReview": false
+    },
+    {
+      "id": "C013-CIT",
+      "split": "dev",
+      "base": "C013",
+      "ms": 10420,
+      "ok": true,
+      "plants": 1,
+      "detected": 1,
+      "tp": 1,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "citation",
+          "hit": true
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true
+    },
+    {
+      "id": "C013-X1",
+      "split": "dev",
+      "base": "C013",
+      "ms": 8398,
+      "ok": true,
+      "plants": 1,
+      "detected": 0,
+      "tp": 0,
+      "dup": 0,
+      "inherited": 0,
+      "unexpected": [],
+      "plantResults": [
+        {
+          "type": "inconsistency",
+          "hit": false
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false
+    }
+  ]
+}

@@ -114,6 +114,7 @@ export interface ReviewResult {
   mode: "live";
   model: string;
   promptVersion: string;
+  modelConfig: { reasoningEffort: string; samples: number; validSamples: number; factsPromptVersion: string; factsStatus: "ok" | "failed" };
   referenceVersion: string;
   latencyMs: number;
   modelLatencyMs?: number;

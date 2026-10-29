@@ -4,8 +4,10 @@ import { REFERENCES, REFERENCE_VERSION, findCharge, type RequiredElement } from 
 import { sha, splitSentences, locateQuote } from "@/lib/text";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
+import { mergeOutputs } from "./merge";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
-import { completeJSON, extractJSON, MODEL, ModelError } from "@/lib/llm";
+import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
 
 type Ev = { sentence_id?: string; quote?: string; field_path?: string };
 
@@ -45,6 +47,23 @@ function stripChargeAdvice(text: string, selected: string[]): { text: string; st
   return { text: keep.join(" "), stripped: keep.length !== parts.length };
 }
 
+const SAMPLE_GRACE_MS = 12_000;
+
+/** Run n samples in parallel. After the first one succeeds, wait at most SAMPLE_GRACE_MS for the rest, then cancel them. */
+async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal) => Promise<T>): Promise<PromiseSettledResult<T>[]> {
+  const ctrls = Array.from({ length: n }, () => new AbortController());
+  const all = ctrls.map((c) => run(c.signal));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const grace = new Promise<void>((resolve) => {
+    let pending = n;
+    all.forEach((p) => p.then(() => { timer ??= setTimeout(resolve, SAMPLE_GRACE_MS); }, () => {}).finally(() => { if (--pending === 0) resolve(); }));
+  });
+  await grace;
+  if (timer) clearTimeout(timer);
+  ctrls.forEach((c) => c.abort());
+  return Promise.allSettled(all);
+}
+
 export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   const t0 = Date.now();
   const sentences = splitSentences(c.narrative.text, c.narrative.pageSpans);
@@ -64,20 +83,37 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   let attempts = 0;
   let out: ModelOutput | null = null;
 
-  try {
-    const m0 = Date.now();
-    const r = await completeJSON(SYSTEM_PROMPT, buildUserPrompt(c, sentences, toCheck, charge, REFERENCES.formGlossary));
-    modelLatencyMs = Date.now() - m0;
-    attempts = r.attempts;
-    const parsed = ModelOutput.safeParse(extractJSON(r.text));
-    if (!parsed.success) {
-      modelStatus = "invalid_output";
-      modelError = "The model answered, but its output did not match the expected format.";
-    } else out = parsed.data;
-  } catch (e) {
-    modelStatus = "failed";
-    attempts = e instanceof ModelError ? e.attempts : attempts;
-    modelError = e instanceof ModelError ? e.message : "The model check could not be completed.";
+  // SAMPLES independent calls in parallel. Each output is validated on its own; valid outputs are merged.
+  const m0 = Date.now();
+  const user = buildUserPrompt(c, sentences, toCheck, charge, REFERENCES.formGlossary);
+  // Fact extraction runs alongside the review samples; code compares the extracted statements (lib/review/facts.ts).
+  const factsCall = completeJSON(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences)).then((r) => FactsOutput.parse(extractJSON(r.text)));
+  const [settled, factsSettled] = await Promise.all([
+    samplesWithGrace(SAMPLES, (signal) => completeJSON(SYSTEM_PROMPT, user, undefined, signal)),
+    factsCall.then((v) => ({ ok: true as const, v }), () => ({ ok: false as const })),
+  ]);
+  modelLatencyMs = Date.now() - m0;
+  const outs: ModelOutput[] = [];
+  for (const r of settled) {
+    if (r.status === "rejected") {
+      attempts += r.reason instanceof ModelError ? r.reason.attempts : 1;
+      modelError ??= r.reason instanceof ModelError ? r.reason.message : "The model check could not be completed.";
+      continue;
+    }
+    attempts += r.value.attempts;
+    try {
+      const parsed = ModelOutput.safeParse(extractJSON(r.value.text));
+      if (parsed.success) outs.push(parsed.data);
+      else modelError ??= "The model answered, but its output did not match the expected format.";
+    } catch {
+      modelError ??= "The model answered, but its output was not valid JSON.";
+    }
+  }
+  if (outs.length) {
+    out = mergeOutputs(outs);
+    modelError = undefined;
+  } else {
+    modelStatus = settled.some((r) => r.status === "fulfilled") ? "invalid_output" : "failed";
   }
 
   // ---- Required elements
@@ -144,6 +180,22 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     if (iss.needs_human_review && iss.reason) humanReasons.push(iss.reason);
   });
 
+  // ---- Deterministic comparison of extracted facts. These replace model issues that point at the same sources.
+  let factsStatus: "ok" | "failed" = "failed";
+  if (factsSettled.ok) {
+    factsStatus = "ok";
+    const cmp = compareFacts(c, sentences, factsSettled.v);
+    for (const ff of cmp.findings) {
+      const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
+      for (let i = findings.length - 1; i >= 0; i--) {
+        const f = findings[i];
+        if (f.source === "model" && (f.category === "inconsistency" || f.category === "unclear") && f.evidence.some((e) => srcs.has(e.sentenceId ?? e.fieldPath))) findings.splice(i, 1);
+      }
+      findings.push(ff);
+    }
+    if (cmp.dropped) discarded.push({ title: "Extracted entry statements", reason: `${cmp.dropped} quote(s) could not be matched to the text and were ignored.` });
+  }
+
   // ---- Citation check
   let citation: ReviewResult["citation"];
   const citeText = selected.map((s) => s.citation).join("; ");
@@ -155,15 +207,29 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     const ev = out.citation.evidence.map((x) => verifyEvidence(x, sentences, c)).filter(Boolean) as EvidenceRef[];
     const clean = stripChargeAdvice(out.citation.explanation, selected.map((s) => s.citation));
     let status = out.citation.status;
-    if (status === "likely_mismatch" && ev.length === 0) {
+    let explanation = clean.text || "See evidence.";
+    if (status === "insufficient_information" && charge) {
+      // The reference exists, so "insufficient" means the record does not establish a key fact for this charge.
+      status = "needs_human_review";
+      explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
+    }
+    let evidence = ev;
+    // Deterministic pre-check of the charge's core requirement; the more cautious result wins.
+    const req = factsSettled.ok && charge ? checkChargeRequirement(c, sentences, factsSettled.v, (charge as { requires?: { entryManner?: string; priorRemoval?: boolean } }).requires) : null;
+    if (req && status !== "likely_mismatch") {
+      status = "likely_mismatch";
+      explanation = req.explanation;
+      evidence = req.evidence;
+    }
+    if (status === "likely_mismatch" && evidence.length === 0) {
       status = "needs_human_review";
       discarded.push({ title: "Citation mismatch", reason: "Mismatch claimed without verifiable evidence; routed to a person instead." });
     }
-    citation = { status, citation: citeText, explanation: clean.text || "See evidence.", evidence: ev };
+    citation = { status, citation: citeText, explanation, evidence };
     if (status === "likely_mismatch") {
       findings.push({
         id: "C-1", category: "citation", title: `Possible citation mismatch: ${citeText}`, explanation: citation.explanation,
-        evidence: ev, referenceIds: charge ? [charge.id] : [], needsHumanReview: true,
+        evidence: citation.evidence, referenceIds: charge ? [charge.id] : [], needsHumanReview: true,
         humanReviewReason: "The officer decides the charge; the tool does not select one.", source: "model", severity: "high",
       });
       humanReasons.push("Possible mismatch between the narrative and the selected charge.");
@@ -180,8 +246,9 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   const checks: CheckResult[] = [
     { id: "required_elements", label: "Required elements", status: elementsUnchecked ? (modelOk ? "partial" : "partial") : byCat("missing_element") ? "completed_with_findings" : "completed_no_findings",
       note: elementsUnchecked ? "Some elements were not checked because the model check was unavailable." : undefined },
-    { id: "consistency", label: "Consistency", status: !modelOk ? (byCat("inconsistency") ? "partial" : "unavailable") : byCat("inconsistency") ? "completed_with_findings" : "completed_no_findings",
-      note: !modelOk ? "Only the rule-based time comparison ran." : undefined },
+    { id: "consistency", label: "Consistency",
+      status: !modelOk && factsStatus !== "ok" ? (byCat("inconsistency") ? "partial" : "unavailable") : !modelOk || factsStatus !== "ok" ? "partial" : byCat("inconsistency") ? "completed_with_findings" : "completed_no_findings",
+      note: !modelOk && factsStatus !== "ok" ? "Only the rule-based time comparison ran." : factsStatus !== "ok" ? "The entry and history fact comparison did not run." : !modelOk ? "Only the fact comparison and rules ran." : undefined },
     { id: "clarity", label: "Clarity", status: !modelOk ? "unavailable" : byCat("unclear") ? "completed_with_findings" : "completed_no_findings" },
     { id: "citation", label: "Citation check", status: citation.status === "not_checked" || citation.status === "insufficient_information" ? "unavailable" : citation.status === "consistent" ? "completed_no_findings" : "completed_with_findings",
       note: citation.status === "insufficient_information" ? citation.explanation : undefined },
@@ -201,6 +268,7 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     mode: "live",
     model: MODEL,
     promptVersion: PROMPT_VERSION,
+    modelConfig: { reasoningEffort: REASONING_EFFORT, samples: SAMPLES, validSamples: outs.length, factsPromptVersion: FACTS_PROMPT_VERSION, factsStatus },
     referenceVersion: REFERENCE_VERSION,
     latencyMs: Date.now() - t0,
     modelLatencyMs,

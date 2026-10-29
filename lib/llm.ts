@@ -7,6 +7,10 @@ const BASE_URL = process.env.CHALLENGEX_BASE_URL ?? "https://challengex-ext2.uni
 const TIMEOUT_MS = Number(process.env.CHALLENGEX_TIMEOUT_MS ?? 55_000);
 const MAX_RETRIES = Number(process.env.CHALLENGEX_MAX_RETRIES ?? 1);
 const RESPONSE_FORMAT = (process.env.CHALLENGEX_RESPONSE_FORMAT ?? "json_object") as "json_object" | "none";
+// gpt-oss reasoning effort. Measured on 2026-10-29: "low" answered in 7-10s; the default ("medium") timed out at 120s.
+export const REASONING_EFFORT = (process.env.CHALLENGEX_REASONING_EFFORT ?? "low") as "low" | "medium" | "high";
+/** Independent samples per review, run in parallel and merged (see lib/review/review.ts). */
+export const SAMPLES = Math.max(1, Math.min(3, Number(process.env.CHALLENGEX_SAMPLES ?? 2)));
 
 export class ModelError extends Error {
   constructor(message: string, public kind: "config" | "timeout" | "http" | "network" | "empty", public attempts: number) {
@@ -23,30 +27,32 @@ function getClient() {
 }
 
 /** One chat completion with a total time budget, bounded retries on transient errors, and no key in any message. */
-export async function completeJSON(system: string, user: string, budgetMs = TIMEOUT_MS) {
+export async function completeJSON(system: string, user: string, budgetMs = TIMEOUT_MS, signal?: AbortSignal) {
   const c = getClient();
   const deadline = Date.now() + budgetMs;
   let attempts = 0;
   let lastErr: ModelError | null = null;
   while (attempts <= MAX_RETRIES) {
     const remaining = deadline - Date.now();
-    if (remaining < 8_000) break; // not enough time for a useful attempt
+    if (remaining < 8_000 || signal?.aborted) break; // not enough time for a useful attempt, or no longer needed
     attempts++;
     try {
       const r = await c.chat.completions.create(
         {
           model: MODEL,
           temperature: 0,
+          reasoning_effort: REASONING_EFFORT,
           messages: [{ role: "system", content: system }, { role: "user", content: user }],
           ...(RESPONSE_FORMAT === "json_object" ? { response_format: { type: "json_object" as const } } : {}),
         },
-        { timeout: remaining }
+        { timeout: remaining, signal }
       );
       const text = r.choices[0]?.message?.content ?? "";
       if (!text.trim()) throw new ModelError("The model returned an empty response.", "empty", attempts);
       return { text, attempts, usage: r.usage };
     } catch (e: unknown) {
       const err = e as { status?: number; name?: string; message?: string };
+      if (signal?.aborted) throw new ModelError("Sample cancelled after the grace period; another sample was used.", "timeout", attempts);
       if (e instanceof ModelError) lastErr = e;
       else if (err.name === "APIConnectionTimeoutError" || /timed? ?out/i.test(err.message ?? ""))
         lastErr = new ModelError("The model endpoint did not answer within the time limit.", "timeout", attempts);
@@ -60,11 +66,4 @@ export async function completeJSON(system: string, user: string, budgetMs = TIME
   throw lastErr ?? new ModelError("Not enough time remained to call the model.", "timeout", attempts);
 }
 
-/** Pull the first JSON object out of a response (tolerates code fences or stray text). */
-export function extractJSON(text: string): unknown {
-  try { return JSON.parse(text); } catch { /* fall through */ }
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start >= 0 && end > start) return JSON.parse(text.slice(start, end + 1));
-  throw new Error("No JSON object in model output");
-}
+export { extractJSON } from "./json";

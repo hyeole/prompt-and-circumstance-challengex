@@ -99,7 +99,10 @@
       "inconsistentWith": [
         "Narrative states the subject was lawfully admitted (for example, on a visa) and the issue is staying past the permitted time"
       ],
-      "type": "administrative (inadmissibility)"
+      "type": "administrative (inadmissibility)",
+      "requires": {
+        "entryManner": "without_inspection"
+      }
     },
     {
       "id": "INA-237a1B",
@@ -117,7 +120,10 @@
       "inconsistentWith": [
         "Narrative states the subject entered without inspection and was never admitted"
       ],
-      "type": "administrative (deportability)"
+      "type": "administrative (deportability)",
+      "requires": {
+        "entryManner": "admitted"
+      }
     },
     {
       "id": "INA-212a7AiI",
@@ -135,7 +141,10 @@
       "inconsistentWith": [
         "Narrative describes entry between ports without any application for admission"
       ],
-      "type": "administrative (inadmissibility)"
+      "type": "administrative (inadmissibility)",
+      "requires": {
+        "entryManner": "admitted"
+      }
     },
     {
       "id": "USC-1325a",
@@ -153,7 +162,10 @@
       "inconsistentWith": [
         "Narrative states the subject was inspected and admitted at a port of entry"
       ],
-      "type": "criminal"
+      "type": "criminal",
+      "requires": {
+        "entryManner": "without_inspection"
+      }
     },
     {
       "id": "USC-1326",
@@ -171,7 +183,10 @@
       "inconsistentWith": [
         "Immigration history shows no prior removal"
       ],
-      "type": "criminal"
+      "type": "criminal",
+      "requires": {
+        "priorRemoval": true
+      }
     }
   ],
   "formGlossary": {
@@ -182,5 +197,6 @@
     "AFOOT": "On foot",
     "UNK": "Unknown",
     "OA / O / PB": "Method of location codes; meaning not confirmed, do not interpret"
-  }
+  },
+  "requiresNote": "'requires' is a team-written, machine-checkable summary of each charge's core factual requirement, used for a deterministic citation pre-check. Provisional."
 }
