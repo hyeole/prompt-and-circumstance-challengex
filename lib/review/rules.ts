@@ -74,7 +74,10 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
     for (const s of sentences) {
       // The time must belong to the arrest/encounter itself, e.g. "placed ... under arrest at 1330 hours",
       // not to a later step such as "arrested and transported to the station at 2145 hours".
-      const m = s.text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(([01]\d|2[0-3])[0-5]\d)\s*hours\b/i);
+      // Both word orders: "placed under arrest at 1330 hours" and "At approximately 1030 hours, X was placed under arrest".
+      const m =
+        s.text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?!\s*:)(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?![^.;]{0,40}\b(?:request|call|receiv|dispatch))/i) ??
+        s.text.match(/\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?:(?!transport|process|book|arriv|request|call|receiv|dispatch)[^.;]){0,80}?\b(?:placed under arrest|arrested|apprehended|detained|encountered)\b/i);
       if (m && m[1] !== formTime && Math.abs(toMin(m[1]) - toMin(formTime)) >= 30) {
         findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
           `The form records the encounter at ${formTime} hours, but the narrative gives ${m[1]} hours for the arrest. The difference may be legitimate (for example, encounter versus arrest time), but it should be confirmed.`,

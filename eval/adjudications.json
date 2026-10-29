@@ -64,6 +64,30 @@
       "note": "Cited sentence describes entering legally into Honduras, not the United States; there is no conflicting account of the U.S. entry.",
       "example": "C013-CIT F-ENTRY-MANNER Conflicting accounts of how the subject entered",
       "date": "2026-10-29"
+    },
+    {
+      "base": "C003",
+      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+      "verdict": "valid_observation",
+      "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'.",
+      "example": "C003-M3 I-1 Encounter time discrepancy",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.date|in 2015 left his home town of ocotal nicaragua by bus and tr",
+      "verdict": "false_flag",
+      "note": "The form records the U.S. entry date as unknown; '2015' in the cited sentence is when he left Nicaragua, not a U.S. entry date.",
+      "example": "C013 I-1 Entry date mismatch",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.place|once arriving at the mexico/guatemala border illegally enter",
+      "verdict": "false_flag",
+      "note": "The cited sentence describes entering Mexico through the mountains, not the place of U.S. entry.",
+      "example": "C013 I-2 Entry place mismatch",
+      "date": "2026-10-29"
     }
   ]
 }

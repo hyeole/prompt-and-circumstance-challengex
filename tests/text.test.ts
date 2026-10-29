@@ -97,3 +97,18 @@ test("partial matches are accepted only when the source fragment contains the ma
   assert.equal(locatePartial(s, q, ["2016"]), null, "fragment must contain the fact being compared");
   assert.equal(locatePartial(s, q, []), null, "no material fact, no partial match");
 });
+
+test("bug: time rule missed 'At approximately 1030 hours, X was placed under arrest' (C003)", () => {
+  const c003 = JSON.parse(readFileSync("eval/cases/C003.json", "utf8")) as CaseRecord;
+  const r = runRules(c003, splitSentences(c003.narrative.text, c003.narrative.pageSpans));
+  const f = r.findings.find((x) => x.id === "R-TIME-MISMATCH");
+  assert.ok(f, "form 0950 vs narrative 1030 should be flagged");
+  assert.match(f!.evidence[0].quote!, /1030 hours/);
+  const ss = splitSentences("At approximately 2145 hours the subjects were transported to the station and arrested later.");
+  assert.ok(!runRules({ ...c003, narrative: { text: ss[0].text } }, ss).findings.some((x) => x.id === "R-TIME-MISMATCH"), "transport times stay excluded");
+});
+
+test("time rule ignores heading words and call/request times (C012 'Facts of Arrest: ... 2000 hours, a Trooper requested')", () => {
+  const c012 = JSON.parse(readFileSync("eval/cases/C012.json", "utf8")) as CaseRecord;
+  assert.ok(!runRules(c012, splitSentences(c012.narrative.text, c012.narrative.pageSpans)).findings.some((x) => x.id === "R-TIME-MISMATCH"));
+});

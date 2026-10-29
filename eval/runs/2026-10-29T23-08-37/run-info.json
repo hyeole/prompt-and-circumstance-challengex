@@ -1,0 +1,10 @@
+{
+  "label": "post-tuning diagnostics (commit 554c9b8)",
+  "split": "dev",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-29T23:08:37.306Z",
+  "commit": "554c9b8",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

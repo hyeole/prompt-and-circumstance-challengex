@@ -13,7 +13,8 @@ Not Unissant's test set. References are provisional.
 | Routing: multi-charge (rule fired) | 100% (5/5) | 100% |
 | Routing: planted ambiguity (reason cites the planted statement) | 67% (2/3) | 100% |
 | Incorrect flags (false + unadjudicated, excl. duplicates) | 9% (3/34) | at most 10% |
-| Unnecessary human-review routing (cases with nothing that calls for review) | 27% (4/15) | |
+| Unnecessary human-review routing (no planted reason and no adjudicated real discrepancy) | 13% (2/15) | |
+| Routed because of an adjudicated real discrepancy in the source | C001, C001-M3 | |
 | Evidence references valid (quote = source text at offsets) | 100% (34/34) | every flag |
 | Sentence evidence by match type | exact 0 · partial 0 · unlabelled 30 | |
 | Latency p50 / p90 / max (full HTTP review) | 22.9s / 55.0s / 55.1s | under 60s |

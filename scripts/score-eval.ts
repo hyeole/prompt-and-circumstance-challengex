@@ -117,7 +117,10 @@ const flagCount = (s: FlagRow["status"]) => flags.filter((f) => f.status === s).
 const nonDup = flags.filter((f) => f.status !== "duplicate").length;
 const ms = latency.map((l) => l.ms).sort((a, b) => a - b);
 const q = (p: number) => (ms.length ? (ms[Math.min(ms.length - 1, Math.floor(p * ms.length))] / 1000).toFixed(1) + "s" : "n/a");
+// Routing on a case with no planted reason is "justified" when it rests on an adjudicated valid observation
+// (a real discrepancy in the source record), and "unnecessary" otherwise.
 const noRouteCases = rows.filter((r) => !r.routingExpected);
+const justified = (r: Row) => r.flags.some((f) => f.status === "valid_observation");
 const outcomeCounts = (["detected", "routed_only", "missed", "not_completed"] as Outcome[]).map((o) => `${o}: ${plantsOf(rows).filter((p) => p.outcome === o).length}`).join(", ");
 let info: Record<string, unknown> = {};
 try { info = JSON.parse(readFileSync(`${dir}/run-info.json`, "utf8")); } catch { /* older runs: see eval/RUNS.md */ }
@@ -137,7 +140,8 @@ const summary = {
     incorrectProportion: pct(flagCount("false_flag") + flagCount("unadjudicated"), nonDup),
     incorrectProportionNote: "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included.",
   },
-  unnecessaryRouting: pct(noRouteCases.filter((r) => r.humanReview).length, noRouteCases.length),
+  unnecessaryRouting: pct(noRouteCases.filter((r) => r.humanReview && !justified(r)).length, noRouteCases.length),
+  routingJustifiedByObservation: noRouteCases.filter((r) => r.humanReview && justified(r)).map((r) => r.id),
   evidenceValidity: pct(rows.reduce((a, r) => a + r.evidenceOk, 0), rows.reduce((a, r) => a + r.evidenceTotal, 0)),
   evidenceMatch: (() => {
     const evs = rows.flatMap((r) => { const res = load(r.id); return res ? res.findings.flatMap((f) => f.evidence.filter((e) => e.kind === "sentence")) : []; });
@@ -164,7 +168,8 @@ Not Unissant's test set. References are provisional.
 | Routing: multi-charge (rule fired) | ${summary.recall.routing_multi_charge} | 100% |
 | Routing: planted ambiguity (reason cites the planted statement) | ${summary.recall.routing_ambiguity} | 100% |
 | Incorrect flags (false + unadjudicated, excl. duplicates) | ${summary.flags.incorrectProportion} | at most 10% |
-| Unnecessary human-review routing (cases with nothing that calls for review) | ${summary.unnecessaryRouting} | |
+| Unnecessary human-review routing (no planted reason and no adjudicated real discrepancy) | ${summary.unnecessaryRouting} | |
+| Routed because of an adjudicated real discrepancy in the source | ${summary.routingJustifiedByObservation.join(", ") || "none"} | |
 | Evidence references valid (quote = source text at offsets) | ${summary.evidenceValidity} | every flag |
 | Sentence evidence by match type | exact ${summary.evidenceMatch.exact} · partial ${summary.evidenceMatch.partial} · unlabelled ${summary.evidenceMatch.unlabelled} | |
 | Latency p50 / p90 / max (full HTTP review) | ${summary.latency.p50} / ${summary.latency.p90} / ${summary.latency.max} | under 60s |
