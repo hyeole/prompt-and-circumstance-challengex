@@ -35,3 +35,6 @@ tmp/
 .claude/settings.local.json
 eval/runs/*/reports/
 share/
+
+# combined one-page reports (deliverable)
+!docs/reports/*.pdf

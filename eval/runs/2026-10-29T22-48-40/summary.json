@@ -10,6 +10,40 @@
   },
   "cases": 37,
   "completion": "89% (33/37)",
+  "partialReviews": [
+    {
+      "id": "C013",
+      "modelStatus": "failed",
+      "seconds": 55.1,
+      "calls": "n/a",
+      "plants": "none"
+    },
+    {
+      "id": "C037-AMB",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "human_review:ambiguity=not_completed, inconsistency=not_completed"
+    },
+    {
+      "id": "C037-CIT",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "citation=detected"
+    },
+    {
+      "id": "C037-X1",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "inconsistency=not_completed"
+    }
+  ],
+  "recallCompletedOnly": {
+    "value": "93% (25/27)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
   "recall": {
     "all": "84% (26/31)",
     "dev": "92% (12/13)",

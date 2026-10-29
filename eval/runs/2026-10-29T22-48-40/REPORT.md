@@ -19,7 +19,10 @@ Not Unissant's test set. References are provisional.
 | Sentence evidence by match type | exact 0 · partial 0 · unlabelled 30 | |
 | Latency p50 / p90 / max (full HTTP review) | 22.9s / 55.0s / 55.1s | under 60s |
 
-Plant outcomes: detected: 26, routed_only: 2, missed: 0, not_completed: 3. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
+Plant outcomes: detected: 26, routed_only: 2, missed: 0, not_completed: 3.
+
+**Partial reviews (model check did not complete): 4.** C013 (failed, 55.1s; n/a; plants: none); C037-AMB (failed, 55s; n/a; plants: human_review:ambiguity=not_completed, inconsistency=not_completed); C037-CIT (failed, 55s; n/a; plants: citation=detected); C037-X1 (failed, 55s; n/a; plants: inconsistency=not_completed).
+Recall over completed reviews only (secondary): 93% (25/27). "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
 Flags issued: 34 = 26 planted + 0 duplicates + 5 adjudicated valid observations + 3 adjudicated false flags + 0 unadjudicated.
 
 ## Per case
