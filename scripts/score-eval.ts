@@ -128,6 +128,15 @@ try { info = JSON.parse(readFileSync(`${dir}/run-info.json`, "utf8")); } catch {
 const summary = {
   run: dir, scoringPolicy: SCORING_POLICY, runInfo: info, cases: rows.length,
   completion: pct(rows.filter((r) => r.completed).length, rows.length),
+  partialReviews: rows.filter((r) => !r.completed).map((r) => {
+    const res = load(r.id);
+    return { id: r.id, modelStatus: r.modelStatus, seconds: +(r.ms / 1000).toFixed(1), calls: res?.calls?.map((c) => `${c.role}:${c.status}`).join(" ") ?? "n/a",
+      plants: r.plants.map((p) => `${p.type}=${p.outcome}`).join(", ") || "none" };
+  }),
+  recallCompletedOnly: (() => {
+    const done = rows.filter((r) => r.completed);
+    return { value: recall(done), note: "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed." };
+  })(),
   recall: {
     all: recall(rows), dev: recall(rows.filter((r) => r.split === "dev")), heldout: recall(rows.filter((r) => r.split === "heldout")),
     missing_element: recall(rows, "missing_element"), inconsistency: recall(rows, "inconsistency"), citation: recall(rows, "citation"),
@@ -174,7 +183,10 @@ Not Unissant's test set. References are provisional.
 | Sentence evidence by match type | exact ${summary.evidenceMatch.exact} · partial ${summary.evidenceMatch.partial} · unlabelled ${summary.evidenceMatch.unlabelled} | |
 | Latency p50 / p90 / max (full HTTP review) | ${summary.latency.p50} / ${summary.latency.p90} / ${summary.latency.max} | under 60s |
 
-Plant outcomes: ${outcomeCounts}. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
+Plant outcomes: ${outcomeCounts}.
+
+**Partial reviews (model check did not complete): ${summary.partialReviews.length}.** ${summary.partialReviews.map((p) => `${p.id} (${p.modelStatus}, ${p.seconds}s; ${p.calls}; plants: ${p.plants})`).join("; ") || "none"}.
+Recall over completed reviews only (secondary): ${summary.recallCompletedOnly.value}. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
 Flags issued: ${flags.length} = ${flagCount("planted")} planted + ${flagCount("duplicate")} duplicates + ${flagCount("valid_observation")} adjudicated valid observations + ${flagCount("false_flag")} adjudicated false flags + ${flagCount("unadjudicated")} unadjudicated.
 
 ## Per case
