@@ -1,0 +1,11 @@
+{
+  "id": "C003-CIT",
+  "base": "C003",
+  "split": "dev",
+  "description": "Selected charge replaced with reentry after removal, while the immigration record is negative.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ]
+}

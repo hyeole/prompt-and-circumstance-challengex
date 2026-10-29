@@ -1,0 +1,17 @@
+{
+  "id": "C119-X1",
+  "base": "C119",
+  "split": "heldout",
+  "description": "Arrival date in the immigration history changed to conflict with the form (08/11/2004).",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "8/11/2009"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ]
+}

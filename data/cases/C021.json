@@ -1,0 +1,210 @@
+{
+  "id": "C021",
+  "title": "Bus check at Sault Ste. Marie, Michigan (2017)",
+  "kind": "adapted-public-record",
+  "split": "heldout",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      91,
+      92,
+      93,
+      94
+    ],
+    "extraction": "Page 91 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 92-94 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": []
+  },
+  "recordedChargeCode": "R1B",
+  "selectedCharges": [
+    {
+      "citation": "INA 237(a)(1)(B)",
+      "referenceId": "INA-237a1B",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 92)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 91,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "NIGERIA",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "BENIN CITY, EDO, NIGERIA",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "39",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] HOUSTON, TEXAS, 77036",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "12/23/2015, 0730",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) A of MIA",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "NIM",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "Non-Immigrant",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/16/2017 0730",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "SAULT STE MARIE, MI",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 91,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "R1B",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Charge Code Words(s)"
+    },
+    {
+      "path": "documents.visa_issued",
+      "label": "Date visa issued",
+      "value": "09/23/2015",
+      "status": "present",
+      "sourcePage": 91,
+      "sourceField": "Date Visa Issued"
+    },
+    {
+      "path": "documents.niv",
+      "label": "NIV issuing post and number",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 91,
+      "sourceField": "NIV Issuing Post and NIV Number"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nREMOVEABILITY:\n\nSubject is removable per Section 237(a)(1)(B) of the Immigration and Nationality Act (Act), as amended, in that after admission as a nonimmigrant under Section 101(a)(15) of the Act, you have remained in the United States for a time longer than permitted, in violation of this Act or any other law of the United States.\n\nEntry: Subject entered the United States at the Miami International Airport port of entry (MIA) on 12/23/2015.\n\nTRAVEL DATA:\n\nSubject traveled by bus to Houston, TX where he resided and worked as a part-time mechanic. On 4/12/2017 he boarded a bus with [REDACTED (b)(6), (b)(7)(C)] and arrived in Sault Sainte Marie on 4/14/2017. He then took another bus to Ann Harbor, MI where he was picked up by the smuggler and brought back to Sault Sainte Marie.\n\nFACTS OF ARREST/ENCOUNTER:\n\nAt 0412 am, Sector Dispatch requested a Supervisory Border Patrol Agent contact Customs and [REDACTED (b)(6), (b)(7)(C)] Border Protection Supervisor [REDACTED (b)(6), (b)(7)(C)] at the Sault Sainte Marie Port of Entry. SBPA called Supervisor [REDACTED (b)(6), (b)(7)(C)] and he informed SBPA [REDACTED (b)(6), (b)(7)(C)] that the Canadian Customs Service Agency had apprehended a smuggling load of Nigerians and that there could possibly be more at the [REDACTED (b)(7)(E)] The driver of the vehicle claimed to Canadian Customs that he had rented this room. After advising Supervisory Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] of the situation, he and SBPA [REDACTED (b)(6), (b)(7)(C] proceeded to the [REDACTED (b)(7)(E)] and found that a [REDACTED (b)(6), (b)(7)(C)] , [REDACTED (b)(6), (b)(7)(C)] , North York, Ontario, Canada had rented [REDACTED (b)(6), (b)(7)(C)] the previous evening but according to the clerk, he was travelling alone. A check of the parking lot indicated no Canadian plated vehicles. SBPA [REDACTED (b)(6), (b)(7)(C)] called Supervisor [REDACTED (b)(6), (b)(7)(C)] who stated that [REDACTED (b)(6), (b)(7)(C)] was the driver of the smuggling load and was in Canadian custody. He advised me to call [REDACTED (b)(6), (b)(7)(C)] , the Canadian Customs Officer handling the case at [REDACTED (b)(6), (b)(7)(C)] . Officer [REDACTED (b)(6), (b)(7)(C)] advised that [REDACTED (b)(6), (b)(7)(C)] stated that he had travelled to Ann Arbor, Michigan yesterday morning and picked up 5 Nigerians, returning to Sault Sainte Marie, MI. [REDACTED (b)(6), (b)(7)(C)] stated that the two females and one male who were apprehended with [REDACTED (b)(6), (b)(7)(C)] had obtained real documents and were found to be [REDACTED (b)(6), (b)(7)(C)] imposters when they tried to enter Canada. Officer advised that [REDACTED (b)(6), (b)(7)(C)] claimed two more Nigerians were in [REDACTED (b)(6), (b)(7)(C)] at this time. Additional Border Patrol Agents were called in at 0630 am. SBPA [REDACTED (b)(6), (b)(7)(C)] accompanied BPA's [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] and they knocked on [REDACTED (b)(6), (b)(7)(C)] . When a male opened the door, BPA [REDACTED (b)(6), (b)(7)(C)] announ were Border Patrol Agents and asked if they could come in and talk. The male, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria said yes, and additional agents entered into the room. A female was also found in the room, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria. Both subjects were advised that the U.S. Border Patrol had received information that additional Nigerian Nationals were in this room and were thought to be in the U.S. Illegally and were possibly going to attempt to try and illegally enter Canada. When question as to their citizenship, both claimed to be from Nigeria and both claimed to have entered the U.S. with passports as visitors.\n\nBPA [REDACTED (b)(6), (b)(7)(C)] obtained both Subjects passports and ran checks through Sector Dispatch. [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B1/B2 arriving on 12-23-2015 at MIA, admitted to 06-22-2016, with a departure date of 01-10-2016. [REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay. [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B-1/B2 arriving on 06- 01-2016 with a departure date of 06-09-2016. [REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay. Subjects were arrested and transported to [REDACTED (b)(7)(E)] Border Patrol Station for processing.\n\nIMMIGRATION HISTORY:\n\nSubject arrived at Miami on 12/23/2015 and was admitted as a B2 Visitor until 06/22/2016.\n\nCRIMINAL HISTORY:\n\nNo criminal history found.\n\nHEALTH:\n\nSubject appears to be in good health.\n\nEQUITIES:\n\nSubject has $6,638.00 (USD) in possession. All money was transferred with subject to [REDACTED (b)(7)(E)] County Jail.\n\nDISPOSITION:\n\nSubject is being held in Service custody pending a hearing at a time and place to be determined. Subject is currently lodged in the [REDACTED (b)(7)(E)] County Jail. Subject was served a Warrant of Arrest/Notice to Appear, Notice of Custody, and was provided a list of free legal services.",
+    "pageSpans": [
+      {
+        "page": 92,
+        "start": 0,
+        "end": 347
+      },
+      {
+        "page": 93,
+        "start": 349,
+        "end": 3813
+      },
+      {
+        "page": 94,
+        "start": 3815,
+        "end": 5200
+      }
+    ]
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "id": "C037",
+  "title": "Referral from an FBI task force near Avon, Ohio (2017)",
+  "kind": "adapted-public-record",
+  "split": "heldout",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      160,
+      161,
+      162,
+      163
+    ],
+    "extraction": "Page 160 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 161-163 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": []
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "team-assigned-for-testing",
+      "note": "The source record shows charge code words 'I6A' and no statutory citation. The team assigned this citation for testing; the code-to-citation mapping is not assumed."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 160,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "AZACUALPA, SANTA BARBARA, HONDURAS",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "25",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TIFFIN, OHIO, 44883",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "06/15/2009, 1200",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "2 mile(s) E of NAC",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "05/01/2017 1335",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "AVON, OH",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 160,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 160,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nENCOUNTER:\n\nOn May 1, 2017, at approximately 12:06 PM, [REDACTED (b)(7)(E)] Border Patrol Station received a call from an FBI Task Force Agent. Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] informed agents from the [REDACTED (b)(7)(E)] Border Patrol Station that he had arrested [REDACTED (b)(6), (b)(7)(C)] (COB: Honduras, DOB: [REDACTED (b)(6), (b)(7)(C)] ) for being present in the United States without immigration documents.\n\nBorder Patrol Agent [REDACTED (b)(6), (b)(7)(C)] responded to the [REDACTED (b)(7)(E)] located at [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] in Avon, Ohio and took custody of the subject. [REDACTED (b)(6), (b)(7)(C)] was transported to the [REDACTED (b)(7)(E)] Border Patrol Station for processing. [REDACTED (b)(6), (b)(7)(C)] was read and understood his Miranda Rights in the Spanish Language at approximately 1:35 PM. [REDACTED (b)(6), (b)(7)(C)] declined to speak to agents without the presence of an attorney as documented on the I-214. [REDACTED (b)(6), (b)(7)(C)] signed and consented to the search of his personal cellular phone as documented on the \"Consent to Search Cell Phone\" form.\n\nPROCESSING INFORMATION:\n\nAt the station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were entered into the [REDACTED (b)(7)(E)] databases which returned with the following results.\n\nIMMIGRATION HISTORY:\n\nNone\n\nCRIMINAL HISTORY:\n\nNone\n\nTRAVEL/WORK:\n\n[REDACTED (b)(6), (b)(7)(C)] stated that he left his home city of Azacualpa in the state of Santa Barbara, Honduras, on or about 06/14/2009. [REDACTED (b)(6), (b)(7)(C)] stated that he travelled by bus for approximately one day before arriving in Naco, Mexico. [REDACTED (b)(6), (b)(7)(C)] stated that he used the services of a local smuggler to help him safely cross the US/Mexico Border. [REDACTED (b)(6), (b)(7)(C)] stated that he paid approximately $5,000.00 USD to illegally cross the border. [REDACTED (b)(6), (b)(7)(C)] stated that he and five others crossed the US/MEXICO Border illegally, into Naco, Arizona, on the afternoon of 06/15/2009. [REDACTED (b)(6), (b)(7)(C)] stated that they walked for five days and were picked-up by an unknown driver. [REDACTED (b)(6), (b)(7)(C)] stated that he was driven to Orlando, Florida where he lived for a year. [REDACTED (b)(6), (b)(7)(C)] claims he moved to Ohio due to the high cost of living in Florida. [REDACTED (b)(6), (b)(7)(C)] stated he lived and continues to live with his girlfriend at [REDACTED (b)(6), (b)(7)(C)] in Lorain, Ohio. [REDACTED (b)(6), (b)(7)(C)] stated that he has been working in construction since his arrival into the United States and is currently working for [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] in West Lake, Ohio. [REDACTED (b)(6), (b)(7)(C)] failed to provide a detailed account of his travel and work history.\n\nDISPOSITION:\n\nA Notice to Appear is being executed on [REDACTED (b)(6), (b)(7)(C)] as per section 212(a)(6)(A)(I) of the Immigration and Nationality Act. [REDACTED (b)(6), (b)(7)(C)] and his property will be held at the [REDACTED (b)(7)(E)] County Jail for the duration of his immigration proceedings. [REDACTED (b)(6), (b)(7)(C)] was advised of his right to speak with a consular officer of his native country of Honduras, which he declined. [REDACTED (b)(6), (b)(7)(C)] was provided with a list of Legal Services and Consulate contact information.\n\n[REDACTED (b)(6), (b)(7)(C)] did not claim any fear of returning to his home country of Honduras. [REDACTED (b)(6), (b)(7)(C)] was not offered a bond. [REDACTED (b)(6), (b)(7)(C)] claims and appeared to be in good health at the time of his processing. Upon service of paperwork, [REDACTED (b)(6), (b)(7)(C)] refused to sign any forms.",
+    "pageSpans": [
+      {
+        "page": 161,
+        "start": 0,
+        "end": 444
+      },
+      {
+        "page": 162,
+        "start": 446,
+        "end": 3368
+      },
+      {
+        "page": 163,
+        "start": 3370,
+        "end": 3704
+      }
+    ]
+  }
+}

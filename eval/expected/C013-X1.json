@@ -1,0 +1,19 @@
+{
+  "id": "C013-X1",
+  "base": "C013",
+  "split": "dev",
+  "description": "Form immigration record changed to NEGATIVE while the narrative documents prior removals.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "deported",
+        "Expedited Removal",
+        "Reinstatement"
+      ],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ]
+}

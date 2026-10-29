@@ -40,12 +40,14 @@ test("quote location tolerates whitespace and case, rejects invented text", () =
   assert.equal(locateQuote(s, "travelling from Texas"), null);
 });
 
-test("C001 rules: fields cover entry elements; multi-subject and time difference are flagged", () => {
+test("C001 rules: fields cover entry elements; time difference flagged; multiple people is a note, not a flag", () => {
   const ss = splitSentences(c001.narrative.text, c001.narrative.pageSpans);
   const r = runRules(c001, ss);
   for (const id of ["E1", "E2", "E3", "E4", "E5"]) assert.equal(r.elementsFromFields.get(id)?.status, "present", id);
   const ids = r.findings.map((f) => f.id);
-  assert.ok(ids.includes("R-MULTI-SUBJECT"));
+  assert.ok(!ids.includes("R-MULTI-SUBJECT"));
+  assert.equal(r.notes.length, 1);
+  assert.equal(r.humanReviewReasons.length, 0);
   assert.ok(ids.includes("R-TIME-MISMATCH"));
   const t = r.findings.find((f) => f.id === "R-TIME-MISMATCH")!;
   assert.equal(t.evidence.length, 2);
@@ -63,4 +65,10 @@ test("redacted field is unavailable, not missing", () => {
   const red = { ...c001, facts: c001.facts.map((f) => (f.path === "entry.manner" ? { ...f, value: "", status: "redacted" as const } : f)) };
   const r = runRules(red, splitSentences(red.narrative.text));
   assert.equal(r.elementsFromFields.get("E3")?.status, "unavailable_redacted");
+});
+
+test("time rule ignores transport times", () => {
+  const ss = splitSentences("The subjects were arrested and transported to the station at 2145 hours by the agent.");
+  const c = { ...c001, narrative: { text: ss[0].text }, facts: c001.facts.map((f) => (f.path === "encounter.date_time" ? { ...f, value: "04/08/2017 2040" } : f)) };
+  assert.ok(!runRules(c, ss).findings.some((f) => f.id === "R-TIME-MISMATCH"));
 });

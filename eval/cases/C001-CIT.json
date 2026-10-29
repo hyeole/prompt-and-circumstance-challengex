@@ -1,0 +1,238 @@
+{
+  "id": "C001-CIT",
+  "title": "Three travellers encountered at a rest stop (Ohio, 2017) [test variant CIT]",
+  "kind": "synthetic-variant",
+  "split": "dev",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "extraction": "Page 1 (I-213) and page 2 (I-831) have no embedded text: fields and narrative were transcribed by hand from the page images, using Apple Vision OCR only as a draft. Pages 3-4 use embedded PDF text, with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 + continuation pages 2-4 of 4, header date 03/22/2017) and all transcribed fields were checked visually against the page images on 2026-10-29. The blank area before '7,' at the start of the page 2 narrative is recorded as [UNREADABLE].",
+    "replacements": [],
+    "modifications": [
+      "Selected charge replaced with one that requires a prior admission, while the record documents entry without inspection."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 237(a)(1)(B)",
+      "referenceId": "INA-237a1B",
+      "source": "team-assigned-for-testing",
+      "note": "Charge set by the team for this test variant."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 1,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "GUATEMALA",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "GUATEMALA CITY, PETEN, GUATEMALA",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "24",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TIFFIN, OHIO, 44883",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "05/15/2014, 2200",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "5 mile(s) S of LAR",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "03/22/2017 1435",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "WASHINTON TOWNSHIP, OH",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.coordinates",
+      "label": "Arrest coordinates",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 1,
+      "sourceField": "Narrative block: ARREST COORDINATES"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "DTM/[REDACTED (b)(7)(E)]",
+      "status": "redacted",
+      "sourcePage": 1,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport number and country",
+      "value": "",
+      "status": "absent",
+      "sourcePage": 1,
+      "sourceField": "Passport Number and Country of Issue"
+    },
+    {
+      "path": "documents.records_checked",
+      "label": "Records checked",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 2,
+      "sourceField": "RECORDS CHECKED"
+    },
+    {
+      "path": "subject.funds",
+      "label": "Funds in possession",
+      "value": "United States Dollar 1,339.00",
+      "status": "present",
+      "sourcePage": 2,
+      "sourceField": "FUNDS IN POSSESSION"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Charge Code Words(s)"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present",
+      "sourcePage": 1,
+      "sourceField": "Disposition"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nApprehending Agents: [REDACTED (b)(6), (b)(7)(C)] Processing Agent: [REDACTED (b)(6), (b)(7)(C)]\n\nENCOUNTER INFORMATION AND IMMIGRATION VIOLATION:\n\n[UNREADABLE]7, Agent [REDACTED (b)(6), (b)(7)(C)] and Agent [REDACTED (b)(6), (b)(7)(C)] from the United States Border Patrol from the [REDACTED (b)(7)(E)] Station were on patrol on [REDACTED (b)(7)(E)] While at the [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] Agent [REDACTED (b)(6), (b)(7)(C)] and Agent [REDACTED (b)(6), (b)(7)(C)] observed three individuals walking into the [REDACTED (b)(7)(E)] The first individual stopped, looked at the agents, and then proceeded to walk toward the women bathroom. He initially entered the women's bathroom, appeared to realize he entered the wrong bathroom, and then entered the men's bathroom. Agent [REDACTED (b)(6), (b)(7)(C)] went outside to see what vehicle the subjects were travelling in and to see if there were any other individuals in the vehicle; there were no additional subjects. Agent [REDACTED (b)(6), (b)(7)(C)] proceeded to go back into the [REDACTED (b)(7)(E)] Agent [REDACTED (b)(6), (b)(7)(C)] initiated a consensual encounter with the subjects. Agent [REDACTED (b)(6), (b)(7)(C)] greeted the subjects in the English language. The subjects all returned the greeting in the Spanish language. Agent [REDACTED (b)(6), (b)(7)(C)] noticed that the subjects were not looking at him despite him talking to them, and asked where they were travelling from. The subjects replied that they were travelling from New York to California. Agent [REDACTED (b)(6), (b)(7)(C)] then asked if the subjects were originally from California; one subject, later identified as [REDACTED (b)(6), (b)(7)(C)] stated that he was from California. Two subjects, later identified as [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] stated they were from New Jersey. Agent [REDACTED (b)(6), (b)(7)(C)] then asked the subjects what country they were citizens of and inquired if they had any identification. [REDACTED (b)(6), (b)(7)(C)] stated he was a citizen of Honduras and provided a California driver's license; [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] stated they were citizens of Guatemala and provided Guatemalan identification cards. Agent [REDACTED (b)(6), (b)(7)(C)] then asked the subjects if they had any documents that would allow them to be in the United States legally; all subjects stated they did not have any immigration documents. Agent [REDACTED (b)(6), (b)(7)(C)] and Agent [REDACTED (b)(6), (b)(7)(C)] placed all subjects under arrest at 1330 hours for being in the United States illegally. The subjects were then transported back to the [REDACTED (b)(7)(E)] Station for additional questioning and processing.\n\nPROCESSING INFORMATION:\n\n[REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were entered into the [REDACTED (b)(7)(E)] database and returned with the immigration and criminal history listed below.\n\nTRAVEL:\n\n[REDACTED (b)(6), (b)(7)(C)] stated that he left his home country Peten, Poptun, Guatemala and travelled for 15 days by bus to Nuevo Nogales, Mexico. [REDACTED (b)(6), (b)(7)(C)] stated that he crossed the Rio Grande River from Matamoros, Mexico, illegally into the United States, into Texas with three other individuals. [REDACTED (b)(6), (b)(7)(C)] stated that after crossing, he was taken by car to San Antonio, Texas. [REDACTED (b)(6), (b)(7)(C)] stated that he spent 15 days in an unknown house. [REDACTED (b)(6), (b)(7)(C)] stated that he left the house by bus to Scotch Plains, NJ. [REDACTED (b)(6), (b)(7)(C)] stated that he still resides in Scotch Plains, NJ. [REDACTED (b)(6), (b)(7)(C)] stated he was heading to California at the time that he was stopped by the US Border Patrol.\n\nRESIDENCE / EMPLOYMENT HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] stated that he lives at [REDACTED (b)(6), (b)(7)(C)] Scotch Plains, NJ. [REDACTED (b)(6), (b)(7)(C)] stated that he has been living there for one year. [REDACTED (b)(6), (b)(7)(C)] stated that he works in a restaurant. [REDACTED (b)(6), (b)(7)(C)] declined to provide any additional details about his employment.\n\nCRIMINAL HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] has no criminal history.\n\nIMMIGRATION HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] was assigned A [REDACTED (b)(6), (b)(7)(C)] for this encounter.\n\nPROPERTY:\n\n[REDACTED (b)(6), (b)(7)(C)] property was inventoried and transported to the [REDACTED (b)(7)(E)] County Jail.\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] is detained, and served with a Notice to Appear before an Immigration Judge. [REDACTED (b)(6), (b)(7)(C)] stated that he has fear of returning to his home country of Guatemala. [REDACTED (b)(6), (b)(7)(C)] stated that he is afraid of the street gangs. [REDACTED (b)(6), (b)(7)(C)] is remanded into Immigration and Customs Enforcement custody at the [REDACTED (b)(7)(E)] County Jail in [REDACTED (b)(7)(E)] [REDACTED (b)(6), (b)(7)(C)] was advised of his right to speak with the Guatemalan Consulate which he declined. [REDACTED (b)(6), (b)(7)(C)] appeared and claims to be in good health at the time of his apprehension. [REDACTED (b)(6), (b)(7)(C)] is not being offered a bond. [REDACTED (b)(6), (b)(7)(C)] was provided with a list of legal service providers. [REDACTED (b)(6), (b)(7)(C)] vehicle was towed by [REDACTED (b)(6), (b)(7)(C)] and is being held at Fremont, OH. [REDACTED (b)(6), (b)(7)(C)] has been provided with contact information for [REDACTED (b)(6), (b)(7)(C)]",
+    "pageSpans": [
+      {
+        "page": 2,
+        "start": 0,
+        "end": 695
+      },
+      {
+        "page": 3,
+        "start": 696,
+        "end": 3734
+      },
+      {
+        "page": 4,
+        "start": 3735,
+        "end": 5496
+      }
+    ]
+  },
+  "baseCaseId": "C001"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "C012-M2",
+  "base": "C012",
+  "split": "dev",
+  "description": "Removed place of entry: form field blanked and 'near Laredo, Texas' deleted from the narrative.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E2"
+    }
+  ]
+}

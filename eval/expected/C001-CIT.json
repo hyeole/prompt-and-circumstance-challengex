@@ -1,0 +1,11 @@
+{
+  "id": "C001-CIT",
+  "base": "C001",
+  "split": "dev",
+  "description": "Selected charge replaced with one that requires a prior admission, while the record documents entry without inspection.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ]
+}

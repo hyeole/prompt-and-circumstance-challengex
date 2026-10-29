@@ -86,6 +86,16 @@ export default function FindingsPanel({
         </div>
       )}
 
+      {review.notes?.length > 0 && (
+        <section className="notes" aria-label="Case notes">
+          {review.notes.map((n, i) => (
+            <p key={i}>
+              <span className="ev-tag">note</span> {n}
+            </p>
+          ))}
+        </section>
+      )}
+
       <section className="panel-section">
         <h2 className="section-title">Citation check</h2>
         <div className={`citation citation-${review.citation.status}`}>

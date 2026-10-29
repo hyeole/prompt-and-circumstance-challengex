@@ -21,7 +21,7 @@ export interface PageSpan {
 export interface SelectedCharge {
   citation: string; // e.g. "INA 212(a)(6)(A)(i)"
   referenceId?: string; // id in config/references.json, if the citation matches one
-  source: "officer-selected" | "team-assigned-for-testing";
+  source: "officer-selected" | "stated-in-record" | "team-assigned-for-testing";
   note?: string;
 }
 
@@ -126,5 +126,6 @@ export interface ReviewResult {
   citation: { status: CitationStatus; citation: string; explanation: string; evidence: EvidenceRef[] };
   humanReview: { required: boolean; reasons: string[] };
   findings: Finding[];
+  notes: string[]; // informational context, not flags
   discarded: { reason: string; title: string }[]; // model output dropped because evidence could not be verified
 }

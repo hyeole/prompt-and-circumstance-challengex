@@ -1,0 +1,20 @@
+{
+  "id": "C003-AMB",
+  "base": "C003",
+  "split": "dev",
+  "description": "Added a conflicting statement about entering at a port of entry with a border crossing card.",
+  "plants": [
+    {
+      "type": "human_review"
+    },
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "border crossing card"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ]
+}

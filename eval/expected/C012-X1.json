@@ -1,0 +1,17 @@
+{
+  "id": "C012-X1",
+  "base": "C012",
+  "split": "dev",
+  "description": "Narrative manner of entry changed to air travel on a tourist visa, conflicting with the form (PWA AFOOT) and the next sentence.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "tourist visa"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ]
+}

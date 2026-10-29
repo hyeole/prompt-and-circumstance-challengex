@@ -1,0 +1,12 @@
+{
+  "id": "C001-M3",
+  "base": "C001",
+  "split": "dev",
+  "description": "Removed manner of entry: form field blanked and the river-crossing sentence deleted.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E3"
+    }
+  ]
+}

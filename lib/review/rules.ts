@@ -6,6 +6,7 @@ export interface RuleOutput {
   elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
   findings: Finding[];
   humanReviewReasons: string[];
+  notes: string[];
   citationPrecheck?: { status: "needs_human_review" | "insufficient_information" | "not_checked"; explanation: string };
 }
 
@@ -59,23 +60,21 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
     reasons.push("Selected charge is not in the loaded reference list.");
   }
 
-  // 3. Multiple people in one narrative: statements may belong to different subjects.
+  // 3. Multiple people in one narrative. Informational only: in the public source the names are redacted,
+  // so statements cannot always be attributed. This is a property of the data, not an officer omission.
+  const notes: string[] = [];
   const multi = sentences.filter((s) => /\b(subjects|individuals|(two|three|four|five|both) (subjects|individuals|people|persons|men|women)|all subjects)\b/i.test(s.text));
-  if (multi.length >= 2) {
-    const ev = multi.slice(0, 3).map((s) => quoteEvidence(s, s.text.match(/\b(two|three|four|five|all|both)?\s?(subjects|individuals)\b/i)?.[0] ?? s.text.slice(0, 40)));
-    reasons.push("The narrative describes more than one person. Statements must be attributed to the right subject before relying on them.");
-    findings.push(mk("R-MULTI-SUBJECT", "human_review", "Narrative covers more than one person",
-      "Several sentences describe a group. Redacted names can hide which person made each statement, so facts such as citizenship or route of travel may belong to a different subject than this record. A person should confirm the attribution.",
-      ev, [], "Statements may belong to different subjects", "medium"));
-  }
+  if (multi.length >= 2)
+    notes.push(`The narrative describes more than one person (for example ${multi[0].id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
 
   // 4. Encounter time in the form vs times stated in the narrative.
   const dt = field(c, "encounter.date_time");
   const formTime = dt?.status === "present" ? dt.value.match(/\b([01]\d|2[0-3])([0-5]\d)\b(?!\/)/g)?.pop() : undefined;
   if (formTime) {
     for (const s of sentences) {
-      if (!/\b(arrest|apprehend|encounter|detain|stopp?ed)\w*/i.test(s.text)) continue;
-      const m = s.text.match(/\b(?:at\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b/i);
+      // The time must belong to the arrest/encounter itself, e.g. "placed ... under arrest at 1330 hours",
+      // not to a later step such as "arrested and transported to the station at 2145 hours".
+      const m = s.text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(([01]\d|2[0-3])[0-5]\d)\s*hours\b/i);
       if (m && m[1] !== formTime && Math.abs(toMin(m[1]) - toMin(formTime)) >= 30) {
         findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
           `The form records the encounter at ${formTime} hours, but the narrative gives ${m[1]} hours for the arrest. The difference may be legitimate (for example, encounter versus arrest time), but it should be confirmed.`,
@@ -85,7 +84,7 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
       }
     }
   }
-  return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck };
+  return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck, notes };
 }
 
 const toMin = (hhmm: string) => parseInt(hhmm.slice(0, 2)) * 60 + parseInt(hhmm.slice(2));

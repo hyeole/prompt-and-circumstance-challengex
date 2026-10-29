@@ -1,0 +1,192 @@
+{
+  "id": "C135-M3",
+  "title": "Restaurant tip in Escanaba, Michigan (2017) [test variant M3]",
+  "kind": "synthetic-variant",
+  "split": "heldout",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      576,
+      577,
+      578
+    ],
+    "extraction": "Page 576 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 577-578 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": [],
+    "modifications": [
+      "Removed manner of entry: form field blanked and 'crossed illegally' replaced with 'came to the United States'."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "team-assigned-for-testing",
+      "note": "The source record shows charge code words 'I6A' and no statutory citation. The team assigned this citation for testing; the code-to-citation mapping is not assumed."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 576,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "SILTEPEC, CHIAPAS, MEXICO",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "31",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TENNESSEE, 37311",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "",
+      "status": "absent",
+      "sourcePage": 576,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "09/07/2017 1226",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ESCANABA, MI",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "O",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 576,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "See Narrative",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 576,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nOn 01/04/2017 a concerned citizen called regarding possible illegal activity at the [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] restaurant in Escanaba, MI. On 01/15/2017 agents from the [REDACTED (b)(7)(E)] Border Patrol station were able to locate two [REDACTED (b)(6), (b)(7)(C)] es in the [REDACTED (b)(7)(E)] restaurant parking lot with TN license plates (TN: [REDACTED (b)(6), (b)(7)(C)] and TN: ) registered to [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] . The registered owner of the vehicles returned with very little information which [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] Agents have discovered is an indication of illegal alienage. [REDACTED (b)(7)(E)] Agents [REDACTED (b)(7)(E)] On 07/02/2017 [REDACTED (b)(7)(E)] the two TN plated vehicles that were located behind the [REDACTED (b)(7)(E)] restaurant. The vehicles were followed to a home located at [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] in Escanaba, MI. On 09/04/2017 agents received information that a subject at the [REDACTED (b)(6), (b)(7)(C)] residence had been arrested and is being held in the Delta County Jail. The subject was found to be an illegal alien and ICE has placed a detainer on the subject [REDACTED (b)(6), (b)(7)(C)] . On 09/07/2017 agents [REDACTED (b)(7)(E)] and followed the vehicle plated [REDACTED (b)(6), (b)(7)(C)] from that location. The vehicle stopped near the intersection of [REDACTED (b)(7)(E)] in Escanaba, MI. The two subjects exited the vehicle as Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] approached and identified themselves as United States Border Patrol Agents and performed a consensual encounter with the two occupants of the U.S. Department of Homeland Security Continuation Page for Form ___________________ I213 Alien’s Name F [REDACTED (b)(6), (b)(7)(C)] Date [REDACTED (b)(6), (b)(7)(C)] 09/07/2017 Event No [REDACTED (b)(7)(E)] vehicle. The two occupants of the vehicle were identified as [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] . Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] asked each individual what country they were citizens of and both indicated they were Mexican citizens. Both subjects were asked if they had any immigration documents to be in the United States legally and both stated they did not. The subjects were asked if they were in the United States legally or illegally and both stated they were in the United States illegally. Neither subject could produce any documentation that permitted them to be in, pass through, work or remain in the United States legally. [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were transported to the [REDACTED (b)(7)(E)] Border Patrol station for processing.\n\nENTRY INFORMATION:\n\n[REDACTED (b)(6), (b)(7)(C)] indicated he came to the United States near Sasabe, Arizona approximately 10 years ago. IMMIGRATION History: [REDACTED (b)(6), (b)(7)(C)] Records checks on show no prior immigration history. CRIMINAL History: [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] Disposition: [REDACTED (b)(6), (b)(7)(C)] received a WA/NTA. [REDACTED (b)(6), (b)(7)(C)] (along with his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending removal proceedings. [REDACTED (b)(6), (b)(7)(C)] did not receive a bond due the new Executive Order Implementing the President's Border Security and Immigration Enforcement Policies dated February 20, 2017. [REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the consulate office of his native country at approximately 1350 hours, to which he exercised his right. (As witnessed by BPA's [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] . [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services. [REDACTED (b)(6), (b)(7)(C)] claimed to not have fear of returning to his native country.",
+    "pageSpans": [
+      {
+        "page": 577,
+        "start": 0,
+        "end": 1712
+      },
+      {
+        "page": 578,
+        "start": 1713,
+        "end": 3966
+      }
+    ]
+  },
+  "baseCaseId": "C135"
+}

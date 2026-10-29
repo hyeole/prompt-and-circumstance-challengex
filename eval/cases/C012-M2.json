@@ -1,0 +1,192 @@
+{
+  "id": "C012-M2",
+  "title": "Traffic assist near St. Ignace, Michigan (2017), subject 1 [test variant M2]",
+  "kind": "synthetic-variant",
+  "split": "dev",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      51,
+      52,
+      53
+    ],
+    "extraction": "Page 51 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 52-53 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29. Same incident as C013 (different subject); both kept in the same evaluation split.",
+    "replacements": [],
+    "modifications": [
+      "Removed place of entry: form field blanked and 'near Laredo, Texas' deleted from the narrative."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 53)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 51,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "NICARAGUA",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "OCOTAL, NUEVA SEGORIA, NICARAGUA",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "30",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] ALANSON, MICHIGAN",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "",
+      "status": "absent",
+      "sourcePage": 51,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "PWA (AFOOT)",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/08/2017 2040",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ST IGNACE, MI",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 51,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 51,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nFacts of Arrest: On April 8, 2017, at approximately 2000 hours, a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals. Agent [REDACTED (b)(6), (b)(7)(C)] arrived on scene and questioned the three individuals as to their immigration status. One individual was a Legal Alien Permanent Resident, [REDACTED (b)(6), (b)(7)(C)] (Honduras, [REDACTED (b)(6), (b)(7)(C)] ). The other two individuals [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] ) admitted they were illegally present in the United States and did not possess any immigration documents to remain or pass through the United States.\n\nThe illegal immigrants were arrested and transported to [REDACTED (b)(7)(E)] station at 2145 hours by Agent [REDACTED (b)(6), (b)(7)(C)] One subject was processed as a WA/NTA and the second subject was processed as a Reinstate. Upon further questioning it was discovered that there was another vehicle following them. Agents went looking for the other vehicle [REDACTED (b)(6), (b)(7)(C)] . The vehicle was located in St. Ignace at the [REDACTED (b)(7)(E)] After agents knocked on the window, the driver accelerated away from the agent. A pursuit followed and the vehicle eventually stopped at [REDACTED (b)(7)(E)] and passenger took off on foot. The driver, [REDACTED (b)(6), (b)(7)(C)] a Legal Alien Permanent Resident remained in the vehicle. The passenger, the owner of the vehicle, is [REDACTED (b)(6), (b)(7)(C)] . Records checks through Central Dispatch returned with negative results. [REDACTED (b)(6), (b)(7)(C)] was taken into custody by Michigan State Police for Resisting and Obstructing a police officer. Removability: Subject is inadmissible under 212(a) (6) (A) (i) of the Immigration and Nationality Act, as amended in that he is an alien present in the United States without being admitted or paroled, or who arrived in the United States at any time or place other than as designated by the Attorney General.\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] COC: Nicaragua) claims to have entered into the United States in August 2013 by crossing the border illegally via a river. He stated that he did not cross through a designated Port of Entry and was not inspected or admitted by an immigration official. IMMIGRATION HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior immigration history. CRIMINAL HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior criminal history. HEALTHY: [REDACTED (b)(6), (b)(7)(C)] claims and appears to be in good health and is not taking any medications. EQUITIES: 1116 U.S. Dollars DISPOSITION: [REDACTED (b)(6), (b)(7)(C)] was served a Warrant of Arrest/Notice to Appear. Subject and his personal property were transported to the [REDACTED (b)(7)(E)] county jail pending removal proceedings.",
+    "pageSpans": [
+      {
+        "page": 52,
+        "start": 0,
+        "end": 740
+      },
+      {
+        "page": 53,
+        "start": 742,
+        "end": 2906
+      }
+    ]
+  },
+  "baseCaseId": "C012"
+}

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "NarrativeCheck: GenAI review assistant for investigative charge documentation. Built by Prompt & Circumstance.",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +11,10 @@
     "typecheck": "tsc --noEmit",
     "check:api": "tsx scripts/check-connection.ts",
     "test": "tsx --test tests/*.test.ts",
-    "eval": "tsx scripts/run-eval.ts"
+    "eval": "tsx scripts/run-eval.ts",
+    "demo:record": "node scripts/record-demo.mjs",
+    "eval:build": "tsx scripts/build-variants.ts",
+    "eval:score": "tsx scripts/score-eval.ts"
   },
   "engines": {
     "node": ">=20"
@@ -27,6 +31,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "playwright-core": "^1.64.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

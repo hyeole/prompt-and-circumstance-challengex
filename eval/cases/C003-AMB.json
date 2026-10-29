@@ -1,0 +1,199 @@
+{
+  "id": "C003-AMB",
+  "title": "Worker stopped near Perrysburg, Ohio (2017) [test variant AMB]",
+  "kind": "synthetic-variant",
+  "split": "dev",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "extraction": "Page 9 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 10-13 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": [],
+    "modifications": [
+      "Added a conflicting statement about entering at a port of entry with a border crossing card."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 13)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 9,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "ACAPULCO, GUERRERO, MEXICO",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "22",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TIFFIN, OHIO, 44883",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "03/27/2017 0950",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PERRYSBURG, OH",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 9,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 9,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nAGENTS PRESENT:\n\nBPA [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] BPA BPA HSI Task Force Agent [REDACTED (b)(6), (b)(7)(C)]\n\nTRANSPORT AGENTS:\n\nBPA [REDACTED (b)(6), (b)(7)(C)]\n\nINFORMATION:\n\nOn March 26, 2017 the [REDACTED (b)(7)(E)] Border Patrol station assisted in the identification of three subjects involved with a fatal traffic accident in Jerusalem Township in Lucas County Ohio. The three subjects in question were transported to [REDACTED (b)(7)(E)] in Oregon, OH and were later identified as [REDACTED (b)(6), (b)(7)(C)] (Driver, DOB: [REDACTED (b)(6), (b)(7)(C)] , COC: Mexico, detainer to be placed), [REDACTED (b)(6), (b)(7)(C)] (Passenger, DOB: [REDACTED (b)(6), (b)(7)(C)] , COC: Mexico, A# [REDACTED (b)(6), (b)(7)(C)] , [REDACTED (b)(7)(E)] ), and [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] . A detainer was created and is pending submission until [REDACTED (b)(6), (b)(7)(C)] booking by the Ohio State Highway Patrol. [REDACTED (b)(6), (b)(7)(C)] was processed for a WA/NTA under event number [REDACTED (b)(7)(E)] . [REDACTED (b)(6), (b)(7)(C)] was released from the hospital prior to [REDACTED (b)(7)(E)] Agents arrival and was not encountered. [REDACTED (b)(7)(E)] received a copy of [REDACTED (b)(6), (b)(7)(C)] Mexican Consular ID. Records checks were run on the information obtained from the ID, all records checks returned with negative results. An open source query revealed [REDACTED (b)(6), (b)(7)(C)] possible involvement with [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] received information that [REDACTED (b)(6), (b)(7)(C)] was possibly staying at the [REDACTED (b)(6), (b)(7)(C)] located at [REDACTED (b)(6), (b)(7)(C)] , Perrysburg, OH 43551. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] and Homeland Security Investigations (HSI) Task Force Agent (TFA) [REDACTED (b)(6), (b)(7)(C)] made contact [REDACTED (b)(6), (b)(7)(C)] with hotel management, and two hotel workers verified [REDACTED (b)(6), (b)(7)(C)] was staying in room A knock and talk was subsequently executed, which resulted the in the arrest of [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] ENCOUNTER WITH [REDACTED (b)(6), (b)(7)(C)] : With the assistance of hotel staff, [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] and HSI TFA [REDACTED (b)(6), (b)(7)(C)] executed a knock and talk at the above listed venue. [REDACTED (b)(6), (b)(7)(C)] answered the door and [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] identified himself as a United States Border Patrol Agent. [REDACTED (b)(7)(E)] [REDACTED (b)(6), (b)(7)(C)] asked [REDACTED (b)(6), (b)(7)(C)] if he was willing to speak with Agents inside of the hotel room, and he advised he would speak with Agents outside of the hotel room. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] again identified himself and Agents present as being United States Border Patrol and Office of Air and Marine Agents. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] if he was involved in a traffic accident over the weekend and was at the hospital due to the accident, and he advised yes. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] where he was from, and he advised North Carolina. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] what country he was a citizen of, and he advised North Carolina. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] again his country of citizenship, and he advised the United States. [REDACTED (b)(6), (b)(7)(C)] was advised that a false claim of United States Citizenship was a crime, and [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] again asked [REDACTED (b)(6), (b)(7)(C)] his country of citizenship, and he admitted to being a citizen of Mexico. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] if he was present in the United States Illegally, and he advised yes. [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] asked [REDACTED (b)(6), (b)(7)(C)] if there was anything illegal in the hotel room such as firearms or narcotics, and he advised he had a small amount of Marijuana. [REDACTED (b)(6), (b)(7)(C)] subsequently granted consent to search the hotel room and Agents searched with negative results. At approximately 1030 hours, [REDACTED (b)(6), (b)(7)(C)] was placed under arrest for his immigration violations.\n\nMIRANDA RIGHTS:\n\nAfter admitting to being in possession of Marijuana, [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] read [REDACTED (b)(6), (b)(7)(C)] his Miranda Rights directly off of a Miranda Warning card. [REDACTED (b)(6), (b)(7)(C)] advised he understood his rights and when asked if he would like to speak with agents further, he advised \"he did not know.\" No further questions were asked of [REDACTED (b)(6), (b)(7)(C)] CONSENT SEARCH OF ROOM [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] subsequently granted consent to search the hotel room and Agents searched with negative results. Empty Medical Marijuana wrappers were found with an address listed in Michigan along with several cigarillo wrappers, known to [REDACTED (b)(6), (b)(7)(C), (b)(7)(E)] to be used to smoke Marijuana. TRANSPORT OF [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] was subsequently transported to the [REDACTED (b)(7)(E)] Border Patrol Station by BPA [REDACTED (b)(6), (b)(7)(C)] for further processing.\n\nPROCESSING INFORMATION:\n\n[REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were entered into the [REDACTED (b)(7)(E)] database and returned with the information listed below.\n\nIMMIGRATION HISTORY:\n\n[REDACTED (b)(7)(E)] fingerprint analysis revealed that [REDACTED (b)(6), (b)(7)(C)] has had no prior apprehensions by [REDACTED (b)(6), (b)(7)(C)] the Border Patrol. As a result of today's apprehension, [REDACTED (b)(6), (b)(7)(C)] was issued A# [REDACTED (b)(6), (b)(7)(C)]\n\nCRIMINAL HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] has no prior criminal history and has been issued FBI# [REDACTED (b)(7)(E)] as a result of today's apprehension.\n\nTRAVEL:\n\n[REDACTED (b)(6), (b)(7)(C)] claims to have crossed the Mexico-United States border at the age of five as an unaccompanied juvenile and he does not recall anything about his illegal entry. He later told agents that he entered at the Nogales port of entry using a border crossing card. [REDACTED (b)(6), (b)(7)(C)] stated that he has lived and worked in North Carolina ever since.\n\nRESIDENCE / EMPLOYMENT HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] claims that he resides at [REDACTED (b)(6), (b)(7)(C)] High Point, North Carolina with his girlfriend and two United States citizen children. [REDACTED (b)(6), (b)(7)(C)] works for [REDACTED (b)(6), (b)(7)(] [REDACTED (b)(6), (b)(7)(C)] , which is a framing company out of North Carolina.\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] will be held pending removal proceedings for violating Section 212 (a)(6)(A)(i) of the Immigration and Nationality Act. [REDACTED (b)(6), (b)(7)(C)] and his property were turned over to the [REDACTED (b)(7)(E)] County Jail for the duration of his proceedings. [REDACTED (b)(6), (b)(7)(C)] was advised of and offered a Stipulated Order of Removal but he declined. [REDACTED (b)(6), (b)(7)(C)] was advised of his right to speak with a consular officer of his native country of Mexico which he declined. [REDACTED (b)(6), (b)(7)(C)] does not claim any fear of returning to his native country of Mexico. [REDACTED (b)(6), (b)(7)(C)] was provided with a list of Free Legal Service Providers. [REDACTED (b)(6), (b)(7)(C)] was not offered a bond. [REDACTED (b)(6), (b)(7)(C)] was treated for injuries sustained in the vehicle accident at [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] He was released on March 26, 2017, and cleared for transportation / detention by [REDACTED (b)(6), (b)(7)(C)] , MD.",
+    "pageSpans": [
+      {
+        "page": 11,
+        "start": 0,
+        "end": 2948
+      },
+      {
+        "page": 12,
+        "start": 2949,
+        "end": 6085
+      },
+      {
+        "page": 13,
+        "start": 6086,
+        "end": 7747
+      }
+    ]
+  },
+  "baseCaseId": "C003"
+}

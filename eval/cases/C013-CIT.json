@@ -1,0 +1,199 @@
+{
+  "id": "C013-CIT",
+  "title": "Traffic assist near St. Ignace, Michigan (2017), subject 2 [test variant CIT]",
+  "kind": "synthetic-variant",
+  "split": "dev",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      54,
+      55,
+      56,
+      57,
+      58
+    ],
+    "extraction": "Page 54 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 55-58 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29. Same incident as C012 (different subject); both kept in the same evaluation split.",
+    "replacements": [],
+    "modifications": [
+      "Selected charge replaced with overstay after admission, while the record documents illegal crossings and prior removals."
+    ]
+  },
+  "recordedChargeCode": "I9A2",
+  "selectedCharges": [
+    {
+      "citation": "INA 237(a)(1)(B)",
+      "referenceId": "INA-237a1B",
+      "source": "team-assigned-for-testing",
+      "note": "Charge set by the team for this test variant."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 54,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "NICARAGUA",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "OCOTAL, NUEVA SEGOVIA, NICARAGUA",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "32",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] ALANSON, MICHIGAN",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "PWA (AFOOT)",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/08/2017 2040",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ST IGNACE, MI",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 54,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - See Narrative",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "See Narrative",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I9A2",
+      "status": "present",
+      "sourcePage": 54,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nREMOVABILITY:\n\n[REDACTED (b)(6), (b)(7)(C)] is inadmissible under 212 (a) (9) (c) (i) (II), as an alien who has been ordered removed under section 235 (b) (1), section 240, or any other provision of law, and who enters or attempts to re-enter the United States without being admitted.\n\nENTRY:\n\nIn 2015, [REDACTED (b)(6), (b)(7)(C)] left his home town of Ocotal, Nicaragua by bus and travelled for two days entering legally into Honduras then into Guatemala. Once arriving at the Mexico/Guatemala Border, [REDACTED (b)(6), (b)(7)(C)] illegally entered into Mexico by walking through the mountains near an unknown city. After illegally entering Mexico, [REDACTED (b)(6), (b)(7)(C)] stayed for approximately three months working in various jobs in Mexico. [REDACTED (b)(6), (b)(7)(C)] eventually illegally crossed the United States/Mexico Border near Laredo, Texas by swimming the river and then walking for three or four days until arriving in an unknown town. He paid an unknown smuggler $3500 USD to be smuggled into the United States. After arriving at his destination in San Antonio, Texas, [REDACTED (b)(6), (b)(7)(C)] did various construction jobs in various parts of the United States until arriving in Alanson, Michigan in March of 2017. [REDACTED (b)(6), (b)(7)(C)] was eventually arrested by Border Patrol on 4/8/2017 near St Ignace, Michigan.\n\nFACTS OF ARREST:\n\nOn 04/08/2017, Michigan State Troopers requested Border Patrol assistance at approximately 2000 hours just north of the [REDACTED (b)(7)(E)] The Michigan State Troopers pulled-over a U- Haul truck for speeding with three individuals. Agent [REDACTED (b)(6), (b)(7)(C)] arrived on scene at approximately 2030 hours, along with Agent [REDACTED (b)(6), (b)(7)(C)] and Agent [REDACTED (b)(6), (b)(7)(C)] When Agent [REDACTED (b)(6), (b)(7)(C)] made contact with the State Troopers, they requested that the individuals be moved away from the U-Haul because they were conducting a search of the vehicle. Agent [REDACTED (b)(6), (b)(7)(C)] moved the subjects to the side of the road near the Border Patrol vehicles. Agent [REDACTED (b)(6), (b)(7)(C)] , after identifying himself as a Border Patrol Agent, questioned the subject, [REDACTED (b)(6), (b)(7)(C)] , concerning his immigration status. [REDACTED (b)(6), (b)(7)(C)] readily admitted to being a citizen of Nicaragua who was illegally present in the United States with no [REDACTED (b)(6), (b)(7)(C)] documents allowing him to be or remain in the United States legally. was then placed under arrest for immigration violations and was transported by Agent [REDACTED (b)(6), (b)(7)(C)] at approximately 2145 hours to the [REDACTED (b)(7)(E)] Border Patrol station for further processing. The two other individuals travelling with [REDACTED (b)(6), (b)(7)(C)] was the driver, [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] , and the other passenger, [REDACTED (b)(6), (b)(7)(C)] . [REDACTED (b)(6), (b)(7)(C)] was a Lawfully Admitted Permanent Resident (LAPR) who was arrested by the Michigan State Troopers that night for a small amount of marijuana that was found during the vehicle search. [REDACTED (b)(6), (b)(7)(C)] was arrested that night by the Border Patrol for being illegally in the United States. He admitted to being a citizen of Nicaragua.\n\nCRIMINAL HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C), (b)(7)(E)]\n\nIMMIGRATION HISTORY:\n\nA [REDACTED (b)(6), (b)(7)(C)] 06/08/2005 [REDACTED (b)(6), (b)(7)(C)] was arrested by Border Patrol and received an Expedited Removal. He returned to Nicaragua from Houston, TX on 06/28/2005. 05/13/2010 [REDACTED (b)(6), (b)(7)(C)] was arrested by ICE/ERO and deported through the New Orleans Port of Entry to Nicaragua on 07/07/2010. 02/23/2015 [REDACTED (b)(6), (b)(7)(C)] was encountered by ICE/DRO at the Atascosa County Jail. He was subsequently taken into custody and received a reinstatement of a prior order of removal. He was deported through the New Orleans Port of Entry to Nicaragua on 04/08/2015.\n\nHEALTH:\n\nSubject claims and appears in good health. Subject is not taking any medication.\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] was served with a Reinstatement of his original prior order of exclusion that was executed on 06/08/2005. [REDACTED (b)(6), (b)(7)(C)] will be housed in the [REDACTED (b)(7)(E)] County Jail pending removal proceedings. Subject did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements policies dated February 20, 2017 and being a reinstate case. Subject appeared to be lucid and in good health.\n\nSubject was notified of his right to contact the Consulate of his native country on [REDACTED (b)(6), (b)(7)(C)] 04/26/2017, at approximately 1140 hours. was contacted by phone at the [REDACTED (b)(7)(E)] County jail by Agent [REDACTED (b)(6), (b)(7)(C)] and he was given the Nicaraguan Consulate's phone number 202 939-6570 (witnessed by Agent [REDACTED (b)(6), (b)(7)(C)] ). Deputy [REDACTED (b)(6), (b)(7)(C)] from the [REDACTED (b)(7)(E)] County Jail was informed and agreed to allow [REDACTED (b)(6), (b)(7)(C)] to make a phone call to the Nicaraguan Consulate. Subject was given a list of free legal services and copies of the I-862 and I-826. Subject does not have any fear of returning to his native country.\n\nUPDATE:\n\n[REDACTED (b)(6), (b)(7)(C)] pleaded guilty to 8 USC 1326(a) in the United States District Court: Western District of Michigan. On-or-about 06/16/2017, he was sentenced to time served (60 days). [REDACTED (b)(6), (b)(7)(C)] was TOT'ed to ICE.",
+    "pageSpans": [
+      {
+        "page": 56,
+        "start": 0,
+        "end": 2632
+      },
+      {
+        "page": 57,
+        "start": 2633,
+        "end": 4599
+      },
+      {
+        "page": 58,
+        "start": 4601,
+        "end": 5570
+      }
+    ]
+  },
+  "baseCaseId": "C013"
+}

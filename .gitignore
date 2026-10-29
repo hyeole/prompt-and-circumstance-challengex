@@ -24,7 +24,7 @@ __pycache__/
 
 # generated / local artifacts
 data/work/
-eval/runs/raw/
+eval/runs/*/raw/
 recordings/
 *.mov
 *.mp4

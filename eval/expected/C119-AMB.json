@@ -1,0 +1,20 @@
+{
+  "id": "C119-AMB",
+  "base": "C119",
+  "split": "heldout",
+  "description": "Added a conflicting statement about first entering on foot near El Paso.",
+  "plants": [
+    {
+      "type": "human_review"
+    },
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "walking across the border"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ]
+}

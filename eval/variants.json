@@ -1,0 +1,645 @@
+{
+  "about": "Team-created test variants of verified adapted public records. Each variant applies documented edits to a copy of a base case. Expected findings are written to eval/expected/ and are never passed to the reviewer. Splits are by base case: variants of a case never cross between dev and held-out. C012 and C013 come from the same incident and share a split.",
+  "splits": {
+    "dev": [
+      "C001",
+      "C003",
+      "C012",
+      "C013"
+    ],
+    "heldout": [
+      "C021",
+      "C037",
+      "C045",
+      "C119",
+      "C135"
+    ]
+  },
+  "demo": [
+    "C012-M2",
+    "C012-X1",
+    "C003-AMB",
+    "C001-MC"
+  ],
+  "variants": [
+    {
+      "id": "C001-M3",
+      "base": "C001",
+      "description": "Removed manner of entry: form field blanked and the river-crossing sentence deleted.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.manner",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "delete_sentence",
+          "containing": "crossed the Rio Grande River"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E3"
+        }
+      ]
+    },
+    {
+      "id": "C001-X1",
+      "base": "C001",
+      "description": "Narrative entry date changed to conflict with the form's date of last entry (05/15/2014).",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "illegally into the United States, into Texas",
+          "with": "illegally into the United States on or about June 2, 2016, into Texas"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "June 2, 2016"
+          ],
+          "fieldPaths": [
+            "entry.date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C001-CIT",
+      "base": "C001",
+      "description": "Selected charge replaced with one that requires a prior admission, while the record documents entry without inspection.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "INA 237(a)(1)(B)",
+              "referenceId": "INA-237a1B"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C001-MC",
+      "base": "C001",
+      "description": "Second charge added (multi-charge case).",
+      "ops": [
+        {
+          "op": "add_charge",
+          "citation": "8 U.S.C. 1325(a)",
+          "referenceId": "USC-1325a"
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        }
+      ]
+    },
+    {
+      "id": "C003-M3",
+      "base": "C003",
+      "description": "Removed manner of entry: form field blanked and the border-crossing sentence deleted.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.manner",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "delete_sentence",
+          "containing": "crossed the Mexico-United States border at the age of five"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E3"
+        }
+      ]
+    },
+    {
+      "id": "C003-AMB",
+      "base": "C003",
+      "description": "Added a conflicting statement about entering at a port of entry with a border crossing card.",
+      "ops": [
+        {
+          "op": "insert_after",
+          "find": "does not recall anything about his illegal entry.",
+          "text": " He later told agents that he entered at the Nogales port of entry using a border crossing card."
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        },
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "border crossing card"
+          ],
+          "fieldPaths": [
+            "entry.manner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C003-CIT",
+      "base": "C003",
+      "description": "Selected charge replaced with reentry after removal, while the immigration record is negative.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "8 U.S.C. 1326",
+              "referenceId": "USC-1326"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C012-X1",
+      "base": "C012",
+      "description": "Narrative manner of entry changed to air travel on a tourist visa, conflicting with the form (PWA AFOOT) and the next sentence.",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "by crossing the border illegally via a river near Laredo, Texas",
+          "with": "by flying into Chicago O'Hare International Airport on a tourist visa"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "tourist visa"
+          ],
+          "fieldPaths": [
+            "entry.manner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C012-M2",
+      "base": "C012",
+      "description": "Removed place of entry: form field blanked and 'near Laredo, Texas' deleted from the narrative.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.place",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "replace",
+          "find": "via a river near Laredo, Texas",
+          "with": "via a river"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E2"
+        }
+      ]
+    },
+    {
+      "id": "C012-MC",
+      "base": "C012",
+      "description": "Second charge added (multi-charge case).",
+      "ops": [
+        {
+          "op": "add_charge",
+          "citation": "INA 212(a)(7)(A)(i)(I)",
+          "referenceId": "INA-212a7AiI"
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        }
+      ]
+    },
+    {
+      "id": "C013-CIT",
+      "base": "C013",
+      "description": "Selected charge replaced with overstay after admission, while the record documents illegal crossings and prior removals.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "INA 237(a)(1)(B)",
+              "referenceId": "INA-237a1B"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C013-X1",
+      "base": "C013",
+      "description": "Form immigration record changed to NEGATIVE while the narrative documents prior removals.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "history.immigration_record",
+          "value": "NEGATIVE",
+          "status": "present"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "deported",
+            "Expedited Removal",
+            "Reinstatement"
+          ],
+          "fieldPaths": [
+            "history.immigration_record"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C021-CIT",
+      "base": "C021",
+      "description": "Selected charge replaced with presence without admission, while the record documents admission as a B2 visitor.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "INA 212(a)(6)(A)(i)",
+              "referenceId": "INA-212a6Ai"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C021-X1",
+      "base": "C021",
+      "description": "Narrative entry date changed to conflict with the form and a later sentence (12/23/2015).",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "port of entry (MIA) on 12/23/2015",
+          "with": "port of entry (MIA) on 12/23/2013"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "12/23/2013"
+          ],
+          "fieldPaths": [
+            "entry.date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C021-MC",
+      "base": "C021",
+      "description": "Second charge added (multi-charge case).",
+      "ops": [
+        {
+          "op": "add_charge",
+          "citation": "8 U.S.C. 1325(a)",
+          "referenceId": "USC-1325a"
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        }
+      ]
+    },
+    {
+      "id": "C037-M3",
+      "base": "C037",
+      "description": "Removed manner of entry: form field blanked and both crossing sentences deleted.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.manner",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "delete_sentence",
+          "containing": "to illegally cross the border"
+        },
+        {
+          "op": "delete_sentence",
+          "containing": "crossed the US/MEXICO Border illegally"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E3"
+        }
+      ]
+    },
+    {
+      "id": "C037-X1",
+      "base": "C037",
+      "description": "Narrative crossing date changed to conflict with the form (06/15/2009).",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "on the afternoon of 06/15/2009",
+          "with": "on the afternoon of 06/15/2012"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "06/15/2012"
+          ],
+          "fieldPaths": [
+            "entry.date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C037-AMB",
+      "base": "C037",
+      "description": "Added a conflicting statement about admission on a tourist visa.",
+      "ops": [
+        {
+          "op": "insert_after",
+          "find": "into Naco, Arizona, on the afternoon of 06/15/2009.",
+          "text": " Later in the interview he stated that he was admitted at the Nogales Port of Entry with a tourist visa and stayed after it expired."
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        },
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "tourist visa"
+          ],
+          "fieldPaths": [
+            "entry.manner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C037-CIT",
+      "base": "C037",
+      "description": "Selected charge replaced with overstay after admission, while the record documents entry without inspection.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "INA 237(a)(1)(B)",
+              "referenceId": "INA-237a1B"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C045-CIT",
+      "base": "C045",
+      "description": "Selected charge replaced with presence without admission, while the record documents admission on an H2B visa.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "INA 212(a)(6)(A)(i)",
+              "referenceId": "INA-212a6Ai"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C045-X1",
+      "base": "C045",
+      "description": "Entry date in the ENTRY section changed to conflict with the form and the earlier sentence (February 21, 2012).",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "last entered the United States on February 21, 2012 through the Port of [",
+          "with": "last entered the United States on February 21, 2015 through the Port of ["
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "February 21, 2015"
+          ],
+          "fieldPaths": [
+            "entry.date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C045-MC",
+      "base": "C045",
+      "description": "Second charge added (multi-charge case).",
+      "ops": [
+        {
+          "op": "add_charge",
+          "citation": "INA 212(a)(7)(A)(i)(I)",
+          "referenceId": "INA-212a7AiI"
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        }
+      ]
+    },
+    {
+      "id": "C119-X1",
+      "base": "C119",
+      "description": "Arrival date in the immigration history changed to conflict with the form (08/11/2004).",
+      "ops": [
+        {
+          "op": "replace",
+          "find": "8/11/2004 Arrived into the United States",
+          "with": "8/11/2009 Arrived into the United States"
+        }
+      ],
+      "plants": [
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "8/11/2009"
+          ],
+          "fieldPaths": [
+            "entry.date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C119-CIT",
+      "base": "C119",
+      "description": "Selected charge replaced with reentry after removal, while no prior removal is documented.",
+      "ops": [
+        {
+          "op": "set_charges",
+          "charges": [
+            {
+              "citation": "8 U.S.C. 1326",
+              "referenceId": "USC-1326"
+            }
+          ]
+        }
+      ],
+      "plants": [
+        {
+          "type": "citation"
+        }
+      ]
+    },
+    {
+      "id": "C119-AMB",
+      "base": "C119",
+      "description": "Added a conflicting statement about first entering on foot near El Paso.",
+      "ops": [
+        {
+          "op": "insert_after",
+          "find": "Both subjects were arrested and taken into custody for being in the United States illegally.",
+          "text": " He also stated that he first entered the United States by walking across the border near El Paso, Texas."
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        },
+        {
+          "type": "inconsistency",
+          "anchors": [
+            "walking across the border"
+          ],
+          "fieldPaths": [
+            "entry.manner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C135-M2",
+      "base": "C135",
+      "description": "Removed place of entry: form field blanked and 'near Sasabe, Arizona' deleted.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.place",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "replace",
+          "find": "crossed illegally near Sasabe, Arizona approximately",
+          "with": "crossed illegally approximately"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E2"
+        }
+      ]
+    },
+    {
+      "id": "C135-M3",
+      "base": "C135",
+      "description": "Removed manner of entry: form field blanked and 'crossed illegally' replaced with 'came to the United States'.",
+      "ops": [
+        {
+          "op": "set_fact",
+          "path": "entry.manner",
+          "value": "",
+          "status": "absent"
+        },
+        {
+          "op": "replace",
+          "find": "indicated he crossed illegally near Sasabe",
+          "with": "indicated he came to the United States near Sasabe"
+        }
+      ],
+      "plants": [
+        {
+          "type": "missing_element",
+          "elementId": "E3"
+        }
+      ]
+    },
+    {
+      "id": "C135-MC",
+      "base": "C135",
+      "description": "Second charge added (multi-charge case).",
+      "ops": [
+        {
+          "op": "add_charge",
+          "citation": "8 U.S.C. 1325(a)",
+          "referenceId": "USC-1325a"
+        }
+      ],
+      "plants": [
+        {
+          "type": "human_review"
+        }
+      ]
+    }
+  ]
+}

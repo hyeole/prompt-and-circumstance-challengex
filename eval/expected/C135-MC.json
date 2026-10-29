@@ -1,0 +1,11 @@
+{
+  "id": "C135-MC",
+  "base": "C135",
+  "split": "heldout",
+  "description": "Second charge added (multi-charge case).",
+  "plants": [
+    {
+      "type": "human_review"
+    }
+  ]
+}

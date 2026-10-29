@@ -41,7 +41,7 @@ def join_lines(lines):
     paras, cur = [], []
     for l in lines:
         l = re.sub(r"\s{2,}", " ", l.strip())
-        if not l: continue
+        if not l or re.fullmatch(r"-{3,}", l): continue
         if HEADING.match(l):
             if cur: paras.append(" ".join(cur)); cur = []
             paras.append(l)

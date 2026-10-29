@@ -1,0 +1,11 @@
+{
+  "id": "C119-CIT",
+  "base": "C119",
+  "split": "heldout",
+  "description": "Selected charge replaced with reentry after removal, while no prior removal is documented.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ]
+}

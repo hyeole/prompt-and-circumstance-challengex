@@ -1,0 +1,11 @@
+{
+  "id": "C021-MC",
+  "base": "C021",
+  "split": "heldout",
+  "description": "Second charge added (multi-charge case).",
+  "plants": [
+    {
+      "type": "human_review"
+    }
+  ]
+}

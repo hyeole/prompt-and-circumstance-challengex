@@ -1,0 +1,17 @@
+{
+  "id": "C021-X1",
+  "base": "C021",
+  "split": "heldout",
+  "description": "Narrative entry date changed to conflict with the form and a later sentence (12/23/2015).",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "12/23/2013"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ]
+}

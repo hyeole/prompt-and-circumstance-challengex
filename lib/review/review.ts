@@ -202,6 +202,7 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     citation,
     humanReview: { required, reasons: uniqReasons },
     findings,
+    notes: rules.notes,
     discarded,
   };
 }

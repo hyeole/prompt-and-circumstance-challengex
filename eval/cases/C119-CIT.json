@@ -1,0 +1,214 @@
+{
+  "id": "C119-CIT",
+  "title": "Visa overstay located near Lake Leelanau, Michigan (2017) [test variant CIT]",
+  "kind": "synthetic-variant",
+  "split": "heldout",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      510,
+      511,
+      512,
+      513
+    ],
+    "extraction": "Page 510 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 511-513 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": [],
+    "modifications": [
+      "Selected charge replaced with reentry after removal, while no prior removal is documented."
+    ]
+  },
+  "recordedChargeCode": "R1B",
+  "selectedCharges": [
+    {
+      "citation": "8 U.S.C. 1326",
+      "referenceId": "USC-1326",
+      "source": "team-assigned-for-testing",
+      "note": "Charge set by the team for this test variant."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 510,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "INDIA",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "NEW DELHI, UNK, INDIA",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "28",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "See Narrative",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "08/11/2004, 1502",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) A of LOS",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "AIR",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "Non-Immigrant",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "08/10/2017 2337",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "LAKE LEELANAU, MI",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "O",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 510,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - See Narrative",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "R1B",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Charge Code Words(s)"
+    },
+    {
+      "path": "documents.visa_issued",
+      "label": "Date visa issued",
+      "value": "08/11/2004",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Date Visa Issued"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport number and country",
+      "value": "[REDACTED (b)(6), (b)(7)(C)], INDIA",
+      "status": "present",
+      "sourcePage": 510,
+      "sourceField": "Passport Number and Country of Issue"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nFACTS OF ENCOUNTER/ ARREST:\n\nOn July 11th, 2017, United States Border Patrol Agents assigned to the [REDACTED (b)(7)(E)] Station received information of a possible visa overstay living in Lake Leelanau, Michigan. Based on that information and record checks that were conducted, agents identified a total of three possible overstays. First subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Second subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Third subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. On August 10, 2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] and observed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] working inside the [REDACTED (b)(7)(E)] in Lake Leelanau, Michigan. At approximately 8:45p.m., both Agents observed [REDACTED (b)(6), (b)(7)(C)] leaving that grocery store and walking south on [REDACTED (b)(7)(E)] Agents approached [REDACTED (b)(6), (b)(7)(C)] , identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. While talking to [REDACTED (b)(6), (b)(7)(C)] , Agents were approached by a female, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents identified themselves as United States Border Patrol Agents, and questioned her as to her immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that her visa had expired and she was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow her to live, to work, or to remain in the U.S. legally. Both subjects were arrested and taken into custody for being in the United States illegally. Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] then, accompanied both [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] to their home in Lake Leelenau, Michigan, in order to retrieve [REDACTED (b)(6), (b)(7)(C)] needed medications. While there, they encountered a male, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely admitted that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. At that time, [REDACTED (b)(6), (b)(7)(C)] was subsequently arrested and taken into custody. All three subjects were then transported to the [REDACTED (b)(7)(E)] Border Patrol Station at approximately 2142 hours for further investigation and processing. Once at the [REDACTED (b)(7)(E)] Border Patrol Station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems. Additional records checks were conducted through Detroit Sector Radio. The following was discovered:\n\nIMMIGRATION HISTORY:\n\n8/11/2004 Arrived into the United States as a B1 Visitor Visa 10/20/2007 Changed status to an F1 Student. [REDACTED (b)(6), (b)(7)(C)] 08/21/2008 Changed status to H4 Child of H-1B1 5/4/2009 Application to extend/change Non-Immigrant Status to F1 Student 9/13/2013 Visa Overstay 7/22/2014 Applied for Re-instatement of Status 9/5/2014 Denial of Re-instatement of Status 10/16/2014 Denial notice ordered, Status revoked 11/28/2014 Appealed Revocation Order 1/09/2015 Denied Appeal Issued A# [REDACTED (b)(6), (b)(7)(C)]\n\nINADMISIBILITY/DEPORTABILITY:\n\n237(a)(1)(B) Nonimmigrant Overstay\n\nCRIMINAL HISTORY:\n\nNone FBI# [REDACTED (b)(7)(E)]\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/Notice to Appear. [REDACTED (b)(6), (b)(7)(C)] (along with all of his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings. [REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017. [REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health, however has General Anxiety issues and has been prescribed [REDACTED (b)(6), (b)(7)(C)] to be taken as needed. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Indian Consulate Office at 2:00 A.M., to which he declined to exercise (as witnessed by Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] ). [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services and copies of the I-862 and I-826. [REDACTED (b)(6), (b)(7)(C)] does not have any fear of returning to his native country of India.",
+    "pageSpans": [
+      {
+        "page": 511,
+        "start": 0,
+        "end": 1036
+      },
+      {
+        "page": 512,
+        "start": 1037,
+        "end": 3956
+      },
+      {
+        "page": 513,
+        "start": 3958,
+        "end": 5142
+      }
+    ]
+  },
+  "baseCaseId": "C119"
+}

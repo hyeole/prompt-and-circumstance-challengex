@@ -1,0 +1,20 @@
+{
+  "id": "C037-AMB",
+  "base": "C037",
+  "split": "heldout",
+  "description": "Added a conflicting statement about admission on a tourist visa.",
+  "plants": [
+    {
+      "type": "human_review"
+    },
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "tourist visa"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ]
+}

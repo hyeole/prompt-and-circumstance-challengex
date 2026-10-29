@@ -1,0 +1,206 @@
+{
+  "id": "C045-CIT",
+  "title": "Seasonal worker visa overstay near Mount Pleasant, Michigan (2017) [test variant CIT]",
+  "kind": "synthetic-variant",
+  "split": "heldout",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      197,
+      198,
+      199,
+      200
+    ],
+    "extraction": "Page 197 (I-213) has no embedded text: its fields were transcribed by hand from the page image (Apple Vision OCR used only as a draft). Narrative pages 198-200 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Case grouping (I-213 followed by continuation pages, consistent printed page totals and header dates) and the transcribed I-213 fields were checked visually against page images on 2026-10-29.",
+    "replacements": [],
+    "modifications": [
+      "Selected charge replaced with presence without admission, while the record documents admission on an H2B visa."
+    ]
+  },
+  "recordedChargeCode": "R1B",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "team-assigned-for-testing",
+      "note": "Charge set by the team for this test variant."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 197,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "APASEO, GUANAJUATO, MEXICO",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "48",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] MIDLAND, MICHIGAN",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "02/21/2012, Unknown Time",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) A of LAR",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "H2B",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "Non-Immigrant",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "05/08/2017 1850",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MOUNT PLEASANT, MI",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "O",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 197,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - See Narrative",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "R1B",
+      "status": "present",
+      "sourcePage": 197,
+      "sourceField": "Charge Code Words(s)"
+    },
+    {
+      "path": "documents.niv",
+      "label": "NIV issuing post and number",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 197,
+      "sourceField": "NIV Issuing Post and NIV Number"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nFACTS OF ENCOUNTER/ARREST:\n\nOn 04/29/2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] spoke with a Michigan State Police Trooper. The Trooper gave information regarding undocumented aliens living and working on hotels in the Mount Pleasant, Michigan area. The information stated that the subjects were working construction on hotels in Mount Pleasant as well as other cities in Michigan. [REDACTED (b)(7)(E)] Agent have recently arrested an illegal alien working construction at a hotel in [REDACTED (b)(7)(E)] Michigan. The subject that was arrested was driving an out of state registered vehicle. Several illegal aliens have been arrested by [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] Agents recently driving out of state registered vehicles one of which was a TN registered vehicle. On 05/04/2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] followed up on the above mentioned information. Agents located three out of state registered vehicles at the [REDACTED (b)(7)(E)] located at [REDACTED (b)(7)(E)] , Mount Pleasant, Michigan, 48858. The Agents noticed there was construction on the [REDACTED (b)(7)(E)] and investigated the location. A black Chevy Tahoe [REDACTED (b)(6), (b)(7)(C)] , a burgundy Chevy Suburban [REDACTED (b)(6), (b)(7)(C)] and a black Nissan Frontier [REDACTED (b)(6), (b)(7)(C)] . Records checks conducted on the vehicles and their registered owners came back with no driver's licenses, no dates of birth and no social security numbers. This information led Agents to believe, based on previous agent experience, that the occupants may be present in the United States illegally. On 05/08/2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] observed the previously mentioned vehicles parked at the [REDACTED (b)(7)(E)] Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] observed six individuals enter the three vehicles and leave at approximately 1845 hours. Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] relayed the information via their service radio to nearby Border Patrol Units. At approximately, 1850 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] conducted a vehicle stop on a black Chevy Tahoe [REDACTED (b)(6), (b)(7)(C)] in a marked Border Patrol vehicle in the [REDACTED (b)(7)(E)] parking lot located at [REDACTED (b)(7)(E)] Mt Pleasant, Michigan 48858. Agent [REDACTED (b)(6), (b)(7)(C)] backed up Agent [REDACTED (b)(6), (b)(7)(C)] and approached the vehicle, identified himself as a United States Border Patrol Agent and questioned a passenger of the vehicle [REDACTED (b)(6), (b)(7)(C)] (D.O.B. [REDACTED (b)(6), (b)(7)(C)] ) as to his right to be in or to remain in the United States legally. [REDACTED (b)(6), (b)(7)(C)] freely and readily admitted to being a citizen and national of Mexico and possessed no documentation to allow him to be in or to remain in the United States legally. At that time Agent [REDACTED (b)(6), (b)(7)(C)] placed [REDACTED (b)(6), (b)(7)(C)] under arrest. [REDACTED (b)(6), (b)(7)(C)] was transported to the [REDACTED (b)(7)(E)] Border Patrol station for further processing. Once at the [REDACTED (b)(7)(E)] Border Patrol Station [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems. Additional records checks were conducted through Detroit Sector Radio. The following information was discovered.\n\nINADMISSIBILITY/DEPORTABILITY:\n\n[REDACTED (b)(6), (b)(7)(C)] is being set up for removal proceedings. [REDACTED (b)(6), (b)(7)(C)] is inadmissible under Section 237(a)(1)(B) of the Immigration and Nationality Act (Act), as amended, in that after admission as a nonimmigrant under Section 101(a)(15) of the Act, you have remained in the United States for a time longer than permitted, in violation of this Act or any other law of the United States.\n\nIMMIGRATION HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] claims to have last entered the United States on February 21, 2012 through the Port of Entry in Laredo, Texas as a H2B visa holder. That visa expired on March 20, 2012 - Visa # [REDACTED (b)(6), (b)(7)(C)] Suspect has not filed for any other Immigration documents. [REDACTED (b)(6), (b)(7)(C)] (A# [REDACTED (b)(6), (b)(7)(C)] was arrested previously by Sault Ste Marie Border Patrol Agents on 12/08/2016. [REDACTED (b)(6), (b)(7)(C)] was processed as a Prosecutorial Discretion and released on his own recognizance.\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] last entered the United States on February 21, 2012 through the Port of [REDACTED (b)(6), (b)(7)(C)] Entry in Laredo, Texas as a H2B visa holder. That visa expired on March 20, 2012 - Visa #\n\nCRIMINAL HISTORY:\n\nPrevious Immigration History FBI# [REDACTED (b)(7)(E)]\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] is being processed as a WA/NTA. [REDACTED (b)(6), (b)(7)(C)] (along with his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings. [REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017. [REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Consulate office of his native [REDACTED (b)(6), (b)(7)(C)] country at approximately 0100 hours, to which he declined to exercise - as witnessed by BPA [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services. [REDACTED (b)(6), (b)(7)(C)] claimed to not / have fear of returning to his native country.",
+    "pageSpans": [
+      {
+        "page": 198,
+        "start": 0,
+        "end": 10
+      },
+      {
+        "page": 199,
+        "start": 12,
+        "end": 3546
+      },
+      {
+        "page": 200,
+        "start": 3548,
+        "end": 5710
+      }
+    ]
+  },
+  "baseCaseId": "C045"
+}
