@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useRef } from "react";
 import type { CaseRecord, Finding, ReviewResult } from "@/lib/types";
 import { CATEGORY } from "./categories";
+import Icon from "./Icon";
 
 interface Span {
   start: number;
@@ -80,70 +81,49 @@ export default function DocumentView({
 
   const narrativeChanged = text !== original.narrative.text;
 
+  const pages = kase.provenance.pdfPages;
   return (
-    <section className="doc-column" aria-label="Narrative">
-      <div className="doc-toolbar">
-        <div>
-          <h1 className="doc-title">{kase.title}</h1>
-          <div className="doc-meta">
-            {kase.id}
-            {kase.provenance.pdfPages && <> · Source PDF pages {kase.provenance.pdfPages.join(", ")}</>}
-            {narrativeChanged && <> · Narrative edited in this session</>}
-          </div>
-        </div>
-        <div className="doc-toolbar-actions">
-          {editing ? (
-            <button className="btn btn-primary btn-sm" onClick={() => setEditing(false)}>
-              Done editing
-            </button>
-          ) : (
-            <button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)} disabled={disabled}>
-              Edit narrative
-            </button>
-          )}
-          {narrativeChanged && !editing && (
-            <button className="btn btn-ghost btn-sm" onClick={() => onChange({ ...kase, narrative: original.narrative })} disabled={disabled}>
-              Restore original
-            </button>
-          )}
-        </div>
-      </div>
-
+    <section className="col canvas" aria-label="Narrative">
       {outdated && (
-        <div className="banner banner-warn" role="status">
-          The case changed after the last review. Highlights are hidden and findings are marked outdated. Run a fresh review.
+        <div className="banner banner-warn canvas-banner" role="status">
+          <Icon name="clock" />
+          <div>The case changed after the last review. Highlights are hidden until a fresh review runs.</div>
         </div>
       )}
-
-      <div className="doc-scroll">
-        {editing ? (
-          <div className="doc-page">
-            <label htmlFor="narrative-edit" className="sr-only">
-              Narrative text
-            </label>
-            <textarea
-              id="narrative-edit"
-              className="doc-editor"
-              value={text}
-              onChange={(e) => onChange({ ...kase, narrative: { text: e.target.value, pageSpans: undefined } })}
-              spellCheck
-            />
-            <p className="hint">You are editing your own text. NarrativeCheck never rewrites it. Run a fresh review when you are done.</p>
+      <article className="paper">
+        <header className="paper-head">
+          <div className="paper-meta">
+            <Icon name="doc" size={14} />
+            <span>Officer narrative</span>
+            {pages && <span>· Source PDF pages {pages[0]}–{pages[pages.length - 1]}</span>}
+            {narrativeChanged && <span className="tag tag-edited">Edited in this session</span>}
+            {review && !outdated && (() => { const n = review.findings.filter((f) => f.evidence.some((e) => e.kind === "sentence")).length; return <span>· {n} highlighted finding{n === 1 ? "" : "s"}</span>; })()}
           </div>
-        ) : (
-          <div className="doc-page" ref={docRef}>
-            <div className="doc-text">
+          <div style={{ display: "flex", gap: 6 }}>
+            {narrativeChanged && !editing && (
+              <button className="btn btn-ghost btn-sm" onClick={() => onChange({ ...kase, narrative: original.narrative })} disabled={disabled}>Restore original</button>
+            )}
+            {editing ? (
+              <button className="btn btn-primary btn-sm" onClick={() => setEditing(false)}><Icon name="check" size={13} /> Done editing</button>
+            ) : (
+              <button className="btn btn-secondary btn-sm" onClick={() => setEditing(true)} disabled={disabled}><Icon name="edit" size={13} /> Edit narrative</button>
+            )}
+          </div>
+        </header>
+        <div className="paper-body">
+          {editing ? (
+            <>
+              <label htmlFor="narrative-edit" className="sr-only">Narrative text</label>
+              <textarea id="narrative-edit" className="doc-editor" value={text} onChange={(e) => onChange({ ...kase, narrative: { text: e.target.value, pageSpans: undefined } })} spellCheck />
+              <p className="hint">You are editing your own text. NarrativeCheck never rewrites it. Run a fresh review when you are done.</p>
+            </>
+          ) : (
+            <div className="doc-text" ref={docRef}>
               {segs.map((s) => {
                 const chunk = text.slice(s.start, s.end);
                 const page = pageStarts.get(s.start);
-                const marker = page && s.start > 0 ? <span className="page-marker" aria-label={`Source page ${page}`}>p.{page}</span> : page ? <span className="page-marker">p.{page}</span> : null;
-                if (!s.findingIds.length)
-                  return (
-                    <Fragment key={s.start}>
-                      {marker}
-                      {renderPlain(chunk, String(s.start))}
-                    </Fragment>
-                  );
+                const marker = page ? <span className="page-marker" aria-label={`Source page ${page}`}>p.{page}</span> : null;
+                if (!s.findingIds.length) return <Fragment key={s.start}>{marker}{renderPlain(chunk, String(s.start))}</Fragment>;
                 const first = byId[s.findingIds[0]];
                 const isSel = selected != null && s.findingIds.includes(selected);
                 const cat = CATEGORY[first.category];
@@ -157,12 +137,7 @@ export default function DocumentView({
                       role="button"
                       aria-label={`${cat.label}: ${s.findingIds.map((id) => byId[id].title).join("; ")}`}
                       onClick={() => onSelect(isSel && s.findingIds.length === 1 ? null : s.findingIds[(s.findingIds.indexOf(selected ?? "") + 1) % s.findingIds.length])}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          onSelect(s.findingIds[0]);
-                        }
-                      }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(s.findingIds[0]); } }}
                     >
                       {renderPlain(chunk, String(s.start))}
                     </mark>
@@ -170,9 +145,9 @@ export default function DocumentView({
                 );
               })}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </article>
     </section>
   );
 }

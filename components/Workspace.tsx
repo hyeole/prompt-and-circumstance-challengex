@@ -6,32 +6,26 @@ import DocumentView from "./DocumentView";
 import FindingsPanel, { type Disposition } from "./FindingsPanel";
 import FactsPanel from "./FactsPanel";
 import PrintReport from "./PrintReport";
+import Icon from "./Icon";
 
 type Phase = "idle" | "running" | "done" | "error";
+type Drawer = null | "cases" | "references";
 
 const snapshot = (c: CaseRecord) => JSON.stringify([c.narrative.text, c.facts, c.selectedCharges]);
 const CLIENT_TIMEOUT_MS = 90_000;
 
-export default function Workspace({
-  cases,
-  initialCaseId,
-  caseSet = "app",
-  elements,
-  referenceVersion,
-  referenceNotice,
-}: {
-  cases: CaseRecord[];
-  initialCaseId?: string;
-  caseSet?: "app" | "eval";
-  elements: { id: string; label: string }[];
-  referenceVersion: string;
-  referenceNotice: string;
+export function kindLabel(kind: CaseRecord["kind"]) {
+  return kind === "adapted-public-record" ? "Adapted public record" : kind === "synthetic-variant" ? "Team test variant" : "Synthetic";
+}
+
+export default function Workspace({ cases, initialCaseId, caseSet = "app", referenceVersion, referenceNotice, glossary }: {
+  cases: CaseRecord[]; initialCaseId?: string; caseSet?: "app" | "eval";
+  elements: { id: string; label: string }[]; referenceVersion: string; referenceNotice: string; glossary?: Record<string, string>;
 }) {
   const [caseId, setCaseId] = useState(initialCaseId ?? cases[0]?.id ?? "");
-  // Working copies: officers may edit their own text; the original record stays untouched in `cases`.
   const [working, setWorking] = useState<Record<string, CaseRecord>>({});
-  const current = working[caseId] ?? cases.find((c) => c.id === caseId)!;
   const original = cases.find((c) => c.id === caseId)!;
+  const current = working[caseId] ?? original;
 
   const [reviews, setReviews] = useState<Record<string, { result: ReviewResult; snap: string }>>({});
   const [phase, setPhase] = useState<Phase>("idle");
@@ -40,6 +34,7 @@ export default function Workspace({
   const [selected, setSelected] = useState<string | null>(null);
   const [factsOpen, setFactsOpen] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [drawer, setDrawer] = useState<Drawer>(null);
   const [dispositions, setDispositions] = useState<Record<string, Record<string, Disposition>>>({});
   const abortRef = useRef<AbortController | null>(null);
 
@@ -54,166 +49,143 @@ export default function Workspace({
     return () => clearInterval(id);
   }, [phase]);
 
-  function update(next: CaseRecord) {
-    setWorking((w) => ({ ...w, [caseId]: next }));
-  }
+  useEffect(() => {
+    if (!drawer) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setDrawer(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [drawer]);
+
+  const update = (next: CaseRecord) => setWorking((w) => ({ ...w, [caseId]: next }));
 
   async function runReview() {
     if (phase === "running") return;
-    setEditing(false);
-    setPhase("running");
-    setError(null);
-    setElapsed(0);
-    setSelected(null);
+    setEditing(false); setPhase("running"); setError(null); setElapsed(0); setSelected(null);
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     const timer = setTimeout(() => ctrl.abort(), CLIENT_TIMEOUT_MS);
     const snap = snapshot(current);
     try {
-      const res = await fetch("/api/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ case: current }),
-        signal: ctrl.signal,
-      });
+      const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ case: current }), signal: ctrl.signal });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? `Review request failed (HTTP ${res.status}).`);
       setReviews((r) => ({ ...r, [caseId]: { result: body as ReviewResult, snap } }));
       setDispositions((d) => ({ ...d, [caseId]: {} }));
       setPhase("done");
     } catch (e) {
-      const msg = (e as Error).name === "AbortError" ? "The review took longer than 90 seconds and was stopped. The shared model endpoint may be busy; try again." : (e as Error).message;
-      setError(msg);
+      setError((e as Error).name === "AbortError" ? "The review took longer than 90 seconds and was stopped. The shared model endpoint may be busy." : (e as Error).message);
       setPhase("error");
     } finally {
       clearTimeout(timer);
     }
   }
 
-  function cancel() {
-    abortRef.current?.abort();
-  }
-
   function switchCase(id: string) {
     if (phase === "running") return;
-    setCaseId(id);
-    setSelected(null);
-    setEditing(false);
-    setPhase(reviews[id] ? "done" : "idle");
-    setError(null);
+    setCaseId(id); setSelected(null); setEditing(false); setPhase(reviews[id] ? "done" : "idle"); setError(null); setDrawer(null);
   }
 
   const findings: Finding[] = review?.result.findings ?? [];
   const status = useMemo(() => {
-    if (phase === "running") return { label: `Reviewing… ${elapsed}s`, tone: "info" };
+    if (phase === "running") return { label: `Reviewing… ${elapsed}s`, tone: "info", pulse: true };
     if (phase === "error" && !review) return { label: "Review failed", tone: "error" };
     if (!review) return { label: "Not reviewed", tone: "neutral" };
-    if (outdated) return { label: "Outdated: re-run review", tone: "warn" };
+    if (outdated) return { label: "Outdated", tone: "warn" };
     if (review.result.modelStatus !== "ok") return { label: "Partial review", tone: "warn" };
-    return { label: review.result.humanReview.required ? "Reviewed: needs human review" : "Reviewed", tone: review.result.humanReview.required ? "warn" : "ok" };
+    return review.result.humanReview.required ? { label: "Needs human review", tone: "review" } : { label: "Reviewed", tone: "ok" };
   }, [phase, elapsed, review, outdated]);
 
   return (
-    <div className="app">
-      <header className="topbar no-print">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden>
-            NC
-          </span>
-          <div>
-            <div className="brand-name">NarrativeCheck</div>
-            <div className="brand-sub">Charge documentation review</div>
+    <div className="shell">
+      <nav className="rail no-print" aria-label="Main">
+        <div className="rail-brand" aria-label="NarrativeCheck">NC</div>
+        <button className={`rail-btn ${drawer === null ? "is-active" : ""}`} onClick={() => setDrawer(null)} aria-label="Review workspace" title="Review workspace"><Icon name="doc" size={19} /></button>
+        <button className={`rail-btn ${drawer === "cases" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "cases" ? null : "cases")} aria-label="Cases" title="Cases" aria-expanded={drawer === "cases"}><Icon name="folder" size={19} /></button>
+        <button className={`rail-btn ${drawer === "references" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "references" ? null : "references")} aria-label="References" title="References" aria-expanded={drawer === "references"}><Icon name="book" size={19} /></button>
+        <div className="rail-spacer" />
+        <div className="rail-credit" title="Built by Prompt & Circumstance" aria-label="Built by Prompt and Circumstance">P&amp;C</div>
+      </nav>
+
+      <div className="main">
+        <header className="header no-print">
+          <div className="header-title">
+            <div className="crumbs">
+              <button onClick={() => setDrawer("cases")}>{caseSet === "eval" ? "Evaluation set" : "Cases"}</button>
+              <Icon name="chevronRight" size={11} />
+              <span className="mono">{current.id}</span>
+              <span className={`tag ${current.kind === "synthetic-variant" ? "tag-variant" : ""}`}>{kindLabel(current.kind)}</span>
+              {edited && <span className="tag tag-edited">Edited copy</span>}
+            </div>
+            <h1 title={current.title}>{current.title}</h1>
           </div>
-        </div>
-        <div className="topbar-case">
-          <label htmlFor="case-select" className="field-label">
-            Case
-          </label>
-          <select id="case-select" value={caseId} onChange={(e) => switchCase(e.target.value)} disabled={phase === "running"}>
-            {cases.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.id} · {c.title}
-              </option>
-            ))}
-          </select>
-          <span className={`tag tag-${current.kind}`}>{kindLabel(current.kind)}</span>
-          {edited && <span className="tag tag-edited">Edited copy</span>}
-        </div>
-        <div className="topbar-actions">
-          <span className={`status status-${status.tone}`} role="status" aria-live="polite">
-            {status.label}
-          </span>
-          {phase === "running" ? (
-            <button className="btn btn-secondary" onClick={cancel}>
-              Cancel
+          <div className="header-actions">
+            <span className={`pill pill-${status.tone}`} role="status" aria-live="polite"><span className={`dot ${status.pulse ? "pulse" : ""}`} />{status.label}</span>
+            {phase === "running" ? (
+              <button className="btn btn-secondary" onClick={() => abortRef.current?.abort()}>Cancel</button>
+            ) : (
+              <button className="btn btn-primary" onClick={runReview}><Icon name={review ? "refresh" : "play"} size={14} />{review ? "Run fresh review" : "Run review"}</button>
+            )}
+            <button className="btn btn-secondary" onClick={() => window.print()} disabled={!review || outdated || phase === "running"} title={!review ? "Run a review first" : outdated ? "Re-run the review after edits before exporting" : "Print or save a one-page report"}>
+              <Icon name="download" size={14} /> Export report
             </button>
-          ) : (
-            <button className="btn btn-primary" onClick={runReview}>
-              {review ? "Run fresh review" : "Run review"}
-            </button>
-          )}
-          <button className="btn btn-secondary" onClick={() => window.print()} disabled={!review || outdated || phase === "running"} title={!review ? "Run a review first" : outdated ? "Re-run the review after edits before exporting" : "Print or save a one-page report"}>
-            Export report
-          </button>
+          </div>
+        </header>
+
+        {caseSet === "eval" && <div className="banner banner-info no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}><Icon name="layers" /> Evaluation set: team-created test variants of adapted public records. Not sponsor data.</div>}
+        {error && review && <div className="banner banner-error no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="alert"><Icon name="alert" /> <span><strong>The latest review did not complete.</strong> {error} The findings shown are from the previous review.</span></div>}
+
+        <div className={`body no-print ${factsOpen ? "" : "facts-collapsed"}`}>
+          <FactsPanel open={factsOpen} onToggle={() => setFactsOpen((o) => !o)} kase={current} original={original} onChange={update}
+            linkedFields={findings.find((f) => f.id === selected)?.evidence.filter((e) => e.kind === "field").map((e) => e.fieldPath!) ?? []} disabled={phase === "running"} />
+          <DocumentView kase={current} original={original} review={review && !outdated ? review.result : null} outdated={outdated} selected={selected} onSelect={setSelected}
+            editing={editing} setEditing={setEditing} onChange={update} disabled={phase === "running"} />
+          <FindingsPanel kase={current} review={review?.result ?? null} outdated={outdated} running={phase === "running"} elapsed={elapsed} error={phase === "error" ? error : null}
+            selected={selected} onSelect={setSelected} onRun={runReview} dispositions={dispositions[caseId] ?? {}}
+            setDisposition={(id, d) => setDispositions((all) => ({ ...all, [caseId]: { ...(all[caseId] ?? {}), [id]: d } }))} />
         </div>
-      </header>
 
-      {caseSet === "eval" && (
-        <div className="banner banner-warn no-print">Evaluation set: team-created test variants of adapted public records. Not sponsor data.</div>
+        <footer className="footer no-print">
+          <span>Decision support only. Findings are not legal determinations; the officer keeps the narrative and the charge.</span>
+          <span className="credit">Built by Prompt &amp; Circumstance</span>
+        </footer>
+      </div>
+
+      {drawer && (
+        <>
+          <div className="scrim no-print" onClick={() => setDrawer(null)} />
+          <aside className="drawer no-print" role="dialog" aria-modal="true" aria-label={drawer === "cases" ? "Cases" : "References"}>
+            <div className="drawer-head">
+              <h2>{drawer === "cases" ? "Cases" : "References"}</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setDrawer(null)} aria-label="Close"><Icon name="x" size={15} /></button>
+            </div>
+            <div className="drawer-body">
+              {drawer === "cases" ? cases.map((c) => {
+                const r = reviews[c.id]?.result;
+                return (
+                  <button key={c.id} className={`case-item ${c.id === caseId ? "is-current" : ""}`} onClick={() => switchCase(c.id)} disabled={phase === "running"}>
+                    <span className="t">{c.title}</span>
+                    <span className="mono small">{c.id}</span>
+                    <span className="s">{kindLabel(c.kind)}{r ? ` · reviewed: ${r.findings.length} finding${r.findings.length === 1 ? "" : "s"}${r.humanReview.required ? ", needs human review" : ""}` : " · not reviewed"}</span>
+                  </button>
+                );
+              }) : (
+                <div className="ref-section">
+                  <h3>Reference version {referenceVersion}</h3>
+                  <p>{referenceNotice}</p>
+                  {glossary && (
+                    <>
+                      <h3>Form abbreviations</h3>
+                      <ul>{Object.entries(glossary).filter(([k]) => k !== "note").map(([k, v]) => <li key={k}><span className="mono">{k}</span>: {v}</li>)}</ul>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </aside>
+        </>
       )}
-      {error && (
-        <div className="banner banner-error no-print" role="alert">
-          <strong>Review not completed.</strong> {error} No results were substituted.
-        </div>
-      )}
-
-      <main className={`workspace no-print ${factsOpen ? "" : "facts-collapsed"}`}>
-        <FactsPanel
-          open={factsOpen}
-          onToggle={() => setFactsOpen((o) => !o)}
-          kase={current}
-          original={original}
-          onChange={update}
-          selectedField={findings.find((f) => f.id === selected)?.evidence.filter((e) => e.kind === "field").map((e) => e.fieldPath!) ?? []}
-          disabled={phase === "running"}
-        />
-        <DocumentView
-          kase={current}
-          original={original}
-          review={review && !outdated ? review.result : null}
-          outdated={outdated}
-          selected={selected}
-          onSelect={setSelected}
-          editing={editing}
-          setEditing={setEditing}
-          onChange={update}
-          disabled={phase === "running"}
-        />
-        <FindingsPanel
-          review={review?.result ?? null}
-          outdated={outdated}
-          running={phase === "running"}
-          elapsed={elapsed}
-          selected={selected}
-          onSelect={setSelected}
-          elements={elements}
-          dispositions={dispositions[caseId] ?? {}}
-          setDisposition={(id, d) => setDispositions((all) => ({ ...all, [caseId]: { ...(all[caseId] ?? {}), [id]: d } }))}
-          referenceVersion={referenceVersion}
-          referenceNotice={referenceNotice}
-        />
-      </main>
-
-      <footer className="footer no-print">
-        <span>Decision support only. Findings are not legal determinations; the officer keeps the narrative and the charge.</span>
-        <span className="credit">Built by Prompt &amp; Circumstance</span>
-      </footer>
 
       {review && !outdated && <PrintReport kase={current} review={review.result} dispositions={dispositions[caseId] ?? {}} edited={edited} />}
     </div>
   );
-}
-
-export function kindLabel(kind: CaseRecord["kind"]) {
-  return kind === "adapted-public-record" ? "Adapted public record" : kind === "synthetic-variant" ? "Team test variant" : "Synthetic";
 }

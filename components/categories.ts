@@ -1,27 +1,27 @@
 import type { FindingCategory, ElementStatus, CitationStatus, CheckStatus } from "@/lib/types";
 
-// Every color is paired with a text label so meaning never depends on color alone.
-export const CATEGORY: Record<FindingCategory, { label: string; short: string }> = {
-  missing_element: { label: "Missing element", short: "Missing" },
-  inconsistency: { label: "Inconsistency", short: "Conflict" },
-  unclear: { label: "Unclear statement", short: "Unclear" },
-  citation: { label: "Citation check", short: "Citation" },
-  human_review: { label: "Human review", short: "Review" },
+// Every color is paired with a text label and an icon so meaning never depends on color alone.
+export const CATEGORY: Record<FindingCategory, { label: string; short: string; icon: string }> = {
+  missing_element: { label: "Missing element", short: "Missing", icon: "missing" },
+  inconsistency: { label: "Inconsistency", short: "Conflicts", icon: "conflict" },
+  unclear: { label: "Unclear statement", short: "Unclear", icon: "unclear" },
+  citation: { label: "Citation check", short: "Citation", icon: "citation" },
+  human_review: { label: "Human review", short: "Review", icon: "review" },
 };
 
 export const ELEMENT_STATUS: Record<ElementStatus, { label: string; icon: string }> = {
-  present: { label: "Present", icon: "✓" },
-  absent: { label: "Not stated", icon: "✕" },
-  unclear: { label: "Unclear", icon: "?" },
-  unavailable_redacted: { label: "Unavailable (redacted)", icon: "▮" },
-  unavailable_unreadable: { label: "Unavailable (unreadable)", icon: "▯" },
-  not_checked: { label: "Not checked", icon: "–" },
+  present: { label: "Present", icon: "check" },
+  absent: { label: "Not stated", icon: "x" },
+  unclear: { label: "Unclear", icon: "unclear" },
+  unavailable_redacted: { label: "Unavailable (redacted)", icon: "shield" },
+  unavailable_unreadable: { label: "Unavailable (unreadable)", icon: "info" },
+  not_checked: { label: "Not checked", icon: "clock" },
 };
 
 export const CITATION_STATUS: Record<CitationStatus, string> = {
-  consistent: "Consistent with narrative facts",
+  consistent: "Consistent with facts",
   likely_mismatch: "Possible mismatch",
-  insufficient_information: "Cannot check: reference unavailable",
+  insufficient_information: "Reference unavailable",
   needs_human_review: "Needs human review",
   not_checked: "Not checked",
 };

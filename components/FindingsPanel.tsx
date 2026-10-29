@@ -1,305 +1,256 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Finding, ReviewResult } from "@/lib/types";
+import type { CaseRecord, EvidenceRef, Finding, ReviewResult } from "@/lib/types";
 import { CATEGORY, CHECK_STATUS, CITATION_STATUS, ELEMENT_STATUS } from "./categories";
+import Icon from "./Icon";
 
 export type Disposition = { state: "acknowledged" | "dismissed"; reason?: string };
 
 const ORDER: Finding["category"][] = ["human_review", "citation", "inconsistency", "missing_element", "unclear"];
+const COUNT_CATS: Finding["category"][] = ["inconsistency", "missing_element", "citation", "unclear"];
+const CITATION_TONE: Record<ReviewResult["citation"]["status"], string> = {
+  consistent: "pill-ok", likely_mismatch: "pill-error", needs_human_review: "pill-review", insufficient_information: "pill-neutral", not_checked: "pill-neutral",
+};
 
-export default function FindingsPanel({
-  review,
-  outdated,
-  running,
-  elapsed,
-  selected,
-  onSelect,
-  elements,
-  dispositions,
-  setDisposition,
-  referenceVersion,
-  referenceNotice,
-}: {
+export default function FindingsPanel(props: {
+  kase: CaseRecord;
   review: ReviewResult | null;
   outdated: boolean;
   running: boolean;
   elapsed: number;
+  error: string | null;
   selected: string | null;
   onSelect: (id: string | null) => void;
-  elements: { id: string; label: string }[];
+  onRun: () => void;
   dispositions: Record<string, Disposition>;
   setDisposition: (id: string, d: Disposition) => void;
-  referenceVersion: string;
-  referenceNotice: string;
 }) {
-  if (running && !review)
-    return (
-      <aside className="findings-column" aria-label="Findings">
-        <div className="empty">
-          <div className="spinner" aria-hidden />
-          <p>
-            <strong>Reviewing… {elapsed}s</strong>
-          </p>
-          <p className="muted">The shared model endpoint can be slow. The review stops after 90 seconds. No progress percentage is shown because the model does not report one.</p>
-        </div>
-      </aside>
-    );
+  const { review, outdated, running, elapsed, error, onRun } = props;
+  const [tab, setTab] = useState<"findings" | "elements" | "checks">("findings");
+
+  if (running && !review) return <aside className="col review" aria-label="Review"><LoadingState elapsed={elapsed} /></aside>;
   if (!review)
     return (
-      <aside className="findings-column" aria-label="Findings">
-        <div className="empty">
-          <p>
-            <strong>No review yet</strong>
-          </p>
-          <p className="muted">Run a review to check required elements, consistency, clarity, and the selected charge. The narrative is never rewritten.</p>
-          <details className="ref-notice">
-            <summary>Reference version: {referenceVersion}</summary>
-            <p>{referenceNotice}</p>
-          </details>
-        </div>
+      <aside className="col review" aria-label="Review">
+        {error ? (
+          <div className="card state">
+            <div className="state-icon" style={{ background: "var(--err-bg)", color: "var(--err)" }}><Icon name="alert" size={24} /></div>
+            <h3>The review did not complete</h3>
+            <p>{error} No results were substituted.</p>
+            <button className="btn btn-primary" onClick={onRun}><Icon name="refresh" /> Try again</button>
+          </div>
+        ) : (
+          <div className="card state">
+            <div className="state-icon"><Icon name="shield" size={24} /></div>
+            <h3>Ready to review</h3>
+            <p>NarrativeCheck checks required elements, consistency, clarity, and the selected charge. It never rewrites the narrative or picks a charge.</p>
+            <button className="btn btn-primary" onClick={onRun}><Icon name="play" size={14} /> Run review</button>
+          </div>
+        )}
       </aside>
     );
 
+  const counts = Object.fromEntries(COUNT_CATS.map((c) => [c, review.findings.filter((f) => f.category === c).length]));
   const sorted = [...review.findings].sort((a, b) => ORDER.indexOf(a.category) - ORDER.indexOf(b.category));
-  const sentenceById = Object.fromEntries(review.sentences.map((s) => [s.id, s]));
+  const partial = review.modelStatus !== "ok";
 
   return (
-    <aside className={`findings-column ${outdated ? "is-outdated" : ""}`} aria-label="Findings">
-      {outdated && <div className="outdated-tag">Outdated: these findings describe an earlier version</div>}
-      {running && <div className="outdated-tag">Reviewing… {elapsed}s</div>}
+    <aside className={`col review ${outdated ? "is-outdated" : ""}`} aria-label="Review">
+      {outdated && (
+        <div className="banner banner-warn" style={{ marginBottom: 12 }} role="status">
+          <Icon name="clock" />
+          <div><strong>Outdated.</strong> The case changed after this review. Run a fresh review to update the findings.</div>
+        </div>
+      )}
+      {running && <div className="banner banner-info" style={{ marginBottom: 12 }} role="status"><Icon name="clock" /> Reviewing… {elapsed}s</div>}
+      {partial && (
+        <div className="banner banner-warn" style={{ marginBottom: 12 }} role="alert">
+          <Icon name="alert" />
+          <div><strong>Partial review.</strong> {review.modelError} Rule-based checks ran; checks marked Unavailable did not run and are not passes.</div>
+        </div>
+      )}
 
-      <section className={`hr-banner ${review.humanReview.required ? "hr-yes" : "hr-no"}`} aria-label="Human review indicator">
-        <div className="hr-title">{review.humanReview.required ? "⚑ Human review required" : "✓ No human-review trigger found"}</div>
-        {review.humanReview.reasons.length > 0 && (
-          <ul>
-            {review.humanReview.reasons.slice(0, 5).map((r, i) => (
-              <li key={i}>{r}</li>
+      <section className="card summary" aria-label="Review summary">
+        <div className={`summary-hr ${review.humanReview.required ? "yes" : "no"}`}>
+          <div className="hr-icon"><Icon name={review.humanReview.required ? "review" : "check"} size={17} /></div>
+          <div>
+            <strong>{review.humanReview.required ? "Human review required" : "No human-review trigger found"}</strong>
+            {review.humanReview.reasons.length > 0 && (
+              <ul>{review.humanReview.reasons.slice(0, 3).map((r, i) => <li key={i}>{r}</li>)}</ul>
+            )}
+          </div>
+        </div>
+        <div className="counts" role="list" aria-label="Findings by category">
+          {COUNT_CATS.map((c) => (
+            <button key={c} role="listitem" className={`count ${counts[c] ? "" : "zero"}`} onClick={() => { setTab("findings"); const f = sorted.find((x) => x.category === c); if (f) props.onSelect(f.id); }} disabled={!counts[c]} aria-label={`${counts[c]} ${CATEGORY[c].label}`}>
+              <div className="n">{counts[c]}</div>
+              <div className="l"><Icon name={CATEGORY[c].icon} size={11} />{CATEGORY[c].short}</div>
+            </button>
+          ))}
+        </div>
+        <div className="citation-line">
+          <Icon name="citation" />
+          <span className="mono">{review.citation.citation || "No charge selected"}</span>
+          <span className={`pill ${CITATION_TONE[review.citation.status]}`}>{CITATION_STATUS[review.citation.status]}</span>
+        </div>
+        <div className="run-meta">
+          <span><Icon name="clock" size={11} /> {(review.latencyMs / 1000).toFixed(1)}s</span>
+          <span>{review.model}</span>
+          <span>references {review.referenceVersion} (provisional)</span>
+        </div>
+      </section>
+
+      {review.notes?.map((n, i) => <div key={i} className="note"><Icon name="info" size={14} /><span>{n}</span></div>)}
+
+      <div className="tabs" role="tablist" aria-label="Review details">
+        {([["findings", "Findings", review.findings.length], ["elements", "Elements", review.elements.length], ["checks", "Checks", review.checks.length]] as const).map(([id, label, n]) => (
+          <button key={id} role="tab" className="tab" aria-selected={tab === id} onClick={() => setTab(id)}>{label}<span className="c">{n}</span></button>
+        ))}
+      </div>
+
+      <div className="tab-panel" role="tabpanel">
+        {tab === "findings" && (sorted.length === 0 ? (
+          <div className="card state"><div className="state-icon" style={{ background: "var(--ok-bg)", color: "var(--ok)" }}><Icon name="check" size={22} /></div><h3>No findings</h3><p>Every check that ran completed without an issue. See Checks for anything that did not run.</p></div>
+        ) : (
+          <ol className="finding-list">
+            {sorted.map((f) => (
+              <FindingCard key={f.id} f={f} kase={props.kase} review={review} selected={props.selected === f.id} onSelect={props.onSelect} disposition={props.dispositions[f.id]} setDisposition={(d) => props.setDisposition(f.id, d)} disabled={outdated} />
             ))}
+          </ol>
+        ))}
+        {tab === "elements" && (
+          <ul className="card checklist" aria-label="Required elements">
+            {review.elements.map((e) => {
+              const st = ELEMENT_STATUS[e.status];
+              const linked = review.findings.find((f) => f.referenceIds.includes(e.elementId) && (f.category === "missing_element" || f.category === "unclear"));
+              const src = e.fieldPaths.length ? "From the form" : e.sentenceIds.length ? `Narrative ${e.sentenceIds.join(", ")}` : e.status === "absent" ? "Not stated anywhere reviewed" : "";
+              return (
+                <li key={e.elementId} className={`check check-${e.status}`}>
+                  <span className="check-ic" aria-hidden><Icon name={st.icon} size={14} /></span>
+                  <span>{e.label}<span className="check-sub">{src}</span></span>
+                  {linked ? <button className="check-st linkish" onClick={() => { setTab("findings"); props.onSelect(linked.id); }}>{st.label}</button> : <span className="check-st">{st.label}</span>}
+                </li>
+              );
+            })}
           </ul>
         )}
-      </section>
-
-      {review.modelStatus !== "ok" && (
-        <div className="banner banner-warn compact" role="alert">
-          <strong>Partial review.</strong> {review.modelError} Only rule-based checks ran. Checks marked Unavailable did not run; they are not passes.
-        </div>
-      )}
-
-      {review.notes?.length > 0 && (
-        <section className="notes" aria-label="Case notes">
-          {review.notes.map((n, i) => (
-            <p key={i}>
-              <span className="ev-tag">note</span> {n}
-            </p>
-          ))}
-        </section>
-      )}
-
-      <section className="panel-section">
-        <h2 className="section-title">Citation check</h2>
-        <div className={`citation citation-${review.citation.status}`}>
-          <div className="citation-head">
-            <span className="mono">{review.citation.citation || "No charge selected"}</span>
-            <span className="citation-status">{CITATION_STATUS[review.citation.status]}</span>
+        {tab === "checks" && (
+          <div className="card">
+            <table className="check-table">
+              <tbody>
+                {review.checks.map((c) => (
+                  <tr key={c.id}><th scope="row">{c.label}</th><td className={`cs cs-${c.status}`}>{CHECK_STATUS[c.status]}{c.note && <div className="muted small">{c.note}</div>}</td></tr>
+                ))}
+              </tbody>
+            </table>
+            <details className="tech" style={{ padding: "8px 12px 12px" }}>
+              <summary>Run details</summary>
+              <div className="tech-body">
+                <div>Prompt {review.promptVersion} · facts {review.modelConfig?.factsPromptVersion} · effort {review.modelConfig?.reasoningEffort} · {review.modelConfig?.validSamples}/{review.modelConfig?.samples} samples valid</div>
+                {review.calls?.map((c, i) => <div key={i}>{c.role}: {c.status} in {(c.ms / 1000).toFixed(1)}s ({c.attempts} attempt{c.attempts === 1 ? "" : "s"})</div>)}
+                {review.discarded.length > 0 && <div>Withheld (evidence not verifiable): {review.discarded.map((d) => d.title).join("; ")}</div>}
+              </div>
+            </details>
           </div>
-          <p>{review.citation.explanation}</p>
-          {review.citation.evidence.length > 0 && (
-            <ul className="evidence-list">
-              {review.citation.evidence.map((e, i) => (
-                <li key={i}>{e.kind === "field" ? <span className="mono">{e.fieldPath}</span> : <>“{e.quote}”</>} {e.page && <span className="muted">p.{e.page}</span>}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
-
-      <section className="panel-section">
-        <h2 className="section-title">Required elements</h2>
-        <ul className="checklist">
-          {review.elements.map((e) => {
-            const st = ELEMENT_STATUS[e.status];
-            const linked = review.findings.find((f) => f.referenceIds.includes(e.elementId) && (f.category === "missing_element" || f.category === "unclear"));
-            return (
-              <li key={e.elementId} className={`check check-${e.status}`}>
-                <span className="check-icon" aria-hidden>
-                  {st.icon}
-                </span>
-                <span className="check-label">
-                  {e.label}
-                  <span className="check-source">
-                    {e.fieldPaths.length ? `form field ${e.fieldPaths.join(", ")}` : e.sentenceIds.length ? `sentence ${e.sentenceIds.join(", ")}` : ""}
-                  </span>
-                </span>
-                {linked ? (
-                  <button className="check-status linkish" onClick={() => onSelect(linked.id)}>
-                    {st.label}
-                  </button>
-                ) : (
-                  <span className="check-status">{st.label}</span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <section className="panel-section">
-        <h2 className="section-title">
-          Findings <span className="count">{review.findings.length}</span>
-        </h2>
-        {sorted.length === 0 && <p className="muted">No findings. Every check that ran completed without an issue. See the check summary below for anything that did not run.</p>}
-        <ol className="finding-list">
-          {sorted.map((f) => (
-            <FindingCard
-              key={f.id}
-              f={f}
-              selected={selected === f.id}
-              onSelect={onSelect}
-              sentenceById={sentenceById}
-              disposition={dispositions[f.id]}
-              setDisposition={(d) => setDisposition(f.id, d)}
-              disabled={outdated}
-            />
-          ))}
-        </ol>
-      </section>
-
-      <section className="panel-section">
-        <h2 className="section-title">Check summary</h2>
-        <table className="check-table">
-          <tbody>
-            {review.checks.map((c) => (
-              <tr key={c.id}>
-                <th scope="row">{c.label}</th>
-                <td className={`cs cs-${c.status}`}>
-                  {CHECK_STATUS[c.status]}
-                  {c.note && <div className="muted small">{c.note}</div>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {review.discarded.length > 0 && (
-          <details className="small muted">
-            <summary>{review.discarded.length} model statement(s) withheld: evidence could not be verified</summary>
-            <ul>
-              {review.discarded.map((d, i) => (
-                <li key={i}>
-                  {d.title}: {d.reason}
-                </li>
-              ))}
-            </ul>
-          </details>
         )}
-        <p className="run-meta">
-          {review.model} · {(review.latencyMs / 1000).toFixed(1)}s · {review.modelAttempts} attempt(s) · prompt {review.promptVersion} · references {review.referenceVersion} (provisional)
-        </p>
-      </section>
+      </div>
     </aside>
   );
 }
 
-function FindingCard({
-  f,
-  selected,
-  onSelect,
-  sentenceById,
-  disposition,
-  setDisposition,
-  disabled,
-}: {
-  f: Finding;
-  selected: boolean;
-  onSelect: (id: string | null) => void;
-  sentenceById: Record<string, { page?: number }>;
-  disposition?: Disposition;
-  setDisposition: (d: Disposition) => void;
-  disabled: boolean;
+function LoadingState({ elapsed }: { elapsed: number }) {
+  return (
+    <div>
+      <div className="card summary" aria-live="polite">
+        <div className="summary-hr no" style={{ background: "var(--blue-50)", color: "#1e3f8f" }}>
+          <div className="hr-icon"><Icon name="clock" size={17} /></div>
+          <div><strong>Reviewing… {elapsed}s</strong><span className="small">The shared model endpoint can be slow. The review stops after 90 seconds. No progress percentage is shown because the model does not report one.</span></div>
+        </div>
+        <div className="counts">{[0, 1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: 52 }} />)}</div>
+      </div>
+      {[0, 1, 2].map((i) => <div key={i} className="skeleton" style={{ height: 76, marginBottom: 10 }} />)}
+    </div>
+  );
+}
+
+function evidenceLabel(e: EvidenceRef, kase: CaseRecord, review: ReviewResult) {
+  if (e.kind === "missing") return { k: "Not stated", q: `${review.elements.find((x) => x.elementId === e.elementId)?.label ?? "Required element"} is not stated in the narrative or the form.` };
+  if (e.kind === "field") {
+    const f = kase.facts.find((x) => x.path === e.fieldPath);
+    return { k: `Form${e.page ? ` · p.${e.page}` : ""}`, q: `${f?.label ?? (e.fieldPath === "selectedCharges" ? "Selected charges" : e.fieldPath)}: ${e.quote ?? ""}` };
+  }
+  return { k: `${e.sentenceId}${e.page ? ` · p.${e.page}` : ""}`, q: `“${e.quote}”` };
+}
+
+function FindingCard({ f, kase, review, selected, onSelect, disposition, setDisposition, disabled }: {
+  f: Finding; kase: CaseRecord; review: ReviewResult; selected: boolean; onSelect: (id: string | null) => void;
+  disposition?: Disposition; setDisposition: (d: Disposition) => void; disabled: boolean;
 }) {
   const ref = useRef<HTMLLIElement>(null);
   const [dismissing, setDismissing] = useState(false);
   const [reason, setReason] = useState("");
-  useEffect(() => {
-    if (selected) ref.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [selected]);
+  useEffect(() => { if (selected) ref.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [selected]);
   const cat = CATEGORY[f.category];
+  const sevLabel = f.severity === "high" ? "High" : f.severity === "medium" ? "Medium" : "Low";
 
   return (
-    <li ref={ref} className={`finding finding-${f.category} ${selected ? "is-selected" : ""} ${disposition ? `is-${disposition.state}` : ""}`}>
+    <li ref={ref} className={`finding cat-${f.category} ${selected ? "is-selected" : ""} ${disposition ? `is-${disposition.state}` : ""}`}>
       <button className="finding-head" onClick={() => onSelect(selected ? null : f.id)} aria-expanded={selected}>
-        <span className={`cat-chip cat-${f.category}`}>{cat.short}</span>
-        <span className="finding-title">{f.title}</span>
-        <span className="finding-id mono">{f.id}</span>
+        <span className="cat-icon" aria-hidden><Icon name={cat.icon} size={17} /></span>
+        <span>
+          <span className="finding-kicker">{cat.label}<span className={`sev sev-${f.severity}`}>{sevLabel}</span>{f.needsHumanReview && <span className="sev" style={{ background: "var(--review-bg)", color: "var(--review)" }}>Review</span>}</span>
+          <span className="finding-title">{f.title}</span>
+          {!selected && <span className="finding-preview">{f.explanation}</span>}
+        </span>
       </button>
-      <div className="finding-body">
-        <p>{f.explanation}</p>
-        <ul className="evidence-list">
-          {f.evidence.map((e, i) => (
-            <li key={i}>
-              {e.kind === "sentence" && (
-                <>
-                  <span className="ev-tag">{e.sentenceId}</span> “{e.quote}” {(e.page ?? sentenceById[e.sentenceId!]?.page) && <span className="muted">p.{e.page ?? sentenceById[e.sentenceId!]?.page}</span>}
-                </>
-              )}
-              {e.kind === "field" && (
-                <>
-                  <span className="ev-tag">field</span> <span className="mono">{e.fieldPath}</span>
-                  {e.quote && <> = “{e.quote}”</>} {e.page && <span className="muted">p.{e.page}</span>}
-                </>
-              )}
-              {e.kind === "missing" && (
-                <>
-                  <span className="ev-tag">absent</span> Required element {e.elementId} is not stated. No text is highlighted because there is nothing to point to.
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-        {f.needsHumanReview && <p className="hr-note">⚑ Human review: {f.humanReviewReason}</p>}
-        <div className="finding-meta muted small">
-          Source: {f.source === "rule" ? "rule-based check" : "model check, evidence verified"}
-          {f.referenceIds.length > 0 && <> · Reference {f.referenceIds.join(", ")}</>}
-        </div>
-        {disposition ? (
-          <div className="disposition">
-            {disposition.state === "acknowledged" ? "Acknowledged by reviewer." : `Dismissed: ${disposition.reason}. Dismissing does not confirm the issue is fixed.`}
+      {selected && (
+        <div className="finding-body">
+          <p>{f.explanation}</p>
+          <div className="evidence" aria-label="Evidence">
+            {f.evidence.map((e, i) => {
+              const { k, q } = evidenceLabel(e, kase, review);
+              return (
+                <button key={i} className="ev" onClick={() => onSelect(f.id)} title={e.kind === "sentence" ? "Show in the narrative" : undefined}>
+                  <span className="ev-k">{k}</span>
+                  <span>
+                    <span className={e.kind === "sentence" ? "ev-q" : undefined}>{q}</span>
+                    {e.match === "partial" && <span className="ev-partial">Partial quote: the extracted wording differed; this is the matching source text.</span>}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          !disabled && (
+          {f.needsHumanReview && <div className="hr-note"><Icon name="review" size={14} /> <span>{f.humanReviewReason}</span></div>}
+          {disposition ? (
+            <div className="disposition">{disposition.state === "acknowledged" ? "Acknowledged by reviewer." : `Dismissed: ${disposition.reason}. Dismissing does not confirm the issue is fixed.`}</div>
+          ) : !disabled && (
             <div className="finding-actions">
               {dismissing ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (reason.trim()) setDisposition({ state: "dismissed", reason: reason.trim() });
-                  }}
-                >
-                  <label className="sr-only" htmlFor={`reason-${f.id}`}>
-                    Reason for dismissing
-                  </label>
+                <form onSubmit={(e) => { e.preventDefault(); if (reason.trim()) setDisposition({ state: "dismissed", reason: reason.trim() }); }}>
+                  <label className="sr-only" htmlFor={`reason-${f.id}`}>Reason for dismissing</label>
                   <input id={`reason-${f.id}`} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (required)" autoFocus />
-                  <button className="btn btn-sm btn-secondary" type="submit" disabled={!reason.trim()}>
-                    Dismiss
-                  </button>
-                  <button className="btn btn-sm btn-ghost" type="button" onClick={() => setDismissing(false)}>
-                    Cancel
-                  </button>
+                  <button className="btn btn-sm btn-secondary" type="submit" disabled={!reason.trim()}>Dismiss</button>
+                  <button className="btn btn-sm btn-ghost" type="button" onClick={() => setDismissing(false)}>Cancel</button>
                 </form>
               ) : (
                 <>
-                  <button className="btn btn-sm btn-ghost" onClick={() => setDisposition({ state: "acknowledged" })}>
-                    Acknowledge
-                  </button>
-                  <button className="btn btn-sm btn-ghost" onClick={() => setDismissing(true)}>
-                    Dismiss with reason
-                  </button>
+                  <button className="btn btn-sm btn-secondary" onClick={() => setDisposition({ state: "acknowledged" })}><Icon name="check" size={13} /> Acknowledge</button>
+                  <button className="btn btn-sm btn-ghost" onClick={() => setDismissing(true)}>Dismiss with reason</button>
                 </>
               )}
             </div>
-          )
-        )}
-      </div>
+          )}
+          <details className="tech">
+            <summary>Technical details</summary>
+            <div className="tech-body">
+              <div>ID {f.id} · {f.source === "rule" ? "rule-based check" : "model check, evidence verified against the text"}{f.sampleAgreement ? ` · reported by ${f.sampleAgreement} of ${review.modelConfig?.validSamples ?? 2} samples` : ""}</div>
+              {f.evidence.filter((e) => e.kind !== "missing").map((e, i) => <div key={i} className="mono">{e.kind === "field" ? e.fieldPath : `${e.sentenceId} [${e.start}–${e.end}] ${e.match ?? "exact"}`}</div>)}
+              {f.referenceIds.length > 0 && <div>Reference {f.referenceIds.join(", ")}</div>}
+            </div>
+          </details>
+        </div>
+      )}
     </li>
   );
 }

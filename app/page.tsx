@@ -15,6 +15,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
       elements={REFERENCES.requiredElements.map((e) => ({ id: e.id, label: e.label }))}
       referenceVersion={REFERENCES.version}
       referenceNotice={REFERENCES.notice}
+      glossary={REFERENCES.formGlossary}
     />
   );
 }

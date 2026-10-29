@@ -1,129 +1,95 @@
 "use client";
 
 import type { CaseRecord, FieldStatus } from "@/lib/types";
+import Icon from "./Icon";
 
-const STATUS_LABEL: Record<FieldStatus, string> = {
-  present: "Present",
-  redacted: "Redacted",
-  absent: "Absent",
-  unreadable: "Unreadable",
-  not_applicable: "N/A",
-};
+const STATUS_LABEL: Record<FieldStatus, string> = { present: "Present", redacted: "Redacted", absent: "Absent", unreadable: "Unreadable", not_applicable: "N/A" };
+const GROUPS: [string, string][] = [["entry.", "Entry"], ["encounter.", "Encounter"], ["subject.", "Subject"], ["status.", "Status"], ["history.", "History"], ["documents.", "Documents"], ["form.", "Form"]];
 
-export default function FactsPanel({
-  open,
-  onToggle,
-  kase,
-  original,
-  onChange,
-  selectedField,
-  disabled,
-}: {
-  open: boolean;
-  onToggle: () => void;
-  kase: CaseRecord;
-  original: CaseRecord;
-  onChange: (c: CaseRecord) => void;
-  selectedField: string[];
-  disabled: boolean;
+export default function FactsPanel({ open, onToggle, kase, original, onChange, linkedFields, disabled }: {
+  open: boolean; onToggle: () => void; kase: CaseRecord; original: CaseRecord; onChange: (c: CaseRecord) => void; linkedFields: string[]; disabled: boolean;
 }) {
   if (!open)
     return (
-      <aside className="facts-column collapsed" aria-label="Case facts (collapsed)">
-        <button className="btn btn-ghost btn-sm vertical" onClick={onToggle} aria-expanded={false}>
-          Case facts ›
-        </button>
+      <aside className="col facts collapsed" aria-label="Case facts (collapsed)">
+        <button className="btn btn-ghost btn-sm" onClick={onToggle} aria-expanded={false}><Icon name="chevronRight" size={14} /> Case facts</button>
       </aside>
     );
 
-  const setCharge = (i: number, citation: string) => {
-    const next = kase.selectedCharges.map((c, j) => (j === i ? { ...c, citation, referenceId: undefined, source: "officer-selected" as const } : c));
-    onChange({ ...kase, selectedCharges: next });
-  };
+  const setCharge = (i: number, citation: string) =>
+    onChange({ ...kase, selectedCharges: kase.selectedCharges.map((c, j) => (j === i ? { ...c, citation, referenceId: undefined, source: "officer-selected" as const } : c)) });
 
   return (
-    <aside className="facts-column" aria-label="Case facts">
-      <div className="facts-head">
-        <h2 className="section-title">Case facts</h2>
-        <button className="btn btn-ghost btn-sm" onClick={onToggle} aria-expanded>
-          ‹ Hide
-        </button>
+    <aside className="col facts" aria-label="Case facts">
+      <div className="panel-head">
+        <h2 className="panel-title">Case facts</h2>
+        <button className="btn btn-ghost btn-sm" onClick={onToggle} aria-expanded aria-label="Hide case facts"><Icon name="chevronLeft" size={14} /></button>
       </div>
 
-      <section className="charge-box">
-        <h3 className="field-label">Officer-selected charge</h3>
+      <section className="card charge-card" aria-label="Officer-selected charge">
+        <h3>Officer-selected charge</h3>
         {kase.selectedCharges.map((c, i) => (
           <div key={i} className="charge-row">
-            <label className="sr-only" htmlFor={`charge-${i}`}>
-              Selected charge {i + 1}
-            </label>
-            <input id={`charge-${i}`} className="mono" value={c.citation} onChange={(e) => setCharge(i, e.target.value)} disabled={disabled} />
+            <label className="sr-only" htmlFor={`charge-${i}`}>Selected charge {i + 1}</label>
+            <input id={`charge-${i}`} value={c.citation} onChange={(e) => setCharge(i, e.target.value)} disabled={disabled} />
             {kase.selectedCharges.length > 1 && (
-              <button className="btn btn-ghost btn-sm" aria-label={`Remove charge ${i + 1}`} disabled={disabled} onClick={() => onChange({ ...kase, selectedCharges: kase.selectedCharges.filter((_, j) => j !== i) })}>
-                ✕
-              </button>
+              <button className="btn btn-ghost btn-sm" aria-label={`Remove charge ${i + 1}`} disabled={disabled} onClick={() => onChange({ ...kase, selectedCharges: kase.selectedCharges.filter((_, j) => j !== i) })}><Icon name="x" size={13} /></button>
             )}
           </div>
         ))}
-        <button className="btn btn-ghost btn-sm" disabled={disabled} onClick={() => onChange({ ...kase, selectedCharges: [...kase.selectedCharges, { citation: "", source: "officer-selected" }] })}>
-          + Add charge
-        </button>
-        {kase.selectedCharges[0]?.source === "team-assigned-for-testing" && <p className="hint">{kase.selectedCharges[0].note}</p>}
-        {kase.recordedChargeCode && (
-          <p className="hint">
-            Form charge code as printed: <span className="mono">{kase.recordedChargeCode}</span>
-          </p>
-        )}
+        <button className="btn btn-ghost btn-sm" disabled={disabled} onClick={() => onChange({ ...kase, selectedCharges: [...kase.selectedCharges, { citation: "", source: "officer-selected" }] })}>+ Add charge</button>
         <p className="hint">NarrativeCheck checks this charge. It never picks or changes it.</p>
+        <details className="tech">
+          <summary>Source of this charge</summary>
+          <div className="tech-body">
+            {kase.selectedCharges.map((c, i) => <div key={i}>{c.citation || "(empty)"}: {c.source === "stated-in-record" ? "stated in the original narrative" : c.source === "team-assigned-for-testing" ? "assigned by the team for testing" : "entered by the officer"}. {c.note}</div>)}
+            {kase.recordedChargeCode && <div>Charge code printed on the form: <span className="mono">{kase.recordedChargeCode}</span> (mapping not assumed)</div>}
+          </div>
+        </details>
       </section>
 
-      <dl className="facts-list">
-        {kase.facts.map((f, i) => {
-          const changed = original.facts[i]?.value !== f.value;
-          return (
-            <div key={f.path} className={`fact ${selectedField.includes(f.path) ? "is-linked" : ""}`}>
-              <dt>
-                <span>{f.label}</span>
-                <span className={`fstatus fstatus-${f.status}`}>{STATUS_LABEL[f.status]}</span>
-              </dt>
-              <dd>
-                {f.status === "present" || f.status === "absent" ? (
-                  <>
-                    <label className="sr-only" htmlFor={`fact-${f.path}`}>
-                      {f.label}
-                    </label>
-                    <input
-                      id={`fact-${f.path}`}
-                      value={f.value}
-                      placeholder="(not recorded)"
-                      disabled={disabled}
-                      onChange={(e) => {
-                        const facts = kase.facts.map((x, j) => (j === i ? { ...x, value: e.target.value, status: (e.target.value.trim() ? "present" : "absent") as FieldStatus } : x));
-                        onChange({ ...kase, facts });
-                      }}
-                    />
-                  </>
-                ) : (
-                  <span className="muted">{f.status === "redacted" ? "Withheld in the public source" : "Not available"}</span>
-                )}
-                <div className="fact-src">
-                  <span className="mono">{f.path}</span>
-                  {f.sourcePage && <> · p.{f.sourcePage}</>}
-                  {changed && <> · edited</>}
-                </div>
-              </dd>
+      {GROUPS.map(([prefix, name]) => {
+        const facts = kase.facts.map((f, i) => ({ f, i })).filter(({ f }) => f.path.startsWith(prefix));
+        if (!facts.length) return null;
+        return (
+          <section key={prefix} className="fact-group">
+            <h4>{name}</h4>
+            <div className="fact-list">
+              {facts.map(({ f, i }) => {
+                const changed = original.facts[i]?.value !== f.value;
+                return (
+                  <div key={f.path} className={`fact ${linkedFields.includes(f.path) ? "is-linked" : ""}`}>
+                    <div className="fact-top">
+                      <label className="fact-label" htmlFor={`fact-${f.path}`}>{f.label}</label>
+                      <span className={`fstatus fstatus-${f.status}`}>{STATUS_LABEL[f.status]}</span>
+                    </div>
+                    {f.status === "present" || f.status === "absent" ? (
+                      <input id={`fact-${f.path}`} value={f.value} placeholder="Not recorded" disabled={disabled}
+                        onChange={(e) => onChange({ ...kase, facts: kase.facts.map((x, j) => (j === i ? { ...x, value: e.target.value, status: (e.target.value.trim() ? "present" : "absent") as FieldStatus } : x)) })} />
+                    ) : (
+                      <span className="fact-withheld" id={`fact-${f.path}`}>{f.status === "redacted" ? "Withheld in the public source" : "Not available"}</span>
+                    )}
+                    <details className="tech">
+                      <summary>Details{changed ? " · edited" : ""}</summary>
+                      <div className="tech-body"><span className="mono">{f.path}</span>{f.sourceField && <> · form field “{f.sourceField}”</>}{f.sourcePage && <> · PDF p.{f.sourcePage}</>}</div>
+                    </details>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </dl>
+          </section>
+        );
+      })}
 
-      <details className="provenance">
+      <details className="tech" style={{ marginTop: 8 }}>
         <summary>Source and provenance</summary>
-        <p>{kase.provenance.source}</p>
-        <p>{kase.provenance.extraction}</p>
-        <p>{kase.provenance.verification}</p>
-        {kase.provenance.replacements.length > 0 && <p>Synthetic replacements: {kase.provenance.replacements.map((r) => `${r.original} → ${r.replacement}`).join("; ")}</p>}
-        {kase.provenance.modifications && kase.provenance.modifications.length > 0 && <p>Team test edits: {kase.provenance.modifications.join("; ")}</p>}
+        <div className="tech-body">
+          <p>{kase.provenance.source}</p>
+          <p>{kase.provenance.extraction}</p>
+          <p>{kase.provenance.verification}</p>
+          {kase.provenance.replacements.length > 0 && <p>Synthetic replacements: {kase.provenance.replacements.map((r) => `${r.original} → ${r.replacement}`).join("; ")}</p>}
+          {kase.provenance.modifications?.length ? <p>Team test edits: {kase.provenance.modifications.join("; ")}</p> : null}
+        </div>
       </details>
     </aside>
   );
