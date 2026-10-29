@@ -1,0 +1,119 @@
+{
+  "version": "team-provisional-2026-10-29",
+  "status": "PROVISIONAL",
+  "notice": "Unissant's plain-English charge reference sheet and required-narrative-elements list have not been received. These entries were compiled by the team so the workflow can be built and tested. Required elements paraphrase the instruction printed in the narrative block of Form I-213 (Rev. 08/01/07). Charge entries paraphrase public statutory text in Title 8 of the U.S. Code. They are not legal advice and are not sponsor-verified. Replace this file when the official references arrive.",
+  "historicalNote": "Source records date from FY2012-FY2019. Checks compare narratives against the wording recorded here, not against the rules in force on each record's date.",
+  "requiredElements": [
+    {
+      "id": "E1",
+      "key": "entry_time",
+      "label": "Date or time of last entry",
+      "description": "When the subject last entered or attempted to enter the United States. An approximate date is acceptable.",
+      "fieldPaths": ["entry.date"],
+      "source": "Form I-213 narrative block instruction: 'time, place and manner of last entry'",
+      "severity": "medium"
+    },
+    {
+      "id": "E2",
+      "key": "entry_place",
+      "label": "Place of last entry",
+      "description": "Where the subject entered. An approximate location such as 'near Brownsville, TX' is acceptable (Unissant clarification). The place of entry is not the same as the place of encounter unless the narrative says so.",
+      "fieldPaths": ["entry.place"],
+      "source": "Form I-213 narrative block instruction; Unissant email clarification on approximate locations",
+      "severity": "medium"
+    },
+    {
+      "id": "E3",
+      "key": "entry_manner",
+      "label": "Manner of last entry",
+      "description": "How the subject entered, for example without inspection on foot, or admitted at a port of entry with a visa.",
+      "fieldPaths": ["entry.manner"],
+      "source": "Form I-213 narrative block instruction: 'time, place and manner of last entry'",
+      "severity": "high"
+    },
+    {
+      "id": "E4",
+      "key": "encounter_particulars",
+      "label": "How the subject was located or apprehended",
+      "description": "The circumstances of the encounter: when, where, and how the subject was located or apprehended.",
+      "fieldPaths": ["encounter.date_time", "encounter.location", "encounter.method"],
+      "requireAllFields": true,
+      "source": "Form I-213 narrative block instruction: 'Outline particulars under which alien was located/apprehended'",
+      "severity": "high"
+    },
+    {
+      "id": "E5",
+      "key": "alienage",
+      "label": "Citizenship or alienage",
+      "description": "A statement or record establishing the subject's country of citizenship.",
+      "fieldPaths": ["subject.citizenship"],
+      "source": "Form I-213 narrative block instruction: 'elements which establish administrative and/or criminal violation'",
+      "severity": "high"
+    },
+    {
+      "id": "E6",
+      "key": "status_basis",
+      "label": "Basis for the immigration violation",
+      "description": "Facts showing the subject lacks lawful status or documents, such as a statement that they have no immigration documents, or that they overstayed an admission.",
+      "fieldPaths": [],
+      "source": "Form I-213 narrative block instruction: 'elements which establish administrative and/or criminal violation'",
+      "severity": "high"
+    },
+    {
+      "id": "E7",
+      "key": "travel_to_interior",
+      "label": "Means and route of travel to the interior",
+      "description": "How the subject travelled from the place of entry to where they were found.",
+      "fieldPaths": [],
+      "source": "Form I-213 narrative block instruction: 'Indicate means and route of travel to interior'",
+      "severity": "low"
+    }
+  ],
+  "charges": [
+    {
+      "id": "INA-212a6Ai",
+      "citations": ["INA 212(a)(6)(A)(i)", "8 U.S.C. 1182(a)(6)(A)(i)"],
+      "title": "Present without admission or parole",
+      "plainEnglish": "The person is in the United States without having been admitted or paroled, or arrived at a time or place not designated by the government.",
+      "keyFacts": ["Not a U.S. citizen", "Present in the United States", "Entered without inspection, admission, or parole, or at an undesignated time or place"],
+      "inconsistentWith": ["Narrative states the subject was lawfully admitted (for example, on a visa) and the issue is staying past the permitted time"],
+      "type": "administrative (inadmissibility)"
+    },
+    {
+      "id": "INA-237a1B",
+      "citations": ["INA 237(a)(1)(B)", "8 U.S.C. 1227(a)(1)(B)"],
+      "title": "Present in violation of law after admission",
+      "plainEnglish": "The person was admitted but is now in the United States in violation of law, for example by remaining longer than permitted.",
+      "keyFacts": ["Not a U.S. citizen", "Was previously admitted", "Now present in violation of law, such as overstaying"],
+      "inconsistentWith": ["Narrative states the subject entered without inspection and was never admitted"],
+      "type": "administrative (deportability)"
+    },
+    {
+      "id": "INA-212a7AiI",
+      "citations": ["INA 212(a)(7)(A)(i)(I)", "8 U.S.C. 1182(a)(7)(A)(i)(I)"],
+      "title": "Immigrant without valid entry document",
+      "plainEnglish": "At the time of applying for admission, the person did not have a valid visa or other required entry document.",
+      "keyFacts": ["Not a U.S. citizen", "Applied for admission (for example, at a port of entry)", "Lacked a valid immigrant visa or entry document at that time"],
+      "inconsistentWith": ["Narrative describes entry between ports without any application for admission"],
+      "type": "administrative (inadmissibility)"
+    },
+    {
+      "id": "USC-1325a",
+      "citations": ["8 U.S.C. 1325(a)", "INA 275(a)"],
+      "title": "Improper entry (criminal)",
+      "plainEnglish": "Entering or attempting to enter at a time or place not designated by immigration officers, eluding inspection, or entering through a false statement.",
+      "keyFacts": ["Not a U.S. citizen", "Entered or attempted entry at an undesignated time or place, eluded inspection, or used a false statement", "Facts about when and where the entry happened"],
+      "inconsistentWith": ["Narrative states the subject was inspected and admitted at a port of entry"],
+      "type": "criminal"
+    },
+    {
+      "id": "USC-1326",
+      "citations": ["8 U.S.C. 1326", "INA 276"],
+      "title": "Reentry after removal (criminal)",
+      "plainEnglish": "A person who was previously removed, deported, or denied admission later entered, attempted to enter, or is found in the United States without permission.",
+      "keyFacts": ["Not a U.S. citizen", "Prior removal, deportation, or denial of admission", "Later entered, attempted entry, or was found in the United States without consent to reapply"],
+      "inconsistentWith": ["Immigration history shows no prior removal"],
+      "type": "criminal"
+    }
+  ]
+}

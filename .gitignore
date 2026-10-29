@@ -1,0 +1,35 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# source materials that stay local (private handoff, sponsor docs, full CBP PDF)
+reference-materials/
+*.pdf
+
+# dependencies and build output
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# generated / local artifacts
+data/work/
+eval/runs/raw/
+recordings/
+*.mov
+*.mp4
+*.webm
+tmp/
+.DS_Store
+*.log
+.claude/settings.local.json

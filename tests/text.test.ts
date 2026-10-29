@@ -1,0 +1,66 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { splitSentences, locateQuote } from "../lib/text";
+import { runRules } from "../lib/review/rules";
+import type { CaseRecord } from "../lib/types";
+
+const c001 = JSON.parse(readFileSync("data/cases/C001.json", "utf8")) as CaseRecord;
+
+test("sentence offsets index the exact narrative text", () => {
+  const ss = splitSentences(c001.narrative.text, c001.narrative.pageSpans);
+  assert.ok(ss.length > 30);
+  for (const s of ss) assert.equal(c001.narrative.text.slice(s.start, s.end), s.text);
+});
+
+test("abbreviations and decimals do not split sentences", () => {
+  const ss = splitSentences("He was stopped by the U.S. Border Patrol. He had $1,339.00 in cash. Done.");
+  assert.deepEqual(ss.map((s) => s.text), ["He was stopped by the U.S. Border Patrol.", "He had $1,339.00 in cash.", "Done."]);
+});
+
+test("headings become their own segment", () => {
+  const ss = splitSentences("TRAVEL:\n\nHe walked north. Then he stopped.");
+  assert.equal(ss[0].text, "TRAVEL:");
+  assert.equal(ss.length, 3);
+});
+
+test("sentences carry source PDF page numbers", () => {
+  const ss = splitSentences(c001.narrative.text, c001.narrative.pageSpans);
+  const rio = ss.find((s) => s.text.includes("Rio Grande"));
+  assert.equal(rio?.page, 3);
+  const gangs = ss.find((s) => s.text.includes("street gangs"));
+  assert.equal(gangs?.page, 4);
+});
+
+test("quote location tolerates whitespace and case, rejects invented text", () => {
+  const [s] = splitSentences("The subjects  were travelling from New York to California.");
+  const loc = locateQuote(s, "travelling from new york");
+  assert.ok(loc);
+  assert.equal(s.text.slice(loc!.start - s.start, loc!.end - s.start), "travelling from New York");
+  assert.equal(locateQuote(s, "travelling from Texas"), null);
+});
+
+test("C001 rules: fields cover entry elements; multi-subject and time difference are flagged", () => {
+  const ss = splitSentences(c001.narrative.text, c001.narrative.pageSpans);
+  const r = runRules(c001, ss);
+  for (const id of ["E1", "E2", "E3", "E4", "E5"]) assert.equal(r.elementsFromFields.get(id)?.status, "present", id);
+  const ids = r.findings.map((f) => f.id);
+  assert.ok(ids.includes("R-MULTI-SUBJECT"));
+  assert.ok(ids.includes("R-TIME-MISMATCH"));
+  const t = r.findings.find((f) => f.id === "R-TIME-MISMATCH")!;
+  assert.equal(t.evidence.length, 2);
+  assert.match(t.evidence[0].quote!, /1330 hours/);
+});
+
+test("multiple selected charges always route to human review", () => {
+  const multi = { ...c001, selectedCharges: [...c001.selectedCharges, { citation: "8 U.S.C. 1325(a)", source: "officer-selected" as const }] };
+  const r = runRules(multi, splitSentences(multi.narrative.text));
+  assert.equal(r.citationPrecheck?.status, "needs_human_review");
+  assert.ok(r.findings.some((f) => f.id === "R-MULTI-CHARGE" && f.needsHumanReview));
+});
+
+test("redacted field is unavailable, not missing", () => {
+  const red = { ...c001, facts: c001.facts.map((f) => (f.path === "entry.manner" ? { ...f, value: "", status: "redacted" as const } : f)) };
+  const r = runRules(red, splitSentences(red.narrative.text));
+  assert.equal(r.elementsFromFields.get("E3")?.status, "unavailable_redacted");
+});

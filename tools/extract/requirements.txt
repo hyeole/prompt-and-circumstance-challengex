@@ -1,0 +1,4 @@
+# Case-preparation tooling only (not needed to run the web app).
+pymupdf==1.26.*
+pyobjc-framework-Vision; sys_platform == "darwin"
+pyobjc-framework-Quartz; sys_platform == "darwin"

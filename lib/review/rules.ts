@@ -1,0 +1,103 @@
+// Deterministic checks. These run on every review, even when the model call fails.
+import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "@/lib/types";
+import { REFERENCES, findCharge } from "@/lib/references";
+
+export interface RuleOutput {
+  elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
+  findings: Finding[];
+  humanReviewReasons: string[];
+  citationPrecheck?: { status: "needs_human_review" | "insufficient_information" | "not_checked"; explanation: string };
+}
+
+const field = (c: CaseRecord, path: string) => c.facts.find((f) => f.path === path);
+
+export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
+  const findings: Finding[] = [];
+  const reasons: string[] = [];
+  const elementsFromFields = new Map<string, ElementResult>();
+
+  // 1. Required elements that structured fields already cover, or that redaction blocks.
+  for (const el of REFERENCES.requiredElements as { id: string; label: string; fieldPaths: string[]; requireAllFields?: boolean }[]) {
+    if (!el.fieldPaths.length) continue;
+    const fs = el.fieldPaths.map((p) => field(c, p));
+    const present = fs.filter((f) => f?.status === "present" && f.value.trim());
+    const covered = el.requireAllFields ? present.length === el.fieldPaths.length : present.length > 0;
+    if (covered) {
+      elementsFromFields.set(el.id, {
+        elementId: el.id, label: el.label, status: "present", sentenceIds: [],
+        fieldPaths: present.map((f) => f!.path), note: "Recorded in a structured form field.",
+      });
+    } else if (fs.some((f) => f?.status === "redacted")) {
+      // Not final: the model may still find it in the narrative. Used only if the narrative lacks it.
+      elementsFromFields.set(el.id, {
+        elementId: el.id, label: el.label, status: "unavailable_redacted", sentenceIds: [],
+        fieldPaths: fs.filter((f) => f?.status === "redacted").map((f) => f!.path),
+        note: "The related form field is redacted in the source, so its absence is not an officer omission.",
+      });
+    } else if (fs.some((f) => f?.status === "unreadable")) {
+      elementsFromFields.set(el.id, {
+        elementId: el.id, label: el.label, status: "unavailable_unreadable", sentenceIds: [],
+        fieldPaths: fs.filter((f) => f?.status === "unreadable").map((f) => f!.path),
+        note: "The related form field could not be read reliably from the source.",
+      });
+    }
+  }
+
+  // 2. Charge selection rules. The tool never proposes a charge.
+  let citationPrecheck: RuleOutput["citationPrecheck"];
+  const charges = c.selectedCharges.filter((s) => s.citation.trim());
+  if (charges.length === 0) {
+    citationPrecheck = { status: "not_checked", explanation: "No charge has been selected, so the citation could not be checked." };
+    reasons.push("No officer-selected charge is recorded.");
+  } else if (charges.length > 1) {
+    citationPrecheck = { status: "needs_human_review", explanation: `More than one charge is selected (${charges.map((x) => x.citation).join("; ")}). Multi-charge cases always go to a person.` };
+    reasons.push("Multiple charges are selected.");
+    findings.push(mk("R-MULTI-CHARGE", "human_review", "Multiple charges selected", citationPrecheck.explanation,
+      [{ kind: "field", fieldPath: "selectedCharges", verified: true }], [], "Multi-charge case", "medium"));
+  } else if (!findCharge(charges[0].citation, charges[0].referenceId)) {
+    citationPrecheck = { status: "insufficient_information", explanation: `"${charges[0].citation}" is not in the loaded charge reference (version ${REFERENCES.version}), so it cannot be checked against reference elements.` };
+    reasons.push("Selected charge is not in the loaded reference list.");
+  }
+
+  // 3. Multiple people in one narrative: statements may belong to different subjects.
+  const multi = sentences.filter((s) => /\b(subjects|individuals|(two|three|four|five|both) (subjects|individuals|people|persons|men|women)|all subjects)\b/i.test(s.text));
+  if (multi.length >= 2) {
+    const ev = multi.slice(0, 3).map((s) => quoteEvidence(s, s.text.match(/\b(two|three|four|five|all|both)?\s?(subjects|individuals)\b/i)?.[0] ?? s.text.slice(0, 40)));
+    reasons.push("The narrative describes more than one person. Statements must be attributed to the right subject before relying on them.");
+    findings.push(mk("R-MULTI-SUBJECT", "human_review", "Narrative covers more than one person",
+      "Several sentences describe a group. Redacted names can hide which person made each statement, so facts such as citizenship or route of travel may belong to a different subject than this record. A person should confirm the attribution.",
+      ev, [], "Statements may belong to different subjects", "medium"));
+  }
+
+  // 4. Encounter time in the form vs times stated in the narrative.
+  const dt = field(c, "encounter.date_time");
+  const formTime = dt?.status === "present" ? dt.value.match(/\b([01]\d|2[0-3])([0-5]\d)\b(?!\/)/g)?.pop() : undefined;
+  if (formTime) {
+    for (const s of sentences) {
+      if (!/\b(arrest|apprehend|encounter|detain|stopp?ed)\w*/i.test(s.text)) continue;
+      const m = s.text.match(/\b(?:at\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b/i);
+      if (m && m[1] !== formTime && Math.abs(toMin(m[1]) - toMin(formTime)) >= 30) {
+        findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
+          `The form records the encounter at ${formTime} hours, but the narrative gives ${m[1]} hours for the arrest. The difference may be legitimate (for example, encounter versus arrest time), but it should be confirmed.`,
+          [quoteEvidence(s, m[0]), { kind: "field", fieldPath: "encounter.date_time", quote: dt!.value, page: dt!.sourcePage, verified: true }],
+          ["E4"], "Times disagree by 30 minutes or more", "medium"));
+        break;
+      }
+    }
+  }
+  return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck };
+}
+
+const toMin = (hhmm: string) => parseInt(hhmm.slice(0, 2)) * 60 + parseInt(hhmm.slice(2));
+
+function quoteEvidence(s: Sentence, quote: string): EvidenceRef {
+  const i = s.text.indexOf(quote);
+  return i >= 0
+    ? { kind: "sentence", sentenceId: s.id, quote, start: s.start + i, end: s.start + i + quote.length, page: s.page, verified: true }
+    : { kind: "sentence", sentenceId: s.id, quote: s.text, start: s.start, end: s.end, page: s.page, verified: true };
+}
+
+function mk(id: string, category: Finding["category"], title: string, explanation: string, evidence: EvidenceRef[],
+  referenceIds: string[], reason: string | undefined, severity: Finding["severity"]): Finding {
+  return { id, category, title, explanation, evidence, referenceIds, needsHumanReview: !!reason, humanReviewReason: reason, source: "rule", severity };
+}
