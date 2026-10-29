@@ -14,16 +14,20 @@ const CLIENT_TIMEOUT_MS = 90_000;
 
 export default function Workspace({
   cases,
+  initialCaseId,
+  caseSet = "app",
   elements,
   referenceVersion,
   referenceNotice,
 }: {
   cases: CaseRecord[];
+  initialCaseId?: string;
+  caseSet?: "app" | "eval";
   elements: { id: string; label: string }[];
   referenceVersion: string;
   referenceNotice: string;
 }) {
-  const [caseId, setCaseId] = useState(cases[0]?.id ?? "");
+  const [caseId, setCaseId] = useState(initialCaseId ?? cases[0]?.id ?? "");
   // Working copies: officers may edit their own text; the original record stays untouched in `cases`.
   const [working, setWorking] = useState<Record<string, CaseRecord>>({});
   const current = working[caseId] ?? cases.find((c) => c.id === caseId)!;
@@ -154,6 +158,9 @@ export default function Workspace({
         </div>
       </header>
 
+      {caseSet === "eval" && (
+        <div className="banner banner-warn no-print">Evaluation set: team-created test variants of adapted public records. Not sponsor data.</div>
+      )}
       {error && (
         <div className="banner banner-error no-print" role="alert">
           <strong>Review not completed.</strong> {error} No results were substituted.

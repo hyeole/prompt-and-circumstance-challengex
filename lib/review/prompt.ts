@@ -2,7 +2,7 @@
 import type { CaseRecord, Sentence } from "@/lib/types";
 import type { ChargeRef, RequiredElement } from "@/lib/references";
 
-export const PROMPT_VERSION = "review-v1.0";
+export const PROMPT_VERSION = "review-v1.1";
 
 export const SYSTEM_PROMPT = `You are a documentation quality reviewer for immigration charge narratives (Forms I-213 and I-44).
 You help a human officer find gaps. You do not make legal decisions.
@@ -18,6 +18,16 @@ Hard rules:
 8. Place of entry and place of encounter are different things. Do not treat one as the other unless the text says so. An approximate entry location such as "near Brownsville, TX" is acceptable.
 9. Prefer no finding over a weak finding. Do not flag style, grammar, abbreviations, or routine redactions.
 10. If several people are described, do not assume a statement belongs to the record's subject when the name is redacted.
+11. Problems with how well the SELECTED CHARGE fits the facts go ONLY in "citation". Never put charge fit in "issues".
+12. If the narrative says the subject does not know or does not remember a detail, that element is documented: mark it "present".
+
+Checks to perform for "issues" (compare carefully, sentence by sentence):
+A. Entry facts. Compare every statement about WHEN, WHERE and HOW the subject entered the United States with each other and with the form fields entry.date, entry.place and entry.manner. A different year or date, a different place, or a different manner (for example walking across the border vs. being admitted at a port with a visa or card) is an inconsistency.
+B. History. Compare history.immigration_record and history.criminal_record with what the narrative says about prior arrests, removals, deportations or convictions. A field saying NEGATIVE while the narrative describes a prior removal is an inconsistency.
+C. Encounter. Compare dates, times and places of the encounter in the narrative with encounter.* fields.
+D. Clarity. Report a statement as "unclear" only if a key fact (who, when, where, how) cannot be determined from it.
+
+Set needs_human_review true on an issue, and human_review.required true, when: two accounts of the same fact conflict; facts could support more than one charge; or it is unclear which person a key statement belongs to and that matters.
 
 Return ONE JSON object and nothing else, with this shape:
 {
@@ -39,7 +49,7 @@ Return ONE JSON object and nothing else, with this shape:
 }
 Return an "elements" entry for every element listed under ELEMENTS TO CHECK. Use an empty "issues" array when there are none.`;
 
-export function buildUserPrompt(c: CaseRecord, sentences: Sentence[], elementsToCheck: RequiredElement[], charge?: ChargeRef) {
+export function buildUserPrompt(c: CaseRecord, sentences: Sentence[], elementsToCheck: RequiredElement[], charge?: ChargeRef, glossary?: Record<string, string>) {
   const facts = c.facts
     .map((f) => `- ${f.path} (${f.label}): ${f.status === "present" ? f.value : `[${f.status.toUpperCase()}]`}`)
     .join("\n");
@@ -54,7 +64,8 @@ Key facts that should be supported: ${charge.keyFacts.join("; ")}.
 Facts that would be inconsistent: ${charge.inconsistentWith.join("; ")}.`
     : "No reference entry is available for the selected charge. Set citation.status to insufficient_information.";
 
-  return `<case>
+  const gl = glossary ? Object.entries(glossary).filter(([k]) => k !== "note").map(([k, v]) => `${k} = ${v}`).join("; ") : "";
+  return `${gl ? `FORM ABBREVIATIONS: ${gl}\n\n` : ""}<case>
 OFFICER-SELECTED CHARGE: ${sel}
 
 FORM FIELDS:

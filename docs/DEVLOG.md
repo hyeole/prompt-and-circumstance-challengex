@@ -43,3 +43,30 @@ The form has charge code `I6A` and no statutory citation. For testing, we assign
 - With no key configured, the app shows "Partial review", lists the checks that did not run, and substitutes no results.
 
 **Pending:** live API check (needs the key on this Mac), more cases, evaluation set.
+
+## 2026-10-29 (Thu, evening) Day 1 continued: more cases, evaluation set, live connection, video
+
+**Live API verified.** `npm run check:api` passed:
+- plain chat (4.7s);
+- JSON mode;
+- strict JSON schema;
+- model list (`gpt-oss-20b`).
+
+The key is in `.env.local` (permissions 600, git-ignored).
+
+**8 more verified cases.** C003, C012, C013, C021, C037, C045, C119, C135.
+- Form fields were typed by hand from the I-213 page images.
+- Narratives come from embedded text.
+- Five narratives state their own charge; we use that citation and record its page. The other cases have a team-assigned charge, labelled as such.
+- C012 and C013 are the same incident (two subjects), so they stay in the same split.
+
+**Two rule fixes found on real data:**
+- The "several people" rule fired on 8 of 9 cases. These records really are group encounters, and redaction hides who said what. That is a property of the public data, so it is now an informational note and no longer forces human review.
+- The time rule would have flagged "arrested and transported to the station at 2145 hours", where the time belongs to the transport. It now only uses times that belong to the arrest or encounter itself.
+
+**Evaluation set** (`eval/`): 9 bases plus 28 variants (37 cases), with expected findings stored apart from the inputs, a split by base case, a scorer with a written matching policy, and a PDF report exporter.
+
+**Video.**
+- Playwright with the installed Chrome records real `.webm` video.
+- It needed Playwright's 1.4 MB ffmpeg encoder, downloaded once into Playwright's cache.
+- The first scripted walkthrough recorded fine. It showed that the ambiguous test case C003-AMB was **not** routed to human review. That needs fixing.

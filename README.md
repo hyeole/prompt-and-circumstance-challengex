@@ -56,6 +56,28 @@ npm run check:api
 npm run dev
 ```
 
+## Documentation
+
+- [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md): beginner-friendly walkthrough of every part
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): request flow and design decisions
+- [DESIGN.md](DESIGN.md): visual and interaction rules
+- [eval/README.md](eval/README.md): test set, splits, and matching policy
+- [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md): demo shot list and narration
+- [docs/DEVLOG.md](docs/DEVLOG.md): development log
+
+## Useful commands
+
+| Command | What it does |
+|---|---|
+| `npm run check:api` | Tests the model connection (the key is never printed) |
+| `npm run dev` | Starts the app at http://localhost:3000 (`/?set=eval` opens the evaluation cases) |
+| `npm test` | Unit tests, no key needed |
+| `npm run eval:build` | Rebuilds the test variants from `eval/variants.json` |
+| `npm run eval -- --split dev` | Runs live reviews for a split and saves the results |
+| `npm run eval:score -- eval/runs/<timestamp>` | Scores a run and writes `REPORT.md` |
+| `node scripts/export-reports.mjs eval/runs/<timestamp>` | Writes a one-page PDF report per case from saved results |
+| `npm run demo:record` | Records a captioned walkthrough video with Chrome (needs `npx playwright-core install ffmpeg` once) |
+
 ## Data and provenance
 
 - Source: CBP, *Detroit Sector Forms I-213 and I-44 FY 2012 – 2019 Part 5* (public, redacted), [cbp.gov link](https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf). The PDF itself is not committed.

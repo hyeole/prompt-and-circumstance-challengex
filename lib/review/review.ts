@@ -28,6 +28,8 @@ function verifyEvidence(ev: Ev, sentences: Sentence[], c: CaseRecord): EvidenceR
   return hits.length === 1 ? hits[0] : null;
 }
 
+// Statements about whether the SELECTED charge fits belong in the citation check only.
+const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
 const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed)? (charging|the charge)|more appropriate charge|instead charge|a better charge)\b/i;
 
 /** Remove any sentence that names a different charge or proposes one. The tool never selects a charge. */
@@ -64,7 +66,7 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
 
   try {
     const m0 = Date.now();
-    const r = await completeJSON(SYSTEM_PROMPT, buildUserPrompt(c, sentences, toCheck, charge));
+    const r = await completeJSON(SYSTEM_PROMPT, buildUserPrompt(c, sentences, toCheck, charge, REFERENCES.formGlossary));
     modelLatencyMs = Date.now() - m0;
     attempts = r.attempts;
     const parsed = ModelOutput.safeParse(extractJSON(r.text));
@@ -93,7 +95,8 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     return { elementId: el.id, label: el.label, status: m.status, sentenceIds: validIds, fieldPaths: [], note: m.note };
   });
   for (const e of elements) {
-    const ref = allElements.find((x) => x.id === e.elementId)!;
+    const ref = allElements.find((x) => x.id === e.elementId)! as RequiredElement & { advisory?: boolean };
+    if (ref.advisory) continue; // advisory elements appear in the checklist only
     if (e.status === "absent") {
       findings.push({
         id: `M-${e.elementId}`, category: "missing_element", title: `Missing: ${e.label.toLowerCase()}`,
@@ -124,11 +127,18 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
       discarded.push({ title: iss.title, reason: "An inconsistency needs two verified sources; only one was provided." });
       return;
     }
+    const issText = `${iss.title} ${iss.explanation}`;
+    if (CHARGE_FIT_RE.test(issText) || selected.some((x) => issText.includes(x.citation))) {
+      discarded.push({ title: iss.title, reason: "Charge fit is reported in the citation check, not as a separate issue." });
+      return;
+    }
     const clean = stripChargeAdvice(iss.explanation, selected.map((s) => s.citation));
+    // Conflicting facts always go to a person: the tool does not decide which account is right.
+    const hr = iss.type === "inconsistency" || iss.needs_human_review;
     findings.push({
       id: `${iss.type === "inconsistency" ? "I" : "Q"}-${i + 1}`, category: iss.type, title: iss.title,
       explanation: clean.text || "See linked evidence.", evidence: verified, referenceIds: [],
-      needsHumanReview: iss.needs_human_review, humanReviewReason: iss.needs_human_review ? iss.reason || "Model asked for human review" : undefined,
+      needsHumanReview: hr, humanReviewReason: hr ? iss.reason || (iss.type === "inconsistency" ? "Conflicting facts: a person should decide which is correct." : "Model asked for human review.") : undefined,
       source: "model", severity: iss.type === "inconsistency" ? "high" : "low",
     });
     if (iss.needs_human_review && iss.reason) humanReasons.push(iss.reason);
@@ -177,6 +187,7 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
       note: citation.status === "insufficient_information" ? citation.explanation : undefined },
     { id: "routing", label: "Human-review routing", status: "completed_with_findings" },
   ];
+  for (const f of findings) if (f.needsHumanReview) humanReasons.push(`${f.title}${f.humanReviewReason ? `: ${f.humanReviewReason}` : ""}`);
   const uniqReasons = [...new Set(humanReasons.map((r) => r.trim()).filter(Boolean))];
   const required = uniqReasons.length > 0 || findings.some((f) => f.needsHumanReview);
   checks[4].status = required ? "completed_with_findings" : "completed_no_findings";

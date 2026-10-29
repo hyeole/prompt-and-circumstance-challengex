@@ -3,11 +3,11 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { CaseRecord } from "./types";
 
-const DIR = path.join(process.cwd(), "data", "cases");
-
-export function loadCases(): CaseRecord[] {
-  return readdirSync(DIR)
+/** "app" = data/cases (shown by default); "eval" = eval/cases (team test set, opened with ?set=eval). */
+export function loadCases(set: "app" | "eval" = "app"): CaseRecord[] {
+  const dir = set === "eval" ? path.join(process.cwd(), "eval", "cases") : path.join(process.cwd(), "data", "cases");
+  return readdirSync(dir)
     .filter((f) => f.endsWith(".json"))
     .sort()
-    .map((f) => JSON.parse(readFileSync(path.join(DIR, f), "utf8")) as CaseRecord);
+    .map((f) => JSON.parse(readFileSync(path.join(dir, f), "utf8")) as CaseRecord);
 }

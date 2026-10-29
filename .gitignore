@@ -33,3 +33,4 @@ tmp/
 .DS_Store
 *.log
 .claude/settings.local.json
+eval/runs/*/reports/
