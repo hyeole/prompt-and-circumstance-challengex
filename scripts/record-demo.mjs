@@ -42,7 +42,7 @@ async function openCase(id) {
 }
 
 async function runReview() {
-  await page.getByRole("button", { name: /run (fresh )?review/i }).click();
+  await page.locator(".header .btn-primary").click();
   await caption("Live review running on the Unissant-hosted gpt-oss-20b. Waiting time is shown in real time.", 0);
   await page.waitForFunction(() => !/Reviewing/.test(document.querySelector(".topbar .status")?.textContent ?? ""), null, { timeout: 120_000 });
   const status = await page.locator(".topbar .status").textContent();

@@ -18,6 +18,10 @@ export default function PrintReport({ kase, review, dispositions, edited }: { ka
         <div className={`r-hr ${review.humanReview.required ? "yes" : "no"}`}>{review.humanReview.required ? "HUMAN REVIEW REQUIRED" : "No human-review trigger"}</div>
       </header>
 
+      {review.modelStatus !== "ok" && (
+        <p className="r-partial"><b>PARTIAL REVIEW.</b> The model check did not complete ({review.modelError ?? "no response"}). Only rule-based checks ran; checks listed as unavailable are not passes.</p>
+      )}
+
       <section className="r-grid">
         <div>
           <h3>Citation check</h3>
