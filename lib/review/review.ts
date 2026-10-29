@@ -283,6 +283,18 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     }
     if (status === "needs_human_review") humanReasons.push(explanation);
   }
+  // A charge can only be "consistent with the facts" when the facts it depends on are settled. If the record has an
+  // unresolved conflict about the entry, the citation check is not a pass: a person must first decide which account is right.
+  const entryConflict = findings.find((f) => f.category === "inconsistency" &&
+    (f.referenceIds.some((r) => ["E1", "E2", "E3"].includes(r)) || f.evidence.some((e) => e.fieldPath?.startsWith("entry."))));
+  if (entryConflict && citation.status === "consistent") {
+    citation = {
+      ...citation,
+      status: "needs_human_review",
+      explanation: `The selected charge fits one account of the facts, but the record has an unresolved conflict about the entry ("${entryConflict.title}"). A person must decide which account is correct before relying on this check.`,
+    };
+    humanReasons.push("Citation check depends on conflicting entry facts.");
+  }
   if (out?.human_review.required) humanReasons.push(...out.human_review.reasons);
   if (modelStatus !== "ok") humanReasons.push("The model check did not complete, so this review is partial.");
 

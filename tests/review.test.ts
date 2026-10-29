@@ -132,3 +132,17 @@ test("the selected charge itself is kept in any equivalent form", async () => {
   const r = await reviewCase(load("C001"), fake({ review: review({ citation: { status: "consistent", explanation: text, evidence: [] } }) }));
   assert.equal(r.citation.explanation, text);
 });
+
+test("an unresolved entry conflict prevents a plain 'consistent' citation (design review item 4)", async () => {
+  const c = load("C012-X1");
+  const visa = sid(c, "tourist visa"), port = sid(c, "did not cross through a designated Port");
+  const r = await reviewCase(c, fake({
+    facts: facts({ entry_statements: [
+      { sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", year: 2013, manner: "admitted", person: "subject" },
+      { sentence_id: port, quote: "did not cross through a designated Port of Entry", year: null, manner: "without_inspection", person: "subject" },
+    ] }),
+  }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-MANNER"));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /unresolved conflict/);
+});

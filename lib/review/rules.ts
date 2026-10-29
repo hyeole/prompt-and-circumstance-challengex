@@ -1,6 +1,7 @@
 // Deterministic checks. These run on every review, even when the model call fails.
 import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "@/lib/types";
 import { REFERENCES, findCharge } from "@/lib/references";
+import { fieldQuality } from "@/lib/fieldQuality";
 
 export interface RuleOutput {
   elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
@@ -24,9 +25,17 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
     const present = fs.filter((f) => f?.status === "present" && f.value.trim());
     const covered = el.requireAllFields ? present.length === el.fieldPaths.length : present.length > 0;
     if (covered) {
+      // Populated is not the same as known: qualify elements covered only by "unknown" or "See narrative" values.
+      const qs = present.map((f) => fieldQuality(f!.value));
+      const qualifier = qs.every((q) => q === "unknown") ? "recorded_unknown" as const
+        : qs.every((q) => q === "see_narrative") ? "see_narrative" as const
+        : qs.some((q) => q !== "known") && !qs.includes("known") ? "partly_unknown" as const : undefined;
       elementsFromFields.set(el.id, {
         elementId: el.id, label: el.label, status: "present", sentenceIds: [],
-        fieldPaths: present.map((f) => f!.path), note: "Recorded in a structured form field.",
+        fieldPaths: present.map((f) => f!.path), qualifier,
+        note: qualifier === "recorded_unknown" ? "The form records this as unknown. It is documented, but no usable value is recorded."
+          : qualifier === "partly_unknown" ? "The form records this only partly (part of the value is marked unknown)."
+          : qualifier === "see_narrative" ? "The form field refers to the narrative." : "Recorded in a structured form field.",
       });
     } else if (fs.some((f) => f?.status === "redacted")) {
       // Not final: the model may still find it in the narrative. Used only if the narrative lacks it.

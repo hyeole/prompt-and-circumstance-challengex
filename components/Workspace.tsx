@@ -14,6 +14,14 @@ type Drawer = null | "cases" | "references";
 const snapshot = (c: CaseRecord) => JSON.stringify([c.narrative.text, c.facts, c.selectedCharges]);
 const CLIENT_TIMEOUT_MS = 90_000;
 
+/** Short display title: the variant tag is shown separately, and long titles are cut at a word boundary. */
+export function shortTitle(title: string, max = 54) {
+  const t = title.replace(/\s*\[test variant [^\]]*\]\s*$/i, "").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  return cut.slice(0, cut.lastIndexOf(" ") > 30 ? cut.lastIndexOf(" ") : max).replace(/[,(]\s*$/, "") + "…";
+}
+
 export function kindLabel(kind: CaseRecord["kind"]) {
   return kind === "adapted-public-record" ? "Adapted public record" : kind === "synthetic-variant" ? "Team test variant" : "Synthetic";
 }
@@ -35,6 +43,7 @@ export default function Workspace({ cases, initialCaseId, caseSet = "app", refer
   const [factsOpen, setFactsOpen] = useState(true);
   const [editing, setEditing] = useState(false);
   const [drawer, setDrawer] = useState<Drawer>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [dispositions, setDispositions] = useState<Record<string, Record<string, Disposition>>>({});
   const abortRef = useRef<AbortController | null>(null);
 
@@ -82,7 +91,7 @@ export default function Workspace({ cases, initialCaseId, caseSet = "app", refer
 
   function switchCase(id: string) {
     if (phase === "running") return;
-    setCaseId(id); setSelected(null); setEditing(false); setPhase(reviews[id] ? "done" : "idle"); setError(null); setDrawer(null);
+    setCaseId(id); setSelected(null); setEditing(false); setDetailsOpen(false); setPhase(reviews[id] ? "done" : "idle"); setError(null); setDrawer(null);
   }
 
   const findings: Finding[] = review?.result.findings ?? [];
@@ -98,17 +107,23 @@ export default function Workspace({ cases, initialCaseId, caseSet = "app", refer
   return (
     <div className="shell">
       <nav className="rail no-print" aria-label="Main">
-        <div className="rail-brand" aria-label="NarrativeCheck">NC</div>
-        <button className={`rail-btn ${drawer === null ? "is-active" : ""}`} onClick={() => setDrawer(null)} aria-label="Review workspace" title="Review workspace"><Icon name="doc" size={19} /></button>
-        <button className={`rail-btn ${drawer === "cases" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "cases" ? null : "cases")} aria-label="Cases" title="Cases" aria-expanded={drawer === "cases"}><Icon name="folder" size={19} /></button>
-        <button className={`rail-btn ${drawer === "references" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "references" ? null : "references")} aria-label="References" title="References" aria-expanded={drawer === "references"}><Icon name="book" size={19} /></button>
+        <button className={`rail-btn ${drawer === null ? "is-active" : ""}`} onClick={() => setDrawer(null)} aria-label="Review workspace" data-tip="Review workspace"><Icon name="doc" size={19} /></button>
+        <button className={`rail-btn ${drawer === "cases" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "cases" ? null : "cases")} aria-label="Cases" data-tip="Cases" aria-expanded={drawer === "cases"}><Icon name="folder" size={19} /></button>
+        <button className={`rail-btn ${drawer === "references" ? "is-active" : ""}`} onClick={() => setDrawer(drawer === "references" ? null : "references")} aria-label="References and form abbreviations" data-tip="References" aria-expanded={drawer === "references"}><Icon name="book" size={19} /></button>
         <div className="rail-spacer" />
         <div className="rail-credit" title="Built by Prompt & Circumstance" aria-label="Built by Prompt and Circumstance">P&amp;C</div>
       </nav>
 
       <div className="main">
         <header className="header no-print">
-          <div className="header-title">
+          <div className="brand">
+            <div className="brand-mark" aria-hidden>NC</div>
+            <div>
+              <div className="wordmark">Narrative<span>Check</span></div>
+              <div className="tagline">Charge documentation review</div>
+            </div>
+          </div>
+          <div className="header-title" style={{ minWidth: 0, flex: 1 }}>
             <div className="crumbs">
               <button onClick={() => setDrawer("cases")}>{caseSet === "eval" ? "Evaluation set" : "Cases"}</button>
               <Icon name="chevronRight" size={11} />
@@ -116,7 +131,11 @@ export default function Workspace({ cases, initialCaseId, caseSet = "app", refer
               <span className={`tag ${current.kind === "synthetic-variant" ? "tag-variant" : ""}`}>{kindLabel(current.kind)}</span>
               {edited && <span className="tag tag-edited">Edited copy</span>}
             </div>
-            <h1 title={current.title}>{current.title}</h1>
+            <button className="title-btn" onClick={() => setDetailsOpen((o) => !o)} aria-expanded={detailsOpen} aria-controls="case-details" title={current.title}>
+              <h1>{shortTitle(current.title)}</h1>
+              <Icon name="chevronDown" size={15} />
+              <span className="sr-only">Show case details</span>
+            </button>
           </div>
           <div className="header-actions">
             <span className={`pill pill-${status.tone}`} role="status" aria-live="polite"><span className={`dot ${status.pulse ? "pulse" : ""}`} />{status.label}</span>
@@ -131,6 +150,19 @@ export default function Workspace({ cases, initialCaseId, caseSet = "app", refer
           </div>
         </header>
 
+        {detailsOpen && (
+          <section id="case-details" className="card case-details no-print" aria-label="Case details">
+            <dl>
+              <dt>Full title</dt><dd>{current.title}</dd>
+              <dt>Case ID</dt><dd className="mono">{current.id}{current.baseCaseId ? ` (variant of ${current.baseCaseId})` : ""}</dd>
+              <dt>Type</dt><dd>{kindLabel(current.kind)}</dd>
+              {current.provenance.pdfPages && <><dt>Source PDF pages</dt><dd>{current.provenance.pdfPages.join(", ")}</dd></>}
+              {current.provenance.modifications?.length ? <><dt>Team test edit</dt><dd>{current.provenance.modifications.join("; ")}</dd></> : null}
+              <dt>Source</dt><dd>{current.provenance.source}</dd>
+              <dt>Verification</dt><dd>{current.provenance.verification}</dd>
+            </dl>
+          </section>
+        )}
         {caseSet === "eval" && <div className="banner banner-info no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}><Icon name="layers" /> Evaluation set: team-created test variants of adapted public records. Not sponsor data.</div>}
         {error && review && <div className="banner banner-error no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="alert"><Icon name="alert" /> <span><strong>The latest review did not complete.</strong> {error} The findings shown are from the previous review.</span></div>}
 

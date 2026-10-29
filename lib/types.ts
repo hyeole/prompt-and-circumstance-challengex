@@ -106,6 +106,8 @@ export interface ElementResult {
   sentenceIds: string[];
   fieldPaths: string[];
   note?: string;
+  /** Set when the element is covered only by form fields whose values are not fully known. */
+  qualifier?: "recorded_unknown" | "partly_unknown" | "see_narrative";
 }
 
 export type CitationStatus = "consistent" | "likely_mismatch" | "insufficient_information" | "needs_human_review" | "not_checked";

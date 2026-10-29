@@ -89,6 +89,7 @@ export default function FindingsPanel(props: {
             </button>
           ))}
         </div>
+        {partial && <p className="small muted" style={{ margin: "8px 2px 0" }}>Counts reflect rule-based checks only; the model checks did not run.</p>}
         <div className="citation-line">
           <Icon name="citation" />
           <span className="mono">{review.citation.citation || "No charge selected"}</span>
@@ -111,7 +112,16 @@ export default function FindingsPanel(props: {
 
       <div className="tab-panel" role="tabpanel">
         {tab === "findings" && (sorted.length === 0 ? (
-          <div className="card state"><div className="state-icon" style={{ background: "var(--ok-bg)", color: "var(--ok)" }}><Icon name="check" size={22} /></div><h3>No findings</h3><p>Every check that ran completed without an issue. See Checks for anything that did not run.</p></div>
+          partial ? (
+            <div className="card state">
+              <div className="state-icon" style={{ background: "var(--warn-bg)", color: "var(--warn)" }}><Icon name="alert" size={22} /></div>
+              <h3>No findings from the rule-based checks</h3>
+              <p>The model checks did not run, so this is not a clean result. Run a fresh review when the endpoint responds.</p>
+              <button className="btn btn-primary btn-sm" onClick={onRun}><Icon name="refresh" size={13} /> Run fresh review</button>
+            </div>
+          ) : (
+            <div className="card state"><div className="state-icon" style={{ background: "var(--ok-bg)", color: "var(--ok)" }}><Icon name="check" size={22} /></div><h3>No findings</h3><p>Every check that ran completed without an issue. See Checks for anything that did not run.</p></div>
+          )
         ) : (
           <ol className="finding-list">
             {sorted.map((f) => (
@@ -125,11 +135,13 @@ export default function FindingsPanel(props: {
               const st = ELEMENT_STATUS[e.status];
               const linked = review.findings.find((f) => f.referenceIds.includes(e.elementId) && (f.category === "missing_element" || f.category === "unclear"));
               const src = e.fieldPaths.length ? "From the form" : e.sentenceIds.length ? `Narrative ${e.sentenceIds.join(", ")}` : e.status === "absent" ? "Not stated anywhere reviewed" : "";
+              const qual = e.status === "present" ? e.qualifier : undefined;
+              const qualLabel = qual === "recorded_unknown" ? "Recorded as unknown" : qual === "partly_unknown" ? "Partly unknown" : qual === "see_narrative" ? "Refers to narrative" : null;
               return (
-                <li key={e.elementId} className={`check check-${e.status}`}>
-                  <span className="check-ic" aria-hidden><Icon name={st.icon} size={14} /></span>
+                <li key={e.elementId} className={`check check-${e.status} ${qual ? "is-qualified" : ""}`} title={qual ? e.note : undefined}>
+                  <span className="check-ic" aria-hidden><Icon name={qual ? "info" : st.icon} size={14} /></span>
                   <span>{e.label}<span className="check-sub">{src}</span></span>
-                  {linked ? <button className="check-st linkish" onClick={() => { setTab("findings"); props.onSelect(linked.id); }}>{st.label}</button> : <span className="check-st">{st.label}</span>}
+                  {linked ? <button className="check-st linkish" onClick={() => { setTab("findings"); props.onSelect(linked.id); }}>{st.label}</button> : <span className="check-st">{qualLabel ?? st.label}</span>}
                 </li>
               );
             })}

@@ -2,6 +2,7 @@
 
 import type { CaseRecord, FieldStatus } from "@/lib/types";
 import Icon from "./Icon";
+import { fieldQuality, QUALITY_LABEL } from "@/lib/fieldQuality";
 
 const STATUS_LABEL: Record<FieldStatus, string> = { present: "Present", redacted: "Redacted", absent: "Absent", unreadable: "Unreadable", not_applicable: "N/A" };
 const GROUPS: [string, string][] = [["entry.", "Entry"], ["encounter.", "Encounter"], ["subject.", "Subject"], ["status.", "Status"], ["history.", "History"], ["documents.", "Documents"], ["form.", "Form"]];
@@ -61,7 +62,13 @@ export default function FactsPanel({ open, onToggle, kase, original, onChange, l
                   <div key={f.path} className={`fact ${linkedFields.includes(f.path) ? "is-linked" : ""}`}>
                     <div className="fact-top">
                       <label className="fact-label" htmlFor={`fact-${f.path}`}>{f.label}</label>
-                      <span className={`fstatus fstatus-${f.status}`}>{STATUS_LABEL[f.status]}</span>
+                      {(() => {
+                        // A populated field is not necessarily known information ("Unknown Date, Unknown Time").
+                        const q = f.status === "present" ? fieldQuality(f.value) : null;
+                        return q && q !== "known"
+                          ? <span className={`fstatus fstatus-${q}`} title="The form field is filled in, but it does not record a usable value.">{QUALITY_LABEL[q]}</span>
+                          : <span className={`fstatus fstatus-${f.status}`}>{STATUS_LABEL[f.status]}</span>;
+                      })()}
                     </div>
                     {f.status === "present" || f.status === "absent" ? (
                       <input id={`fact-${f.path}`} value={f.value} placeholder="Not recorded" disabled={disabled}
