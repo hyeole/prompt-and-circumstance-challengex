@@ -16,6 +16,7 @@ Every run is listed with its code version, so results can be traced and compared
 | 2026-10-29T22-38-59 | post-tuning | same working tree as above | held-out | 1 | NOT a held-out claim |
 | 2026-10-29T22-48-40 | post-hoc | commit `2c9e2d4`, dataset v2 | all 37 | 1 | NOT a held-out claim. 4 model timeouts |
 | 2026-10-29T23-08-37 | post-tuning diagnostics | commit `554c9b8` | dev | 1 | first run with per-call logs and sample agreement; the time-rule fix came after it |
+| **2026-10-29T23-32-42** | **post-tuning, shipped code** | **commit `8c0b474`, no uncommitted server changes** | all 37 | 1 | final run; source of the per-case PDF reports. NOT a held-out claim. 0 partial reviews |
 
 From now on `run-info.json` in each run folder records the commit, any uncommitted server changes, the label, and the concurrency.
 New held-out claims need a **fresh independent set** of base cases that were never used for tuning.

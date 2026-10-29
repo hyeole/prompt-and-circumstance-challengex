@@ -10,7 +10,7 @@ export const CATEGORY: Record<FindingCategory, { label: string; short: string; i
 };
 
 export const ELEMENT_STATUS: Record<ElementStatus, { label: string; icon: string }> = {
-  present: { label: "Present", icon: "check" },
+  present: { label: "Established", icon: "check" },
   absent: { label: "Not stated", icon: "x" },
   unclear: { label: "Unclear", icon: "unclear" },
   unavailable_redacted: { label: "Unavailable (redacted)", icon: "shield" },

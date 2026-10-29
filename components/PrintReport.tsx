@@ -47,7 +47,7 @@ export default function PrintReport({ kase, review, dispositions, edited }: { ka
               {review.elements.map((e) => (
                 <tr key={e.elementId}>
                   <td>{e.label}</td>
-                  <td>{e.status === "present" && e.qualifier ? (e.qualifier === "recorded_unknown" ? "Recorded as unknown" : e.qualifier === "partly_unknown" ? "Partly unknown" : "Refers to narrative") : ELEMENT_STATUS[e.status].label}</td>
+                  <td>{e.status === "present" && e.qualifier ? (e.qualifier === "recorded_unknown" ? "Documented as unknown (not established)" : e.qualifier === "partly_unknown" ? "Partly established" : "Refers to narrative") : ELEMENT_STATUS[e.status].label}</td>
                 </tr>
               ))}
             </tbody>

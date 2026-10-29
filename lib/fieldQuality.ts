@@ -23,6 +23,6 @@ export function fieldQuality(value: string): FieldQuality {
 export const QUALITY_LABEL: Record<FieldQuality, string> = {
   known: "Present",
   partly_unknown: "Partly unknown",
-  unknown: "Recorded as unknown",
+  unknown: "Documented as unknown",
   see_narrative: "See narrative",
 };

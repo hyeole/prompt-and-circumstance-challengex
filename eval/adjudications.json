@@ -88,6 +88,14 @@
       "note": "The cited sentence describes entering Mexico through the mountains, not the place of U.S. entry.",
       "example": "C013 I-2 Entry place mismatch",
       "date": "2026-10-29"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|once arriving at the mexico/guatemala border illegally enter",
+      "verdict": "false_flag",
+      "note": "Compares the form's U.S. entry manner with a sentence about illegally entering Mexico (S6); no conflicting account of the U.S. entry.",
+      "example": "C013 I-1 Entry facts mismatch",
+      "date": "2026-10-29"
     }
   ]
 }

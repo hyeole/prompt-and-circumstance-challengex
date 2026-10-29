@@ -89,7 +89,7 @@ export default function FindingsPanel(props: {
             </button>
           ))}
         </div>
-        {partial && <p className="small muted" style={{ margin: "8px 2px 0" }}>Counts reflect rule-based checks only; the model checks did not run.</p>}
+        {partial && <p className="small muted" style={{ margin: "8px 2px 0" }}>Findings from completed checks only. The model checks did not run.</p>}
         <div className="citation-line">
           <Icon name="citation" />
           <span className="mono">{review.citation.citation || "No charge selected"}</span>
@@ -114,9 +114,9 @@ export default function FindingsPanel(props: {
         {tab === "findings" && (sorted.length === 0 ? (
           partial ? (
             <div className="card state">
-              <div className="state-icon" style={{ background: "var(--warn-bg)", color: "var(--warn)" }}><Icon name="alert" size={22} /></div>
-              <h3>No findings from the rule-based checks</h3>
-              <p>The model checks did not run, so this is not a clean result. Run a fresh review when the endpoint responds.</p>
+              <div className="state-icon" style={{ background: "#e9eef4", color: "#46546a" }}><Icon name="clock" size={22} /></div>
+              <h3>Review incomplete</h3>
+              <p>No findings came from the checks that completed, but the model checks did not run. This is not a clean result. Run a fresh review when the endpoint responds.</p>
               <button className="btn btn-primary btn-sm" onClick={onRun}><Icon name="refresh" size={13} /> Run fresh review</button>
             </div>
           ) : (
@@ -136,7 +136,9 @@ export default function FindingsPanel(props: {
               const linked = review.findings.find((f) => f.referenceIds.includes(e.elementId) && (f.category === "missing_element" || f.category === "unclear"));
               const src = e.fieldPaths.length ? "From the form" : e.sentenceIds.length ? `Narrative ${e.sentenceIds.join(", ")}` : e.status === "absent" ? "Not stated anywhere reviewed" : "";
               const qual = e.status === "present" ? e.qualifier : undefined;
-              const qualLabel = qual === "recorded_unknown" ? "Recorded as unknown" : qual === "partly_unknown" ? "Partly unknown" : qual === "see_narrative" ? "Refers to narrative" : null;
+              // "Established" means usable information is recorded; "Documented as unknown" means the officer recorded
+              // that it is unknown, which is not the same as establishing it.
+              const qualLabel = qual === "recorded_unknown" ? "Documented as unknown" : qual === "partly_unknown" ? "Partly established" : qual === "see_narrative" ? "Refers to narrative" : null;
               return (
                 <li key={e.elementId} className={`check check-${e.status} ${qual ? "is-qualified" : ""}`} title={qual ? e.note : undefined}>
                   <span className="check-ic" aria-hidden><Icon name={qual ? "info" : st.icon} size={14} /></span>
