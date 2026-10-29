@@ -44,8 +44,8 @@ async function openCase(id) {
 async function runReview() {
   await page.locator(".header .btn-primary").click();
   await caption("Live review running on the Unissant-hosted gpt-oss-20b. Waiting time is shown in real time.", 0);
-  await page.waitForFunction(() => !/Reviewing/.test(document.querySelector(".topbar .status")?.textContent ?? ""), null, { timeout: 120_000 });
-  const status = await page.locator(".topbar .status").textContent();
+  await page.waitForFunction(() => !/Reviewing/.test(document.querySelector(".header .pill")?.textContent ?? ""), null, { timeout: 120_000 });
+  const status = await page.locator(".header .pill").textContent();
   await caption(`Review finished: ${status}`, 2.5);
 }
 
@@ -61,7 +61,10 @@ await caption("NarrativeCheck reviews an officer's narrative, the case facts, an
 
 // 1. Complete case
 await openCase(CLEAN);
-await caption(`Case ${CLEAN}: an adapted public record. Facts on the left, the original narrative in the middle, findings on the right.`, 4);
+await caption(`Case ${CLEAN}: an adapted public record. Case facts on the left, the original narrative in the middle, the review on the right.`, 4);
+await page.locator(".title-btn").click();
+await caption("Case details show the full title, source PDF pages, and how the case was prepared.", 4);
+await page.locator(".title-btn").click();
 await runReview();
 await caption("Required elements, citation check, and human-review indicator. Checks that complete with no issue say so.", 5);
 
@@ -70,7 +73,10 @@ await openCase("C012-M2");
 await caption("Test variant C012-M2: the team removed the place of entry from both the form and the narrative.", 4);
 await runReview();
 await clickFinding(/place of entry|Missing/i);
-await caption("Missing information appears in the checklist. Nothing is highlighted because there is no text to point to.", 5);
+await caption("The missing place of entry is reported with no highlight, because there is no text to point to.", 4);
+await page.getByRole("tab", { name: /elements/i }).click();
+await caption("The required-elements checklist shows what is stated, what is not, and what is recorded only as unknown.", 5);
+await page.getByRole("tab", { name: /findings/i }).click();
 
 // 3. Correction and fresh review
 await caption("The officer adds the missing detail in their own words.", 3);
@@ -89,7 +95,7 @@ await openCase("C012-X1");
 await caption("Test variant C012-X1: the narrative now says the subject flew in on a tourist visa, which conflicts with other statements and the form.", 5);
 await runReview();
 (await clickFinding(/conflict|inconsisten|contradict|manner|visa/i)) || (await page.locator("mark.hl").first().click());
-await caption("Clicking a finding highlights every linked source: the sentences and the form field.", 5);
+await caption("Both conflicting statements are highlighted and the linked form field lights up. The charge check waits for a person to resolve the conflict.", 6);
 const mark = page.locator("mark.hl").first();
 if (await mark.count()) { await mark.click(); await caption("Clicking a highlight opens its explanation.", 3); }
 
@@ -97,7 +103,7 @@ if (await mark.count()) { await mark.click(); await caption("Clicking a highligh
 await openCase("C003-AMB");
 await caption("Test variant C003-AMB: a second, conflicting account of how the subject entered.", 4);
 await runReview();
-await page.locator(".hr-banner").scrollIntoViewIfNeeded();
+await page.locator(".summary-hr").scrollIntoViewIfNeeded();
 await caption("Ambiguous facts are routed to a person, with the reason shown.", 5);
 
 // 6. Multi-charge

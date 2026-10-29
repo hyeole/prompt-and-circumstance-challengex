@@ -1,0 +1,10 @@
+{
+  "label": "post-tuning, shipped code (commit 8c0b474)",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-29T23:32:42.522Z",
+  "commit": "8c0b474",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

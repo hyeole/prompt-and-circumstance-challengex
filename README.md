@@ -6,7 +6,9 @@ NarrativeCheck reviews an officer-written charge narrative, the case facts behin
 
 It **never** rewrites the narrative, never picks or changes the charge, and never fills in missing facts. Ambiguous and multi-charge cases go to a person.
 
-> Status: in active development for the CHALLENGE X deadline. See [docs/DEVLOG.md](docs/DEVLOG.md).
+![NarrativeCheck review workspace after a live review of a team test case with a planted contradiction](docs/design/review-screen-v2.png)
+
+*Live review of team test case C012-X1. Two conflicting statements about the manner of entry are highlighted and linked to the form field. The case is routed to human review.*
 
 ## What it does
 
@@ -20,19 +22,40 @@ It **never** rewrites the narrative, never picks or changes the charge, and neve
 
 ### Review pipeline
 
-1. **Rule checks** (deterministic):
+1. **Rule checks** (deterministic code):
    - required elements already recorded in form fields;
-   - redacted fields treated as unavailable rather than as omissions;
+   - redacted fields treated as unavailable rather than missing;
+   - "Unknown" values qualified as *recorded as unknown*;
    - multiple selected charges;
-   - narratives covering several people;
-   - encounter time on the form vs. the narrative.
-2. **One model call** to the Unissant-hosted `gpt-oss-20b`. Case text is passed as data, never as instructions.
-3. **Verification**:
-   - output is validated against a schema;
-   - every quote must match the reviewed text exactly, or the statement is withheld;
+   - encounter time on the form vs. the arrest time in the narrative.
+2. **Three parallel model requests** to the Unissant-hosted `gpt-oss-20b`:
+   - two independent review samples (elements, issues, citation opinion);
+   - one **fact extraction** (entry and removal statements with exact quotes).
+
+   Case text is passed as data, never as instructions.
+3. **Code compares the extracted facts** with the form fields and with each other: entry year, manner of entry, and prior removals. It also checks the selected charge's core requirement (for example, an overstay charge needs a documented admission).
+4. **Verification:**
+   - every quote must match the reviewed text exactly (redaction markers normalized), or the statement is withheld;
    - contradictions need two verified sources;
-   - any suggestion of a different charge is removed.
-4. **Honest status**: each check reports *completed with findings*, *completed with no findings*, *partial*, or *unavailable*. If the model call fails, the app says so and does not substitute results.
+   - text that names or suggests another charge is removed from everything displayed;
+   - a charge that fits only one of two conflicting accounts is marked *needs human review*.
+5. **Honest status.** Each check reports *completed with findings*, *completed with no findings*, *partial*, or *unavailable*. If the model fails, the app says "Partial review" and substitutes nothing.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for request counts, timeouts and the measured latency.
+
+## Evaluation (internal, team-created test cases)
+
+We built 37 test cases: 9 verified adapted public records and 28 copies, each with one documented planted issue. Answers are kept separately from the inputs, and the cases are split into dev and held-out sets by base case. Full detail is in [eval/README.md](eval/README.md) and [eval/RUNS.md](eval/RUNS.md).
+
+| Measure | Internal held-out run (untouched, 21 cases) | Deck target |
+|---|---|---|
+| Strict detection of planted issues | 83% (15/18) | at least 90%: **not met** |
+| Incorrect flags (hand-adjudicated) | 28% (5/18) | at most 10%: **not met** |
+| Ambiguous / multi-charge cases routed to a person, for the planted reason | 100% (2/2 and 3/3) | 100%: met |
+| Evidence references reproduce the source text | 100% | every flag: met |
+| Review time, p50 / max | 22s / 55s | under 60s: met |
+
+Later runs after error analysis are **post-hoc** and do not replace this result. They are listed in `eval/RUNS.md`.
 
 ## Important limitations
 
@@ -42,7 +65,9 @@ It **never** rewrites the narrative, never picks or changes the charge, and neve
 
   Neither is sponsor-verified or legal advice.
 - **Cases are adapted public records.** They come from a redacted public CBP release; see [Data and provenance](#data-and-provenance). The original records are not an answer key.
-- **Evaluation scores are internal.** Planted-error test cases are team-created until Unissant supplies its test set.
+- **Evaluation scores are internal.** Planted-error test cases are team-created until Unissant supplies its test set. The single untouched held-out run does not meet the detection and incorrect-flag targets.
+- **The shared endpoint can be slow.** Some reviews hit the 55-second limit and are reported as partial reviews.
+- **Redacted names** often make it impossible to tell which person a statement belongs to. The app notes this and does not assume.
 - The tool is decision support. Its output is not a legal determination.
 
 ## Run it

@@ -106,3 +106,37 @@ The key is in `.env.local` (permissions 600, git-ignored).
 The general fixes are in commit `2c9e2d4`. Any held-out number after that is **post-hoc**, not blind.
 
 **Latency note:** the shared endpoint's speed varies a lot with load. The same code measured p50 17s at one time and 38s an hour later. We now run evaluations one case at a time.
+
+## 2026-10-29 (Thu, late night) Audit, rescoring, and redesign
+
+**Labels:** internal held-out vs post-hoc.
+- The first held-out run (`2026-10-29T22-28-28`, commit `ae55a38`) is the **internal held-out evaluation**: team-made cases, not a sponsor evaluation.
+- Every later run on those cases is **post-hoc**.
+- Registry: `eval/RUNS.md`.
+
+**Scoring policy v2 / v2.1** (`eval/README.md`):
+- Completion is reported separately, and failed reviews count as missed. The exception is a planted issue that a deterministic rule caught without the model.
+- Strict detection: generic routing is "routed only", not detection.
+- Every non-planted flag is adjudicated by hand against the source (`eval/adjudications.json`) or counted as incorrect.
+- Routing that rests on a verified real discrepancy is reported separately from unnecessary routing.
+
+**Internal held-out under v2.1:** strict recall 83% (15/18), incorrect flags 28% (5/18, all adjudicated false), routing 100%, evidence valid 100%, p50 22s. This misses the 90% and 10% targets.
+- Separately: excluding the doubtful v1 C037-M3 label gives 88% (15/17).
+- The v1 dataset is archived in `eval/archive/dataset-v1-ae55a38/`.
+
+**Audit fixes (commits `554c9b8`, `b53135e`):**
+- **Exact evidence.** Redaction markers are normalized. Model claims need exact matches or are withheld. Partial fragments are only allowed in date comparisons when the fragment contains the year, and they are labelled "partial".
+- **Per-request log.** In the diagnostic run: 48 requests for 16 reviews; review samples 22 ok / 6 cancelled / 4 timed out; facts 15 ok / 1 timed out. Only 7 reviews merged two samples, and merging added no single-sample flags.
+- **Charge-wording filter.** It now covers every displayed text. A sentence-split bug that let "8 U.S.C. 1325(a)" through is fixed.
+- **Time rule.** It now catches "At approximately 1030 hours, X was placed under arrest". That is a real 0950 vs 1030 discrepancy in C003, verified on the page image. Headings and call times are excluded.
+- **Tests.** 41 regression and unit tests at that point.
+
+**Design (approved direction, then refinements):**
+- A redesigned workspace (see `DESIGN.md`).
+- From the design review:
+  - "Unknown Date, Unknown Time" is shown as *Recorded as unknown*.
+  - The citation shows *Needs human review* when entry facts conflict.
+  - Partial reviews no longer show a green "No findings".
+  - Wordmark, short titles with case details, rail tooltips, softer highlights, and a blue-grey textured workspace.
+- UI QA at 1280×800 and 1366×768: no overflow. A missing favicon (404) was fixed.
+- 44 tests pass.

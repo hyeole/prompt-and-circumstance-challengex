@@ -107,3 +107,19 @@ These scores are **internal**. They are not Unissant's test set.
 - Every review in it is a live model call, and waiting time is shown in real time.
 - The video goes to `recordings/`, which Git ignores.
 - To play it: open the file in Chrome, or upload it to Google Drive or YouTube. QuickTime does not play `.webm`.
+
+## 9. What changed after the first evaluation (and why)
+
+- **Fact extraction plus code comparison.**
+  - On its own, the model was inconsistent at spotting contradictions (25% on the tuning cases).
+  - Now one model request only *pulls out* statements about entry and removals, with exact quotes. Plain code compares years, manner of entry and history with the form.
+  - Code is consistent, testable and explainable.
+- **Faster model setting.** `reasoning_effort=low` answered in 7 to 10 seconds. The default timed out at 120 seconds. Two review samples run in parallel and are merged; the slower one gets a 12-second grace period.
+- **Exact evidence.** A quote must match the source exactly, apart from spacing, capital letters, quote marks, and how redactions are written. A quote that doesn't match is withheld. The text you see is always copied from the source.
+- **"Populated" is not "known".**
+  - "Unknown Date, Unknown Time" is filled in, but it is not a usable date, so it shows as *Recorded as unknown*.
+  - When the record gives two accounts of how someone entered, the charge check says *Needs human review* instead of "Consistent".
+- **Honest scoring.**
+  - We ran the held-out cases once with the settings locked. That result (83% detection, 28% incorrect flags) is the one we report.
+  - Later improvements were informed by those mistakes, so later scores are labelled post-hoc.
+  - Every extra flag was checked by hand against the PDF. A few turned out to be real discrepancies in the original records, such as an arrest time that differs from the form.
