@@ -67,8 +67,26 @@ export function normalizeForMatch(s: string) {
     .toLowerCase();
 }
 
-/** Find a quote inside a sentence and return absolute offsets in the narrative, or null. */
+/**
+ * Find a quote inside a sentence and return absolute offsets in the narrative, or null.
+ * Fallback: the model sometimes drops or rewords a redaction tag inside a quote. Then the longest run of consecutive
+ * quoted words found in the sentence is used, if it covers at least half of the quote (and 4+ words), so evidence
+ * still points only at real text.
+ */
 export function locateQuote(sentence: Sentence, quote: string): { start: number; end: number } | null {
+  const exact = locateExact(sentence, quote);
+  if (exact) return exact;
+  const words = quote.replace(/\[[^\]]*\]?/g, " ").split(/\s+/).filter(Boolean);
+  const total = quote.split(/\s+/).filter(Boolean).length;
+  for (let len = words.length; len >= Math.max(4, Math.ceil(total / 2)); len--)
+    for (let i = 0; i + len <= words.length; i++) {
+      const hit = locateExact(sentence, words.slice(i, i + len).join(" "));
+      if (hit) return hit;
+    }
+  return null;
+}
+
+function locateExact(sentence: Sentence, quote: string): { start: number; end: number } | null {
   const q = normalizeForMatch(quote);
   if (q.length < 3) return null;
   // Build a normalized copy of the sentence with an index map back to the original offsets.

@@ -351,7 +351,7 @@
     {
       "id": "C037-M3",
       "base": "C037",
-      "description": "Removed manner of entry: form field blanked and both crossing sentences deleted.",
+      "description": "Removed manner of entry: form field blanked and the crossing sentences deleted. Corrected 2026-10-29 after error analysis: the smuggler sentence, which still implied crossing the border, is now also removed.",
       "ops": [
         {
           "op": "set_fact",
@@ -366,6 +366,10 @@
         {
           "op": "delete_sentence",
           "containing": "crossed the US/MEXICO Border illegally"
+        },
+        {
+          "op": "delete_sentence",
+          "containing": "used the services of a local smuggler"
         }
       ],
       "plants": [

@@ -72,3 +72,11 @@ test("time rule ignores transport times", () => {
   const c = { ...c001, narrative: { text: ss[0].text }, facts: c001.facts.map((f) => (f.path === "encounter.date_time" ? { ...f, value: "04/08/2017 2040" } : f)) };
   assert.ok(!runRules(c, ss).findings.some((f) => f.id === "R-TIME-MISMATCH"));
 });
+
+test("a quote that drops a redaction tag still matches the real text fragment only", () => {
+  const [s] = splitSentences("He last entered the United States on February 21, 2015 through the Port of [REDACTED (b)(7)(E)] Entry in Laredo, Texas.");
+  const loc = locateQuote(s, "entered the United States on February 21, 2015 through the Port of Entry in Laredo");
+  assert.ok(loc);
+  assert.equal(s.text.slice(loc!.start - s.start, loc!.end - s.start), "entered the United States on February 21, 2015 through the Port of");
+  assert.equal(locateQuote(s, "entered the country on March 3, 2019 through the Port of Entry"), null);
+});

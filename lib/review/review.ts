@@ -5,7 +5,7 @@ import { sha, splitSentences, locateQuote } from "@/lib/text";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
 
@@ -130,6 +130,14 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     if (m.status === "unavailable") return { elementId: el.id, label: el.label, status: "unavailable_redacted", sentenceIds: validIds, fieldPaths: [], note: m.note };
     return { elementId: el.id, label: el.label, status: m.status, sentenceIds: validIds, fieldPaths: [], note: m.note };
   });
+  // Cross-check E3 (manner of entry) with the fact extraction: if no form field covers it and no extracted statement
+  // says how the subject entered, a model "present" is not trusted.
+  const e3 = elements.find((e) => e.elementId === "E3");
+  if (e3 && e3.status === "present" && !e3.fieldPaths.length && factsSettled.ok && !hasMannerStatement(sentences, factsSettled.v)) {
+    e3.status = "absent";
+    e3.note = "No sentence states how the subject entered (checked by fact extraction).";
+    e3.sentenceIds = [];
+  }
   for (const e of elements) {
     const ref = allElements.find((x) => x.id === e.elementId)! as RequiredElement & { advisory?: boolean };
     if (ref.advisory) continue; // advisory elements appear in the checklist only
@@ -199,26 +207,35 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   // ---- Citation check
   let citation: ReviewResult["citation"];
   const citeText = selected.map((s) => s.citation).join("; ");
+  const reqs = (charge as { requires?: { entryManner?: string; priorRemoval?: boolean } } | undefined)?.requires;
+  // Deterministic pre-check of the charge's core requirement. Uses extracted facts when available, form fields otherwise.
+  const req = !rules.citationPrecheck && charge ? checkChargeRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs) : null;
   if (rules.citationPrecheck) {
     citation = { status: rules.citationPrecheck.status, citation: citeText, explanation: rules.citationPrecheck.explanation, evidence: [] };
-  } else if (!out) {
-    citation = { status: "not_checked", citation: citeText, explanation: "The citation check could not run because the model check was unavailable.", evidence: [] };
   } else {
-    const ev = out.citation.evidence.map((x) => verifyEvidence(x, sentences, c)).filter(Boolean) as EvidenceRef[];
-    const clean = stripChargeAdvice(out.citation.explanation, selected.map((s) => s.citation));
-    let status = out.citation.status;
-    let explanation = clean.text || "See evidence.";
-    if (status === "insufficient_information" && charge) {
-      // The reference exists, so "insufficient" means the record does not establish a key fact for this charge.
-      status = "needs_human_review";
-      explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
+    let status: ReviewResult["citation"]["status"] = "not_checked";
+    let explanation = "The citation check could not run because the model check was unavailable.";
+    let evidence: EvidenceRef[] = [];
+    if (out) {
+      evidence = out.citation.evidence.map((x) => verifyEvidence(x, sentences, c)).filter(Boolean) as EvidenceRef[];
+      explanation = stripChargeAdvice(out.citation.explanation, selected.map((s) => s.citation)).text || "See evidence.";
+      status = out.citation.status;
+      if (status === "insufficient_information" && charge) {
+        // The reference exists, so "insufficient" means the record does not establish a key fact for this charge.
+        status = "needs_human_review";
+        explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
+      }
+      if (!req && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(sentences, factsSettled.v, reqs)) {
+        // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch.
+        status = "needs_human_review";
+        explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
+      }
     }
-    let evidence = ev;
-    // Deterministic pre-check of the charge's core requirement; the more cautious result wins.
-    const req = factsSettled.ok && charge ? checkChargeRequirement(c, sentences, factsSettled.v, (charge as { requires?: { entryManner?: string; priorRemoval?: boolean } }).requires) : null;
-    if (req && status !== "likely_mismatch") {
-      status = "likely_mismatch";
-      explanation = req.explanation;
+    // The more cautious result wins.
+    const rank = { not_checked: -1, consistent: 0, insufficient_information: 1, needs_human_review: 2, likely_mismatch: 3 } as const;
+    if (req && rank[req.status] > rank[status]) {
+      status = req.status;
+      explanation = req.explanation + (out ? "" : " (Checked from form fields and rules; the model check was unavailable.)");
       evidence = req.evidence;
     }
     if (status === "likely_mismatch" && evidence.length === 0) {
@@ -228,13 +245,13 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     citation = { status, citation: citeText, explanation, evidence };
     if (status === "likely_mismatch") {
       findings.push({
-        id: "C-1", category: "citation", title: `Possible citation mismatch: ${citeText}`, explanation: citation.explanation,
-        evidence: citation.evidence, referenceIds: charge ? [charge.id] : [], needsHumanReview: true,
-        humanReviewReason: "The officer decides the charge; the tool does not select one.", source: "model", severity: "high",
+        id: "C-1", category: "citation", title: `Possible citation mismatch: ${citeText}`, explanation,
+        evidence, referenceIds: charge ? [charge.id] : [], needsHumanReview: true,
+        humanReviewReason: "The officer decides the charge; the tool does not select one.", source: req?.status === "likely_mismatch" ? "rule" : "model", severity: "high",
       });
       humanReasons.push("Possible mismatch between the narrative and the selected charge.");
     }
-    if (status === "needs_human_review") humanReasons.push(citation.explanation);
+    if (status === "needs_human_review") humanReasons.push(explanation);
   }
   if (out?.human_review.required) humanReasons.push(...out.human_review.reasons);
   if (modelStatus !== "ok") humanReasons.push("The model check did not complete, so this review is partial.");
