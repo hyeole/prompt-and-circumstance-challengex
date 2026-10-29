@@ -1,0 +1,224 @@
+[
+  {
+    "id": "C001",
+    "ms": 7482,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C001-CIT",
+    "ms": 14891,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C001-M3",
+    "ms": 13022,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C001-MC",
+    "ms": 11796,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C001-X1",
+    "ms": 10945,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003",
+    "ms": 19028,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003-AMB",
+    "ms": 7191,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003-CIT",
+    "ms": 53816,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003-M3",
+    "ms": 27843,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012",
+    "ms": 33990,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-M2",
+    "ms": 35726,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-MC",
+    "ms": 10481,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-X1",
+    "ms": 29466,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C013",
+    "ms": 55091,
+    "ok": true,
+    "modelStatus": "failed"
+  },
+  {
+    "id": "C013-CIT",
+    "ms": 33667,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C013-X1",
+    "ms": 26290,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C021",
+    "ms": 55033,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C021-CIT",
+    "ms": 17799,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C021-MC",
+    "ms": 55033,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C021-X1",
+    "ms": 19371,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C037",
+    "ms": 31254,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C037-AMB",
+    "ms": 55035,
+    "ok": true,
+    "modelStatus": "failed"
+  },
+  {
+    "id": "C037-CIT",
+    "ms": 55042,
+    "ok": true,
+    "modelStatus": "failed"
+  },
+  {
+    "id": "C037-M3",
+    "ms": 55044,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C037-X1",
+    "ms": 55030,
+    "ok": true,
+    "modelStatus": "failed"
+  },
+  {
+    "id": "C045",
+    "ms": 27410,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C045-CIT",
+    "ms": 11218,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C045-MC",
+    "ms": 25487,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C045-X1",
+    "ms": 16239,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C119",
+    "ms": 11818,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C119-AMB",
+    "ms": 19871,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C119-CIT",
+    "ms": 22464,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C119-X1",
+    "ms": 12045,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C135",
+    "ms": 23791,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C135-M2",
+    "ms": 7420,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C135-M3",
+    "ms": 22948,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C135-MC",
+    "ms": 8865,
+    "ok": true,
+    "modelStatus": "ok"
+  }
+]

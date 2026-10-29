@@ -7,6 +7,7 @@
  * Output: eval/runs/<timestamp>/raw/<id>.json (git-ignored) and eval/runs/<timestamp>/latency.json
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 
 const arg = (k: string, d?: string) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = process.env.EVAL_BASE_URL ?? "http://localhost:3000";
@@ -19,6 +20,14 @@ const cases = readdirSync("eval/cases").sort().map((f) => JSON.parse(readFileSyn
 const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 const dir = `eval/runs/${stamp}`;
 mkdirSync(`${dir}/raw`, { recursive: true });
+const sh = (cmd: string) => { try { return execSync(cmd, { encoding: "utf8" }).trim(); } catch { return "unknown"; } };
+const label = arg("label", "post-tuning")!; // "official-heldout" only for a first, blind run of a frozen commit
+writeFileSync(`${dir}/run-info.json`, JSON.stringify({
+  label, split, only: only ?? null, concurrency: conc, startedAt: new Date().toISOString(),
+  commit: sh("git rev-parse --short HEAD"), uncommittedServerChanges: sh("git status --porcelain -- lib app components config") || "none",
+  // Server-side model settings come from the app's environment; recorded per review in raw results as modelConfig.
+  note: "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result.",
+}, null, 2));
 console.log(`Running ${cases.length} cases against ${BASE} (concurrency ${conc}) -> ${dir}`);
 
 const latency: { id: string; ms: number; ok: boolean; modelStatus?: string; error?: string }[] = [];

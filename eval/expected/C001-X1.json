@@ -2,6 +2,7 @@
   "id": "C001-X1",
   "base": "C001",
   "split": "dev",
+  "datasetVersion": "v2",
   "description": "Narrative entry date changed to conflict with the form's date of last entry (05/15/2014).",
   "plants": [
     {

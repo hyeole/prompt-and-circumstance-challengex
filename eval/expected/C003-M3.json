@@ -2,6 +2,7 @@
   "id": "C003-M3",
   "base": "C003",
   "split": "dev",
+  "datasetVersion": "v2",
   "description": "Removed manner of entry: form field blanked and the border-crossing sentence deleted.",
   "plants": [
     {

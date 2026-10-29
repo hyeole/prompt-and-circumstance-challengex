@@ -1,0 +1,69 @@
+{
+  "about": "Manual adjudication of findings that match no planted issue. Each was checked against the case text and source PDF page. Adjudicated by the team (prepared by Claude Code, to be confirmed by Harshal Yeole). Keyed by base case so the same finding is judged the same way in every variant and run.",
+  "items": [
+    {
+      "base": "C021",
+      "key": "inconsistency|dob: pob: nigeria entered as a b-1/b2 arriving on 06- 01-201|entry.date",
+      "verdict": "false_flag",
+      "note": "S29 describes a second person (a B-1/B-2 arrival on 06-01-2016), not this record's subject, whose entry 12/23/2015 matches the form.",
+      "example": "C021 F-ENTRY-DATE Entry date differs from the form",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|at 0412 am sector dispatch requested a supervisory border pa|encounter.date_time",
+      "verdict": "false_flag",
+      "note": "Misreads the time '0412 am' in S10 as the date 4/12; the narrative's encounter facts do not conflict with 04/16/2017 0730.",
+      "example": "C021-CIT I-1 Encounter date mismatch",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject is removable per section 237(a)(1)(b) of the immigra",
+      "verdict": "false_flag",
+      "note": "'Subject is removable per Section 237(a)(1)(B)' states the current charge, not a past removal.",
+      "example": "C021-MC F-HISTORY Immigration record conflicts with the narrative",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C021",
+      "key": "citation|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015",
+      "verdict": "false_flag",
+      "note": "The record documents admission as a B2 visitor (S27, S33), which is what 237(a)(1)(B) depends on; the model's own explanation says the facts support the charge.",
+      "example": "C021-X1 C-1 Possible citation mismatch: INA 237(a)(1)(B)",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C045",
+      "key": "inconsistency|claims to have last entered the united states on february 21|entry.place",
+      "verdict": "false_flag",
+      "note": "'LAR' in the form is the location code for Laredo, which is where the narrative says the subject entered; no conflict.",
+      "example": "C045-X1 I-2 Entry place mismatch",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+      "verdict": "valid_observation",
+      "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm.",
+      "example": "C001 R-TIME-MISMATCH Encounter time differs between form and narrative",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C003",
+      "key": "missing_element|E6",
+      "verdict": "false_flag",
+      "note": "The basis is stated: S23 he admitted being a citizen of Mexico; S24 asked if he was present illegally, he advised yes.",
+      "example": "C003-CIT M-E6 Missing: basis for the immigration violation",
+      "date": "2026-10-29"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|in 2015 left his home town of ocotal nicaragua by bus and tr|once arriving at the mexico/guatemala border illegally enter",
+      "verdict": "false_flag",
+      "note": "Cited sentence describes entering legally into Honduras, not the United States; there is no conflicting account of the U.S. entry.",
+      "example": "C013-CIT F-ENTRY-MANNER Conflicting accounts of how the subject entered",
+      "date": "2026-10-29"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
   "id": "C001-CIT",
   "base": "C001",
   "split": "dev",
+  "datasetVersion": "v2",
   "description": "Selected charge replaced with one that requires a prior admission, while the record documents entry without inspection.",
   "plants": [
     {

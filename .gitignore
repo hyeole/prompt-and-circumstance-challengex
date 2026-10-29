@@ -34,3 +34,4 @@ tmp/
 *.log
 .claude/settings.local.json
 eval/runs/*/reports/
+share/

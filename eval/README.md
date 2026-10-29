@@ -15,14 +15,38 @@
 | Citation | Selected charge replaced with one whose key facts conflict with the record | Citation status is `likely_mismatch` or `needs_human_review` |
 | Human review | Second charge added, or a conflicting statement added | Human review required = true |
 
-## Matching policy
-- Each planted issue is counted once. Extra findings matching the same planted issue are duplicates. They count neither as correct nor as incorrect.
-- **Incorrect-flag proportion (conservative):** on variant cases, any finding that matches no planted issue and did not already appear on the unmodified base case counts as incorrect, even if it might be a fair observation.
-- Findings that already appeared on the base case are "inherited" and reported separately.
-- Findings on unmodified bases are reported as **unadjudicated observations**. The public records are not an answer key.
-- **Evidence validity:** every sentence reference must reproduce its quote exactly at the stored offsets of the reviewed text. Field references must name a real field.
-- **Latency:** client-measured time for the full HTTP review, including slow and failed requests.
-- Reviewer dismissals and the model's own confidence are never used as ground truth.
+## Scoring policy v2 (2026-10-29, `scripts/score-eval.ts`)
+Policy v1 was used for the early tuning notes in the dev log. Every run in `RUNS.md` has been re-scored with v2 so the numbers can be compared.
+
+**Completion.** A review is *completed* when the model check finished. Completion rate is reported separately.
+On a failed or partial review, a planted issue counts as detected only if a finding produced by a deterministic **rule** (`source: "rule"`, e.g. multi-charge routing or the form-field charge requirement check) addresses it. Everything else counts as missed ("not_completed"). (v2.1, 2026-10-29: v2 credited only multi-charge routing; changed after the post-hoc run showed the rule-based charge check catching a mismatch while the model timed out. All runs re-scored.)
+
+**Strict detection, per planted issue:**
+| Planted issue | Detected only when |
+|---|---|
+| Missing element | The element is reported absent, or a finding cites that element. "Unclear" counts as *routed only* |
+| Inconsistency | An inconsistency or unclear finding cites the planted sentence (anchor text) or the changed field |
+| Citation error | Citation status is `likely_mismatch` **with verified evidence**. `needs_human_review` counts as *routed only* |
+| Multi-charge routing | The multi-charge rule fired (`R-MULTI-CHARGE`) |
+| Ambiguity routing | Human review is required **and** a finding marked for human review cites the planted statement. Generic routing counts as *routed only* |
+
+Recall counts only "detected". The outcome counts (detected, routed only, missed, not completed) are reported with every run.
+
+**Flags.** Every finding that matches no planted issue is either:
+- **adjudicated by hand** against the case text and the source PDF page (`eval/adjudications.json`, recorded with `scripts/adjudicate.ts`) as a *valid observation* or a *false flag*; or
+- left *unadjudicated*, in which case it counts as incorrect.
+
+Nothing is excluded automatically for "already appearing on the base case". Findings that match an already-matched planted issue are **duplicates**. They are listed and left out of the incorrect-flag proportion.
+
+**Incorrect-flag proportion** = (false flags + unadjudicated) / (all issued flags − duplicates), including flags on unmodified base cases.
+
+**Unnecessary routing** = share of cases where nothing calls for review (unmodified bases and missing-element variants) that were still routed to human review.
+
+**Evidence validity**: every sentence reference must reproduce its quote exactly at the stored offsets. Field references must name a real field.
+
+**Latency**: client-measured time for the full HTTP review, including slow and failed requests.
+
+Reviewer dismissals and the model's own confidence are never used as ground truth.
 
 ## Run
 ```bash

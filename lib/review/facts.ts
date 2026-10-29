@@ -3,7 +3,7 @@
 // and with the form fields, so contradictions are found consistently and every comparison can be explained.
 import { z } from "zod";
 import type { CaseRecord, EvidenceRef, Finding, Sentence } from "@/lib/types";
-import { locateQuote } from "@/lib/text";
+import { locatePartial, locateQuote } from "@/lib/text";
 
 export const FACTS_PROMPT_VERSION = "facts-v1.2";
 
@@ -54,12 +54,23 @@ export function formYear(value: string): number | undefined {
 
 type Verified = { s: Sentence; ev: EvidenceRef };
 
-function verify(sentences: Sentence[], id: string, quote: string): Verified | null {
+/**
+ * Verify an extracted quote against the source sentence. Exact by default. When `material` is given (for example a
+ * year), a partial source fragment is accepted only if that fragment itself contains the material fact.
+ * The evidence shown is always source text at exact offsets.
+ */
+function verify(sentences: Sentence[], id: string, quote: string, material: string[] = []): Verified | null {
   const s = sentences.find((x) => x.id === id);
   if (!s) return null;
-  const loc = locateQuote(s, quote);
+  const loc = material.length ? locatePartial(s, quote, material) : locateQuote(s, quote);
   if (!loc) return null;
-  return { s, ev: { kind: "sentence", sentenceId: s.id, quote: s.text.slice(loc.start - s.start, loc.end - s.start), start: loc.start, end: loc.end, page: s.page, verified: true } };
+  return { s, ev: { kind: "sentence", sentenceId: s.id, quote: s.text.slice(loc.start - s.start, loc.end - s.start), start: loc.start, end: loc.end, page: s.page, verified: true, match: loc.match } };
+}
+
+/** Evidence that visibly contains `fact`: the verified quote if it does, otherwise the whole source sentence. */
+function showing(v: Verified, fact: string): EvidenceRef {
+  if (v.ev.quote?.includes(fact)) return v.ev;
+  return { kind: "sentence", sentenceId: v.s.id, quote: v.s.text, start: v.s.start, end: v.s.end, page: v.s.page, verified: true, match: "exact" };
 }
 
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not make clear whether this statement is about this record's subject." : "");
@@ -71,20 +82,27 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
   const fieldEv = (p: string): EvidenceRef => { const f = field(p)!; return { kind: "field", fieldPath: f.path, quote: f.value, page: f.sourcePage, verified: true }; };
 
+  // Each statement is verified exactly; a statement with a year may instead match partially, but then it is used
+  // only for the date comparison and only if the matched source fragment contains that year.
   const entries = facts.entry_statements
     .filter((e) => e.person !== "other")
-    .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) }))
-    .filter((x) => (x.v ? true : (dropped++, false))) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
+    .map((e) => {
+      const exact = verify(sentences, e.sentence_id, e.quote);
+      const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
+      return { e, v, exact: !!exact };
+    })
+    .filter((x) => (x.v ? true : (dropped++, false))) as { e: FactsOutput["entry_statements"][number]; v: Verified; exact: boolean }[];
 
   // 1. Entry year vs form date of last entry.
   const fy = field("entry.date") ? formYear(field("entry.date")!.value) : undefined;
   if (fy) {
     const off = entries.find((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)));
+    const offEv = off ? showing(off.v, String(off.e.year)) : null;
     if (off)
       findings.push({
         id: "F-ENTRY-DATE", category: "inconsistency", title: "Entry date differs from the form",
         explanation: `The narrative gives ${off.e.year} for the entry, but the form records the last entry in ${fy}.${attributionNote(off.e.person)}`,
-        evidence: [off.v.ev, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
+        evidence: [offEv!, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
@@ -97,13 +115,13 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       findings.push({
         id: "F-ENTRY-DATE-2", category: "inconsistency", title: "Narrative gives two different entry years",
         explanation: `One statement gives ${a.e.year} and another gives ${b.e.year} for the entry.${attributionNote(b.e.person)}`,
-        evidence: [a.v.ev, b.v.ev], referenceIds: ["E1"], needsHumanReview: true,
+        evidence: [showing(a.v, String(a.e.year)), showing(b.v, String(b.e.year))], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
   // 3. Manner of entry: narrative statements vs each other and vs the form code.
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
-  const known = entries.filter((x) => x.e.manner !== "unknown");
+  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown"); // manner wording must be verified exactly
   const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");

@@ -4,7 +4,7 @@ import { REFERENCES, REFERENCE_VERSION, findCharge, type RequiredElement } from 
 import { sha, splitSentences, locateQuote } from "@/lib/text";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
-import { mergeOutputs } from "./merge";
+import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
@@ -22,7 +22,8 @@ function verifyEvidence(ev: Ev, sentences: Sentence[], c: CaseRecord): EvidenceR
   const byId = sentences.find((s) => s.id === ev.sentence_id);
   const tryIn = (s: Sentence) => {
     const loc = locateQuote(s, ev.quote!);
-    return loc ? { kind: "sentence" as const, sentenceId: s.id, quote: c.narrative.text.slice(loc.start, loc.end), start: loc.start, end: loc.end, page: s.page, verified: true } : null;
+    // Model claims need an exact match (after normalizing whitespace, case, quote marks and redaction markers).
+    return loc ? { kind: "sentence" as const, sentenceId: s.id, quote: c.narrative.text.slice(loc.start, loc.end), start: loc.start, end: loc.end, page: s.page, verified: true, match: "exact" as const } : null;
   };
   // Prefer the cited sentence; otherwise accept a unique match elsewhere (the model sometimes mis-numbers).
   if (byId) { const r = tryIn(byId); if (r) return r; }
@@ -32,17 +33,23 @@ function verifyEvidence(ev: Ev, sentences: Sentence[], c: CaseRecord): EvidenceR
 
 // Statements about whether the SELECTED charge fits belong in the citation check only.
 const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
-const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed)? (charging|the charge)|more appropriate charge|instead charge|a better charge)\b/i;
+const ANY_CITATION_RE = /\b(?:INA|Section)\s*\d{3}\s*\([a-z0-9]+\)(?:\s*\([a-z0-9]+\))*|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}(?:\s*\([a-z0-9]+\))*/gi;
+const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed|s)? (charging|the charge|a charge)|more appropriate|a better charge|alternative charge|could be charged|consider (charging|a different|another))\b|\bcharg\w*\b[^.]*\binstead\b|\binstead\b[^.]*\bcharg/i;
 
 /** Remove any sentence that names a different charge or proposes one. The tool never selects a charge. */
 function stripChargeAdvice(text: string, selected: string[]): { text: string; stripped: boolean } {
   const allCites = REFERENCES.charges.flatMap((c) => c.citations);
-  const sels = selected.map((s) => s.toLowerCase());
-  const parts = text.split(/(?<=[.!?])\s+/);
+  // Do not split after single-letter abbreviations ("U.S.C.", "U.S."), or citations get cut in half.
+  const parts = text.split(/(?<=[.!?])(?<!\b[A-Z]\.)\s+/);
+  const core = (x: string) => x.toLowerCase().replace(/[\s.§]/g, "").replace(/^(ina|section|8usc)/, "");
+  // The selected charge may appear in any of its equivalent forms (INA section, U.S.C. section, "Section ...").
+  const allowed = [...selected, ...REFERENCES.charges.filter((ch) => ch.citations.some((ci) => selected.some((x) => core(x).startsWith(core(ci))))).flatMap((ch) => ch.citations)].map(core);
   const keep = parts.filter((p) => {
     if (OTHER_CHARGE_RE.test(p)) return false;
     const low = p.toLowerCase();
-    return !allCites.some((ci) => low.includes(ci.toLowerCase()) && !sels.some((s) => s.includes(ci.toLowerCase()) || ci.toLowerCase().includes(s)));
+    if (allCites.some((ci) => low.includes(ci.toLowerCase()) && !allowed.some((a) => a.startsWith(core(ci)) || core(ci).startsWith(a)))) return false;
+    // Any other statutory citation pattern that is not the selected charge (or a prefix of it).
+    return [...p.matchAll(ANY_CITATION_RE)].every((m) => allowed.some((a) => a.startsWith(core(m[0])) || core(m[0]).startsWith(a)));
   });
   return { text: keep.join(" "), stripped: keep.length !== parts.length };
 }
@@ -50,9 +57,9 @@ function stripChargeAdvice(text: string, selected: string[]): { text: string; st
 const SAMPLE_GRACE_MS = 12_000;
 
 /** Run n samples in parallel. After the first one succeeds, wait at most SAMPLE_GRACE_MS for the rest, then cancel them. */
-async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal) => Promise<T>): Promise<PromiseSettledResult<T>[]> {
+async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal, i: number) => Promise<T>): Promise<PromiseSettledResult<T>[]> {
   const ctrls = Array.from({ length: n }, () => new AbortController());
-  const all = ctrls.map((c) => run(c.signal));
+  const all = ctrls.map((c, i) => run(c.signal, i));
   let timer: ReturnType<typeof setTimeout> | undefined;
   const grace = new Promise<void>((resolve) => {
     let pending = n;
@@ -64,7 +71,25 @@ async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal) => Prom
   return Promise.allSettled(all);
 }
 
-export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
+/** A model call. Injected so tests can run the whole pipeline offline with a fake model. */
+export type Complete = (system: string, user: string, budgetMs?: number, signal?: AbortSignal) => Promise<{ text: string; attempts: number }>;
+type CallLog = ReviewResult["calls"][number];
+
+/** Wrap a call so its outcome, duration and attempts are recorded, including failures and cancellations. */
+function logged<T extends { attempts: number }>(log: CallLog[], role: string, p: Promise<T>): Promise<T> {
+  const t0 = Date.now();
+  return p.then(
+    (v) => (log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts }), v),
+    (e) => {
+      const cancelled = e instanceof ModelError && /cancelled/i.test(e.message);
+      log.push({ role, status: cancelled ? "cancelled" : "failed", ms: Date.now() - t0, attempts: e instanceof ModelError ? e.attempts : 1, error: e instanceof ModelError ? e.kind : "error" });
+      throw e;
+    },
+  );
+}
+
+export async function reviewCase(c: CaseRecord, complete: Complete = completeJSON): Promise<ReviewResult> {
+  const calls: CallLog[] = [];
   const t0 = Date.now();
   const sentences = splitSentences(c.narrative.text, c.narrative.pageSpans);
   const rules = runRules(c, sentences);
@@ -87,9 +112,11 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   const m0 = Date.now();
   const user = buildUserPrompt(c, sentences, toCheck, charge, REFERENCES.formGlossary);
   // Fact extraction runs alongside the review samples; code compares the extracted statements (lib/review/facts.ts).
-  const factsCall = completeJSON(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences)).then((r) => FactsOutput.parse(extractJSON(r.text)));
+  const factsCall = logged(calls, "facts", complete(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences))).then((r) => {
+    try { return FactsOutput.parse(extractJSON(r.text)); } catch (e) { const last = calls.find((x) => x.role === "facts"); if (last) last.status = "invalid_output"; throw e; }
+  });
   const [settled, factsSettled] = await Promise.all([
-    samplesWithGrace(SAMPLES, (signal) => completeJSON(SYSTEM_PROMPT, user, undefined, signal)),
+    samplesWithGrace(SAMPLES, (signal, i) => logged(calls, `review-${i + 1}`, complete(SYSTEM_PROMPT, user, undefined, signal))),
     factsCall.then((v) => ({ ok: true as const, v }), () => ({ ok: false as const })),
   ]);
   modelLatencyMs = Date.now() - m0;
@@ -101,11 +128,14 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
       continue;
     }
     attempts += r.value.attempts;
+    const idx = settled.indexOf(r);
+    const markInvalid = () => { const l = calls.find((x) => x.role === `review-${idx + 1}`); if (l) l.status = "invalid_output"; };
     try {
       const parsed = ModelOutput.safeParse(extractJSON(r.value.text));
       if (parsed.success) outs.push(parsed.data);
-      else modelError ??= "The model answered, but its output did not match the expected format.";
+      else { markInvalid(); modelError ??= "The model answered, but its output did not match the expected format."; }
     } catch {
+      markInvalid();
       modelError ??= "The model answered, but its output was not valid JSON.";
     }
   }
@@ -183,7 +213,7 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
       id: `${iss.type === "inconsistency" ? "I" : "Q"}-${i + 1}`, category: iss.type, title: iss.title,
       explanation: clean.text || "See linked evidence.", evidence: verified, referenceIds: [],
       needsHumanReview: hr, humanReviewReason: hr ? iss.reason || (iss.type === "inconsistency" ? "Conflicting facts: a person should decide which is correct." : "Model asked for human review.") : undefined,
-      source: "model", severity: iss.type === "inconsistency" ? "high" : "low",
+      source: "model", severity: iss.type === "inconsistency" ? "high" : "low", sampleAgreement: agreement(outs, iss),
     });
     if (iss.needs_human_review && iss.reason) humanReasons.push(iss.reason);
   });
@@ -276,6 +306,19 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
   const required = uniqReasons.length > 0 || findings.some((f) => f.needsHumanReview);
   checks[4].status = required ? "completed_with_findings" : "completed_no_findings";
 
+  // Final pass: no displayed text may name or recommend a charge other than the selected one.
+  const sel = selected.map((x) => x.citation);
+  const clean = (t: string) => stripChargeAdvice(t, sel).text;
+  citation.explanation = clean(citation.explanation) || "See the evidence listed.";
+  for (const f of findings) {
+    f.title = clean(f.title) || (f.category === "citation" ? "Possible citation mismatch" : "Finding");
+    f.explanation = clean(f.explanation) || "See the linked evidence.";
+    if (f.humanReviewReason) f.humanReviewReason = clean(f.humanReviewReason) || "A person should review this.";
+  }
+  for (const e of elements) if (e.note) e.note = clean(e.note);
+  const shownReasons = uniqReasons.map(clean).filter(Boolean);
+
+  const perSample = outs.map((o) => o.issues.length);
   return {
     reviewId: `R-${Date.now().toString(36)}`,
     caseId: c.id,
@@ -296,9 +339,11 @@ export async function reviewCase(c: CaseRecord): Promise<ReviewResult> {
     checks,
     elements,
     citation,
-    humanReview: { required, reasons: uniqReasons },
+    humanReview: { required, reasons: shownReasons.length ? shownReasons : required ? ["See findings marked for human review."] : [] },
     findings,
     notes: rules.notes,
     discarded,
+    calls: calls.sort((a, b) => a.role.localeCompare(b.role)),
+    sampleIssues: { perSample, merged: out?.issues.length ?? 0, inAllSamples: out ? out.issues.filter((i) => agreement(outs, i) === outs.length).length : 0 },
   };
 }

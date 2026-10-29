@@ -70,3 +70,39 @@ The key is in `.env.local` (permissions 600, git-ignored).
 - Playwright with the installed Chrome records real `.webm` video.
 - It needed Playwright's 1.4 MB ffmpeg encoder, downloaded once into Playwright's cache.
 - The first scripted walkthrough recorded fine. It showed that the ambiguous test case C003-AMB was **not** routed to human review. That needs fixing.
+
+## 2026-10-29 (Thu, night) Live evaluation and tuning
+
+**C001 verified live:**
+- 20.4s total, one model call.
+- The citation `INA 212(a)(6)(A)(i)` is consistent. Its evidence (form `entry.manner` = "EWI AFOOT" p.1; S16 "all subjects stated they did not have any immigration documents" p.3) matches the PDF.
+- The time finding (S17 "arrest at 1330 hours" p.3 vs form 1435 p.1) matches the PDF.
+- Bug found and fixed: the human-review banner showed no reasons when the reason came from a finding.
+
+**Tuning history (dev split only: C001, C003, C012, C013 and their variants, 16 cases):**
+
+| Version | Recall | Incorrect flags | Routing | p50 latency | What changed |
+|---|---|---|---|---|---|
+| review-v1.0 | 69% | 44% | 67% | 26s | baseline |
+| review-v1.1 | 69% | 20% | 100%* | 52s | explicit comparisons, human-review criteria, E7 advisory, form glossary. *Partly from timeouts; the scorer now gives no credit for failed reviews |
+| + `reasoning_effort=low`, 2 samples | 77% | 18% | 100% | 9s | `medium` timed out at 120s in a probe; `low` answered in 7 to 10s |
+| + fact extraction (facts-v1.0/1.1) | 85% | 9% | 100% | 12s | model extracts entry/removal statements, code compares them |
+| + charge requirement check (v1.2) | 100% | 14% | 100% | 17s | config `requires`; the more cautious citation result wins |
+
+**Official held-out result** (frozen config, commit `ae55a38`, 21 cases, run once):
+- recall **89%** (16/18);
+- incorrect flags **24%** (4/17);
+- routing **100%** (5/5);
+- evidence valid **100%**;
+- p50 22s, max 55s, none over 60s.
+
+**Error analysis of held-out:**
+- 2 missed missing-manner cases. One was a flaw in our own test case: a smuggler sentence still implied the crossing.
+- 1 extra flag from a redacted companion's entry date. A real limitation: names are redacted.
+- 1 from "removable" being read as "removed".
+- 1 model citation "mismatch" that contradicted its own explanation.
+- 1 from "LAR" vs "Laredo".
+
+The general fixes are in commit `2c9e2d4`. Any held-out number after that is **post-hoc**, not blind.
+
+**Latency note:** the shared endpoint's speed varies a lot with load. The same code measured p50 17s at one time and 38s an hour later. We now run evaluations one case at a time.

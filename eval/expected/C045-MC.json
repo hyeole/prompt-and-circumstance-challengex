@@ -2,10 +2,12 @@
   "id": "C045-MC",
   "base": "C045",
   "split": "heldout",
+  "datasetVersion": "v2",
   "description": "Second charge added (multi-charge case).",
   "plants": [
     {
-      "type": "human_review"
+      "type": "human_review",
+      "reason": "multi_charge"
     }
   ]
 }

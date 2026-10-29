@@ -68,48 +68,75 @@ export function normalizeForMatch(s: string) {
 }
 
 /**
- * Find a quote inside a sentence and return absolute offsets in the narrative, or null.
- * Fallback: the model sometimes drops or rewords a redaction tag inside a quote. Then the longest run of consecutive
- * quoted words found in the sentence is used, if it covers at least half of the quote (and 4+ words), so evidence
- * still points only at real text.
+ * Redaction markers in any form the model may write them ("[REDACTED]", "[REDACTED (b)(6), (b)(7)(C)]",
+ * "(b)(6), (b)(7)(C)", "(b) (7)(E)", "REDACTED", "[UNREADABLE]") are compared as one canonical marker.
  */
-export function locateQuote(sentence: Sentence, quote: string): { start: number; end: number } | null {
-  const exact = locateExact(sentence, quote);
-  if (exact) return exact;
-  const words = quote.replace(/\[[^\]]*\]?/g, " ").split(/\s+/).filter(Boolean);
-  const total = quote.split(/\s+/).filter(Boolean).length;
-  for (let len = words.length; len >= Math.max(4, Math.ceil(total / 2)); len--)
-    for (let i = 0; i + len <= words.length; i++) {
-      const hit = locateExact(sentence, words.slice(i, i + len).join(" "));
-      if (hit) return hit;
-    }
-  return null;
-}
+const MARKER_RE = /\[\s*(?:REDACTED|UNREADABLE)[^\]]*\]|\(b\)\s*\(\d\)(?:\s*\([A-Z]\))?(?:\s*,\s*\(b\)\s*\(\d\)(?:\s*\([A-Z]\))?)*|\bREDACTED\b|\bUNREADABLE\b/gi;
+const MARK = "\u0000"; // single canonical character for a redaction marker
 
-function locateExact(sentence: Sentence, quote: string): { start: number; end: number } | null {
-  const q = normalizeForMatch(quote);
-  if (q.length < 3) return null;
-  // Build a normalized copy of the sentence with an index map back to the original offsets.
-  const src = sentence.text;
+/** Canonical view of a string with a map from each canonical character back to the original [start, end). */
+function canonical(src: string) {
   let norm = "";
-  const map: number[] = [];
+  const map: { s: number; e: number }[] = [];
   let lastSpace = true;
-  for (let i = 0; i < src.length; i++) {
+  let i = 0;
+  MARKER_RE.lastIndex = 0;
+  const markers = [...src.matchAll(MARKER_RE)].map((m) => ({ s: m.index!, e: m.index! + m[0].length }));
+  let mi = 0;
+  while (i < src.length) {
+    if (mi < markers.length && markers[mi].s === i) {
+      if (!lastSpace) { norm += " "; map.push({ s: i, e: i }); }
+      norm += MARK; map.push(markers[mi]);
+      norm += " "; map.push({ s: markers[mi].e, e: markers[mi].e });
+      lastSpace = true;
+      i = markers[mi].e; mi++;
+      continue;
+    }
     let c = src[i];
     if (/\s/.test(c)) {
-      if (lastSpace) continue;
-      c = " ";
-      lastSpace = true;
+      if (!lastSpace) { norm += " "; map.push({ s: i, e: i + 1 }); lastSpace = true; }
     } else {
-      lastSpace = false;
       c = c.replace(/[‘’]/, "'").replace(/[“”]/, '"').toLowerCase();
+      norm += c; map.push({ s: i, e: i + 1 }); lastSpace = false;
     }
-    norm += c;
-    map.push(i);
+    i++;
   }
+  return { norm, map };
+}
+
+const canonicalQuote = (q: string) => canonical(q).norm.trim();
+
+export type QuoteMatch = { start: number; end: number; match: "exact" | "partial" };
+
+/**
+ * Exact match after normalizing whitespace, quote marks, case, and redaction markers.
+ * Offsets are into the narrative; the caller displays narrative.slice(start, end), i.e. the source text.
+ */
+export function locateQuote(sentence: Sentence, quote: string): QuoteMatch | null {
+  const q = canonicalQuote(quote);
+  if (q.replace(new RegExp(MARK, "g"), "").trim().length < 3) return null;
+  const { norm, map } = canonical(sentence.text);
   const idx = norm.indexOf(q);
   if (idx < 0) return null;
-  const s = map[idx];
-  const e = map[idx + q.length - 1] + 1;
-  return { start: sentence.start + s, end: sentence.start + e };
+  return { start: sentence.start + map[idx].s, end: sentence.start + map[idx + q.length - 1].e, match: "exact" };
+}
+
+/**
+ * Partial match, used ONLY by the fact comparison: the longest run of the quote's words found in the sentence,
+ * accepted only if that source fragment itself contains every material fact in `mustContain` (for example the year
+ * being compared). Returned as match "partial" and never presented as exact verification.
+ */
+export function locatePartial(sentence: Sentence, quote: string, mustContain: string[]): QuoteMatch | null {
+  const exact = locateQuote(sentence, quote);
+  if (exact) return exact;
+  if (!mustContain.length) return null;
+  const words = canonicalQuote(quote).split(" ").filter((w) => w && w !== MARK);
+  for (let len = words.length; len >= 4; len--)
+    for (let i = 0; i + len <= words.length; i++) {
+      const hit = locateQuote(sentence, words.slice(i, i + len).join(" "));
+      if (!hit) continue;
+      const text = sentence.text.slice(hit.start - sentence.start, hit.end - sentence.start);
+      if (mustContain.every((m) => text.includes(m))) return { ...hit, match: "partial" };
+    }
+  return null;
 }

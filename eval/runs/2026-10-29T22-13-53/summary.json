@@ -1,9 +1,9 @@
 {
   "run": "eval/runs/2026-10-29T22-13-53",
+  "scoringPolicy": "v2.1",
+  "runInfo": {},
   "cases": 16,
-  "variantCases": 12,
-  "baseCases": 4,
-  "modelFailures": [],
+  "completion": "100% (16/16)",
   "recall": {
     "all": "77% (10/13)",
     "dev": "77% (10/13)",
@@ -11,45 +11,34 @@
     "missing_element": "100% (3/3)",
     "inconsistency": "25% (1/4)",
     "citation": "100% (3/3)",
-    "human_review": "100% (3/3)"
+    "routing_multi_charge": "100% (2/2)",
+    "routing_ambiguity": "100% (1/1)",
+    "outcomes": "detected: 10, routed_only: 0, missed: 3, not_completed: 0"
   },
-  "incorrectFlagProportion": "18% (2/11)",
-  "humanReviewRouting": "100% (3/3)",
+  "flags": {
+    "issued": 17,
+    "planted": 9,
+    "duplicates": 2,
+    "validObservations": 5,
+    "falseFlags": 0,
+    "unadjudicated": 1,
+    "incorrectProportion": "7% (1/15)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "29% (2/7)",
   "evidenceValidity": "100% (17/17)",
-  "baseCaseObservations": [
-    {
-      "id": "C001",
-      "citation": "consistent",
-      "humanReview": true,
-      "findings": [
-        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative"
-      ]
-    },
-    {
-      "id": "C003",
-      "citation": "consistent",
-      "humanReview": false,
-      "findings": []
-    },
-    {
-      "id": "C012",
-      "citation": "consistent",
-      "humanReview": false,
-      "findings": []
-    },
-    {
-      "id": "C013",
-      "citation": "consistent",
-      "humanReview": false,
-      "findings": []
-    }
-  ],
+  "evidenceMatch": {
+    "exact": 0,
+    "partial": 0,
+    "unlabelled": 11,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
   "latency": {
     "p50": "9.2s",
     "p90": "21.0s",
     "max": "55.0s",
     "over60s": 0,
-    "failed": 0
+    "httpFailures": 0
   },
   "rows": [
     {
@@ -57,326 +46,422 @@
       "split": "dev",
       "base": "C001",
       "ms": 8892,
-      "ok": true,
-      "plants": 0,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [
-        "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative"
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        }
       ],
-      "plantResults": [],
       "citation": "consistent",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C001-CIT",
       "split": "dev",
       "base": "C001",
       "ms": 9743,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 1,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "citation",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner|stated that he crossed the rio grande river from matamoros m",
+          "status": "planted"
         }
       ],
       "citation": "likely_mismatch",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
     },
     {
       "id": "C001-M3",
       "split": "dev",
       "base": "C001",
       "ms": 9008,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 1,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "missing_element",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
         }
       ],
       "citation": "insufficient_information",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
     },
     {
       "id": "C001-MC",
       "split": "dev",
       "base": "C001",
       "ms": 7409,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 1,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
-          "type": "human_review",
-          "hit": true
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
         }
       ],
       "citation": "needs_human_review",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
     },
     {
       "id": "C001-X1",
       "split": "dev",
       "base": "C001",
       "ms": 8283,
-      "ok": true,
-      "plants": 1,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 1,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "inconsistency",
-          "hit": false
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
         }
       ],
       "citation": "consistent",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C003",
       "split": "dev",
       "base": "C003",
       "ms": 9171,
-      "ok": true,
-      "plants": 0,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [],
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
     },
     {
       "id": "C003-AMB",
       "split": "dev",
       "base": "C003",
       "ms": 20342,
-      "ok": true,
-      "plants": 2,
-      "detected": 2,
-      "tp": 1,
-      "dup": 1,
-      "inherited": 0,
-      "unexpected": [
-        "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)"
-      ],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
-          "type": "human_review",
-          "hit": true
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
         },
         {
           "type": "inconsistency",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry manner inconsistency",
+          "key": "inconsistency|entry.manner|he later told agents that he entered at the nogales port of",
+          "status": "planted"
+        },
+        {
+          "id": "I-2",
+          "finding": "I-2 inconsistency: Entry place inconsistency",
+          "key": "inconsistency|entry.place|he later told agents that he entered at the nogales port of",
+          "status": "duplicate"
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)",
+          "key": "citation|entry.manner|he later told agents that he entered at the nogales port of",
+          "status": "duplicate"
         }
       ],
       "citation": "likely_mismatch",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
     },
     {
       "id": "C003-CIT",
       "split": "dev",
       "base": "C003",
       "ms": 12611,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "citation",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: 8 U.S.C. 1326",
+          "key": "citation|claims to have crossed the mexico-united states border at th|history.immigration_record",
+          "status": "planted"
         }
       ],
       "citation": "likely_mismatch",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C003-M3",
       "split": "dev",
       "base": "C003",
       "ms": 55025,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "missing_element",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
         }
       ],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C012",
       "split": "dev",
       "base": "C012",
       "ms": 8887,
-      "ok": true,
-      "plants": 0,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [],
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
     },
     {
       "id": "C012-M2",
       "split": "dev",
       "base": "C012",
       "ms": 10231,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "missing_element",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E2",
+          "finding": "M-E2 missing_element: Missing: place of last entry",
+          "key": "missing_element|E2",
+          "status": "planted"
         }
       ],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C012-MC",
       "split": "dev",
       "base": "C012",
       "ms": 20968,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [
-        "I-1 inconsistency: Entry date mismatch"
-      ],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
-          "type": "human_review",
-          "hit": true
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry date mismatch",
+          "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.date",
+          "status": "unadjudicated"
         }
       ],
       "citation": "needs_human_review",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
     },
     {
       "id": "C012-X1",
       "split": "dev",
       "base": "C012",
       "ms": 6414,
-      "ok": true,
-      "plants": 1,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "inconsistency",
-          "hit": false
+          "outcome": "missed"
         }
       ],
+      "flags": [],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
     },
     {
       "id": "C013",
       "split": "dev",
       "base": "C013",
       "ms": 7432,
-      "ok": true,
-      "plants": 0,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [],
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
     },
     {
       "id": "C013-CIT",
       "split": "dev",
       "base": "C013",
       "ms": 10420,
-      "ok": true,
-      "plants": 1,
-      "detected": 1,
-      "tp": 1,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "citation",
-          "hit": true
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner",
+          "status": "planted"
         }
       ],
       "citation": "likely_mismatch",
-      "humanReview": true
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
     },
     {
       "id": "C013-X1",
       "split": "dev",
       "base": "C013",
       "ms": 8398,
-      "ok": true,
-      "plants": 1,
-      "detected": 0,
-      "tp": 0,
-      "dup": 0,
-      "inherited": 0,
-      "unexpected": [],
-      "plantResults": [
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
         {
           "type": "inconsistency",
-          "hit": false
+          "outcome": "missed"
         }
       ],
+      "flags": [],
       "citation": "consistent",
-      "humanReview": false
+      "humanReview": false,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
     }
   ]
 }

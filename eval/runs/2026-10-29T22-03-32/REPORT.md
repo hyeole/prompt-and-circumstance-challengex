@@ -1,43 +1,43 @@
-# Evaluation run 2026-10-29T22-03-32
+# Evaluation run 2026-10-29T22-03-32 (scoring policy v2.1)
 
-**Internal synthetic evaluation.** Test variants and expected findings were created by the team from adapted public records.
-They are not Unissant's test set. References are provisional (see config/references.json).
+**Label: see eval/RUNS.md.** Internal synthetic evaluation on team-created test variants of adapted public records.
+Not Unissant's test set. References are provisional.
 
 | Measure | Result | Deck target |
 |---|---|---|
-| Detection recall, all planted issues | 69% (9/13) | at least 90% |
-| Recall, dev split | 69% (9/13) | |
-| Recall, held-out split | n/a | |
+| Review completion (model check finished) | 63% (10/16) | |
+| Detection recall, strict (failures count as missed) | 62% (8/13) | at least 90% |
 | Missing elements | 0% (0/3) | |
 | Inconsistencies | 75% (3/4) | |
-| Citation errors | 100% (3/3) | |
-| Human-review routing (ambiguous or multi-charge) | 100% (3/3) | 100% |
-| Incorrect flags among issued flags (variants, conservative) | 20% (2/10) | at most 10% |
-| Evidence references valid | 100% (17/17) | every flag |
-| Latency p50 / p90 / max | 51.9s / 55.1s / 55.3s | under 60s |
-| Reviews over 60s / failed | 0 / 0 | |
+| Citation errors (mismatch with verified evidence) | 100% (3/3) | |
+| Routing: multi-charge (rule fired) | 100% (2/2) | 100% |
+| Routing: planted ambiguity (reason cites the planted statement) | 0% (0/1) | 100% |
+| Incorrect flags (false + unadjudicated, excl. duplicates) | 24% (4/17) | at most 10% |
+| Unnecessary human-review routing (cases with nothing that calls for review) | 100% (7/7) | |
+| Evidence references valid (quote = source text at offsets) | 100% (17/17) | every flag |
+| Sentence evidence by match type | exact 0 · partial 0 · unlabelled 23 | |
+| Latency p50 / p90 / max (full HTTP review) | 51.9s / 55.1s / 55.3s | under 60s |
 
-Cases: 16 (12 variants, 4 unmodified bases). Model failures: C001-M3, C001-MC, C003, C003-AMB, C003-M3, C012-M2.
+Plant outcomes: detected: 8, routed_only: 0, missed: 0, not_completed: 5. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
+Flags issued: 17 = 8 planted + 0 duplicates + 5 adjudicated valid observations + 0 adjudicated false flags + 4 unadjudicated.
 
 ## Per case
 
-| Case | Split | Time | Planted | Detected | Citation | Human review | Unexpected flags |
-|---|---|---|---|---|---|---|---|
-| C001 | dev | 30.7s | none | n/a | consistent | yes | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative; I-1 inconsistency: Entry facts conflict with form fields |
-| C001-CIT | dev | 41.2s | citation | 1/1 | likely_mismatch | yes |  |
-| C001-M3 | dev | 55.3s | missing_element | 0/1 | not_checked | yes |  |
-| C001-MC | dev | 55.0s | human_review | 1/1 | needs_human_review | yes |  |
-| C001-X1 | dev | 29.3s | inconsistency | 1/1 | needs_human_review | yes |  |
-| C003 | dev | 55.1s | none | n/a | not_checked | yes |  |
-| C003-AMB | dev | 55.0s | human_review, inconsistency | 1/2 | not_checked | yes |  |
-| C003-CIT | dev | 54.8s | citation | 1/1 | likely_mismatch | yes |  |
-| C003-M3 | dev | 55.0s | missing_element | 0/1 | not_checked | yes |  |
-| C012 | dev | 47.8s | none | n/a | consistent | yes | I-1 inconsistency: Entry date conflict |
-| C012-M2 | dev | 55.0s | missing_element | 0/1 | not_checked | yes |  |
-| C012-MC | dev | 44.4s | human_review | 1/1 | needs_human_review | yes | I-1 inconsistency: Entry date inconsistency |
-| C012-X1 | dev | 33.7s | inconsistency | 1/1 | consistent | yes |  |
-| C013 | dev | 39.0s | none | n/a | consistent | yes |  |
-| C013-CIT | dev | 33.2s | citation | 1/1 | likely_mismatch | yes | I-1 inconsistency: Entry facts conflict with form fields |
-| C013-X1 | dev | 51.9s | inconsistency | 1/1 | consistent | yes |  |
-
-Unexpected flags on unmodified bases are unadjudicated observations: the public records are not an answer key.
+| Case | Split | Time | Completed | Plants (outcome) | Human review | Non-planted flags |
+|---|---|---|---|---|---|---|
+| C001 | dev | 30.7s | yes | none | yes (not expected) | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative [valid_observation]; I-1 inconsistency: Entry facts conflict with form fields [unadjudicated] |
+| C001-CIT | dev | 41.2s | yes | citation (detected) | yes | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative [valid_observation] |
+| C001-M3 | dev | 55.3s | failed | missing_element (not_completed) | yes (not expected) | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative [valid_observation] |
+| C001-MC | dev | 55.0s | failed | human_review:multi_charge (detected) | yes | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative [valid_observation] |
+| C001-X1 | dev | 29.3s | yes | inconsistency (detected) | yes | R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative [valid_observation] |
+| C003 | dev | 55.1s | failed | none | yes (not expected) |  |
+| C003-AMB | dev | 55.0s | failed | human_review:ambiguity (not_completed), inconsistency (not_completed) | yes |  |
+| C003-CIT | dev | 54.8s | yes | citation (detected) | yes |  |
+| C003-M3 | dev | 55.0s | failed | missing_element (not_completed) | yes (not expected) |  |
+| C012 | dev | 47.8s | yes | none | yes (not expected) | I-1 inconsistency: Entry date conflict [unadjudicated] |
+| C012-M2 | dev | 55.0s | failed | missing_element (not_completed) | yes (not expected) |  |
+| C012-MC | dev | 44.4s | yes | human_review:multi_charge (detected) | yes | I-1 inconsistency: Entry date inconsistency [unadjudicated] |
+| C012-X1 | dev | 33.7s | yes | inconsistency (detected) | yes |  |
+| C013 | dev | 39.0s | yes | none | yes (not expected) |  |
+| C013-CIT | dev | 33.2s | yes | citation (detected) | yes | I-1 inconsistency: Entry facts conflict with form fields [unadjudicated] |
+| C013-X1 | dev | 51.9s | yes | inconsistency (detected) | yes |  |

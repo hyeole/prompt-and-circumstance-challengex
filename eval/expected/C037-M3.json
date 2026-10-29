@@ -2,6 +2,7 @@
   "id": "C037-M3",
   "base": "C037",
   "split": "heldout",
+  "datasetVersion": "v2",
   "description": "Removed manner of entry: form field blanked and the crossing sentences deleted. Corrected 2026-10-29 after error analysis: the smuggler sentence, which still implied crossing the border, is now also removed.",
   "plants": [
     {

@@ -7,6 +7,13 @@ const CITATION_RANK = { consistent: 0, insufficient_information: 1, needs_human_
  * Elements: "present" with sentence references wins, so a single sample cannot create a false "missing" flag.
  * Citation: the more cautious status wins; a mismatch is still downgraded later if its evidence does not verify.
  */
+export const issueKey = (i: ModelOutput["issues"][number]) => `${i.type}:${i.evidence.map((e) => e.field_path ?? e.sentence_id ?? "").sort().join("|")}`;
+
+/** How many samples reported an issue with the same type and evidence sources. */
+export function agreement(outs: ModelOutput[], i: ModelOutput["issues"][number]) {
+  return outs.filter((o) => o.issues.some((x) => issueKey(x) === issueKey(i))).length;
+}
+
 export function mergeOutputs(outs: ModelOutput[]): ModelOutput {
   if (outs.length === 1) return outs[0];
   const elements = new Map<string, ModelOutput["elements"][number]>();
@@ -17,8 +24,7 @@ export function mergeOutputs(outs: ModelOutput[]): ModelOutput {
       if (better) elements.set(e.element_id, e);
     }
   const issues: ModelOutput["issues"] = [];
-  const key = (i: ModelOutput["issues"][number]) => i.evidence.map((e) => e.field_path ?? e.sentence_id ?? "").sort().join("|");
-  for (const o of outs) for (const i of o.issues) if (!issues.some((x) => x.type === i.type && key(x) === key(i))) issues.push(i);
+  for (const o of outs) for (const i of o.issues) if (!issues.some((x) => issueKey(x) === issueKey(i))) issues.push(i);
   const citation = outs.map((o) => o.citation).sort((a, b) => CITATION_RANK[b.status] - CITATION_RANK[a.status])[0];
   return {
     elements: [...elements.values()],

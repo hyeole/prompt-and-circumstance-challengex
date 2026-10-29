@@ -68,6 +68,9 @@ export interface EvidenceRef {
   end?: number;
   page?: number;
   verified: boolean;
+  /** "exact": the quote matched the source after normalizing whitespace, case, quote marks and redaction markers.
+   *  "partial": fact comparison only; the shown text is a source fragment that contains the material fact. */
+  match?: "exact" | "partial";
 }
 
 export interface Finding {
@@ -81,6 +84,8 @@ export interface Finding {
   humanReviewReason?: string;
   source: "rule" | "model";
   severity: "high" | "medium" | "low";
+  /** For model issues: how many of the parallel samples reported an issue with the same evidence. */
+  sampleAgreement?: number;
 }
 
 export type CheckStatus = "completed_with_findings" | "completed_no_findings" | "unavailable" | "partial";
@@ -129,4 +134,8 @@ export interface ReviewResult {
   findings: Finding[];
   notes: string[]; // informational context, not flags
   discarded: { reason: string; title: string }[]; // model output dropped because evidence could not be verified
+  /** Every model request made for this review, including failed and cancelled ones. */
+  calls: { role: string; status: "ok" | "failed" | "cancelled" | "invalid_output"; ms: number; attempts: number; error?: string }[];
+  /** Raw issue counts per sample before verification, to check that merging does not just accumulate flags. */
+  sampleIssues: { perSample: number[]; merged: number; inAllSamples: number };
 }

@@ -68,7 +68,7 @@ let n = 0;
 for (const b of [...spec.splits.dev, ...spec.splits.heldout]) {
   const c = base(b);
   writeFileSync(`eval/cases/${b}.json`, JSON.stringify({ ...c, split: splitOf(b) }, null, 2));
-  writeFileSync(`eval/expected/${b}.json`, JSON.stringify({ id: b, base: b, split: splitOf(b), description: "Unmodified adapted public record. No planted issues. Findings here are unadjudicated observations.", plants: [] }, null, 2));
+  writeFileSync(`eval/expected/${b}.json`, JSON.stringify({ id: b, base: b, split: splitOf(b), datasetVersion: spec.datasetVersion, description: "Unmodified adapted public record. No planted issues. Findings here are unadjudicated observations.", plants: [] }, null, 2));
   n++;
 }
 for (const v of spec.variants) {
@@ -81,7 +81,7 @@ for (const v of spec.variants) {
   c.title = `${c.title} [test variant ${v.id.split("-")[1]}]`;
   c.provenance = { ...c.provenance, modifications: [v.description] };
   writeFileSync(`eval/cases/${v.id}.json`, JSON.stringify(c, null, 2));
-  writeFileSync(`eval/expected/${v.id}.json`, JSON.stringify({ id: v.id, base: v.base, split: c.split, description: v.description, plants: v.plants }, null, 2));
+  writeFileSync(`eval/expected/${v.id}.json`, JSON.stringify({ id: v.id, base: v.base, split: c.split, datasetVersion: spec.datasetVersion, description: v.description, plants: v.plants }, null, 2));
   if (spec.demo.includes(v.id)) writeFileSync(`data/cases/${v.id}.json`, JSON.stringify({ ...c, split: "demo" }, null, 2));
   n++;
 }

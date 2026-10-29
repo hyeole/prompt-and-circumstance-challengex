@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { splitSentences, locateQuote } from "../lib/text";
+import { splitSentences, locateQuote, locatePartial } from "../lib/text";
 import { runRules } from "../lib/review/rules";
 import type { CaseRecord } from "../lib/types";
 
@@ -73,10 +73,27 @@ test("time rule ignores transport times", () => {
   assert.ok(!runRules(c, ss).findings.some((f) => f.id === "R-TIME-MISMATCH"));
 });
 
-test("a quote that drops a redaction tag still matches the real text fragment only", () => {
+test("redaction markers written differently by the model still match exactly, showing source text", () => {
   const [s] = splitSentences("He last entered the United States on February 21, 2015 through the Port of [REDACTED (b)(7)(E)] Entry in Laredo, Texas.");
-  const loc = locateQuote(s, "entered the United States on February 21, 2015 through the Port of Entry in Laredo");
-  assert.ok(loc);
-  assert.equal(s.text.slice(loc!.start - s.start, loc!.end - s.start), "entered the United States on February 21, 2015 through the Port of");
-  assert.equal(locateQuote(s, "entered the country on March 3, 2019 through the Port of Entry"), null);
+  for (const q of ["through the Port of [REDACTED] Entry in Laredo", "through the Port of (b) (7)(E) Entry in Laredo", "through the Port of REDACTED Entry in Laredo"]) {
+    const loc = locateQuote(s, q);
+    assert.ok(loc, q);
+    assert.equal(loc!.match, "exact");
+    assert.equal(s.text.slice(loc!.start - s.start, loc!.end - s.start), "through the Port of [REDACTED (b)(7)(E)] Entry in Laredo");
+  }
+});
+
+test("a quote that silently drops a redaction is not an exact match", () => {
+  const [s] = splitSentences("He last entered the United States on February 21, 2015 through the Port of [REDACTED (b)(7)(E)] Entry in Laredo, Texas.");
+  assert.equal(locateQuote(s, "entered the United States on February 21, 2015 through the Port of Entry in Laredo"), null);
+});
+
+test("partial matches are accepted only when the source fragment contains the material fact", () => {
+  const [s] = splitSentences("He last entered the United States on February 21, 2015 through the Port of [REDACTED (b)(7)(E)] Entry in Laredo, Texas.");
+  const q = "entered the United States on February 21, 2015 through the Port of Entry in Laredo";
+  const hit = locatePartial(s, q, ["2015"]);
+  assert.equal(hit?.match, "partial");
+  assert.ok(s.text.slice(hit!.start - s.start, hit!.end - s.start).includes("2015"));
+  assert.equal(locatePartial(s, q, ["2016"]), null, "fragment must contain the fact being compared");
+  assert.equal(locatePartial(s, q, []), null, "no material fact, no partial match");
 });

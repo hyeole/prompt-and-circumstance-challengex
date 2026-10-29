@@ -1,4 +1,6 @@
 {
+  "datasetVersion": "v2",
+  "changeLog": "See eval/archive/dataset-v1-ae55a38/README.md",
   "about": "Team-created test variants of verified adapted public records. Each variant applies documented edits to a copy of a base case. Expected findings are written to eval/expected/ and are never passed to the reviewer. Splits are by base case: variants of a case never cross between dev and held-out. C012 and C013 come from the same incident and share a split.",
   "splits": {
     "dev": [
@@ -102,7 +104,8 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "multi_charge"
         }
       ]
     },
@@ -142,7 +145,11 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "ambiguity",
+          "anchors": [
+            "border crossing card"
+          ]
         },
         {
           "type": "inconsistency",
@@ -236,7 +243,8 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "multi_charge"
         }
       ]
     },
@@ -344,7 +352,8 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "multi_charge"
         }
       ]
     },
@@ -415,7 +424,11 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "ambiguity",
+          "anchors": [
+            "tourist visa"
+          ]
         },
         {
           "type": "inconsistency",
@@ -506,7 +519,8 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "multi_charge"
         }
       ]
     },
@@ -567,7 +581,11 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "ambiguity",
+          "anchors": [
+            "walking across the border"
+          ]
         },
         {
           "type": "inconsistency",
@@ -641,7 +659,8 @@
       ],
       "plants": [
         {
-          "type": "human_review"
+          "type": "human_review",
+          "reason": "multi_charge"
         }
       ]
     }

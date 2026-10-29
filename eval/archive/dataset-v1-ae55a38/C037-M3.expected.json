@@ -1,0 +1,12 @@
+{
+  "id": "C037-M3",
+  "base": "C037",
+  "split": "heldout",
+  "description": "Removed manner of entry: form field blanked and both crossing sentences deleted.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E3"
+    }
+  ]
+}
