@@ -552,6 +552,166 @@
       "note": "Mis-categorised: the explanation and evidence describe the planted NEGATIVE-record vs documented-removals conflict, not a charge mismatch. Real discrepancy, but no detection credit (wrong category).",
       "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
       "date": "2026-10-30"
+    },
+    {
+      "base": "DS06",
+      "key": "unclear|two occupants and stated that they are citizens of mexico an",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "DS06 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS11",
+      "key": "unclear|the subject stated that he has no documents allowing him to",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "DS11 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|he has never had any documents that would allow him to be or|inadmissibility: is a citizen of mexico.",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F039-G U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|he has never had any documents that would allow him to be or",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F039-X U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|claims to have illegally entered the united states in laredo",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|bpa identified himself as a border patrol agent and asked al|bpa then asked all subjects individually if they were in the|five subjects stated that they did not have any immigration",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F051-E U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS10",
+      "key": "unclear|the three passengers and stated that they are citizens of ho",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "FS10 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|the other two individuals (nicaragua and (nicaragua ) admitt",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C012-M2 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united|he stated that he did not cross through a designated port of",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C012-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C012-X1 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|later in the interview he stated that he was admitted at the",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C037-AMB U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|stated that he and five others crossed the us/mexico border",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C037-CIT U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|border patrol agent informed agents from the border patrol s",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C037-X1 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21|last entered the united states on february 21 2012 through t",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C135",
+      "key": "unclear|both subjects were asked if they had any immigration documen|neither subject could produce any documentation that permitt|the subjects were asked if they were in the united states le",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C135-M2 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C135",
+      "key": "unclear|both subjects were asked if they had any immigration documen|the subjects were asked if they were in the united states le",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C135-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS06",
+      "key": "inconsistency|stated that he entered the united states in 2016 by crossing|stated that he entered the united states in 2018 by walking",
+      "verdict": "false_flag",
+      "note": "Two different redacted people give 2016 and 2018 (pre-run label: should not flag). The narrative-only claim escaped the multi-person rule, which only covered claims citing a form field.",
+      "example": "DS06 I-1 Conflicting entry dates",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "inconsistency|encounter.date_time|facts of arrest: on april 8 2017 at approximately 2000 hours",
+      "verdict": "false_flag",
+      "note": "'approximately 2000 hours' is when the Trooper requested assistance, not the encounter time (same standard as the time-rule exclusion of call/request times).",
+      "example": "C012-X1 I-2 Encounter time discrepancy",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "unclear|history.immigration_record",
+      "verdict": "valid_observation",
+      "note": "This is the planted discrepancy (form records a prior removal the narrative never describes). Field-only finding; no detection credit under scoring v2.3 because the plant has no anchor text.",
+      "example": "F055-H F-HISTORY-2 Prior removal on the form is not described in the narrative",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS09",
+      "key": "unclear|history.immigration_record",
+      "verdict": "false_flag",
+      "note": "The narrative does describe the removal ('was removed through Laredo, Texas, on June 1, 2018'); the extractor missed it and the new check relied only on extracted statements.",
+      "example": "FS09 F-HISTORY-2 Prior removal on the form is not described in the narrative",
+      "date": "2026-10-30"
     }
   ]
 }

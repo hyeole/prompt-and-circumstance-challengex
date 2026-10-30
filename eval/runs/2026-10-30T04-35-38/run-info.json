@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, post-diagnosis (eval/dev-synthetic, commit 8864d7b)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T04:35:38.593Z",
+  "commit": "8864d7b",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

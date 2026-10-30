@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, post-diagnosis (eval, commit 8864d7b)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T04:48:10.980Z",
+  "commit": "0fd47be",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}
