@@ -1,0 +1,20 @@
+{
+  "id": "DS07",
+  "base": "DS07",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Clean port-of-entry case: documents presented, claimed classification, purpose of travel, facts developed, ground, and disposition.",
+  "plants": [],
+  "elementExpectations": {
+    "N1": "present",
+    "N2": "present",
+    "N3": "present",
+    "N5": "present",
+    "N7": "present",
+    "E1": "not_applicable",
+    "E4": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

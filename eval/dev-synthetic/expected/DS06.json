@@ -1,0 +1,17 @@
+{
+  "id": "DS06",
+  "base": "DS06",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Two people in one vehicle. One redacted person says 2016, the other says 2018; the form (for this record's subject) says 2018. Attribution cannot be determined from redacted names.",
+  "plants": [],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [
+    "in 2016"
+  ],
+  "labelNotes": "Correct behaviour is no entry-date conflict: the 2016 statement cannot be attributed to this record's subject."
+}

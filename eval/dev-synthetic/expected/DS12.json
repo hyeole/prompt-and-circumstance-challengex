@@ -1,0 +1,19 @@
+{
+  "id": "DS12",
+  "base": "DS12",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Selected charge requires a prior admission; the record documents entry without inspection.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

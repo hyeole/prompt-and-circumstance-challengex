@@ -14,16 +14,18 @@ const BASE = process.env.EVAL_BASE_URL ?? "http://localhost:3000";
 const split = arg("split", "all")!;
 const only = arg("only")?.split(",");
 const conc = Number(arg("concurrency", "2"));
+const dataset = arg("dataset", "eval")!.replace(/\/$/, ""); // "eval" = legacy benchmark (eval/cases); or e.g. eval/dev-synthetic
+const casesDir = dataset === "eval" ? "eval/cases" : `${dataset}/cases`;
 
-const cases = readdirSync("eval/cases").sort().map((f) => JSON.parse(readFileSync(`eval/cases/${f}`, "utf8")))
-  .filter((c) => (split === "all" || c.split === split) && (!only || only.includes(c.id)));
+const cases = readdirSync(casesDir).sort().map((f) => JSON.parse(readFileSync(`${casesDir}/${f}`, "utf8")))
+  .filter((c) => (split === "all" || c.split === split || dataset !== "eval") && (!only || only.includes(c.id)));
 const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 const dir = `eval/runs/${stamp}`;
 mkdirSync(`${dir}/raw`, { recursive: true });
 const sh = (cmd: string) => { try { return execSync(cmd, { encoding: "utf8" }).trim(); } catch { return "unknown"; } };
 const label = arg("label", "post-tuning")!; // "official-heldout" only for a first, blind run of a frozen commit
 writeFileSync(`${dir}/run-info.json`, JSON.stringify({
-  label, split, only: only ?? null, concurrency: conc, startedAt: new Date().toISOString(),
+  label, dataset, split, only: only ?? null, concurrency: conc, startedAt: new Date().toISOString(),
   commit: sh("git rev-parse --short HEAD"), uncommittedServerChanges: sh("git status --porcelain -- lib app components config") || "none",
   // Server-side model settings come from the app's environment; recorded per review in raw results as modelConfig.
   note: "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result.",

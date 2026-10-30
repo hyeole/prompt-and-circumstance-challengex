@@ -1,4 +1,4 @@
-# Evaluation run 2026-10-29T22-28-28 (scoring policy v2.1)
+# Evaluation run 2026-10-29T22-28-28 (scoring policy v2.1, dataset eval)
 
 **Label: see eval/RUNS.md.** Internal synthetic evaluation on team-created test variants of adapted public records.
 Not Unissant's test set. References are provisional.
@@ -15,11 +15,16 @@ Not Unissant's test set. References are provisional.
 | Incorrect flags (false + unadjudicated, excl. duplicates) | 28% (5/18) | at most 10% |
 | Unnecessary human-review routing (no planted reason and no adjudicated real discrepancy) | 13% (1/8) | |
 | Routed because of an adjudicated real discrepancy in the source | none | |
+| Checklist expectations met (status per item, incl. not applicable / applicability unclear) | n/a | |
+| "Should not flag" violations (resolved explanations, unattributable statements) | 0 | 0 |
 | Evidence references valid (quote = source text at offsets) | 100% (18/18) | every flag |
 | Sentence evidence by match type | exact 0 · partial 0 · unlabelled 15 | |
 | Latency p50 / p90 / max (full HTTP review) | 22.0s / 35.9s / 55.0s | under 60s |
 
-Plant outcomes: detected: 15, routed_only: 1, missed: 2, not_completed: 0. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
+Plant outcomes: detected: 15, routed_only: 1, missed: 2, not_completed: 0.
+
+**Partial reviews (model check did not complete): 0.** none.
+Recall over completed reviews only (secondary): 83% (15/18). "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
 Flags issued: 18 = 13 planted + 0 duplicates + 0 adjudicated valid observations + 5 adjudicated false flags + 0 unadjudicated.
 
 ## Per case

@@ -1,0 +1,16 @@
+{
+  "id": "DS09",
+  "base": "DS09",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Clean expedited-removal case: advisal, sworn statement, opportunity to respond, supervisory approval, I-860 service.",
+  "plants": [],
+  "elementExpectations": {
+    "N8": "present",
+    "N7": "present",
+    "N3": "present",
+    "E1": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

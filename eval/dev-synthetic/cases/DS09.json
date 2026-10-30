@@ -1,0 +1,68 @@
+{
+  "id": "DS09",
+  "title": "Expedited removal at the Detroit-Windsor Tunnel (complete)",
+  "kind": "synthetic",
+  "split": "dev-synthetic",
+  "context": [
+    "port_of_entry",
+    "expedited_removal"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic case (dev-synthetic-v1), 2026-10-30",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; reviewed by the team for internal consistency against its intended scenario.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Clean expedited-removal case: advisal, sworn statement, opportunity to respond, supervisory approval, I-860 service."
+    ]
+  },
+  "narrative": {
+    "text": "INSPECTION:\nOn September 12, 2023, at approximately 1130 hours, the subject applied for admission at the Detroit-Windsor Tunnel port of entry as a passenger in a private vehicle. The subject presented a valid Brazilian passport and a B1/B2 visitor visa and stated that the purpose of his trip was tourism for one week. In secondary inspection, CBP Officer [REDACTED (b)(6), (b)(7)(C)] found work tools, a hotel receipt for 90 days, and an employment offer letter from a construction company in Dearborn, Michigan. When asked about the letter, the subject stated that he intended to work in Michigan for three months. CBP Officer [REDACTED (b)(6), (b)(7)(C)] found that the subject's stated purpose did not match the documents in his possession and that he intended to work without authorization.\nThe subject is inadmissible under Section 212(a)(7)(A)(i)(I) of the Immigration and Nationality Act, in that he is an immigrant not in possession of a valid immigrant visa or other valid entry document at the time of application for admission.\nPROCESSING:\nThe subject was processed for expedited removal. CBP Officer [REDACTED (b)(6), (b)(7)(C)] advised the subject of the charge of inadmissibility through a Portuguese interpreter, took a sworn statement on Form I-867A/B, and gave the subject an opportunity to respond. The subject stated that he understood the charge and had nothing to add. Supervisory CBP Officer [REDACTED (b)(6), (b)(7)(C)] reviewed and approved the expedited removal. The subject was served Form I-860, Notice and Order of Expedited Removal, and signed the acknowledgment.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "BRAZIL",
+      "status": "present"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport number and country",
+      "value": "[REDACTED (b)(6), (b)(7)(C)], BRAZIL",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Port of entry",
+      "value": "DETROIT-WINDSOR TUNNEL, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Inspection date and hour",
+      "value": "09/12/2023 1130",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(7)(A)(i)(I)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic case."
+    }
+  ]
+}

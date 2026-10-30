@@ -1,0 +1,25 @@
+{
+  "id": "DS05",
+  "base": "DS05",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Narrative says the subject entered in August 2015; the form records 03/10/2018.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "August 2015"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

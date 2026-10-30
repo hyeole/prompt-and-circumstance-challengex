@@ -1,0 +1,18 @@
+{
+  "id": "DS11",
+  "base": "DS11",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "No case context set and no Border Patrol or port wording: context-dependent items should be 'applicability unclear', not missing.",
+  "plants": [],
+  "elementExpectations": {
+    "E1": "applicability_unclear",
+    "E4": "applicability_unclear",
+    "N3": "applicability_unclear",
+    "N8": "applicability_unclear",
+    "N7": "present",
+    "N5": "present"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

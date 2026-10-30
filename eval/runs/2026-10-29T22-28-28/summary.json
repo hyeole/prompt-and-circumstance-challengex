@@ -4,6 +4,11 @@
   "runInfo": {},
   "cases": 21,
   "completion": "100% (21/21)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "83% (15/18)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
   "recall": {
     "all": "83% (15/18)",
     "dev": "n/a",
@@ -27,6 +32,12 @@
   },
   "unnecessaryRouting": "13% (1/8)",
   "routingJustifiedByObservation": [],
+  "dataset": "eval",
+  "checklistExpectations": {
+    "accuracy": "n/a",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [],
   "evidenceValidity": "100% (18/18)",
   "evidenceMatch": {
     "exact": 0,

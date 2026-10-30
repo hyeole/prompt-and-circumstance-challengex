@@ -1,0 +1,103 @@
+{
+  "id": "DS05",
+  "title": "Entry date conflicts with the form",
+  "kind": "synthetic",
+  "split": "dev-synthetic",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic case (dev-synthetic-v1), 2026-10-30",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; reviewed by the team for internal consistency against its intended scenario.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Narrative says the subject entered in August 2015; the form records 03/10/2018."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn June 4, 2023, at approximately 1410 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] was conducting roving patrol duties on Interstate 75 near Monroe, Michigan. Agent [REDACTED (b)(6), (b)(7)(C)] observed a vehicle travelling northbound and conducted a vehicle stop with the assistance of Michigan State Police. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself as a Border Patrol Agent and questioned the passenger, later identified as the subject, as to his citizenship. The subject stated that he is a citizen and national of Mexico and presented a Mexican voter identification card. The subject stated that he did not have any immigration documents allowing him to be in or remain in the United States legally. Agent [REDACTED (b)(6), (b)(7)(C)] placed the subject under arrest at approximately 1425 hours and transported him to the [REDACTED (b)(7)(E)] Border Patrol Station for processing.\n\nENTRY:\nThe subject stated that he entered the United States in August 2015, by walking across the border near Nogales, Arizona, and that he was not inspected or admitted by an immigration officer. The subject stated that he then travelled by car to Phoenix, Arizona, and later by bus to Toledo, Ohio, where he has lived since 2019.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was processed for a Notice to Appear and was served with a Warrant of Arrest. The subject was transferred to Immigration and Customs Enforcement custody pending removal proceedings.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/10/2018",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Nogales, AZ",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "06/04/2023 1410",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MONROE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic case."
+    }
+  ]
+}

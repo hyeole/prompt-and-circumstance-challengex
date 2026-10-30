@@ -1,0 +1,18 @@
+{
+  "id": "DS04",
+  "base": "DS04",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Subject first names Laredo, then explains he crossed near Hidalgo and was picked up in Laredo; the officer records the clarification. The apparent conflict is resolved in the narrative.",
+  "plants": [],
+  "elementExpectations": {
+    "N7": "present",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [
+    "crossed at Laredo"
+  ],
+  "labelNotes": "If the app flags the Laredo/Hidalgo statements as a conflict, it is counted against precision: the narrative records and resolves the explanation (sponsor category S5)."
+}

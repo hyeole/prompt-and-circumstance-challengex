@@ -1,0 +1,19 @@
+{
+  "id": "DS08",
+  "base": "DS08",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Port-of-entry case with the documents presented and the purpose of travel removed.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N3"
+    }
+  ],
+  "elementExpectations": {
+    "E1": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": "N3 asks for port, documents presented and purpose; the port remains stated, so 'unclear' is also an acceptable detection."
+}

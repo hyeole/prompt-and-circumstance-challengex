@@ -1,0 +1,21 @@
+{
+  "id": "DS03",
+  "base": "DS03",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "No INA section stated in the narrative; selected charge is still recorded.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N5"
+    }
+  ],
+  "elementExpectations": {
+    "N7": "present",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

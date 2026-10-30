@@ -1,0 +1,21 @@
+{
+  "id": "DS02",
+  "base": "DS02",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Disposition removed from the narrative and the form.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N7"
+    }
+  ],
+  "elementExpectations": {
+    "N5": "present",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

@@ -7,24 +7,29 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, Finding, ReviewResult } from "../lib/types";
 import { findingKey } from "./finding-key";
 
-export const SCORING_POLICY = "v2.1";
+export const SCORING_POLICY = "v2.2"; // v2.2 = v2.1 definitions + checklist-expectation and should-not-flag metrics
 
 type Plant =
   | { type: "missing_element"; elementId: string }
   | { type: "inconsistency"; anchors: string[]; fieldPaths: string[] }
   | { type: "citation" }
   | { type: "human_review"; reason: "multi_charge" | "ambiguity"; anchors?: string[] };
-type Expected = { id: string; base: string; split: string; description: string; plants: Plant[] };
+type Expected = { id: string; base: string; split: string; description: string; plants: Plant[]; elementExpectations?: Record<string, string>; shouldNotFlag?: string[] };
 type Adjudication = { base: string; key: string; verdict: "valid_observation" | "false_flag"; note: string };
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: score-eval.ts eval/runs/<timestamp>");
 const listUnadjudicated = process.argv.includes("--list-unadjudicated");
-const expected = readdirSync("eval/expected").map((f) => JSON.parse(readFileSync(`eval/expected/${f}`, "utf8")) as Expected);
+let info0: { dataset?: string } = {};
+try { info0 = JSON.parse(readFileSync(`${dir}/run-info.json`, "utf8")); } catch { /* older runs: legacy dataset */ }
+const dataset = (process.argv.includes("--dataset") ? process.argv[process.argv.indexOf("--dataset") + 1] : info0.dataset) ?? "eval";
+const expectedDir = dataset === "eval" ? "eval/expected" : `${dataset}/expected`;
+const casesDir = dataset === "eval" ? "eval/cases" : `${dataset}/cases`;
+const expected = readdirSync(expectedDir).map((f) => JSON.parse(readFileSync(`${expectedDir}/${f}`, "utf8")) as Expected);
 const latency = JSON.parse(readFileSync(`${dir}/latency.json`, "utf8")) as { id: string; ms: number; ok: boolean; modelStatus?: string }[];
 const adjudications: Adjudication[] = existsSync("eval/adjudications.json") ? JSON.parse(readFileSync("eval/adjudications.json", "utf8")).items : [];
 const load = (id: string) => (existsSync(`${dir}/raw/${id}.json`) ? (JSON.parse(readFileSync(`${dir}/raw/${id}.json`, "utf8")) as ReviewResult) : null);
-const caseOf = (id: string) => JSON.parse(readFileSync(`eval/cases/${id}.json`, "utf8")) as CaseRecord;
+const caseOf = (id: string) => JSON.parse(readFileSync(`${casesDir}/${id}.json`, "utf8")) as CaseRecord;
 const low = (s: string) => s.toLowerCase();
 
 const sentenceText = (r: ReviewResult, id?: string) => low(r.sentences.find((s) => s.id === id)?.text ?? "");
@@ -108,6 +113,19 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
   rows.push(row);
 }
 
+// Checklist expectations (dev-synthetic and later datasets): expected status per item, reported apart from recall.
+const elementChecks: { id: string; elementId: string; expected: string; actual: string }[] = [];
+const shouldNotFlagViolations: { id: string; anchor: string; finding: string }[] = [];
+for (const ex of expected) {
+  const r = load(ex.id);
+  if (!r || r.modelStatus !== "ok") continue;
+  for (const [elementId, want] of Object.entries(ex.elementExpectations ?? {}))
+    elementChecks.push({ id: ex.id, elementId, expected: want, actual: r.elements.find((e) => e.elementId === elementId)?.status ?? "missing" });
+  for (const anchor of ex.shouldNotFlag ?? [])
+    for (const f of r.findings)
+      if ((f.category === "inconsistency" || f.category === "unclear") && citesAnchor(r, f, [anchor])) shouldNotFlagViolations.push({ id: ex.id, anchor, finding: `${f.id} ${f.title}` });
+}
+
 const pct = (a: number, b: number) => (b ? `${((100 * a) / b).toFixed(0)}% (${a}/${b})` : "n/a");
 const plantsOf = (rs: Row[], t?: string) => rs.flatMap((r) => r.plants).filter((p) => !t || p.type.startsWith(t));
 const det = (ps: { outcome: Outcome }[]) => ps.filter((p) => p.outcome === "detected").length;
@@ -151,6 +169,9 @@ const summary = {
   },
   unnecessaryRouting: pct(noRouteCases.filter((r) => r.humanReview && !justified(r)).length, noRouteCases.length),
   routingJustifiedByObservation: noRouteCases.filter((r) => r.humanReview && justified(r)).map((r) => r.id),
+  dataset,
+  checklistExpectations: { accuracy: pct(elementChecks.filter((c) => c.expected === c.actual).length, elementChecks.length), mismatches: elementChecks.filter((c) => c.expected !== c.actual) },
+  shouldNotFlagViolations,
   evidenceValidity: pct(rows.reduce((a, r) => a + r.evidenceOk, 0), rows.reduce((a, r) => a + r.evidenceTotal, 0)),
   evidenceMatch: (() => {
     const evs = rows.flatMap((r) => { const res = load(r.id); return res ? res.findings.flatMap((f) => f.evidence.filter((e) => e.kind === "sentence")) : []; });
@@ -162,7 +183,7 @@ const summary = {
 };
 writeFileSync(`${dir}/summary.json`, JSON.stringify(summary, null, 2));
 
-const md = `# Evaluation run ${dir.split("/").pop()} (scoring policy ${SCORING_POLICY})
+const md = `# Evaluation run ${dir.split("/").pop()} (scoring policy ${SCORING_POLICY}, dataset ${dataset})
 
 **Label: ${(info.label as string) ?? "see eval/RUNS.md"}.** Internal synthetic evaluation on team-created test variants of adapted public records.
 Not Unissant's test set. References are provisional.
@@ -179,6 +200,8 @@ Not Unissant's test set. References are provisional.
 | Incorrect flags (false + unadjudicated, excl. duplicates) | ${summary.flags.incorrectProportion} | at most 10% |
 | Unnecessary human-review routing (no planted reason and no adjudicated real discrepancy) | ${summary.unnecessaryRouting} | |
 | Routed because of an adjudicated real discrepancy in the source | ${summary.routingJustifiedByObservation.join(", ") || "none"} | |
+| Checklist expectations met (status per item, incl. not applicable / applicability unclear) | ${summary.checklistExpectations.accuracy} | |
+| "Should not flag" violations (resolved explanations, unattributable statements) | ${summary.shouldNotFlagViolations.length} | 0 |
 | Evidence references valid (quote = source text at offsets) | ${summary.evidenceValidity} | every flag |
 | Sentence evidence by match type | exact ${summary.evidenceMatch.exact} · partial ${summary.evidenceMatch.partial} · unlabelled ${summary.evidenceMatch.unlabelled} | |
 | Latency p50 / p90 / max (full HTTP review) | ${summary.latency.p50} / ${summary.latency.p90} / ${summary.latency.max} | under 60s |

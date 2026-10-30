@@ -1,0 +1,18 @@
+{
+  "id": "DS10",
+  "base": "DS10",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Expedited-removal case with the advisal, sworn statement, response and supervisory review removed.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N8"
+    }
+  ],
+  "elementExpectations": {
+    "N7": "present"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

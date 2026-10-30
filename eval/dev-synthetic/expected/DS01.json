@@ -1,0 +1,20 @@
+{
+  "id": "DS01",
+  "base": "DS01",
+  "split": "dev-synthetic",
+  "datasetVersion": "dev-synthetic-v1",
+  "description": "Clean interior case: citizenship, documents, entry, encounter, status, stated ground with explanation, and disposition all present.",
+  "plants": [],
+  "elementExpectations": {
+    "E5": "present",
+    "N1": "present",
+    "N5": "present",
+    "N7": "present",
+    "N6": "not_applicable",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}
