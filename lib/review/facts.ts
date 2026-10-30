@@ -158,7 +158,11 @@ export const aboutSubject = (attr: "subject" | "other" | "unclear", multiPerson:
 const EVENT_VERB_RE = /\b(enter(?:ed|ing|s)?|entry|cross(?:ed|ing|es)?|came|arriv(?:ed|ing|es)|walk(?:ed|ing)|swam|wad(?:ed|ing)|smuggled|removed|removals?|deport(?:ed|ation)|excluded|reinstat\w*|returned|arrested|apprehended|encountered|departed)\b/gi;
 const ENTRY_EVENT_RE = /\b(enter(?:ed|ing|s)?|entry|cross(?:ed|ing|es)?|came|arriv(?:ed|ing|es)|walk(?:ed|ing)|swam|wad(?:ed|ing)|smuggled)\b/gi;
 const REPORTING_CUT_RE = /\bthat\b|["“”]|[,;:]|\b(?:said|says|stated|states|told(?:\s+\w+)?|explained|reported|added)\b/gi;
-const NP_TAIL_RE = /\s+(?:had|has|have|was|were|is|are|been|being|be|also|then|later|first|previously|illegally|allegedly|reportedly|not|never|once|initially|subsequently|already|again|eventually|finally|to|a|an|prior|previous|earlier|expedited|formal)\s*$/i;
+const NP_TAIL_RE = /\s+(?:had|has|have|was|were|is|are|been|being|be|also|then|later|first|previously|illegally|allegedly|reportedly|not|never|once|initially|subsequently|already|again|eventually|finally|to|a|an|prior|previous|earlier|expedited|formal|claims|claimed|admits|admitted|alleges|alleged|maintains|maintained|do|does|did|didn't|doesn't|don't|can|could|would|will|may|might|must|should)\s*$/i;
+// "The other subject" is someone else; "another subject", "the second subject", "one of the subjects" could be anyone
+// (unknown). Both are resolved before the generic "subject", which is the record's subject.
+const OTHER_SUBJECT_NP_RE = /\bthe\s+other\s+subject\s*$/i;
+const SOME_SUBJECT_NP_RE = /\b(?:another|a|an|one|any|either|neither|first|second|third|fourth|fifth|last|remaining)\s+subject\s*$|\bone of the subjects\s*$/i;
 const SELF_NP_RE = /\b(he|she|i|subject|himself|herself)\s*$|\b(he|she|i|subject)\s+and\b|\band\s+(he|she|i|himself|herself)\b/i;
 const THIRD_PARTY_NP_RE = /(?:\b(?:his|her|their|my|our|your)\s+|\b\w+['’]s\s+)(?:[\w-]+\s+){0,2}?(?:wife|husband|spouse|partner|sons?|daughters?|child|children|kids?|brothers?|sisters?|siblings?|mother|father|parents?|cousins?|uncle|aunt|nephew|niece|grand\w+|friends?|girlfriend|boyfriend|companions?|co-?travel+ers?|relatives?|family)\s*$|\bthe other subject\s*$/i;
 const GROUP_NP_RE = /\b(?:they|we)\s*$/i;
@@ -168,6 +172,8 @@ export function eventParticipant(text: string, at: number): "self" | "other" | "
   const cut = Math.max(0, ...[...t.matchAll(REPORTING_CUT_RE)].map((m) => m.index! + m[0].length));
   t = " " + t.slice(cut);
   while (NP_TAIL_RE.test(t)) t = t.replace(NP_TAIL_RE, "");
+  if (OTHER_SUBJECT_NP_RE.test(t)) return "other";
+  if (SOME_SUBJECT_NP_RE.test(t)) return "unknown";
   if (SELF_NP_RE.test(t)) return "self";
   if (THIRD_PARTY_NP_RE.test(t)) return "other";
   return GROUP_NP_RE.test(t) ? "group" : "unknown";
@@ -189,9 +195,15 @@ export function eventSpan(text: string, at: number): string {
     }
   return text.slice(start, end);
 }
-export type SentenceEvent = { verb: string; at: number; participant: "self" | "other" | "group" | "unknown"; span: string };
+/** `reported`: the event is inside a reported clause ("He stated that …", a quotation), where only a self participant is the speaker. */
+export type SentenceEvent = { verb: string; at: number; participant: "self" | "other" | "group" | "unknown"; reported: boolean; span: string };
+const REPORTED_RE = /\bthat\b|["“”]|\b(?:said|says|stated|states|told|explained|reported|added)\b/i;
 export function sentenceEvents(text: string, re: RegExp = EVENT_VERB_RE): SentenceEvent[] {
-  return [...text.matchAll(new RegExp(re.source, "gi"))].map((m) => ({ verb: m[0], at: m.index!, participant: eventParticipant(text, m.index!), span: eventSpan(text, m.index!) }));
+  return [...text.matchAll(new RegExp(re.source, "gi"))].map((m) => ({ verb: m[0], at: m.index!, participant: eventParticipant(text, m.index!), reported: REPORTED_RE.test(text.slice(0, m.index!)), span: eventSpan(text, m.index!) }));
+}
+/** The speaker's own event: a self participant, or an unknown one outside a reported clause ("[REDACTED] entered …"). */
+function speakersOwn(e: SentenceEvent): boolean {
+  return e.participant === "self" || (e.participant === "unknown" && !e.reported);
 }
 /** Every event in the focused part of the sentence (or the whole sentence) is a third party's. */
 function reportsOthersEvent(text: string, focus?: string): boolean {
@@ -210,7 +222,9 @@ function reportsOthersEvent(text: string, focus?: string): boolean {
  * does not prove that a removal happened. Removal wording outside the processing phrase still counts ("processed for
  * expedited removal and removed to Mexico").
  */
-const CURRENT_REMOVAL_RE = /\b(processed (for|as) (an )?(expedited )?removal|(reviewed|approved|authori[sz]ed)( and (reviewed|approved|authori[sz]ed))? (the |this |his |her )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/gi;
+// The auxiliaries belong to the phrase ("is being processed for expedited removal"): matched first, so that "is/being
+// processed" alone cannot take them and leave "removal" behind.
+const CURRENT_REMOVAL_RE = /\b(((is|are|was|were|be|been|being)\s+)*processed (for|as) (an )?(expedited )?removal|(reviewed|approved|authori[sz]ed)( and (reviewed|approved|authori[sz]ed))? (the |this |his |her )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/gi;
 // Arrests, apprehensions, Notices to Appear and voluntary returns or departures are not removals; only removal wording
 // (removed, deported, excluded, reinstatement, a removal order) is.
 const REMOVAL_WORD_RE = /\b(removed|removal|deported|deportation|deport|excluded|exclusion|reinstat\w*)\b/i;
@@ -221,11 +235,14 @@ const NOT_HAPPENED_RE = /\b(offered|declined|refused|pending|will be|would be|ma
 // deported", "no record of removal"). The negation must govern the removal word: only auxiliaries, adverbs, articles
 // and history nouns may come between them, so "did not resist and was removed" and "did not receive a bond … being a
 // reinstate case" are not denials.
-const NEG_GAP = "(?:(?:at any time|at any point|ever|yet|once|been|be|being|was|were|had|has|have|previously|formally|officially|physically|actually|any|prior|previous|formal|expedited|ordered|order|of|from|to|the|a|an|record|history|evidence|known)\\s+){0,6}?";
+// "never been arrested or removed": one negation governs participles coordinated with "or"/"nor".
+const NEG_GAP = "(?:(?:\\w+(?:ed|en)\\s+(?:or|nor)|at any time|at any point|ever|yet|once|been|be|being|was|were|had|has|have|previously|formally|officially|physically|actually|any|prior|previous|formal|expedited|ordered|order|of|from|to|the|a|an|record|history|evidence|known)\\s+){0,6}?";
 export const NEGATED_REMOVAL_RE = new RegExp(`(?:\\b(?:never|not|no|without|nor)|n't)\\s+${NEG_GAP}(removed|deported|removals?|deportations?|excluded|exclusions?|reinstat\\w*)\\b`, "i");
 // Polarity is decided per clause, so a denial in one clause does not cancel an affirmative removal in another ("was not
 // deported in 2015, but he was removed in 2017").
-const HISTORY_CLAUSE_SPLIT = /\s*;\s*|,?\s+\b(?:but|however|although|though|whereas|while|yet)\b\s*,?\s*/i;
+// A coordinated verb phrase with its own auxiliary ("… was not removed to Mexico and was removed to Honduras") is a
+// separate clause: its polarity is its own.
+const HISTORY_CLAUSE_SPLIT = /\s*;\s*|,?\s+\b(?:but|however|although|though|whereas|while|yet)\b\s*,?\s*|,?\s+and\s+(?=(?:was|were|is|are|had|has|have|he|she|later|then|subsequently)\b)/i;
 const priorRemovalClause = (cl: string) =>
   !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
 export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause);
@@ -739,10 +756,14 @@ function peopleOfInterest(text: string): number {
  * be told apart, so only coordination within one sentence counts.
  */
 const PEOPLE_NOUN = "(?:subjects|individuals|people|persons|men|women|males|females|aliens|passengers|occupants|adults|juveniles|minors|travel+ers|migrants)";
-const SEVERAL_PEOPLE_RE = new RegExp(`\\b(?:two|three|four|five|six|seven|eight|nine|ten|several|multiple|both)\\s+(?:[\\w-]+\\s+)?${PEOPLE_NOUN}\\b|\\bboth of them\\b|\\b(?:the other|the second|a second|the third|one of the|each of the|another)\\s+(?:subject|man|woman|individual|person|occupant|passenger|male|female)s?\\b|\\ba (?:man|woman|male|female) and (?:a|an) (?:man|woman|male|female|juvenile|child|minor)\\b`, "i");
+const SEVERAL_PEOPLE_RE = new RegExp(`\\b(?:two|three|four|five|six|seven|eight|nine|ten|several|multiple|both|[2-9]|[1-9]\\d)\\s+(?:[\\w-]+\\s+)?${PEOPLE_NOUN}\\b|\\bboth of them\\b|\\b(?:the other|the second|a second|the third|one of the|each of the|another)\\s+(?:subject|man|woman|individual|person|occupant|passenger|male|female)s?\\b|\\ba (?:man|woman|male|female) and (?:a|an) (?:man|woman|male|female|juvenile|child|minor)\\b`, "i");
+// The subject, or a redacted person, together with a possessed companion or relative ("encountered the subject and his
+// companion"). A relative merely mentioned ("his wife lives in Houston") or an officer ("the subject and Agent …") is not.
+const WITH_COMPANION_RE = /(?:\bsubject|@P@)\s+and\s+(?:his|her|their)\s+(?:[\w-]+\s+)?(?:wife|husband|spouse|partner|sons?|daughters?|child|children|brothers?|sisters?|mother|father|cousins?|friends?|girlfriend|boyfriend|companions?|co-?travel+ers?|relatives?)\b|\bsubject\s+and\s+(?:a|an|another)\s+(?:man|woman|male|female|juvenile|minor|child|companion)\b/i;
 export function statesSeveralPeople(text: string): boolean {
   if (SEVERAL_PEOPLE_RE.test(text)) return true;
   const t = people(text);
+  if (WITH_COMPANION_RE.test(t)) return true;
   const marks = [...t.matchAll(/@P@/g)].map((m) => m.index!);
   const official: boolean[] = [];
   marks.forEach((at, i) => {
@@ -804,7 +825,7 @@ export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new
     // The account holder's own entry clauses in each sentence: an entry reported for a relative, a companion or a group, or
     // a trip away from the United States, is not the account holder's last U.S. entry. Year and manner are read from
     // those clauses only.
-    const own = new Map(chain.map((x) => [x.id, sentenceEvents(x.text, ENTRY_EVENT_RE).filter((e) => (e.participant === "self" || e.participant === "unknown") && !leavesUs(e.span)).map((e) => e.span).join(" ")]));
+    const own = new Map(chain.map((x) => [x.id, sentenceEvents(x.text, ENTRY_EVENT_RE).filter((e) => speakersOwn(e) && !leavesUs(e.span)).map((e) => e.span).join(" ")]));
     const entries = chain.filter((x) => own.get(x.id) && !(nonUs.has(x.id) && !(usEntryText(x.text) && !OTHER_COUNTRY_RE.test(x.text))) && !(OTHER_COUNTRY_RE.test(x.text) && !/\b(United States|U\.S\.)/.test(x.text)) && !NOT_LAST_ENTRY_RE.test(x.text) && !CORRECTION_RE.test(x.text));
     const ev = (x: Sentence): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, "unclear", "us_entry");
     const pron = (x: Sentence) => x.text.match(/\b(he|she)\b/i)?.[0] ?? "he";
@@ -904,7 +925,7 @@ export function exactEntryLink(c: CaseRecord, sentences: Sentence[], id: string)
   if (!formDate || !cat) return false;
   // The date and the manner must belong to the same entry event, and that entry must not be a third party's or a trip
   // away from the United States: a marriage or removal date elsewhere in the sentence does not count.
-  const linked = sentenceEvents(s.text, ENTRY_EVENT_RE).some((e) => (e.participant === "self" || e.participant === "unknown") && !leavesUs(e.span) &&
+  const linked = sentenceEvents(s.text, ENTRY_EVENT_RE).some((e) => speakersOwn(e) && !leavesUs(e.span) &&
     fullDates(e.span).includes(formDate) && statedManner(e.span) === cat);
   if (!linked) return false;
   if (accountOf(sentences, id).some((x) => SHARED_ENTRY_RE.test(x.text))) return false;
