@@ -1,0 +1,18 @@
+{
+  "version": "unissant-guidance-2026-10-30",
+  "receivedFrom": "Unissant Challenge Team (email reply; screenshots supplied by Harshal Yeole on 2026-10-30)",
+  "status": "Sponsor-provided guidance. Contextual, not a universal checklist.",
+  "answers": {
+    "testCases": "Teams can create their own test cases. The PDF can be used as guidance on how narratives are written.",
+    "chargeReferenceSheetAndChecklist": "Will not be provided. Sample narratives give a general guideline of what elements are expected; the 'Core elements to cover' table is offered as guidance."
+  },
+  "coreElementsToCover": [
+    { "id": "S1", "element": "Identity and claimed status", "shouldEstablish": "Who the traveler is; citizenship/nationality; identifying documents; and the immigration status or classification under which admission is requested. In expedited removal, the regulation expressly calls for recording statements concerning identity, alienage, and inadmissibility." },
+    { "id": "S2", "element": "Encounter and application for admission", "shouldEstablish": "The date, time, port of entry, relevant travel circumstances, documents presented, and stated purpose of travel. These facts establish the context for evaluating the application for admission." },
+    { "id": "S3", "element": "Relevant facts developed during inspection", "shouldEstablish": "A logical account of the material questions, answers, documents, observations, and other evidence. Identify the source of each important fact and distinguish the traveler's statements from the officer's findings. The expedited-removal regulation requires a record of the case facts and the traveler's statements." },
+    { "id": "S4", "element": "Specific ground of inadmissibility", "shouldEstablish": "The precise INA section and subsection, along with an explanation of how the established facts satisfy that ground. A general assertion that the traveler is 'not credible' or 'not a bona fide visitor' does not, by itself, explain the statutory basis." },
+    { "id": "S5", "element": "Traveler's explanation or response", "shouldEstablish": "Material explanations, corrections, and responses to the alleged deficiency or contradiction, followed by an explanation of why they do or do not resolve it. In expedited removal, the traveler must be advised of the charges and given an opportunity to respond in the sworn statement." },
+    { "id": "S6", "element": "Disposition and procedural record", "shouldEstablish": "What action was taken, the forms documenting it, required supervisory review, and service or acknowledgment requirements applicable to that action. Expedited-removal requirements are more specific than a general narrative summary." }
+  ],
+  "note": "Text transcribed from the sponsor's table. Source citations shown in the table as 'ecfr' and 'cbp+1' were not followed or verified by the team."
+}

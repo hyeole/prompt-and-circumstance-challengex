@@ -49,3 +49,20 @@ Re-scored on 2026-10-29 with one policy. Unadjudicated flags count as incorrect,
 - Every flag's evidence matched the source text.
 
 The post-hoc runs show improvement, but they were informed by the held-out errors. A new held-out claim needs a fresh set of base cases.
+
+## M2: 1 vs 2 review samples (dev split, production build of commit `bcac131`, one case at a time)
+
+These are post-tuning diagnostic runs. Each configuration ran twice.
+
+| Run | Samples | Requests (ok) | Completion | Strict recall | Incorrect flags (provisional) | p50 / max |
+|---|---|---|---|---|---|---|
+| 2026-10-30T00-19-52 | 2 | 48 (47) | 100% | 100% (13/13) | 25% (7/28), 7 unadjudicated | 16.8s / 55.0s |
+| 2026-10-30T00-25-17 | 1 | 32 (31) | 100% | 100% (13/13) | 16% (4/25), 4 unadjudicated | 16.0s / 55.0s |
+| 2026-10-30T00-30-49 | 2 | 48 (46) | 100% | 85% (11/13) | 19% (5/26), 5 unadjudicated | 16.2s / 55.0s |
+| 2026-10-30T00-36-49 | 1 | 32 (30) | 88% | 77% (10/13) | 17% (4/24), 4 unadjudicated | 17.9s / 55.0s |
+
+**Not concluded yet.**
+- The new flags are not adjudicated. Unadjudicated flags count as incorrect, so these incorrect-flag figures are upper bounds.
+- Run-to-run variation (85–100% for the same configuration) is as large as the difference between configurations.
+- One sample used a third fewer requests, with similar latency.
+- Next steps: adjudicate the new flags, then decide.
