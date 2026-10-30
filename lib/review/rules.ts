@@ -2,6 +2,7 @@
 import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "@/lib/types";
 import { REFERENCES, chargeIdConflict, findCharge } from "@/lib/references";
 import { fieldQuality } from "@/lib/fieldQuality";
+import { statesSeveralPeople } from "./facts";
 
 export interface RuleOutput {
   elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
@@ -77,9 +78,13 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
   // 3. Multiple people in one narrative. Informational only: in the public source the names are redacted,
   // so statements cannot always be attributed. This is a property of the data, not an officer omission.
   const notes: string[] = [];
+  // Bare group wording ("subjects", "passengers") must recur, since it can be boilerplate; a sentence that itself states
+  // several people (a count, "the other subject", two coordinated non-official redacted names) is enough on its own.
+  // Repeated identical redaction markers and officials' names never establish a second person.
   const multi = sentences.filter((s) => /\b(subjects|individuals|passengers|occupants|(two|three|four|five|six|both) (subjects|individuals|people|persons|men|women|passengers|occupants|aliens)|all (subjects|three|four|five)|both of them)\b/i.test(s.text));
-  if (multi.length >= 2)
-    notes.push(`The narrative describes more than one person (for example ${multi[0].id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
+  const stated = sentences.find((s) => statesSeveralPeople(s.text));
+  if (multi.length >= 2 || stated)
+    notes.push(`The narrative describes more than one person (for example ${(multi.length >= 2 ? multi[0] : stated!).id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
 
   // 4. Encounter time in the form vs times stated in the narrative.
   const dt = field(c, "encounter.date_time");

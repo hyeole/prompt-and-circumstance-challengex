@@ -730,6 +730,27 @@ function peopleOfInterest(text: string): number {
   const t = people(text);
   return [...t.matchAll(/@P@/g)].filter((m) => !OFFICIAL_BEFORE_RE.test(t.slice(Math.max(0, m.index! - 40), m.index!))).length;
 }
+/**
+ * A sentence that by itself states that several people of interest are involved: a number of people ("two subjects",
+ * "four men", "both of them"), a reference that presupposes another ("the other subject", "the second subject", "one of
+ * the subjects", "a man and a woman"), or two redacted people joined by "and"/a comma, where neither is an official.
+ * A redacted name after an official's title, or joined to one ("Agents [REDACTED] and [REDACTED]"), is an official. The
+ * same redaction marker appearing in separate places is not evidence of a second person: identical placeholders cannot
+ * be told apart, so only coordination within one sentence counts.
+ */
+const PEOPLE_NOUN = "(?:subjects|individuals|people|persons|men|women|males|females|aliens|passengers|occupants|adults|juveniles|minors|travel+ers|migrants)";
+const SEVERAL_PEOPLE_RE = new RegExp(`\\b(?:two|three|four|five|six|seven|eight|nine|ten|several|multiple|both)\\s+(?:[\\w-]+\\s+)?${PEOPLE_NOUN}\\b|\\bboth of them\\b|\\b(?:the other|the second|a second|the third|one of the|each of the|another)\\s+(?:subject|man|woman|individual|person|occupant|passenger|male|female)s?\\b|\\ba (?:man|woman|male|female) and (?:a|an) (?:man|woman|male|female|juvenile|child|minor)\\b`, "i");
+export function statesSeveralPeople(text: string): boolean {
+  if (SEVERAL_PEOPLE_RE.test(text)) return true;
+  const t = people(text);
+  const marks = [...t.matchAll(/@P@/g)].map((m) => m.index!);
+  const official: boolean[] = [];
+  marks.forEach((at, i) => {
+    const joined = i > 0 && /^\s*(?:,|and|,\s*and|&)\s*$/i.test(t.slice(marks[i - 1] + 3, at));
+    official.push(OFFICIAL_BEFORE_RE.test(t.slice(Math.max(0, at - 40), at)) || (joined && official[i - 1]));
+  });
+  return marks.some((at, i) => i > 0 && !official[i] && !official[i - 1] && /^\s*(?:,|and|,\s*and|&)\s*$/i.test(t.slice(marks[i - 1] + 3, at)));
+}
 /** The first reference to a person in a sentence: a third-person singular pronoun, a person of interest, or anything else. */
 function firstReference(text: string): "pronoun" | "other" | null {
   const t = people(text);
