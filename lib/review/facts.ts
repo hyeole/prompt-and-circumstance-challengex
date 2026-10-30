@@ -1,6 +1,7 @@
 // Fact extraction + deterministic comparison.
 // The model only EXTRACTS statements (with sentence IDs and exact quotes). Plain code compares them with each other
 // and with the form fields, so contradictions are found consistently and every comparison can be explained.
+import { fieldQuality } from "@/lib/fieldQuality";
 import { z } from "zod";
 import type { CaseRecord, EvidenceRef, Finding, Sentence } from "@/lib/types";
 import { locatePartial, locateQuote } from "@/lib/text";
@@ -60,9 +61,14 @@ export const isUsEntry = (e: Entry) => (e.event ?? "us_entry") === "us_entry" &&
  * sentence literally says "Subject"/"the subject" (singular). "other" is accepted from the extractor; anything else is unclear.
  */
 const EXPLICIT_SUBJECT = /\b(the\s+)?subject(?!s)\b/i;
+/** "one subject", "the last subject", "each subject", "another subject": a member of a group, not this record's subject. */
+const GROUP_MEMBER = /\b(one|another|each|every|other|last|first|second|third|fourth|fifth|remaining|a|any|either|neither)\s+subject(?!s)\b/i;
 export function attribution(sentence: Sentence, person: "subject" | "other" | "unclear"): "subject" | "other" | "unclear" {
   if (person === "other") return "other";
-  return EXPLICIT_SUBJECT.test(sentence.text) ? "subject" : "unclear";
+  // Every "subject" mention must refer to this record's subject; a group-member reference makes the sentence unattributed.
+  const mentions = sentence.text.match(new RegExp(EXPLICIT_SUBJECT.source, "gi")) ?? [];
+  const groupRefs = sentence.text.match(new RegExp(GROUP_MEMBER.source, "gi")) ?? [];
+  return mentions.length > groupRefs.length ? "subject" : "unclear";
 }
 
 /**
@@ -132,6 +138,33 @@ function showing(v: Verified, fact: string): EvidenceRef {
 const EVENT_LABEL: Record<string, string> = { us_entry: "Entry into the U.S.", other_country_entry: "Entry into another country", departure: "Departure", travel: "Travel", removal: "Prior removal" };
 const ctx = (ev: EvidenceRef, attribution: "subject" | "unclear" | "other", event: string): EvidenceRef => ({ ...ev, context: { attribution, event: EVENT_LABEL[event] ?? event } });
 
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+/** Month/day pairs a sentence states: "May 5", "05/05/2011", "8/11/2009"; "the day after 06/08/2011" also gives 06/09. */
+function monthDays(text: string): string[] {
+  const out: string[] = [];
+  const t = text.toLowerCase();
+  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) out.push(`${+m[1]}/${+m[2]}`);
+  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2})\\b`, "g"))) out.push(`${MONTHS.indexOf(m[1]) + 1}/${+m[2]}`);
+  for (const m of t.matchAll(/\bday after\b[^.]{0,80}?\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) {
+    const d = new Date(Date.UTC(2000, +m[1] - 1, +m[2] + 1));
+    out.push(`${d.getUTCMonth() + 1}/${d.getUTCDate()}`);
+  }
+  return out;
+}
+
+/**
+ * Independent evidence that ties an unattributed statement to THIS record's subject: the statement gives the same
+ * entry month and day as the subject's own form (only the year may differ). Place and manner are never links,
+ * because people who travel together share them (dev-synthetic DS06: two companions, both "near Nogales").
+ * Returns the matched facts, empty when nothing ties the statement to the subject.
+ */
+export function formLinks(c: CaseRecord, text: string, _conflict: "entry.date" | "entry.manner" | "entry.place"): string[] {
+  const f = c.facts.find((x) => x.path === "entry.date" && x.status === "present");
+  const fd = f?.value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
+  return fd && monthDays(text).includes(`${+fd[1]}/${+fd[2]}`) ? [`the entry month and day (${fd[1]}/${fd[2]})`] : [];
+}
+const linkNote = (links: string[]) => ` The statement does not name the subject (several people are described), but it matches this subject's form on ${links.join(" and ")}, so it is treated as about this subject. A person should confirm.`;
+
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
@@ -173,13 +206,16 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy);
     const counts = (x: { attr: "subject" | "other" | "unclear" }) => aboutSubject(x.attr, multiPerson) && (x.attr === "subject" || !subjectAgrees);
     const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && !correctedLater(x, fy));
-    const off = differs.find(counts);
+    // In a multi-person narrative an unattributed statement still counts when the subject's own form links it.
+    const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? formLinks(c, x.v.s.text, "entry.date") : []);
+    const off = differs.find(counts) ?? differs.find((x) => linksOf(x).length > 0);
+    const offLinks = off && !counts(off) ? linksOf(off) : [];
     if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson).map((x) => x.v.s.id));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
     if (off)
       findings.push({
         id: "F-ENTRY-DATE", category: "inconsistency", title: "Entry date differs from the form",
-        explanation: `The narrative gives ${off.e.year} for the entry, but the form records the last entry in ${fy}.${attributionNote(off.attr)}`,
+        explanation: `The narrative gives ${off.e.year} for the entry, but the form records the last entry in ${fy}.${offLinks.length ? linkNote(offLinks) : attributionNote(off.attr)}`,
         evidence: [offEv!, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
@@ -202,15 +238,16 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 3. Manner of entry: narrative statements vs each other and vs the form code.
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
   // Manner wording must be verified exactly and must actually describe a manner of entry.
-  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && aboutSubject(x.attr, multiPerson));
+  const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? formLinks(c, x.v.s.text, "entry.manner") : []);
+  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && (aboutSubject(x.attr, multiPerson) || mannerLinks(x).length > 0));
   const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
-  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "")).map((x) => x.v.s.id));
+  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length).map((x) => x.v.s.id));
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
     const other = known.find((x) => x.e.manner === fm);
     findings.push({
       id: "F-ENTRY-MANNER", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
-      explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}.${other ? " Another narrative statement agrees with the form." : ""}${attributionNote(conflict.attr)}`,
+      explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}.${other ? " Another narrative statement agrees with the form." : ""}${!aboutSubject(conflict.attr, multiPerson) ? linkNote(mannerLinks(conflict)) : attributionNote(conflict.attr)}`,
       evidence: [ctx(conflict.v.ev, conflict.attr, "us_entry"), ...(other ? [ctx(other.v.ev, other.attr, "us_entry")] : []), fieldEv("entry.manner")], referenceIds: ["E3"], needsHumanReview: true,
       humanReviewReason: "Two accounts of the manner of entry conflict; the facts could support different charges.", source: "model", severity: "high",
     });
@@ -238,6 +275,16 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         evidence: [ctx(rem.ev, attribution(sentences.find((x) => x.id === rem.ev.sentenceId)!, "unclear"), "removal"), fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
         humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: "model", severity: "high",
       });
+  }
+  // 4b. The form records a prior removal, but the narrative describes none at all. One source only, so this is a
+  //     clarity gap for a person to resolve, not a contradiction (the narrative may simply omit the history).
+  if (imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|excluded)/i.test(imm.value) && !priorRemovals(sentences, facts, false).length) {
+    findings.push({
+      id: "F-HISTORY-2", category: "unclear", title: "Prior removal on the form is not described in the narrative",
+      explanation: `The form records the immigration record as "${imm.value}", but the narrative does not describe any prior removal or deportation.`,
+      evidence: [fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
+      humanReviewReason: "The form and the narrative disagree about the immigration history: a person should confirm.", source: "model", severity: "medium",
+    });
   }
   return { findings, dropped, unattributed: [...new Set(unattributed)] };
 }

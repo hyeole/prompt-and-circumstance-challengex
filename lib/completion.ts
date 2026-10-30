@@ -18,8 +18,10 @@ export function computeCompletion(r: Pick<ReviewResult, "modelStatus" | "modelEr
   const failed: Completion["failed"] = [];
   const unsupported: Completion["unsupported"] = [];
   if (r.modelStatus !== "ok") failed.push({ check: "Model review", reason: r.modelError ? `did not complete (${r.modelError})` : "did not complete" });
-  const facts = (r.calls ?? []).find((c) => c.role === "facts");
-  if (facts && facts.status !== "ok") failed.push({ check: "Fact extraction", reason: `did not complete (${facts.error ?? facts.status}); entry and history comparisons did not run` });
+  // The fact call may be retried once ("facts-retry"); it is complete if either attempt succeeded.
+  const factCalls = (r.calls ?? []).filter((c) => c.role === "facts" || c.role === "facts-retry");
+  const lastFacts = factCalls.at(-1);
+  if (lastFacts && !factCalls.some((c) => c.status === "ok")) failed.push({ check: "Fact extraction", reason: `did not complete (${lastFacts.error ?? lastFacts.status}); entry and history comparisons did not run` });
   const omitted = (r.elements ?? []).filter((e) => e.status === "not_checked");
   if (omitted.length && r.modelStatus === "ok") failed.push({ check: "Required elements", reason: `no output for ${omitted.map((e) => e.elementId).join(", ")}` });
   if (opts.citationExpected && r.citation?.status === "not_checked") failed.push({ check: "Citation check", reason: "did not run" });

@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, post-audit (eval, commit 324c393)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T04:06:35.692Z",
+  "commit": "324c393",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

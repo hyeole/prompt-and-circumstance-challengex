@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, formLinks, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -56,6 +56,14 @@ function supportedEntryPart(c: CaseRecord, path: string, citedText: string): str
     return tokens.length && named && !tokens.some((t) => new RegExp(`\\b${t}`, "i").test(citedText)) ? `The cited narrative statement names a different place of entry than the form ("${f.value}").` : null;
   }
   return null;
+}
+
+const FACTS_BUDGET_MS = 55_000;
+/** A short reason for invalid model output: which schema paths failed, or that it was not JSON. Never the content. */
+function invalidReason(e: unknown): string {
+  const issues = (e as { issues?: { path: (string | number)[] }[] }).issues;
+  if (issues?.length) return `schema: ${[...new Set(issues.slice(0, 3).map((i) => i.path.join(".") || "(root)"))].join(", ")}`;
+  return "not valid JSON";
 }
 
 /** A sentence that says a fact is not known ("does not recall when", "date of entry unknown"). */
@@ -153,8 +161,19 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   const m0 = Date.now();
   const user = buildUserPrompt(c, sentences, toCheck, charge, REFERENCES.formGlossary);
   // Fact extraction runs alongside the review samples; code compares the extracted statements (lib/review/facts.ts).
-  const factsCall = logged(calls, "facts", complete(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences))).then((r) => {
-    try { return FactsOutput.parse(extractJSON(r.text)); } catch (e) { const last = calls.find((x) => x.role === "facts"); if (last) last.status = "invalid_output"; throw e; }
+  // Invalid output is retried once if enough of the time budget remains; the reason is logged (never the content).
+  const factsStart = Date.now();
+  const parseFacts = (role: string) => (r: { text: string }) => {
+    try { return FactsOutput.parse(extractJSON(r.text)); } catch (e) {
+      const last = calls.find((x) => x.role === role);
+      if (last) Object.assign(last, { status: "invalid_output", error: invalidReason(e) });
+      throw e;
+    }
+  };
+  const factsCall = logged(calls, "facts", complete(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences))).then(parseFacts("facts")).catch((e) => {
+    const remaining = FACTS_BUDGET_MS - (Date.now() - factsStart);
+    if (calls.find((x) => x.role === "facts")?.status !== "invalid_output" || remaining < 15_000 || cancel?.aborted) throw e;
+    return logged(calls, "facts-retry", complete(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences), remaining)).then(parseFacts("facts-retry"));
   });
   const [settled, factsSettled] = await Promise.all([
     samplesWithGrace(SAMPLES, (signal, i) => logged(calls, `review-${i + 1}`, complete(SYSTEM_PROMPT, user, undefined, signal))),
@@ -188,16 +207,18 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   }
 
   // ---- Required elements
+  // Elements decided by deterministic detectors or form-field rules, without the model: their findings are rule findings.
+  const ruleDecided = new Set<string>();
   const elements: ElementResult[] = allElements.map((el): ElementResult => {
     const ap = applicability.get(el.id);
     if (ap === false) return { elementId: el.id, label: el.label, status: "not_applicable", sentenceIds: [], fieldPaths: [], note: `Applies only in: ${(el.appliesIn ?? []).join(", ").replace(/_/g, " ")}.` };
     if (ap === "unclear") return { elementId: el.id, label: el.label, status: "applicability_unclear", sentenceIds: [], fieldPaths: [], note: `Applies in ${(el.appliesIn ?? []).join(", ").replace(/_/g, " ")}; this case's context could not be determined.` };
     const det = detected.get(el.id);
-    if (det) return det;
+    if (det) { ruleDecided.add(el.id); return det; }
     const fromField = rules.elementsFromFields.get(el.id);
     // Fully known form fields settle the element. Fields recorded as unknown (or partly unknown) are documented but
     // not established, so the narrative is still checked; if it does not state the fact, the qualified field result stands.
-    if (fromField?.status === "present" && !fromField.qualifier) return fromField;
+    if (fromField?.status === "present" && !fromField.qualifier) { ruleDecided.add(el.id); return fromField; }
     const m = out?.elements.find((x) => x.element_id === el.id);
     const validIds = (m?.sentence_ids ?? []).filter((id) => sentences.some((s) => s.id === id));
     if (fromField?.status === "present") {
@@ -259,7 +280,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         id: `M-${e.elementId}`, category: "missing_element", title: `Missing: ${e.label.toLowerCase()}`,
         explanation: `${ref.description} The narrative and form fields reviewed do not state this.${e.note ? " Note: " + e.note : ""}`,
         evidence: [{ kind: "missing", elementId: e.elementId, verified: true }], referenceIds: [e.elementId],
-        needsHumanReview: false, source: "model", severity: ref.severity as Finding["severity"],
+        needsHumanReview: false, source: ruleDecided.has(e.elementId) ? "rule" : "model", severity: ref.severity as Finding["severity"],
       });
     } else if (e.status === "unclear") {
       const ev: EvidenceRef[] = e.sentenceIds.map((id) => { const s = sentences.find((x) => x.id === id)!; return { kind: "sentence", sentenceId: id, quote: s.text, start: s.start, end: s.end, page: s.page, verified: true }; });
@@ -267,7 +288,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         id: `U-${e.elementId}`, category: "unclear", title: `Unclear: ${e.label.toLowerCase()}`,
         explanation: `${e.note || "The narrative touches on this element but does not state it clearly."}`,
         evidence: ev.length ? ev : [{ kind: "missing", elementId: e.elementId, verified: true }], referenceIds: [e.elementId],
-        needsHumanReview: false, source: "model", severity: "low",
+        needsHumanReview: false, source: ruleDecided.has(e.elementId) ? "rule" : "model", severity: "low",
       });
     }
   }
@@ -311,9 +332,14 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // (1c) In a narrative about several people, a statement whose subject cannot be attributed (redacted names) is not
     // evidence against THIS subject's entry or history fields (same rule as the fact comparison: facts.aboutSubject).
+    // A statement the subject's own form links to this subject (same entry month and day, or place) still counts.
+    const entryPath = verified.find((v) => v.fieldPath === "entry.date" || v.fieldPath === "entry.manner" || v.fieldPath === "entry.place")?.fieldPath as "entry.date" | "entry.manner" | "entry.place" | undefined;
+    const unlinked = (v: EvidenceRef) => {
+      const s = sentences.find((x) => x.id === v.sentenceId)!;
+      return attribution(s, "unclear") !== "subject" && !(entryPath && formLinks(c, s.text, entryPath).length);
+    };
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
-        verified.every((v) => !v.sentenceId || attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear") !== "subject") &&
-        verified.some((v) => v.sentenceId && attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear") !== "subject")) {
+        verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
       discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });
       return;
     }

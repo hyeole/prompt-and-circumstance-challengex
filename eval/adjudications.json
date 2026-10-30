@@ -480,6 +480,78 @@
       "note": "The variant removed the manner of entry; 'entered in Laredo' does not state an admission, so the mismatch is an inference, not a record conflict (the gap is reported as the missing manner).",
       "example": "F051-E C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
       "date": "2026-10-30"
+    },
+    {
+      "base": "C003",
+      "key": "unclear|received a copy of mexican consular id.",
+      "verdict": "false_flag",
+      "note": "'received a copy of [the subject's] Mexican Consular ID' states an identity document; the post-audit N1 guard does not recognise 'received a copy of'.",
+      "example": "C003-M3 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "unclear|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015",
+      "verdict": "false_flag",
+      "note": "The narrative states the agent 'obtained both Subjects passports'; identity documents are stated (the N1 guard does not recognise 'obtained').",
+      "example": "C021-CIT U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "unclear|dob: pob: nigeria entered as a b-1/b2 arriving on 06- 01-201|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015|reveals to be an overstay.|reveals to be an overstay.",
+      "verdict": "false_flag",
+      "note": "The narrative states the agent 'obtained both Subjects passports'; identity documents are stated (the N1 guard does not recognise 'obtained').",
+      "example": "C021-X1 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "unclear|readily admitted to being a citizen of nicaragua who was ill",
+      "verdict": "valid_observation",
+      "note": "Only status documents are mentioned ('no documents allowing him to be or remain'); no identity documents are stated.",
+      "example": "C013-X1 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national",
+      "verdict": "valid_observation",
+      "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
+      "example": "C045-CIT U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national|records checks conducted on the vehicles and their registere",
+      "verdict": "valid_observation",
+      "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21",
+      "verdict": "valid_observation",
+      "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
+      "example": "C045-X1 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|entry.manner",
+      "verdict": "false_flag",
+      "note": "The narrative documents prior removals (the charge's requirement); the PWA manner code does not conflict with a reentry charge. Same standard as the earlier C013 adjudication.",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|history.immigration_record",
+      "verdict": "valid_observation",
+      "note": "Mis-categorised: the explanation and evidence describe the planted NEGATIVE-record vs documented-removals conflict, not a charge mismatch. Real discrepancy, but no detection credit (wrong category).",
+      "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
     }
   ]
 }

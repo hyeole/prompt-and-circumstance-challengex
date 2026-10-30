@@ -168,16 +168,17 @@ test("planted date conflict is still found when the differing statement is expli
   assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
 });
 
-test("audit item 3: unattributed statements in a multi-person narrative are routed, not flagged as a contradiction (C045-X1)", async () => {
+test("form-linked attribution: an unattributed statement matching this subject's form on entry day and place is a contradiction (C045-X1)", async () => {
   const c = load("C045-X1");
   const s30 = sid(c, "claims to have last entered"), s35 = sid(c, "February 21, 2015");
   const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
     { sentence_id: s30, quote: "last entered the United States on February 21, 2012", event: "us_entry", year: 2012, manner: "admitted", person: "unclear" },
     { sentence_id: s35, quote: "last entered the United States on February 21, 2015", event: "us_entry", year: 2015, manner: "admitted", person: "unclear" },
   ] }) }));
-  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")));
-  assert.ok(r.humanReview.required);
-  assert.ok(r.humanReview.reasons.some((x) => x.includes(s35) && /cannot be attributed/.test(x)));
+  const f = r.findings.find((x) => x.id === "F-ENTRY-DATE");
+  assert.ok(f, "the year conflict is kept: the form links the statement to this subject");
+  assert.match(f!.explanation, /matches this subject's form on the entry month and day/);
+  assert.ok(f!.needsHumanReview);
 });
 
 test("bug C013: entering Mexico is not compared with the U.S. entry field", async () => {
@@ -472,4 +473,71 @@ test("a known form code that meets the charge's requirement is verified support 
 test("without a form code or an attributable statement, 'consistent' is still routed (DS11)", async () => {
   const r = await reviewCase(loadD("DS11"), fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
   assert.equal(r.citation.status, "needs_human_review");
+});
+
+// ---- Post-audit diagnosis fixes (eval/fresh/POST-AUDIT-DIAGNOSIS.md); post-tuning ----
+
+test("form-linked attribution restores F010-X: 'on or about May 5, 2014' vs form 05/05/2011", async () => {
+  const c = loadF("F010-X");
+  const s = sid(c, "May 5, 2014");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "claims to have crossed the border illegally at night with eight other individuals on or about May 5, 2014", event: "us_entry", year: 2014, manner: "without_inspection", person: "unclear" }] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
+});
+
+test("form-linked attribution restores F075-X: 'the day after ... 06/08/2011' gives 06/09, the form's month and day", async () => {
+  const c = loadF("F075-X");
+  const s = sid(c, "the day after returning to Mexico");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "claimed to have crossed the Rio Grande River into the United States the day after returning to Mexico as a Voluntary Return on 06/08/2011", event: "us_entry", year: 2011, manner: "without_inspection", person: "unclear" }] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
+});
+
+test("negative control DS06: a companion's different year with no form link stays unflagged", async () => {
+  const c = loadD("DS06");
+  const s = sid(c, "in 2016");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: sentenceText(c, s), event: "us_entry", year: 2016, manner: "without_inspection", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")));
+});
+
+test("negative control F055-A: a conflicting manner with nothing on the form to link it stays routed", async () => {
+  const c = loadF("F055-A");
+  const s = sid(c, "border crossing card");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "he stated that he entered the United States through the Hidalgo port of entry with a border crossing card", event: "us_entry", year: null, manner: "admitted", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((f) => f.id === "F-ENTRY-MANNER"));
+  assert.ok(r.humanReview.reasons.some((x) => x.includes(s) && /cannot be attributed/.test(x)));
+});
+
+test("F051-C: 'one had been ordered removed ... the last subject was in status' is about group members, not this subject", async () => {
+  const c = loadF("F051-C");
+  const s = sid(c, "one had been ordered removed");
+  const r = await reviewCase(c, fake({ facts: facts({ removal_statements: [{ sentence_id: s, quote: "one had been ordered removed", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((f) => f.id === "F-HISTORY"));
+});
+
+test("invalid fact output is retried once and the reason is logged without content", async () => {
+  let n = 0;
+  const complete: Complete = async (system) => {
+    if (system === FACTS_SYSTEM_PROMPT) return { text: n++ === 0 ? "not json at all" : facts(), attempts: 1 };
+    return { text: review(), attempts: 1 };
+  };
+  const r = await reviewCase(load("C037"), complete);
+  const first = r.calls.find((x) => x.role === "facts")!;
+  assert.equal(first.status, "invalid_output");
+  assert.equal(first.error, "not valid JSON");
+  assert.equal(r.calls.find((x) => x.role === "facts-retry")?.status, "ok");
+  assert.ok(!r.completion?.failed.some((f) => f.check === "Fact extraction"));
+});
+
+test("provenance: a missing element decided by a deterministic detector is a rule finding (F039-G)", async () => {
+  const r = await reviewCase(loadF("F039-G"), fake({ facts: new ModelError("timeout", "timeout", 1) }));
+  const n5 = r.findings.find((f) => f.id === "M-N5" || f.id === "U-N5");
+  assert.ok(n5);
+  assert.equal(n5!.source, "rule");
+});
+
+test("F055-H: a form that records a prior removal the narrative never describes is routed as a clarity gap", async () => {
+  const r = await reviewCase(loadF("F055-H"), fake({}));
+  const f = r.findings.find((x) => x.id === "F-HISTORY-2");
+  assert.ok(f);
+  assert.equal(f!.category, "unclear");
+  assert.ok(f!.needsHumanReview);
 });

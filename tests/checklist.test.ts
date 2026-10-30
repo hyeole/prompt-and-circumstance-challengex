@@ -79,3 +79,11 @@ test("audit item 4: an incomplete 'INA 212(a)' is not a precise ground; a precis
   assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)(6)(A)(i). He crossed the river illegally."), "present");
   assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)(6)(A)(i) in that he is present without being admitted."), "present");
 });
+
+test("legacy post-audit false flags: 'received a copy of ... Consular ID' and 'obtained ... passports' state identity documents", () => {
+  assert.equal(probe("N1", "The agent received a copy of [REDACTED] Mexican Consular ID."), "present");
+  assert.equal(probe("N1", "BPA [REDACTED] obtained both Subjects passports and ran checks."), "present");
+  // Status documents are not identity documents (same standard as the legacy adjudications for C013 and C045).
+  assert.equal(probe("N1", "He had no documents allowing him to be or remain in the United States."), "model");
+  assert.equal(probe("N1", "The subject had no identification."), "present");
+});
