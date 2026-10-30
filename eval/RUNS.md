@@ -122,3 +122,23 @@ Every flag in these runs was adjudicated by hand. Standards used:
 - **The audited "font is unreadable" example does not occur in any recorded run.** It is reproduced as a negative-control test.
 
 **Headlines are unchanged and stay labelled as before.** The internal held-out result is 83% / 28% under v2.2. fresh-v1's untouched result is 71% / 30% under v2.2, and the independent audit reproduced those figures. Fixes informed by fresh-v1 are post-tuning, so fresh-v1 cannot support another untouched claim.
+
+## Post-audit runs at commit `324c393` (scoring policy v2.3; post-tuning)
+
+The code includes all eight independent-audit fixes. Every flag was adjudicated by hand. These runs exposed two problems: a wrong team reference for INA 212(a)(7) and a large recall drop. The drop is diagnosed per planted issue in `eval/fresh/POST-AUDIT-DIAGNOSIS.md`.
+
+| Run | Dataset | Completion | Strict recall | Incorrect flags | Unnecessary routing | Other |
+|---|---|---|---|---|---|---|
+| 2026-10-30T03-48-20 | dev-synthetic-v1 | 100% (12/12) | 100% (6/6) | 0% (0/9) | 40% (4/10) | checklist 50/50, should-not-flag 0, p50 18.0s |
+| 2026-10-30T03-52-17 | fresh-v1 (post-tuning) | 89% (25/28) | 47% (8/17) | 21% (4/19) | 61% (11/18) | checklist 97%, should-not-flag 0, p50 28.9s |
+| 2026-10-30T04-06-35 | legacy benchmark (37) | 86% (32/37) | 68% (21/31) | 19% (11/57) | 33% (5/15) | should-not-flag 0, p50 27.9s; 5 partial (fact call timed out) |
+
+**Why recall fell.**
+- **Attribution rule (audit item 3).** Almost every adapted source record describes several people with redacted names. Planted conflicts in unattributed statements were routed to a person with the sentence named, not flagged. Fresh lost 4 plants this way; legacy lost 7.
+- **Completion rule (audit item 1).** A failed fact call now makes the review partial. Fresh lost 2 plants; legacy lost 1.
+
+**Why routing rose.**
+- The INA 212(a)(7)(A)(i)(I) reference wrongly required a prior admission.
+- Form fields did not count as support for a "consistent" verdict.
+
+Both were fixed in `0ab6dfa`. The diagnosis fixes are in `8864d7b`; they are listed in `eval/fresh/POST-AUDIT-DIAGNOSIS.md`, and `8864d7b` is measured below. Scoring and labels are unchanged.

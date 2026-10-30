@@ -40,3 +40,27 @@ Strict recall fell from **82% (14/17)** in the post-tuning run `03-05-54` to **4
 5. **Coverage (history).** Compare a form record that states a removal with a narrative that describes none (route, since the narrative may simply omit it). Also compare documented prior apprehensions with a NEGATIVE record.
 
 Each fix needs regression tests on the cases above and a negative control. One example: a group member's statement that matches nothing on the subject's form must stay routed.
+
+## Legacy benchmark, same run family (`2026-10-30T04-06-35`)
+
+Ten planted issues were not detected (recall 68%, 21/31):
+- **Attribution routing, 7:** C001-X1, C003-AMB ×2, C012-X1, C119-X1, C119-AMB, C013-X1. In each, the routing reason names the planted sentence.
+  - Only C119-X1 is linked by the subject's own form (8/11 = 08/11).
+  - C013-X1's model output described the planted conflict, but as a citation mismatch: adjudicated a valid observation, with no detection credit.
+- **Incomplete check, 1:** C037-X1 (fact call failed).
+- **Model miss, 1:** C119-CIT. The model called a reentry charge consistent; the safety net routed it.
+- **Element miss, 1:** C012-M2. Already missed before the audit.
+
+New false flags, all on N1 (identifying documents): the post-audit N1 guard did not recognise "received a copy of … Consular ID" (C003) or "obtained … passports" (C021).
+
+## Implemented (commit `8864d7b`, post-tuning)
+1. **Form-linked attribution, entry month and day only.** Place was tried and dropped: the DS06 negative control showed two companions sharing "near Nogales".
+   - Expected to restore F010-X, F075-X, C119-X1 and C045-X1.
+   - F055-A, C001-X1, C003-AMB, C012-X1 and C119-AMB stay routed; nothing on their forms links the statement.
+2. **Group-member wording** ("one/the last/each subject").
+3. **Provenance:** detector- and form-rule-decided elements are rule findings.
+4. **Fact-call retry** once on invalid output, with the reason logged.
+5. **N1:** added the missing verbs and plurals; status documents ("no documents allowing him to be") are not identity documents.
+6. **New clarity check:** a form that records a prior removal the narrative never describes (F055-H).
+   - It cannot earn detection credit under v2.3, because that plant has no anchor text and a field-only finding must name a planted value. The scorer is left unchanged.
+   - Not implemented: prior apprehensions vs a NEGATIVE record. The only planted case (F075-H) is unattributable, so the check would only route it.
