@@ -409,7 +409,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // Relevance: an exact quote is necessary but not sufficient. (1) A claim about the U.S. entry fields must not rest on a
     // sentence the extractor identified as entry into another country, a departure, or travel.
-    const nonUs = factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>();
+    const nonUs = factsSettled.ok ? nonUsEntrySentences(factsSettled.v, sentences) : new Set<string>();
     if (iss.type === "inconsistency" && verified.some((v) => v.sentenceId && nonUs.has(v.sentenceId))) {
       discarded.push({ title: iss.title, reason: "The cited sentence describes entry into another country or travel, not the U.S. entry, so it cannot show a conflict about the U.S. entry." });
       invalidate(iss, verified);
@@ -509,9 +509,11 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
 
   // ---- Deterministic comparison of extracted facts. These replace model issues that point at the same sources.
   let factsStatus: "ok" | "failed" = "failed";
-  if (factsSettled.ok) {
-    factsStatus = "ok";
-    const cmp = compareFacts(c, sentences, factsSettled.v, multiPerson);
+  // The comparison also runs when extraction failed, with no extracted statements: its source-text checks (prior
+  // removals and encounters stated in the narrative) still apply. The review stays partial (completion below).
+  {
+    if (factsSettled.ok) factsStatus = "ok";
+    const cmp = compareFacts(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, multiPerson);
     for (const ff of cmp.findings) {
       const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
       for (let i = findings.length - 1; i >= 0; i--) {
@@ -529,12 +531,15 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
 
   // Conflicts within one person's continuous account (deterministic; no comparison with the form and no claim that the
   // account is this subject's). A model inconsistency citing the same sentences is superseded; rule findings are kept.
-  for (const af of accountConflicts(sentences, factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>())) {
+  for (const af of accountConflicts(sentences, factsSettled.ok ? nonUsEntrySentences(factsSettled.v, sentences) : new Set<string>())) {
     const ids = af.evidence.map((e) => e.sentenceId);
-    if (findings.some((f) => f.source !== "model" && f.category === "inconsistency" && f.evidence.some((e) => e.sentenceId && ids.includes(e.sentenceId)))) continue;
+    // A rule or fact-comparison finding (F-…) about the same sentences already says more (it is tied to this subject or
+    // the form): keep it and skip this one. Only free-text model issues citing the same sentences are superseded.
+    const cites = (f: Finding) => f.evidence.some((e) => e.sentenceId && ids.includes(e.sentenceId));
+    if (findings.some((f) => f.category === "inconsistency" && (f.source !== "model" || /^F-/.test(f.id)) && cites(f))) continue;
     for (let i = findings.length - 1; i >= 0; i--) {
       const f = findings[i];
-      if (f.source === "model" && f.category === "inconsistency" && f.evidence.some((e) => e.sentenceId && ids.includes(e.sentenceId))) findings.splice(i, 1);
+      if (f.source === "model" && !/^F-/.test(f.id) && f.category === "inconsistency" && cites(f)) findings.splice(i, 1);
     }
     findings.push(af);
   }

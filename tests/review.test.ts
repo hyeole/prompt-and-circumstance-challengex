@@ -604,6 +604,10 @@ test("F075-H: a voluntary return is not a removal, so it is neither a removal co
   assert.ok(!r.humanReview.reasons.some((x) => x.includes(s) && /cannot be attributed/.test(x)));
 });
 
+// Round 2: C013-X1's S38 ("Subject … being a reinstate case") is verified, explicitly-subject support for a prior
+// removal. Tests whose premise is "no verified support" use the record without that sentence.
+const withoutS38 = (c: CaseRecord) => ({ ...c, narrative: { text: c.narrative.text.replace(/Subject did not receive a bond[^.]*\./, "") } }) as CaseRecord;
+
 // ---- Fixes 1, 2, 4, 6 (post-tuning) ----
 
 
@@ -622,7 +626,7 @@ test("fix 1: an account about a past entry does not qualify a port-of-entry appl
 
 test("fix 4: a 'mismatch' whose explanation says the narrative documents the requirement, without verified support, is unresolved (C013-X1)", async () => {
   // C013-X1: several people, the removals are unattributed, so nothing verified establishes this subject's prior removal.
-  const c = load("C013-X1");
+  const c = withoutS38(load("C013-X1"));
   const s = sid(c, "received an Expedited Removal");
   const r = await reviewCase(c, fake({
     review: review({ citation: { status: "likely_mismatch", explanation: "The selected charge requires prior removal, which the narrative documents.", evidence: [{ sentence_id: s, quote: "received an Expedited Removal" }] } }),
@@ -661,8 +665,12 @@ test("fix 2: an unattributed conflicting account is a routing item showing the a
   assert.ok(r.humanReview.required);
 });
 
-test("fix 2: several unattributed history sentences become one routing item for that fact (F075-H)", async () => {
-  const r = await reviewCase(loadF("F075-H"), fake({}));
+test("fix 2: several unattributed history sentences become one routing item for that fact (F075-H, form date not matching S22)", async () => {
+  // Round 2: on the real F075-H form, S22 gives the subject's exact recorded entry date and is linked (see round2 tests).
+  // With a form date S22 does not match, nothing ties the history sentences to the subject: one grouped routing item.
+  const c0 = loadF("F075-H");
+  const c = { ...c0, facts: c0.facts.map((f) => f.path === "entry.date" ? { ...f, value: "03/02/2012, 1800" } : f) } as CaseRecord;
+  const r = await reviewCase(c, fake({}));
   const groups = (r.humanReview.accounts ?? []).filter((x) => x.fieldPath === "history.immigration_record");
   assert.equal(groups.length, 1);
   assert.ok(groups[0].sentenceIds.length >= 2);
@@ -740,7 +748,7 @@ test("negative control: a real admission statement still supports an admission c
 
 // ---- Limitations found in the 4b10d72 evaluation (post-tuning) ----
 test("fix-4 negation scope: 'which the narrative documents but the form indicates no prior removal' is narrative support, so unresolved (C013-X1)", async () => {
-  const c = load("C013-X1");
+  const c = withoutS38(load("C013-X1"));
   const s = sid(c, "received an Expedited Removal");
   const r = await reviewCase(c, fake({
     review: review({ citation: { status: "likely_mismatch", explanation: "Selected charge 8 USC 1326(a) requires prior removal, which the narrative documents but the form indicates no prior removal.", evidence: [{ sentence_id: s, quote: "received an Expedited Removal" }] } }),
