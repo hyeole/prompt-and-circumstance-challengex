@@ -5,7 +5,7 @@ import { sha, splitSentences, locateQuote } from "@/lib/text";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory } from "./facts";
 import { unsupportedValues } from "./support";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
@@ -212,9 +212,22 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     // Relevance: an exact quote is necessary but not sufficient. (1) A claim about the U.S. entry fields must not rest on a
     // sentence the extractor identified as entry into another country, a departure, or travel.
     const nonUs = factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>();
-    if (verified.some((v) => v.fieldPath?.startsWith("entry.")) && verified.some((v) => v.sentenceId && nonUs.has(v.sentenceId))) {
-      discarded.push({ title: iss.title, reason: "The cited sentence describes entry into another country or travel, not the U.S. entry recorded on the form." });
+    if (iss.type === "inconsistency" && verified.some((v) => v.sentenceId && nonUs.has(v.sentenceId))) {
+      discarded.push({ title: iss.title, reason: "The cited sentence describes entry into another country or travel, not the U.S. entry, so it cannot show a conflict about the U.S. entry." });
       return;
+    }
+    // (1b) A claimed conflict between the form's manner-of-entry code and a narrative sentence the extractor classified in
+    // the SAME manner category (e.g. EWI/PWA vs "crossed illegally") is not a conflict.
+    const mannerField = verified.find((v) => v.fieldPath === "entry.manner");
+    if (iss.type === "inconsistency" && mannerField && factsSettled.ok) {
+      const formCat = formMannerCategory(c.facts.find((f) => f.path === "entry.manner")?.value ?? "");
+      const byS = usEntryMannerBySentence(sentences, factsSettled.v);
+      const cited = verified.filter((v) => v.sentenceId).map((v) => byS.get(v.sentenceId!));
+      const otherFields = verified.filter((v) => v.fieldPath && v.fieldPath !== "entry.manner");
+      if (formCat && cited.length > 0 && cited.every((m) => m === formCat) && otherFields.length === 0) {
+        discarded.push({ title: iss.title, reason: `The form code "${mannerField.quote}" and the cited narrative statement describe the same manner of entry.` });
+        return;
+      }
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
     const evTexts = verified.map((v) => (v.sentenceId ? sentences.find((x) => x.id === v.sentenceId)?.text ?? "" : v.quote ?? ""));

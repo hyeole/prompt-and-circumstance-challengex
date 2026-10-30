@@ -245,9 +245,19 @@ export function hasMannerStatement(sentences: Sentence[], facts: FactsOutput): b
   return facts.entry_statements.some((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
 }
 
-/** True when a verified statement supports the charge's entry-manner requirement. */
-export function supportsRequirement(sentences: Sentence[], facts: FactsOutput, requires?: { entryManner?: string }): boolean {
+/** True when a verified statement supports the charge's core requirement (entry manner, or a prior removal). */
+export function supportsRequirement(sentences: Sentence[], facts: FactsOutput, requires?: { entryManner?: string; priorRemoval?: boolean }): boolean {
+  if (requires?.priorRemoval)
+    return facts.removal_statements.some((r) => r.person !== "other" && verify(sentences, r.sentence_id, r.quote));
   return !!requires?.entryManner && facts.entry_statements.some((e) => isUsEntry(e) && e.person !== "other" && e.manner === requires.entryManner && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
+}
+
+/** Manner category the extractor assigned to each verified U.S.-entry sentence with manner wording. */
+export function usEntryMannerBySentence(sentences: Sentence[], facts: FactsOutput): Map<string, "without_inspection" | "admitted"> {
+  const m = new Map<string, "without_inspection" | "admitted">();
+  for (const e of facts.entry_statements)
+    if (isUsEntry(e) && e.manner !== "unknown" && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote)) m.set(e.sentence_id, e.manner);
+  return m;
 }
 
 /** Verified statements that the subject (or an unattributed person) lacks lawful status, with status wording in the quote. */

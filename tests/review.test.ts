@@ -227,3 +227,49 @@ test("bug C021-CIT: a date claim that its evidence does not contain is withheld"
   assert.ok(!r.findings.some((f) => f.title === "Encounter date mismatch"));
   assert.ok(r.discarded.some((d) => /4\/12\/2017/.test(d.reason)));
 });
+
+// ---- Regression tests for recurring false flags in the M2 runs (2026-10-30) ----
+
+test("PWA (AFOOT) vs 'illegally crossed ... by swimming' is not a conflict (C013)", async () => {
+  const c = load("C013");
+  const s8 = sid(c, "eventually illegally crossed");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Entry manner mismatch", explanation: "Narrative states subject entered illegally, while form entry.manner indicates PWA.", evidence: [{ sentence_id: s8, quote: "eventually illegally crossed the United States/Mexico Border near Laredo" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: s8, quote: "eventually illegally crossed the United States/Mexico Border near Laredo, Texas by swimming", event: "us_entry", country: "United States", year: null, manner: "without_inspection", person: "unclear" }] }),
+  }));
+  assert.ok(!r.findings.some((f) => f.title === "Entry manner mismatch"));
+  assert.ok(r.discarded.some((d) => /same manner of entry/.test(d.reason)));
+});
+
+test("a real manner conflict with the form code is still reported (C012-X1)", async () => {
+  const c = load("C012-X1");
+  const visa = sid(c, "tourist visa");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Visa vs PWA", explanation: "The narrative says a tourist visa; the form says PWA.", evidence: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", country: "United States", year: 2013, manner: "admitted", person: "unclear" }] }),
+  }));
+  assert.ok(r.findings.some((f) => f.category === "inconsistency"));
+});
+
+test("a model conflict citing an entry into Mexico is withheld even without a form field (C013-X1)", async () => {
+  const c = load("C013-X1");
+  const s6 = sid(c, "illegally entered into Mexico"), s8 = sid(c, "eventually illegally crossed");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Walking vs swimming", explanation: "One sentence says walking, another swimming.", evidence: [{ sentence_id: s6, quote: "illegally entered into Mexico by walking through the mountains" }, { sentence_id: s8, quote: "eventually illegally crossed the United States/Mexico Border" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [
+      { sentence_id: s6, quote: "illegally entered into Mexico by walking through the mountains", event: "other_country_entry", country: "Mexico", year: null, manner: "without_inspection", person: "unclear" },
+    ] }),
+  }));
+  assert.ok(!r.findings.some((f) => f.title === "Walking vs swimming"));
+});
+
+test("a citation 'mismatch' for a reentry charge is downgraded when prior removals are documented (C013)", async () => {
+  const c = load("C013");
+  const s = sid(c, "received an Expedited Removal");
+  const r = await reviewCase(c, fake({
+    review: review({ citation: { status: "likely_mismatch", explanation: "The narrative supports the charge but the form conflicts.", evidence: [{ sentence_id: s, quote: "received an Expedited Removal" }] } }),
+    facts: facts({ removal_statements: [{ sentence_id: s, quote: "was arrested by Border Patrol and received an Expedited Removal", person: "unclear" }] }),
+  }));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.ok(!r.findings.some((f) => f.category === "citation"));
+});
