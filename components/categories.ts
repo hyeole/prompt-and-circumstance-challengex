@@ -16,6 +16,8 @@ export const ELEMENT_STATUS: Record<ElementStatus, { label: string; icon: string
   unavailable_redacted: { label: "Unavailable (redacted)", icon: "shield" },
   unavailable_unreadable: { label: "Unavailable (unreadable)", icon: "info" },
   not_checked: { label: "Not checked", icon: "clock" },
+  not_applicable: { label: "Not applicable", icon: "info" },
+  applicability_unclear: { label: "Applicability unclear", icon: "unclear" },
 };
 
 export const CITATION_STATUS: Record<CitationStatus, string> = {

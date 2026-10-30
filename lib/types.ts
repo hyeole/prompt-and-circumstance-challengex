@@ -50,7 +50,11 @@ export interface CaseRecord {
   facts: FactField[];
   selectedCharges: SelectedCharge[];
   recordedChargeCode?: string; // abbreviated code as printed on the form; mapping not assumed
+  /** Case context(s). When absent, the context is inferred from the narrative and may be unknown. */
+  context?: CaseContext[];
 }
+
+export type CaseContext = "interior" | "port_of_entry" | "expedited_removal";
 
 export interface Sentence {
   id: string; // "S1"
@@ -103,7 +107,7 @@ export interface CheckResult {
   note?: string;
 }
 
-export type ElementStatus = "present" | "absent" | "unclear" | "unavailable_redacted" | "unavailable_unreadable" | "not_checked";
+export type ElementStatus = "present" | "absent" | "unclear" | "unavailable_redacted" | "unavailable_unreadable" | "not_checked" | "not_applicable" | "applicability_unclear";
 
 export interface ElementResult {
   elementId: string;
@@ -112,6 +116,8 @@ export interface ElementResult {
   sentenceIds: string[];
   fieldPaths: string[];
   note?: string;
+  /** Unissant guidance category (S1-S6) this item implements. */
+  sponsorCategory?: string;
   /** Set when the element is covered only by form fields whose values are not fully known. */
   qualifier?: "recorded_unknown" | "partly_unknown" | "see_narrative";
 }
@@ -141,6 +147,9 @@ export interface ReviewResult {
   humanReview: { required: boolean; reasons: string[] };
   findings: Finding[];
   notes: string[]; // informational context, not flags
+  /** Case context used to decide which checklist items apply. */
+  caseContext?: { contexts: CaseContext[]; source: "case" | "inferred" | "unknown"; basis?: string };
+  checklistVersion?: string;
   discarded: { reason: string; title: string }[]; // model output dropped because evidence could not be verified
   /** Every model request made for this review, including failed and cancelled ones. */
   calls: { role: string; status: "ok" | "failed" | "cancelled" | "invalid_output"; ms: number; attempts: number; error?: string }[];

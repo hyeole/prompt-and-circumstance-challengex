@@ -1,7 +1,7 @@
 {
-  "version": "team-provisional-2026-10-30",
-  "status": "PROVISIONAL",
-  "notice": "Unissant's plain-English charge reference sheet and required-narrative-elements list have not been received. These entries were compiled by the team so the workflow can be built and tested. Required elements paraphrase the instruction printed in the narrative block of Form I-213 (Rev. 08/01/07). Charge entries paraphrase public statutory text in Title 8 of the U.S. Code. They are not legal advice and are not sponsor-verified. Replace this file when the official references arrive.",
+  "version": "team-provisional-2026-10-31",
+  "status": "PROVISIONAL (team implementation choices)",
+  "notice": "Unissant confirmed on 2026-10-30 that no charge reference sheet or required-elements checklist will be provided, and supplied a 'Core elements to cover' table as guidance (config/sponsor/unissant-guidance-2026-10-30.json). This checklist (v2) is the team's implementation of that guidance plus the instruction printed on Form I-213: each item names its sponsor category and the case contexts where it applies. The charge summaries are team paraphrases of public statutory text (Title 8 U.S.C.); they are not sponsor-approved and are not legal advice.",
   "historicalNote": "Source records date from FY2012-FY2019. Checks compare narratives against the wording recorded here, not against the rules in force on each record's date.",
   "requiredElements": [
     {
@@ -13,7 +13,11 @@
         "entry.date"
       ],
       "source": "Form I-213 narrative block instruction: 'time, place and manner of last entry'",
-      "severity": "medium"
+      "severity": "medium",
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "interior"
+      ]
     },
     {
       "id": "E2",
@@ -24,7 +28,11 @@
         "entry.place"
       ],
       "source": "Form I-213 narrative block instruction; Unissant email clarification on approximate locations",
-      "severity": "medium"
+      "severity": "medium",
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "interior"
+      ]
     },
     {
       "id": "E3",
@@ -35,7 +43,11 @@
         "entry.manner"
       ],
       "source": "Form I-213 narrative block instruction: 'time, place and manner of last entry'",
-      "severity": "high"
+      "severity": "high",
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "interior"
+      ]
     },
     {
       "id": "E4",
@@ -49,7 +61,11 @@
       ],
       "requireAllFields": true,
       "source": "Form I-213 narrative block instruction: 'Outline particulars under which alien was located/apprehended'",
-      "severity": "high"
+      "severity": "high",
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "interior"
+      ]
     },
     {
       "id": "E5",
@@ -60,7 +76,11 @@
         "subject.citizenship"
       ],
       "source": "Form I-213 narrative block instruction: 'elements which establish administrative and/or criminal violation'",
-      "severity": "high"
+      "severity": "high",
+      "sponsorCategory": "S1",
+      "appliesIn": [
+        "all"
+      ]
     },
     {
       "id": "E6",
@@ -69,7 +89,11 @@
       "description": "Facts showing the subject lacks lawful status or documents, such as a statement that they have no immigration documents, or that they overstayed an admission.",
       "fieldPaths": [],
       "source": "Form I-213 narrative block instruction: 'elements which establish administrative and/or criminal violation'",
-      "severity": "high"
+      "severity": "high",
+      "sponsorCategory": "S3",
+      "appliesIn": [
+        "all"
+      ]
     },
     {
       "id": "E7",
@@ -79,7 +103,122 @@
       "fieldPaths": [],
       "source": "Form I-213 narrative block instruction: 'Indicate means and route of travel to interior'",
       "severity": "low",
+      "advisory": true,
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "interior"
+      ]
+    },
+    {
+      "id": "N1",
+      "key": "identifying_documents",
+      "label": "Identifying documents",
+      "description": "Which identity documents the traveler had or presented (passport, ID card, license, visa), or a statement that there were none.",
+      "fieldPaths": [
+        "documents.passport"
+      ],
+      "source": "Unissant guidance S1 (identity and claimed status)",
+      "severity": "low",
+      "sponsorCategory": "S1",
+      "appliesIn": [
+        "all"
+      ]
+    },
+    {
+      "id": "N2",
+      "key": "claimed_status",
+      "label": "Status or classification claimed for admission",
+      "description": "The immigration status or classification under which admission was requested.",
+      "fieldPaths": [],
+      "source": "Unissant guidance S1",
+      "severity": "medium",
+      "sponsorCategory": "S1",
+      "appliesIn": [
+        "port_of_entry"
+      ]
+    },
+    {
+      "id": "N3",
+      "key": "application_for_admission",
+      "label": "Application for admission: port, documents presented, purpose of travel",
+      "description": "The port of entry, the documents presented, and the stated purpose of travel.",
+      "fieldPaths": [],
+      "source": "Unissant guidance S2",
+      "severity": "medium",
+      "sponsorCategory": "S2",
+      "appliesIn": [
+        "port_of_entry"
+      ]
+    },
+    {
+      "id": "N4",
+      "key": "fact_sources",
+      "label": "Source of key facts identified",
+      "description": "Whether important facts say where they came from: the traveler's statement, the officer's observation, or a records check. Advisory: shown in the checklist, not raised as a flag.",
+      "fieldPaths": [],
+      "source": "Unissant guidance S3",
+      "severity": "low",
+      "sponsorCategory": "S3",
+      "appliesIn": [
+        "all"
+      ],
       "advisory": true
+    },
+    {
+      "id": "N5",
+      "key": "specific_ground",
+      "label": "Specific ground stated and explained",
+      "description": "The narrative states the precise INA section and subsection and how the facts satisfy it. A bare 'not credible' or 'not a bona fide visitor' is not enough.",
+      "fieldPaths": [],
+      "source": "Unissant guidance S4",
+      "severity": "low",
+      "sponsorCategory": "S4",
+      "appliesIn": [
+        "all"
+      ]
+    },
+    {
+      "id": "N6",
+      "key": "traveler_response",
+      "label": "Traveler's explanation for a discrepancy",
+      "description": "When the record contains a discrepancy, whether the traveler's explanation or response is recorded and whether it resolves it. Not applicable when no discrepancy is found. Advisory: shown in the checklist, not raised as a separate flag (the discrepancy itself is already a finding routed to a person).",
+      "fieldPaths": [],
+      "source": "Unissant guidance S5",
+      "severity": "medium",
+      "sponsorCategory": "S5",
+      "appliesIn": [
+        "all"
+      ],
+      "conditional": "conflict",
+      "advisory": true
+    },
+    {
+      "id": "N7",
+      "key": "disposition",
+      "label": "Disposition and documenting form",
+      "description": "What action was taken (for example Notice to Appear, warrant of arrest, reinstatement, expedited removal, voluntary return) and the form documenting it.",
+      "fieldPaths": [
+        "form.disposition"
+      ],
+      "source": "Unissant guidance S6",
+      "severity": "medium",
+      "sponsorCategory": "S6",
+      "appliesIn": [
+        "all"
+      ]
+    },
+    {
+      "id": "N8",
+      "key": "er_procedure",
+      "label": "Expedited removal: advisal, opportunity to respond, review and service",
+      "description": "In expedited removal: the traveler was advised of the charges and given an opportunity to respond, and required review and service are recorded.",
+      "fieldPaths": [],
+      "source": "Unissant guidance S5, S6",
+      "severity": "medium",
+      "sponsorCategory": "S6",
+      "appliesIn": [
+        "expedited_removal"
+      ]
     }
   ],
   "charges": [
@@ -198,5 +337,15 @@
     "UNK": "Unknown",
     "OA / O / PB": "Method of location codes; meaning not confirmed, do not interpret"
   },
-  "requiresNote": "'requires' is a team-written, machine-checkable summary of each charge's core factual requirement, used for a deterministic citation pre-check. Provisional."
+  "requiresNote": "'requires' is a team-written, machine-checkable summary of each charge's core factual requirement, used for a deterministic citation pre-check. Provisional.",
+  "checklistVersion": "v2",
+  "sponsorGuidance": "config/sponsor/unissant-guidance-2026-10-30.json",
+  "previousVersions": [
+    "eval/archive/references-team-provisional-2026-10-30.json (checklist v1, E1-E7)"
+  ],
+  "contexts": {
+    "interior": "Interior encounter: located inside the United States (for example by Border Patrol).",
+    "port_of_entry": "Application for admission at a port of entry.",
+    "expedited_removal": "Processed under expedited removal (may overlap the other contexts)."
+  }
 }

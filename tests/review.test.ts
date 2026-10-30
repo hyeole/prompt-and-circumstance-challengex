@@ -273,3 +273,21 @@ test("a citation 'mismatch' for a reentry charge is downgraded when prior remova
   assert.equal(r.citation.status, "needs_human_review");
   assert.ok(!r.findings.some((f) => f.category === "citation"));
 });
+
+test("checklist v2: traveler's explanation (N6) is not applicable without a discrepancy and never becomes a flag", async () => {
+  const clean = await reviewCase(load("C037"), fake({}));
+  assert.equal(clean.elements.find((e) => e.elementId === "N6")?.status, "not_applicable");
+  assert.equal(clean.elements.find((e) => e.elementId === "N3")?.status, "not_applicable", "port-of-entry item on an interior case");
+  assert.equal(clean.caseContext?.contexts.join(","), "interior");
+  const c = load("C012-X1");
+  const visa = sid(c, "tourist visa"), port = sid(c, "did not cross through a designated Port");
+  const r = await reviewCase(c, fake({
+    review: review({ elements: [{ element_id: "N6", status: "absent", sentence_ids: [], note: "" }] }),
+    facts: facts({ entry_statements: [
+      { sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", year: 2013, manner: "admitted", person: "unclear" },
+      { sentence_id: port, quote: "did not cross through a designated Port of Entry", event: "us_entry", year: null, manner: "without_inspection", person: "unclear" },
+    ] }),
+  }));
+  assert.equal(r.elements.find((e) => e.elementId === "N6")?.status, "absent");
+  assert.ok(!r.findings.some((f) => f.referenceIds.includes("N6")), "advisory: shown in the checklist, not issued as a flag");
+});

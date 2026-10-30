@@ -7,6 +7,7 @@ import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory } from "./facts";
 import { unsupportedValues } from "./support";
+import { applies, caseContext, detect, type ChecklistItem } from "./checklist";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
 
@@ -97,8 +98,12 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const selected = c.selectedCharges.filter((s) => s.citation.trim());
   const charge = selected.length === 1 ? findCharge(selected[0].citation, selected[0].referenceId) : undefined;
 
-  const allElements = REFERENCES.requiredElements as RequiredElement[];
-  const toCheck = allElements.filter((e) => rules.elementsFromFields.get(e.id)?.status !== "present");
+  const allElements = REFERENCES.requiredElements as (RequiredElement & ChecklistItem)[];
+  // Checklist v2: which items apply in this case's context, and which can be decided without the model.
+  const ctx = caseContext(c, sentences);
+  const applicability = new Map(allElements.map((el) => [el.id, applies(el, ctx)]));
+  const detected = new Map(allElements.map((el) => [el.id, applicability.get(el.id) === true ? detect(el, c, sentences) : null]));
+  const toCheck = allElements.filter((e) => applicability.get(e.id) === true && !detected.get(e.id) && rules.elementsFromFields.get(e.id)?.status !== "present");
 
   const findings: Finding[] = [...rules.findings];
   const discarded: ReviewResult["discarded"] = [];
@@ -148,7 +153,12 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   }
 
   // ---- Required elements
-  const elements: ElementResult[] = allElements.map((el) => {
+  const elements: ElementResult[] = allElements.map((el): ElementResult => {
+    const ap = applicability.get(el.id);
+    if (ap === false) return { elementId: el.id, label: el.label, status: "not_applicable", sentenceIds: [], fieldPaths: [], note: `Applies only in: ${(el.appliesIn ?? []).join(", ").replace(/_/g, " ")}.` };
+    if (ap === "unclear") return { elementId: el.id, label: el.label, status: "applicability_unclear", sentenceIds: [], fieldPaths: [], note: `Applies in ${(el.appliesIn ?? []).join(", ").replace(/_/g, " ")}; this case's context could not be determined.` };
+    const det = detected.get(el.id);
+    if (det) return det;
     const fromField = rules.elementsFromFields.get(el.id);
     if (fromField?.status === "present") return fromField;
     const m = out?.elements.find((x) => x.element_id === el.id);
@@ -357,6 +367,13 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const required = uniqReasons.length > 0 || findings.some((f) => f.needsHumanReview);
   checks[4].status = required ? "completed_with_findings" : "completed_no_findings";
 
+  // N6 (traveler's explanation) applies only when this review found a discrepancy.
+  const n6 = elements.find((e) => e.elementId === "N6");
+  if (n6 && n6.status !== "not_applicable" && n6.status !== "applicability_unclear" && !findings.some((f) => f.category === "inconsistency")) {
+    Object.assign(n6, { status: "not_applicable", sentenceIds: [], note: "No discrepancy was found, so no explanation is needed." });
+  }
+  for (const e of elements) e.sponsorCategory = allElements.find((x) => x.id === e.elementId)?.sponsorCategory;
+
   // Final pass: no displayed text may name or recommend a charge other than the selected one.
   const sel = selected.map((x) => x.citation);
   const clean = (t: string) => stripChargeAdvice(t, sel).text;
@@ -393,6 +410,8 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     humanReview: { required, reasons: shownReasons.length ? shownReasons : required ? ["See findings marked for human review."] : [] },
     findings,
     notes: rules.notes,
+    caseContext: ctx,
+    checklistVersion: (REFERENCES as { checklistVersion?: string }).checklistVersion ?? "v1",
     discarded,
     calls: calls.sort((a, b) => a.role.localeCompare(b.role)),
     sampleIssues: { perSample, merged: out?.issues.length ?? 0, inAllSamples: out ? out.issues.filter((i) => agreement(outs, i) === outs.length).length : 0 },

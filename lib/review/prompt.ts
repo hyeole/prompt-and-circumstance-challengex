@@ -2,7 +2,7 @@
 import type { CaseRecord, Sentence } from "@/lib/types";
 import type { ChargeRef, RequiredElement } from "@/lib/references";
 
-export const PROMPT_VERSION = "review-v1.3";
+export const PROMPT_VERSION = "review-v1.4";
 
 export const SYSTEM_PROMPT = `You are a documentation quality reviewer for immigration charge narratives (Forms I-213 and I-44).
 You help a human officer find gaps. You do not make legal decisions.
