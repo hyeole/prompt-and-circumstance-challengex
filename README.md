@@ -57,6 +57,12 @@ We built 37 test cases: 9 verified adapted public records and 28 copies, each wi
 
 Later runs after error analysis are **post-hoc** and do not replace this result. They are listed in `eval/RUNS.md`.
 
+## Reports and demo
+
+- **One-page gap reports** for all 37 test cases: [docs/reports/narrativecheck-case-reports.pdf](docs/reports/narrativecheck-case-reports.pdf). They were generated from the final post-tuning run, and each was checked automatically (`tools/verify_reports.py`).
+- **Demo video:** a captioned 3-minute walkthrough of the production build with live reviews. Link to be added once it is uploaded. The beats were verified before recording ([docs/demo-verification.md](docs/demo-verification.md)), and the shot list is in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
+- **Final post-tuning run** on the shipped code (not a held-out claim): 94% strict detection, 12% incorrect flags (10% target not met), 100% routing, 100% evidence validity, 100% completion. See [eval/RUNS.md](eval/RUNS.md).
+
 ## Important limitations
 
 - **References are provisional.** Unissant's charge reference sheet and required-elements list have not been received yet. [`config/references.json`](config/references.json) contains:

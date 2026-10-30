@@ -1,5 +1,18 @@
 # Demo script
 
+## Final demo video (recorded 2026-10-30 00:02 UTC)
+- File: `recordings/NarrativeCheck-demo-final.webm`. It is kept out of Git; share it via Google Drive or YouTube. 3 min 8 s, 1440×900, VP9.
+- Recorded with `npm run demo:record` (Playwright + Chrome) against the **production build** at commit `e376664`.
+- Every review is a live `gpt-oss-20b` call, and waiting time is shown in real time.
+- **Before recording**, all six beats passed `scripts/verify-demo.ts` with live reviews (`docs/demo-verification.md`).
+- **During recording**, the recorder logged what each review returned, and every beat matched:
+  - C037: reviewed, no findings, citation consistent
+  - C012-M2: "Missing: place of last entry"; after the officer's correction and a fresh review, no findings
+  - C012-X1: conflicting accounts of entry, needs human review, citation needs human review
+  - C003-AMB: conflicting accounts of entry, needs human review. It also shows C003's real time discrepancy (form 0950 vs narrative 1030, verified on the page images)
+  - C001-MC: multiple charges selected, needs human review. It also shows C001's real time discrepancy (1435 vs 1330)
+- The video has captions and no voice. To add narration, use the table below as a voice-over.
+
 There are two kinds of video:
 1. **Development recordings.** These are your own learning clips. Optional; they are not submitted.
 2. **Final demo.** Recorded automatically with `npm run demo:record`, as a captioned `.webm` of the real app with live model calls. You can also record it yourself with the shot list below and add your voice.

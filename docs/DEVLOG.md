@@ -140,3 +140,22 @@ The general fixes are in commit `2c9e2d4`. Any held-out number after that is **p
   - Wordmark, short titles with case details, rail tooltips, softer highlights, and a blue-grey textured workspace.
 - UI QA at 1280×800 and 1366×768: no overflow. A missing favicon (404) was fixed.
 - 44 tests pass.
+
+## 2026-10-30 (Fri, ~00:00 UTC) Final run, reports, production build, demo video
+
+**Final run.** `2026-10-29T23-32-42`: post-tuning, shipped code `8c0b474`, all 37 cases, one at a time.
+- Completion 100% (no partial reviews).
+- Strict recall 94% (29/31).
+- Incorrect flags 12% (5/41, all adjudicated; the 10% target is **not met**). Three of the five are one redacted-companion attribution error on C021.
+- Routing 100%, evidence valid 100%, p50 18s, max 55s.
+- This run is **not** a held-out claim. The internal held-out result stays 83% recall / 28% incorrect flags.
+
+**Wording.**
+- Partial reviews show a neutral "Review incomplete" state, and counts are labelled "Findings from completed checks only".
+- The checklist and report say **Established** vs **Documented as unknown (not established)** / **Partly established**.
+
+**Production build.** `next build` succeeded, and the key is absent from the client bundle. Both states were checked in the production build.
+
+**Reports.** 37 one-page reports, exported from the production build and checked by `tools/verify_reports.py`. All pass: 1 page, no clipping, footer, human-review marker, every evidence reference, no partial notice where none is due. The 4 partial reviews from the post-hoc run were also exported and pass with the notice present. Combined file: `docs/reports/narrativecheck-case-reports.pdf` (800 KB).
+
+**Demo.** All six beats verified live, then recorded. The beat log during recording matched (see `docs/DEMO-SCRIPT.md`). MP4 conversion is not available on this Mac (Playwright's encoder is VP9-only), so the video is `.webm`.

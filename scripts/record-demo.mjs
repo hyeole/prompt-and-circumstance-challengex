@@ -20,6 +20,7 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, recordVideo: { dir: OUT, size: { width: 1440, height: 900 } } });
 const page = await ctx.newPage();
 const pause = (s) => page.waitForTimeout(s * 1000);
+const log = []; // what each live review actually returned, so the video can be checked against the verified beats
 
 async function caption(text, secs = 3) {
   await page.evaluate((t) => {
@@ -37,8 +38,12 @@ async function caption(text, secs = 3) {
 }
 
 async function openCase(id) {
-  await page.selectOption("#case-select", id);
-  await pause(1.2);
+  // Open the Cases drawer from the navigation rail and pick the case.
+  await page.locator(".rail-btn[aria-label=Cases]").click();
+  await pause(0.8);
+  await page.locator(".case-item", { has: page.locator(".mono", { hasText: new RegExp(`^${id}$`) }) }).click();
+  await page.waitForFunction((cid) => document.querySelector(".crumbs .mono")?.textContent === cid, id);
+  await pause(1.0);
 }
 
 async function runReview() {
@@ -46,6 +51,9 @@ async function runReview() {
   await caption("Live review running on the Unissant-hosted gpt-oss-20b. Waiting time is shown in real time.", 0);
   await page.waitForFunction(() => !/Reviewing/.test(document.querySelector(".header .pill")?.textContent ?? ""), null, { timeout: 120_000 });
   const status = await page.locator(".header .pill").textContent();
+  const titles = await page.locator(".finding-title").allTextContents();
+  const cit = await page.locator(".citation-line .pill").textContent().catch(() => "");
+  log.push(`${await page.locator(".crumbs .mono").textContent()}: ${status} | citation: ${cit} | findings: ${titles.join("; ") || "none"}`);
   await caption(`Review finished: ${status}`, 2.5);
 }
 
@@ -55,12 +63,11 @@ async function clickFinding(re) {
   return false;
 }
 
-await page.goto(BASE);
-await page.waitForSelector("#case-select");
+await page.goto(`${BASE}/?case=${CLEAN}`);
+await page.waitForSelector(".header");
 await caption("NarrativeCheck reviews an officer's narrative, the case facts, and the selected charge. It never rewrites the narrative or picks the charge.", 5);
 
-// 1. Complete case
-await openCase(CLEAN);
+// 1. Complete case (already open)
 await caption(`Case ${CLEAN}: an adapted public record. Case facts on the left, the original narrative in the middle, the review on the right.`, 4);
 await page.locator(".title-btn").click();
 await caption("Case details show the full title, source PDF pages, and how the case was prepared.", 4);
@@ -126,3 +133,4 @@ await browser.close();
 const out = `${OUT}/narrativecheck-demo-${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
 renameSync(tmp, out);
 console.log("Saved", out);
+for (const l of log) console.log("  " + l);
