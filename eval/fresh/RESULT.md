@@ -28,13 +28,14 @@ This is an internal evaluation on team-made cases, not a sponsor-issued test or 
 - **F075-X (entry year relative to a 2011 voluntary return):** not detected. Anticipated in the label note.
 
 ## False flags (11)
-- Treating PWA (AFOOT) as conflicting with an illegal crossing: 2.
-- Statements by unattributed members of a group: 3 (F051-C I-3, FS10 ×2).
-- A resolved, explained correction flagged anyway: 1 (FS02).
-- A van sighting time treated as the encounter time: 1.
-- The lack-of-status item misapplied to a port-of-entry fraud case: 1 (FS06).
-- "Visiting a friend" not recognised as a purpose of travel, a pattern bug: 2 (FS08, FS09).
-- Total: 2 + 3 + 1 + 1 + 1 + 2 = 10, plus 1 counted per adjudication key across variants (see `summary.json`).
+| Cause | Count | Cases |
+|---|---|---|
+| PWA (AFOOT) treated as conflicting with an illegal crossing | 2 | F051-C, F055 |
+| Statements by unattributed members of a group used against this subject's record | 3 | F051-C, FS10 ×2 |
+| A correction the narrative already explains flagged anyway | 1 | FS02 |
+| A van sighting time treated as the encounter time | 1 | F039-X |
+| The lack-of-status item (E6) misapplied to port-of-entry fraud | 2 | FS06, FS07 |
+| "Visiting a friend" not recognised as a purpose of travel (pattern bug) | 2 | FS08, FS09 |
 
 ## Doubts found after the run (labels not changed)
 - **FS06, N2:** the pre-run label says the claimed classification is present. On re-reading, the narrative states the documents and purpose but never names the classification requested. The flag was adjudicated as a valid observation; the label stays as written, so the checklist-expectation mismatch is still counted.

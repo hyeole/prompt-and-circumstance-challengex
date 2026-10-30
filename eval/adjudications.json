@@ -384,6 +384,14 @@
       "note": "The 2021 and 2022 statements are by different people (he / she); not a conflict about this subject.",
       "example": "FS10 F-ENTRY-DATE-2 Narrative gives two different entry years",
       "date": "2026-10-30"
+    },
+    {
+      "base": "FS07",
+      "key": "missing_element|E6",
+      "verdict": "false_flag",
+      "note": "Same as FS06: the basis (seeking admission with an altered passport) is stated; the lack-of-status wording of E6 does not fit port-of-entry fraud.",
+      "example": "FS07 M-E6 Missing: basis for the immigration violation",
+      "date": "2026-10-30"
     }
   ]
 }

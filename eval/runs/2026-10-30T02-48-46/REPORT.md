@@ -25,7 +25,7 @@ Plant outcomes: detected: 12, routed_only: 1, missed: 4, not_completed: 0.
 
 **Partial reviews (model check did not complete): 0.** none.
 Recall over completed reviews only (secondary): 71% (12/17). "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
-Flags issued: 37 = 11 planted + 0 duplicates + 15 adjudicated valid observations + 10 adjudicated false flags + 1 unadjudicated.
+Flags issued: 37 = 11 planted + 0 duplicates + 15 adjudicated valid observations + 11 adjudicated false flags + 0 unadjudicated.
 
 ## Per case
 
@@ -55,7 +55,7 @@ Flags issued: 37 = 11 planted + 0 duplicates + 15 adjudicated valid observations
 | FS04 | fresh | 7.4s | yes | none | no |  |
 | FS05 | fresh | 9.4s | yes | citation (detected) | yes | M-N5 missing_element: Missing: specific ground stated and explained [valid_observation] |
 | FS06 | fresh | 9.6s | yes | none | yes (not expected) | M-E6 missing_element: Missing: basis for the immigration violation [false_flag]; M-N2 missing_element: Missing: status or classification claimed for admission [valid_observation] |
-| FS07 | fresh | 10.0s | yes | missing_element (detected) | yes (not expected) | M-E6 missing_element: Missing: basis for the immigration violation [unadjudicated]; U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel [valid_observation] |
+| FS07 | fresh | 10.0s | yes | missing_element (detected) | yes (not expected) | M-E6 missing_element: Missing: basis for the immigration violation [false_flag]; U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel [valid_observation] |
 | FS08 | fresh | 17.0s | yes | none | yes (not expected) | U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel [false_flag] |
 | FS09 | fresh | 11.3s | yes | missing_element (detected) | yes (not expected) | U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel [false_flag] |
 | FS10 | fresh | 17.0s | yes | none | yes (not expected) | I-1 inconsistency: History record conflict [false_flag]; F-ENTRY-DATE-2 inconsistency: Narrative gives two different entry years [false_flag] |
