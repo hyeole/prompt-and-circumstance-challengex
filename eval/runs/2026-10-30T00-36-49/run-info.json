@@ -1,0 +1,10 @@
+{
+  "label": "M2 merge comparison: samples=1, round 2 (commit bcac131, production build)",
+  "split": "dev",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T00:36:49.325Z",
+  "commit": "bcac131",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

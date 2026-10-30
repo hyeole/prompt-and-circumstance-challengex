@@ -96,6 +96,102 @@
       "note": "Compares the form's U.S. entry manner with a sentence about illegally entering Mexico (S6); no conflicting account of the U.S. entry.",
       "example": "C013 I-1 Entry facts mismatch",
       "date": "2026-10-29"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.date|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+      "verdict": "valid_observation",
+      "note": "Real place discrepancy: form p.1 '5 mile(s) S of LAR' (Laredo) vs p.3 'crossed the Rio Grande River from Matamoros' (opposite Brownsville). Attribution uncertain in this multi-person narrative; any manner part of the claim is not a conflict.",
+      "example": "C001-CIT I-1 Entry facts conflict with narrative",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+      "verdict": "valid_observation",
+      "note": "Real place discrepancy: form p.1 '5 mile(s) S of LAR' (Laredo) vs p.3 'crossed the Rio Grande River from Matamoros' (opposite Brownsville). Attribution uncertain in this multi-person narrative; any manner part of the claim is not a conflict.",
+      "example": "C001-CIT I-1 Entry facts conflict",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.manner|stated that he crossed the rio grande river from matamoros m",
+      "verdict": "false_flag",
+      "note": "Crossing the Rio Grande on foot is consistent with EWI AFOOT; later car and bus travel is not the manner of entry.",
+      "example": "C001-CIT I-2 Entry manner inconsistency",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C001",
+      "key": "unclear|encounter.location",
+      "verdict": "false_flag",
+      "note": "The encounter location is recorded on the form; 'unclear' was used for information not repeated in the narrative.",
+      "example": "C001-CIT Q-2 Encounter location unclear",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.manner",
+      "verdict": "false_flag",
+      "note": "PWA (AFOOT) is consistent with crossing illegally via a river; an unknown form date does not conflict with a narrative date.",
+      "example": "C012-M2 I-1 Entry manner and date conflict",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|eventually illegally crossed the united states/mexico border",
+      "verdict": "false_flag",
+      "note": "PWA means present without admission; an illegal crossing is consistent with it.",
+      "example": "C013 I-1 Entry facts mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|05/13/2010 was arrested by ice/ero and deported through the|a 06/08/2005 was arrested by border patrol and received an e",
+      "verdict": "false_flag",
+      "note": "The model's own explanation says the narrative supports the selected 1326(a) charge; 'mismatch' contradicts it.",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|entry.manner|eventually illegally crossed the united states/mexico border",
+      "verdict": "false_flag",
+      "note": "The model's own explanation says the narrative supports the selected 1326(a) charge; 'mismatch' contradicts it.",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+      "verdict": "false_flag",
+      "note": "Cites entry into Mexico; the U.S. crossing by swimming is consistent with PWA (AFOOT).",
+      "example": "C013-X1 I-1 Entry manner mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.place|eventually illegally crossed the united states/mexico border",
+      "verdict": "valid_observation",
+      "note": "Documentation gap, not a contradiction: narrative states near Laredo, Texas; form place recorded as unknown.",
+      "example": "C013-X1 I-2 Entry place mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|entry.place|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+      "verdict": "false_flag",
+      "note": "Mixes entry into Mexico with the U.S. crossing; PWA (AFOOT) is consistent with the U.S. crossing.",
+      "example": "C013-X1 I-3 Entry facts mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|history.immigration_record",
+      "verdict": "false_flag",
+      "note": "The narrative does describe prior removals (Expedited Removal 06/08/2005; deportations 2010 and 2015); the extraction missed them, so 'no prior removal' is wrong.",
+      "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
     }
   ]
 }

@@ -52,17 +52,26 @@ The post-hoc runs show improvement, but they were informed by the held-out error
 
 ## M2: 1 vs 2 review samples (dev split, production build of commit `bcac131`, one case at a time)
 
-These are post-tuning diagnostic runs. Each configuration ran twice.
+These are post-tuning diagnostic runs. Each configuration ran twice, and every flag is adjudicated (`eval/adjudications.json`).
 
-| Run | Samples | Requests (ok) | Completion | Strict recall | Incorrect flags (provisional) | p50 / max |
-|---|---|---|---|---|---|---|
-| 2026-10-30T00-19-52 | 2 | 48 (47) | 100% | 100% (13/13) | 25% (7/28), 7 unadjudicated | 16.8s / 55.0s |
-| 2026-10-30T00-25-17 | 1 | 32 (31) | 100% | 100% (13/13) | 16% (4/25), 4 unadjudicated | 16.0s / 55.0s |
-| 2026-10-30T00-30-49 | 2 | 48 (46) | 100% | 85% (11/13) | 19% (5/26), 5 unadjudicated | 16.2s / 55.0s |
-| 2026-10-30T00-36-49 | 1 | 32 (30) | 88% | 77% (10/13) | 17% (4/24), 4 unadjudicated | 17.9s / 55.0s |
+| Run | Samples | Requests | Completion | Strict recall | Incorrect flags | Valid observations | p50 / max |
+|---|---|---|---|---|---|---|---|
+| 2026-10-30T00-19-52 | 2 | 48 | 100% | 100% (13/13) | 18% (5/28) | 11 | 16.8s / 55.0s |
+| 2026-10-30T00-25-17 | 1 | 32 | 100% | 100% (13/13) | 12% (3/25) | 10 | 16.0s / 55.0s |
+| 2026-10-30T00-30-49 | 2 | 48 | 100% | 85% (11/13) | 12% (3/26) | 12 | 16.2s / 55.0s |
+| 2026-10-30T00-36-49 | 1 | 32 | 88% | 77% (10/13) | 13% (3/24) | 11 | 17.9s / 55.0s |
+| **Both rounds, 2 samples** | | 96 | 32/32 | 92% (24/26) | 15% (8/54) | | |
+| **Both rounds, 1 sample** | | 64 | 30/32 | 88% (23/26) | 12% (6/49) | | |
 
-**Not concluded yet.**
-- The new flags are not adjudicated. Unadjudicated flags count as incorrect, so these incorrect-flag figures are upper bounds.
-- Run-to-run variation (85–100% for the same configuration) is as large as the difference between configurations.
-- One sample used a third fewer requests, with similar latency.
-- Next steps: adjudicate the new flags, then decide.
+**Decision:** keep 2 samples (no configuration change).
+- **Against:** one sample used a third fewer requests and gave slightly fewer false flags.
+- **For:** two samples were the only measured protection against a single request timing out. The single-sample setup lost 2 reviews to timeouts; the two-sample setup lost none, and it found one more planted issue.
+- **Caveat:** all differences are within run-to-run variation, so this is weak evidence either way. Revisit with more runs if request cost matters.
+
+**Recurring false flags seen here:**
+- PWA or EWI treated as conflicting with a described illegal crossing.
+- Entries into Mexico still cited by model issues.
+- A citation "mismatch" whose own explanation supports the charge.
+- One missed prior-removal extraction.
+
+These are inputs for the next reliability step. They are not fixed in these runs.
