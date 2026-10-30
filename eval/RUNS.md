@@ -242,3 +242,14 @@ See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 in
 - **Bounded diagnostic** of `facts-v2.1` (`18-17-17`, `18-19-47`, `18-20-57`): not adopted.
 - **Post-run patch** P1/P2 is unevaluated.
 - **Report:** `eval/EVALUATION-round2-1b5f59b.md`.
+
+## Round 3 measured evaluation `rc-round3` (`4cf02c3`; code = `3655aa9`), post-tuning, NOT promoted
+- **Runs:** dev `2026-10-30T21-34-06`, fresh `21-36-27`, legacy `21-48-37`, gen-v1 `22-09-01`. Each case ran once; no restarts.
+- **Results (77 cases, v2.4 claim layer):**
+  - detection 41/54 (baseline 42/54, `1b5f59b` 41/54);
+  - incorrect flags 3/101 (original-record layer 4/101);
+  - completion 67/77 (all failures are 55 s model-call timeouts, clustered in time; cause not confirmed);
+  - unnecessary routing 5/43; evidence validity 100%; 0 should-not-flag violations.
+- **Partial-review credit from corrected provenance:** 0.
+- **gen-v1** (not held-out): 6/7 detected, G06's credit questionable; 0/8 incorrect; completion 10/12.
+- **Configuration:** `eval/RUN-CONFIG-round3.md`. **Report:** `eval/EVALUATION-round3-4cf02c3.md`.

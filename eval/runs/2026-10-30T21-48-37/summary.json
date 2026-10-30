@@ -1,0 +1,1285 @@
+{
+  "run": "eval/runs/2026-10-30T21-48-37",
+  "scoringPolicy": "v2.4",
+  "adjudicationLayer": "key only",
+  "runInfo": {
+    "label": "round-3 measured evaluation, post-tuning (frozen rc-round3 = 4cf02c3; code = 3655aa9; not held-out)",
+    "dataset": "eval",
+    "split": "all",
+    "only": null,
+    "concurrency": 1,
+    "startedAt": "2026-10-30T21:48:37.616Z",
+    "commit": "4cf02c3",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 37,
+  "completion": "78% (29/37)",
+  "partialReviews": [
+    {
+      "id": "C001-CIT",
+      "modelStatus": "ok",
+      "seconds": 55.1,
+      "calls": "facts:failed review-1:cancelled review-2:ok",
+      "plants": "citation=detected"
+    },
+    {
+      "id": "C003-CIT",
+      "modelStatus": "ok",
+      "seconds": 55,
+      "calls": "facts:failed review-1:ok review-2:cancelled",
+      "plants": "citation=detected"
+    },
+    {
+      "id": "C003-M3",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "facts:failed review-1:failed review-2:failed",
+      "plants": "missing_element=not_completed"
+    },
+    {
+      "id": "C012-MC",
+      "modelStatus": "ok",
+      "seconds": 55,
+      "calls": "facts:failed review-1:ok review-2:ok",
+      "plants": "human_review:multi_charge=detected"
+    },
+    {
+      "id": "C013",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "facts:failed review-1:failed review-2:failed",
+      "plants": "none"
+    },
+    {
+      "id": "C013-CIT",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "facts:failed review-1:failed review-2:failed",
+      "plants": "citation=detected"
+    },
+    {
+      "id": "C021",
+      "modelStatus": "ok",
+      "seconds": 55,
+      "calls": "facts:failed review-1:ok review-2:ok",
+      "plants": "none"
+    },
+    {
+      "id": "C021-CIT",
+      "modelStatus": "ok",
+      "seconds": 55,
+      "calls": "facts:failed review-1:cancelled review-2:ok",
+      "plants": "citation=detected"
+    }
+  ],
+  "recallCompletedOnly": {
+    "value": "76% (19/25)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "77% (24/31)",
+    "dev": "77% (10/13)",
+    "heldout": "78% (14/18)",
+    "missing_element": "83% (5/6)",
+    "inconsistency": "60% (6/10)",
+    "citation": "86% (6/7)",
+    "routing_multi_charge": "100% (5/5)",
+    "routing_ambiguity": "67% (2/3)",
+    "outcomes": "detected: 24, routed_only: 2, missed: 4, not_completed: 1"
+  },
+  "flags": {
+    "issued": 62,
+    "planted": 22,
+    "duplicates": 0,
+    "validObservations": 37,
+    "falseFlags": 3,
+    "unadjudicated": 0,
+    "incorrectProportion": "5% (3/62)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "13% (2/15)",
+  "routingJustifiedByObservation": [
+    "C001",
+    "C001-M3",
+    "C003",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C037-M3",
+    "C135-M3"
+  ],
+  "dataset": "eval",
+  "checklistExpectations": {
+    "accuracy": "n/a",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [],
+  "evidenceValidity": "100% (62/62)",
+  "evidenceMatch": {
+    "exact": 14,
+    "partial": 0,
+    "unlabelled": 32,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "27.4s",
+    "p90": "55.0s",
+    "max": "55.1s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "C001",
+      "split": "dev",
+      "base": "C001",
+      "ms": 31246,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C001-CIT",
+      "split": "dev",
+      "base": "C001",
+      "ms": 55077,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|agent then asked the subjects if they had any documents that|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C001-M3",
+      "split": "dev",
+      "base": "C001",
+      "ms": 19172,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C001-MC",
+      "split": "dev",
+      "base": "C001",
+      "ms": 16213,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C001-X1",
+      "split": "dev",
+      "base": "C001",
+      "ms": 35369,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C003",
+      "split": "dev",
+      "base": "C003",
+      "ms": 8059,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C003-AMB",
+      "split": "dev",
+      "base": "C003",
+      "ms": 13361,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        },
+        {
+          "id": "F-ACCOUNT",
+          "finding": "F-ACCOUNT inconsistency: One person's account of the entry contradicts itself (manner)",
+          "key": "inconsistency|claims to have crossed the mexico-united states border at th|he later told agents that he entered at the nogales port of",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C003-CIT",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55027,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Encounter time discrepancy",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: 8 U.S.C. 1326",
+          "key": "citation|history.immigration_record",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C003-M3",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55030,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        },
+        {
+          "id": "U-N5",
+          "finding": "U-N5 unclear: Unclear: specific ground stated and explained",
+          "key": "unclear|will be held pending removal proceedings for violating secti",
+          "status": "false_flag",
+          "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict."
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012",
+      "split": "dev",
+      "base": "C012",
+      "ms": 44793,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|the other two individuals (nicaragua and (nicaragua ) admitt",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C012-M2",
+      "split": "dev",
+      "base": "C012",
+      "ms": 30135,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E2",
+          "finding": "M-E2 missing_element: Missing: place of last entry",
+          "key": "missing_element|E2",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012-MC",
+      "split": "dev",
+      "base": "C012",
+      "ms": 55025,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united|he stated that he did not cross through a designated port of",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012-X1",
+      "split": "dev",
+      "base": "C012",
+      "ms": 27411,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "F-ACCOUNT",
+          "finding": "F-ACCOUNT inconsistency: One person's account of the entry contradicts itself (manner)",
+          "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|he stated that he did not cross through a designated port of",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C013",
+      "split": "dev",
+      "base": "C013",
+      "ms": 55031,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [],
+      "flags": [],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C013-CIT",
+      "split": "dev",
+      "base": "C013",
+      "ms": 55036,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C013-X1",
+      "split": "dev",
+      "base": "C013",
+      "ms": 34961,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N1",
+          "finding": "M-N1 missing_element: Missing: identifying documents",
+          "key": "missing_element|N1",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned (S17 'no ... documents allowing him to be or remain'); no identity document of the subject is stated. Same standard as F051 and C037."
+        },
+        {
+          "id": "F-HISTORY",
+          "finding": "F-HISTORY inconsistency: Immigration record conflicts with the narrative",
+          "key": "inconsistency|history.immigration_record|subject did not receive a bond due to the new executive orde",
+          "status": "valid_observation",
+          "note": "Round 2 run 18-43-05: see the claim-layer record for this finding (same verdict and reasoning)."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C021",
+      "split": "heldout",
+      "base": "C021",
+      "ms": 55031,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C021-CIT",
+      "split": "heldout",
+      "base": "C021",
+      "ms": 55035,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)",
+          "key": "citation|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C021-MC",
+      "split": "heldout",
+      "base": "C021",
+      "ms": 27177,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C021-X1",
+      "split": "heldout",
+      "base": "C021",
+      "ms": 38652,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-2",
+          "finding": "I-2 inconsistency: History record mismatch",
+          "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+          "status": "false_flag",
+          "note": "A lawful B2 admission does not contradict a NEGATIVE immigration record (no prior violations/removals); same standard as the earlier C021 adjudication."
+        },
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|entry.date|entry: subject entered the united states at the miami intern",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C037",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 44042,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|border patrol agent informed agents from the border patrol s",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C037-AMB",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 21828,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-MANNER",
+          "finding": "F-ENTRY-MANNER inconsistency: Conflicting accounts of how the subject entered",
+          "key": "inconsistency|entry.manner|later in the interview he stated that he was admitted at the|stated that he paid approximately $5 000.00 usd to illegally",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C037-CIT",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 23698,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|border patrol agent informed agents from the border patrol s",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C037-M3",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 16054,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
+        },
+        {
+          "id": "M-N1",
+          "finding": "M-N1 missing_element: Missing: identifying documents",
+          "key": "missing_element|N1",
+          "status": "valid_observation",
+          "note": "C037 names no identity document of the subject (the 'consular officer' sentence concerns the right to speak with one). Same N1 standard."
+        },
+        {
+          "id": "U-N5",
+          "finding": "U-N5 unclear: Unclear: specific ground stated and explained",
+          "key": "unclear|a notice to appear is being executed on as per section 212(a",
+          "status": "false_flag",
+          "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C037-X1",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 25617,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|border patrol agent informed agents from the border patrol s",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|entry.date|stated that he and five others crossed the us/mexico border",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C045",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 25339,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national|records checks conducted on the vehicles and their registere",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C045-CIT",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 9485,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)",
+          "key": "citation|claims to have last entered the united states on february 21",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C045-MC",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 22479,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national|records checks conducted on the vehicles and their registere",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C045-X1",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 46322,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C119",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 25189,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C119-AMB",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 26705,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "routed_only"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C119-CIT",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 48722,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "routed_only"
+        }
+      ],
+      "flags": [],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C119-X1",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 42442,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|8/11/2009 arrived into the united states as a b1 visitor vis|entry.date",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C135",
+      "split": "heldout",
+      "base": "C135",
+      "ms": 20645,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|both subjects were asked if they had any immigration documen|neither subject could produce any documentation that permitt|the subjects were asked if they were in the united states le",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C135-M2",
+      "split": "heldout",
+      "base": "C135",
+      "ms": 26997,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E2",
+          "finding": "M-E2 missing_element: Missing: place of last entry",
+          "key": "missing_element|E2",
+          "status": "planted"
+        },
+        {
+          "id": "M-N1",
+          "finding": "M-N1 missing_element: Missing: identifying documents",
+          "key": "missing_element|N1",
+          "status": "valid_observation",
+          "note": "Only status/immigration documents are mentioned (S14, S16); no identity document of either subject is stated. Same standard as F051 and C037."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C135-M3",
+      "split": "heldout",
+      "base": "C135",
+      "ms": 18043,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|both subjects were asked if they had any immigration documen|the subjects were asked if they were in the united states le",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C135-MC",
+      "split": "heldout",
+      "base": "C135",
+      "ms": 12677,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|both subjects were asked if they had any immigration documen|the subjects were asked if they were in the united states le",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    }
+  ]
+}

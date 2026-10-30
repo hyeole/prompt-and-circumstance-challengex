@@ -1,0 +1,11 @@
+{
+  "label": "round-3 measured evaluation, post-tuning (frozen rc-round3 = 4cf02c3; code = 3655aa9; not held-out)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T21:34:06.160Z",
+  "commit": "4cf02c3",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

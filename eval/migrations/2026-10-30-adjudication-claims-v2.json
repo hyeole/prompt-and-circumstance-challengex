@@ -1084,6 +1084,72 @@
       "example": "G10 F-HISTORY-3 Prior immigration encounters described while the record is NEGATIVE",
       "run": "2026-10-30T18-58-39",
       "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|encounter.date_time|facts of arrest: on may 2 2017 border patrol agent (bpa) and",
+      "claim": "I:encounter date time mismatch | 7:50>08:47 |  | ?/?,field:encounter.date_time | UNCERTAIN",
+      "case": "F039-G",
+      "explanation": "Narrative says 7:50 AM, form field says 08:47.",
+      "verdict": "false_flag",
+      "note": "7:50 AM (S18) is when a van passed the agents, not the encounter; the form's 0847 is the encounter. Not a conflict (same verdict as the original F039-G I-4 record).",
+      "example": "F039-G I-4 Encounter date/time mismatch",
+      "run": "2026-10-30T21-36-27",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C003",
+      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+      "claim": "I:encounter time discrepancy | 09:50>10:30 |  | ?/?,field:encounter.date_time | UNCERTAIN",
+      "case": "C003-CIT",
+      "explanation": "The form lists the encounter at 09:50, while the narrative states it occurred at approximately 10:30.",
+      "verdict": "false_flag",
+      "note": "S27's 1030 hours is the arrest, after hotel contact and a consent search; the narrative states no encounter time, so the form's 0950 encounter does not conflict with it.",
+      "example": "C003-CIT I-1 Encounter time discrepancy",
+      "run": "2026-10-30T21-48-37",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "missing_element|N1",
+      "claim": "M-N1 |  | ?:neg:status;narrative:pos:entry-manner+identity-document | element:N1",
+      "verdict": "valid_observation",
+      "note": "Only status documents are mentioned (S17 'no ... documents allowing him to be or remain'); no identity document of the subject is stated. Same standard as F051 and C037.",
+      "example": "C013-X1 M-N1 Missing: identifying documents",
+      "run": "2026-10-30T21-48-37",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C135",
+      "key": "missing_element|N1",
+      "claim": "M-N1 |  | narrative:pos:entry-manner+identity-document | element:N1",
+      "verdict": "valid_observation",
+      "note": "Only status/immigration documents are mentioned (S14, S16); no identity document of either subject is stated. Same standard as F051 and C037.",
+      "example": "C135-M2 M-N1 Missing: identifying documents",
+      "run": "2026-10-30T21-48-37",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "claim": "I:history record mismatch |  | both:pos:entry-manner | ?/?,field:history.immigration_record",
+      "verdict": "false_flag",
+      "note": "A lawful B2 admission (S33) does not contradict a NEGATIVE immigration record (no prior violations or removals); same standard as the earlier C021 adjudications.",
+      "example": "C021-X1 I-2 History record mismatch",
+      "run": "2026-10-30T21-48-37",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "G08",
+      "key": "inconsistency|agent arrived and encountered the subject at approximately 0|encounter.location",
+      "claim": "I:encounter location mismatch |  |  | ?/?,field:encounter.location | UNCERTAIN",
+      "case": "G08",
+      "explanation": "Narrative says subject was encountered near Detroit, MI, while form field lists MONROE, MI.",
+      "verdict": "valid_observation",
+      "note": "S3 'near Detroit, Michigan' vs form encounter.location 'MONROE, MI': a real discrepancy introduced when the case was written (disclosed in round 2). Label unchanged.",
+      "example": "G08 I-1 Encounter location mismatch",
+      "run": "2026-10-30T22-09-01",
+      "date": "2026-10-30"
     }
   ],
   "needsReadjudication": [
