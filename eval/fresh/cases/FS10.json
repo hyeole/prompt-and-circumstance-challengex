@@ -1,0 +1,79 @@
+{
+  "id": "FS10",
+  "title": "Three passengers near Toledo, redacted names",
+  "kind": "synthetic",
+  "split": "fresh",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic scenario (fresh-v1), 2026-10-30",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic; checked by the team against its intended scenario before any run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Three redacted people; one says he was deported in 2019. This record's form shows a NEGATIVE immigration record and entry in 2021. Attribution cannot be determined from the redacted names."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn April 5, 2024, at approximately 2210 hours, Border Patrol Agents assisted the Ohio State Highway Patrol with a vehicle stop on Interstate 80 near Toledo, Ohio. The three passengers, [REDACTED (b)(6), (b)(7)(C)], [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)], stated that they are citizens of Honduras and that they had no immigration documents allowing them to be in the United States. All three were arrested at approximately 2230 hours and transported to the [REDACTED (b)(7)(E)] Border Patrol Station.\n\nENTRY AND HISTORY:\n[REDACTED (b)(6), (b)(7)(C)] stated that he was deported to Honduras in 2019 and returned the same year. [REDACTED (b)(6), (b)(7)(C)] stated that he entered the United States in 2021 by crossing the Rio Grande near McAllen, Texas, and has never been arrested before. [REDACTED (b)(6), (b)(7)(C)] stated that she entered with her cousin in 2022.\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was served a Notice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "2021",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near McAllen, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/05/2024 2210",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "TOLEDO, OH",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "BC",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic scenario."
+    }
+  ]
+}

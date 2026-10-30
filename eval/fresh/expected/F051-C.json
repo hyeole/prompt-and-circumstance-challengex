@@ -1,0 +1,15 @@
+{
+  "id": "F051-C",
+  "base": "F051",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Selected charge replaced with reentry after removal (8 U.S.C. 1326); this subject's immigration record is NEGATIVE.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F051-C: the narrative says one of the group 'had been ordered removed' without saying who. A careful reviewer could route this to a person instead of calling it a mismatch. Under scoring policy v2.2 only a verified mismatch counts as detected; 'needs human review' will be reported as routed-only."
+}

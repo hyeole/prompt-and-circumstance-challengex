@@ -1,0 +1,19 @@
+{
+  "id": "F055-H",
+  "base": "F055",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Form immigration record changed from NEGATIVE to 'POSITIVE - prior removal 2012' with no removal in the narrative.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F055-H: the narrative says immigration history 'NONE FOUND'. The conflict is between that sentence and the changed form field; a finding citing the field counts."
+}

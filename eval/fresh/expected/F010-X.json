@@ -1,0 +1,21 @@
+{
+  "id": "F010-X",
+  "base": "F010",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Narrative crossing date changed to May 5, 2014; the form records 05/05/2011.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "May 5, 2014"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

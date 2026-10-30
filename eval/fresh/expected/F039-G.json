@@ -1,0 +1,16 @@
+{
+  "id": "F039-G",
+  "base": "F039",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Stated ground removed: the sentence citing section 212(a)(6)(A)(i) and explaining it is deleted.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N5"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

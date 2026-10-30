@@ -1,0 +1,17 @@
+{
+  "id": "FS02",
+  "base": "FS02",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Subject first gives 2020 and corrects herself to 2019, explaining why; the officer records the correction.",
+  "plants": [],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [
+    "entered in 2020"
+  ],
+  "labelNotes": "FS02: the 2020 statement is corrected and explained in the narrative (sponsor S5). Any conflict flag citing it counts as a should-not-flag violation."
+}

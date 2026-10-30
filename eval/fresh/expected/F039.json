@@ -1,0 +1,11 @@
+{
+  "id": "F039",
+  "base": "F039",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Unmodified",
+  "plants": [],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "Unmodified record. The form's immigration record is NEGATIVE while the narrative lists earlier apprehensions processed as voluntary returns; any flag about it is adjudicated on its merits."
+}

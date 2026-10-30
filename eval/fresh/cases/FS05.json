@@ -1,0 +1,79 @@
+{
+  "id": "FS05",
+  "title": "Visa overstay near Port Huron: entry-without-inspection charge",
+  "kind": "synthetic",
+  "split": "fresh",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic scenario (fresh-v1), 2026-10-30",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic; checked by the team against its intended scenario before any run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Charge requires entry without admission; the record documents admission as a B2 visitor."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn July 9, 2024, at approximately 1115 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] responded to a request from the Michigan State Police at a traffic stop near Port Huron, Michigan. The driver, later identified as the subject, stated that he is a citizen of Nigeria and presented a Nigerian passport containing a B1/B2 visa. Records checks showed that the subject was admitted at John F. Kennedy International Airport on March 2, 2016, as a B2 visitor authorized to remain until September 1, 2016. The subject stated that he stayed after his authorized period to work and has not applied for any other status. Agent [REDACTED (b)(6), (b)(7)(C)] arrested the subject at approximately 1130 hours.\nDISPOSITION:\nThe subject was served a Notice to Appear and detained pending removal proceedings.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "NIGERIA",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/02/2016",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "JFK AIRPORT, NY",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "B2 ADMITTED",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "07/09/2024 1115",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PORT HURON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "BC",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic scenario."
+    }
+  ]
+}

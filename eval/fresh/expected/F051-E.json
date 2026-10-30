@@ -1,0 +1,16 @@
+{
+  "id": "F051-E",
+  "base": "F051",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Manner of entry removed: form field blanked; 'illegally' and the swimming sentence removed.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E3"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F051-E: the legal ground still says 'present in the United States without being admitted or paroled'. We label the manner of entry missing because no factual account of how he crossed remains; the legal conclusion alone is not a factual statement."
+}

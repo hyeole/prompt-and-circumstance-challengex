@@ -1,0 +1,55 @@
+{
+  "id": "FS06",
+  "title": "Altered passport at the Ambassador Bridge (complete)",
+  "kind": "synthetic",
+  "split": "fresh",
+  "context": [
+    "port_of_entry"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic scenario (fresh-v1), 2026-10-30",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic; checked by the team against its intended scenario before any run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Clean port-of-entry scenario; the selected charge is outside the team's charge summaries."
+    ]
+  },
+  "narrative": {
+    "text": "INSPECTION:\nOn August 21, 2024, at approximately 1620 hours, the subject applied for admission at the Ambassador Bridge port of entry in Detroit, Michigan, as the driver of a commercial truck. The subject presented an Indian passport and a Canadian permanent resident card and stated that the purpose of his trip was to deliver auto parts to a warehouse in Taylor, Michigan. CBP Officer [REDACTED (b)(6), (b)(7)(C)] found that the passport's biographic page had been altered: the laminate was lifted and the date of birth did not match the permanent resident card. When asked about the passport, the subject stated that a relative had changed the date of birth to help him obtain work. CBP Officer [REDACTED (b)(6), (b)(7)(C)] found that the subject sought admission by presenting an altered document.\nThe subject is inadmissible under Section 212(a)(6)(C)(i) of the Immigration and Nationality Act, in that he sought admission to the United States by fraud or willful misrepresentation of a material fact.\nDISPOSITION:\nThe subject was refused admission, the altered passport was seized, and the subject was returned to Canada.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "INDIA",
+      "status": "present"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport number and country",
+      "value": "[REDACTED (b)(6), (b)(7)(C)], INDIA",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Port of entry",
+      "value": "AMBASSADOR BRIDGE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Inspection date and hour",
+      "value": "08/21/2024 1620",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(C)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic scenario."
+    }
+  ]
+}

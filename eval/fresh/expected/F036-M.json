@@ -1,0 +1,16 @@
+{
+  "id": "F036-M",
+  "base": "F036",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Second charge added (multi-charge case).",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "multi_charge"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

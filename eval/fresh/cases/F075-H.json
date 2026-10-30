@@ -1,0 +1,181 @@
+{
+  "id": "F075-H",
+  "title": "Encounter near Rocky River, Ohio (2017) [test variant H]",
+  "kind": "synthetic-variant",
+  "split": "fresh",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      322,
+      323,
+      324,
+      325
+    ],
+    "extraction": "Page 322 (I-213) fields transcribed by hand from the page image. Narrative pages 323-325 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Grouping (I-213 + continuation pages with matching header dates and printed totals) and transcribed fields checked visually against page images on 2026-10-30. Not used in any earlier development or evaluation.",
+    "replacements": [],
+    "modifications": [
+      "Form immigration record changed to NEGATIVE; the narrative describes two earlier Border Patrol apprehensions (NTA, voluntary return)."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 324)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 322,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "GUADALUPE, ZACATECAS, MEXICO",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "29",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TIFFIN, OHIO, 44883",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "06/09/2011, 1800",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "1 mile(s) W of ELP",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "06/20/2017 1406",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ROCKY RIVER, OH",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 322,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "See Narrative",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 322,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nApprehending Agents: [REDACTED (b)(6), (b)(7)(C)] Processing Agent: [REDACTED (b)(6), (b)(7)(C)]\n\nENCOUTER:\n\nOn June 20, 2017 at approximately 1200 hours, Detroit Sector Dispatch ( [REDACTED (b)(7)(E)] contacted [REDACTED (b)(7)(E)] Border Patrol Agents (BPA) via the service radio regarding a request for all that they received from Rocky River Police Department. [REDACTED (b)(7)(E)] informed BPA [REDACTED (b)(6), (b)(7)(C)] that Rocky River Police Department needed identification assistance with two subjects from a traffic stop on [REDACTED (b)(7)(E)] near Rocky River, Ohio. BPA [REDACTED (b)(6), (b)(7)(C)] responded to the call and arrived at the location of the vehicle stop at approximately 1245 hours. Upon arrival, Officer [REDACTED (b)(6), (b)(7)(C)] informed BPA [REDACTED (b)(6), (b)(7)(C)] that he had stopped the vehicle for speeding and when he asked for the driver and the passenger's identification, both subjects presented him with Mexican Consular ID Cards. BPA [REDACTED (b)(6), (b)(7)(C)] identified himself as a United States Border Patrol Agent to both subjects and questioned them as to their citizenship. Both subjects stated that they were citizens and nationals of Mexico without any United States immigration documents allowing them to be in, pass through, or remain in the United States legally. The first subject was later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] and the second subject was lat [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] BPA [REDACTED (b)(6), (b)(7)(C)] then placed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] under arrest and transported them to the [REDACTED (b)(7)(E)] Border Patrol Station for processing. At the station [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] was fingerprinted and entered into the [REDACTED (b)(7)(E)] databases. Records revealed the following immigration and criminal history.\n\nCRIMINAL HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C), (b)(7)(E)]\n\nIMMIGRATION:\n\n[REDACTED (b)(7)(E)] fingerprint analysis revealed [REDACTED (b)(6), (b)(7)(C)] was previously arrested by U.S. Border Patrol on two separate occasions. [REDACTED (b)(6), (b)(7)(C)] was assigned A# [REDACTED (b)(6), (b)(7)(C)] as a result of his apprehension on 12/20/2004. This Alien Registration Number was not associated to any biometric indicator and was solely a match based on the subject's name and date of birth. The disposition of the event associated with the apprehension on 12/20/2004 was a Notice to Appear, however, no biographical information was available. A second Alien Registration Number (A# [REDACTED (b)(6), (b)(7)(C)] was assigned to [REDACTED (b)(6), (b)(7)(C)] on 06/05/2011 and is associated with [REDACTED (b)(6), (b)(7)(C)] biometrics; this Alien Registration Number was used for this event. The second event resulted in a Voluntary Return. TRAVEL/RESIDENCE/WORK HISTORY [REDACTED (b)(6), (b)(7)(C)] claimed to have crossed the Rio Grande River into the United States the day after returning to Mexico as a Voluntary Return on 06/08/2011. [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] claimed that he paid an unknown individual $7,000 USD to assist him in illegally re-entering the United States. [REDACTED (b)(6), (b)(7)(C)] stated that he crossed the United States/Mexico International Border illegally with about five other individuals from Ciudad Juarez, Mexico, into the city of El Paso, Texas. [REDACTED (b)(6), (b)(7)(C)] stated that his group walked to a motel, where they remained for about four days. An unknown individual than transported him to the Sanford, North Carolina, area, where he resided until his arrest on June 20, 2017. [REDACTED (b)(6), (b)(7)(C)] was temporarily living in a hotel and working near Rocky River, Ohio, installing dry wall for a hotel construction. [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] stated that he works as a laborer installing dry wall.\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] was held pending removal proceedings under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act. He was offered and requested a Stipulated Order of Removal.\n\nPROPERTY:\n\n[REDACTED (b)(6), (b)(7)(C)] and all of his property were turned over to the [REDACTED (b)(7)(E)] County Jail pending removal proceedings. [REDACTED (b)(6), (b)(7)(C)] was advised of his right to speak with the Mexican Consulate which he declined. [REDACTED (b)(6), (b)(7)(C)] did not claim to have fear returning to Mexico. [REDACTED (b)(6), (b)(7)(C)] appeared, and claimed to be in good health at the time of his apprehension."
+  },
+  "baseCaseId": "F075"
+}

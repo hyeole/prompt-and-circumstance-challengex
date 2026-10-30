@@ -31,3 +31,15 @@ test("variants never share a split with a different split of their base", () => 
   }
   for (const [b, s] of byBase) assert.equal(s.size, 1, b);
 });
+
+test("fresh and dev-synthetic runtime inputs contain no expected answers; variants stay with their base", () => {
+  for (const dir of ["eval/fresh/cases", "eval/dev-synthetic/cases"]) {
+    for (const f of readdirSync(dir)) {
+      const raw = readFileSync(`${dir}/${f}`, "utf8");
+      assert.ok(!/"plants"|"anchors"|"shouldNotFlag"|"elementExpectations"|"labelNotes"/.test(raw), `${dir}/${f}`);
+    }
+  }
+  const fresh = readdirSync("eval/fresh/cases").map((f) => JSON.parse(readFileSync(`eval/fresh/cases/${f}`, "utf8")));
+  const legacyAndDev = new Set([...readdirSync("eval/cases"), ...readdirSync("eval/dev-synthetic/cases")].map((f) => f.replace(".json", "").split("-")[0]));
+  for (const c of fresh) assert.ok(!legacyAndDev.has((c.baseCaseId ?? c.id).replace(/^F/, "C")) || !(c.baseCaseId ?? c.id).startsWith("F"), `fresh base ${c.id} reuses a legacy incident`);
+});

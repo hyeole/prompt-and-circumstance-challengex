@@ -1,0 +1,11 @@
+{
+  "id": "F075",
+  "base": "F075",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Unmodified",
+  "plants": [],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

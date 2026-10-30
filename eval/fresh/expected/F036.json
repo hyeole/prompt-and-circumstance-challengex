@@ -1,0 +1,11 @@
+{
+  "id": "F036",
+  "base": "F036",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Unmodified",
+  "plants": [],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "Unmodified record. The form records the entry date as unknown while the narrative states 10/15/2012: a real documentation gap; any flag about it is adjudicated as a valid observation."
+}

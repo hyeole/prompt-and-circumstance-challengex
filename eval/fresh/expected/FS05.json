@@ -1,0 +1,19 @@
+{
+  "id": "FS05",
+  "base": "FS05",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Charge requires entry without admission; the record documents admission as a B2 visitor.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

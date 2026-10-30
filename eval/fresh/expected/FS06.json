@@ -1,0 +1,18 @@
+{
+  "id": "FS06",
+  "base": "FS06",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Clean port-of-entry scenario; the selected charge is outside the team's charge summaries.",
+  "plants": [],
+  "elementExpectations": {
+    "N2": "present",
+    "N3": "present",
+    "N5": "present",
+    "N7": "present",
+    "E1": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": "FS06: INA 212(a)(6)(C)(i) is not in the team's charge summaries, so the citation check is expected to say it cannot be checked and route the case to a person. That routing is expected, not a false flag."
+}

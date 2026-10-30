@@ -1,0 +1,16 @@
+{
+  "id": "F010-D",
+  "base": "F010",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Disposition removed: the DISPOSITION section (warrant of arrest/notice to appear and jail hold) is deleted.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N7"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F010-D: the PROPERTY section still says property will accompany him on his transfer to a county jail. We label the disposition as missing because the action taken and its documenting form are no longer stated; a reader could argue the transfer implies detention."
+}

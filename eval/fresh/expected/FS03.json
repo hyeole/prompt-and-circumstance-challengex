@@ -1,0 +1,20 @@
+{
+  "id": "FS03",
+  "base": "FS03",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Citizenship removed from the narrative and the form.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E5"
+    }
+  ],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": "FS03: the narrative still says 'an alien present ... without being admitted' in the ground; that states alienage as a legal conclusion but no country of citizenship. Labeled missing."
+}

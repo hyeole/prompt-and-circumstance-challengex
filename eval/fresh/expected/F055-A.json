@@ -1,0 +1,28 @@
+{
+  "id": "F055-A",
+  "base": "F055",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Added a conflicting statement that he entered through the Hidalgo port of entry with a border crossing card.",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "border crossing card"
+      ]
+    },
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "border crossing card"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

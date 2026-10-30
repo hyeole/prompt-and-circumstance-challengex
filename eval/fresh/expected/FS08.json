@@ -1,0 +1,16 @@
+{
+  "id": "FS08",
+  "base": "FS08",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Clean expedited-removal scenario.",
+  "plants": [],
+  "elementExpectations": {
+    "N3": "present",
+    "N8": "present",
+    "N7": "present",
+    "E1": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": "FS08: INA 212(a)(9)(A)(ii) is not in the team's charge summaries; routing because the citation cannot be checked is expected."
+}

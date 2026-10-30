@@ -1,0 +1,181 @@
+{
+  "id": "F010-D",
+  "title": "Encounter near Riley Township, Ohio (2017) [test variant D]",
+  "kind": "synthetic-variant",
+  "split": "fresh",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      43,
+      44,
+      45,
+      46
+    ],
+    "extraction": "Page 43 (I-213) fields transcribed by hand from the page image. Narrative pages 44-46 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Grouping (I-213 + continuation pages with matching header dates and printed totals) and transcribed fields checked visually against page images on 2026-10-30. Not used in any earlier development or evaluation.",
+    "replacements": [],
+    "modifications": [
+      "Disposition removed: the DISPOSITION section (warrant of arrest/notice to appear and jail hold) is deleted."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "team-assigned-for-testing",
+      "note": "The record shows charge code words 'I6A'; the narrative states no citation. Team-assigned for testing; code-to-citation mapping not assumed."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 43,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "CAZONES, VERACRUZ, MEXICO",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "23",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] TIFFIN, OHIO, 44883",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "05/05/2011, 1400",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "2 mile(s) E of MCI",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/03/2017 0325",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "RILEY TOWNSHIP, OH",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 43,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 43,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nENCOUNTER:\n\nOn April 3, 2017, while performing assigned duties on [REDACTED (b)(7)(E)] , United States Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] observed Ohio State Highway Patrol Trooper [REDACTED (b)(6), (b)(7)(C)] perform a traffic stop on a vehicle traveling eastbound near [REDACTED (b)(7)(E)] Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] activated their emergency lights and pulled in behind Trooper [REDACTED (b)(6), (b)(7)(C)] vehicle to provide backup. Agents observed Trooper [REDACTED (b)(6), (b)(7)(C)] approach the vehicle on the passenger side and speak to the occupants. Trooper [REDACTED (b)(6), (b)(7)(C)] then requested that the driver exit the vehicle, and he complied. Trooper [REDACTED (b)(6), (b)(7)(C)] escorted the driver, later identified as [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] ; COB: Mexico) to his patrol vehicle. Trooper [REDACTED (b)(6), (b)(7)(C)] then notified Agent [REDACTED (b)(6), (b)(7)(C)] that [REDACTED (b)(6), (b)(7)(C)] had presented him with a Mexican ID card when asked for identification.\n\nAgent [REDACTED (b)(6), (b)(7)(C)] then approached [REDACTED (b)(6), (b)(7)(C)] , who was in the back seat of Trooper [REDACTED (b)(6), (b)(7)(C)] vehicle, and identified himself as a United Sta rol Agent. Agent [REDACTED (b)(6), (b)(7)(C)] questioned [REDACTED (b)(6), (b)(7)(C)] as to his citizenship. [REDACTED (b)(6), (b)(7)(C)] readily admitted to being a citizen and national of Mexico who had illegally entered the United States through an area not designated as a port of entry, and who was not then inspected, admitted, or paroled by an immigration officer. [REDACTED (b)(6), (b)(7)(C)] was not in possession of any United States immigration documents allowing him to enter, transit through, or remain in the United States legally. Agent [REDACTED (b)(6), (b)(7)(C)] placed [REDACTED (b)(6), (b)(7)(C)] under arrest. While Agent [REDACTED (b)(6), (b)(7)(C)] was speaking with [REDACTED (b)(6), (b)(7)(C)] , Agent [REDACTED (b)(6), (b)(7)(C)] spoke with the remaining occupant of the vehicle, later identified as [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] ; COB: Mexico). Agent [REDACTED (b)(6), (b)(7)(C)] identified himself as a United States Border Patrol Agent and questioned [REDACTED (b)(6), (b)(7)(C)] as to his citizenship. [REDACTED (b)(6), (b)(7)(C)] readily admitted to being a citizen and national of Mexico who had illegally entered the United States through an area not designated as a port of entry, and who was not then inspected, admitted, or paroled by an immigration officer. [REDACTED (b)(6), (b)(7)(C)] was not in possession of any United States immigration documents allowing him to enter, transit through, or remain in the United States legally. Agent [REDACTED (b)(6), (b)(7)(C)] placed [REDACTED (b)(6), (b)(7)(C)] under arrest. Both Subjects were then transported by Agent [REDACTED (b)(6), (b)(7)(C)] to the [REDACTED (b)(7)(E)] Border Patrol Station for further processing and questioning. [REDACTED (b)(6), (b)(7)(C)] was contacted by the Ohio State Highway Patrol, and the vehicle was towed to [REDACTED (b)(6), (b)(7)(C)] in Fremont, Ohio. Trooper [REDACTED (b)(6), (b)(7)(C)] later notified Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] that he had stopped the vehicle, a 2004 Cadillac Escalade, bearing Colorado license plate # [REDACTED (b)(6), (b)(7)(C)] , for not having a license [REDACTED (b)(6), (b)(7)(C)] plate light. [REDACTED (b)(6), (b)(7)(C)] was issued a written warning for the violation by Trooper\n\nIMMIGRATION HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] has no prior apprehensions by the United States Border Patrol. He was assigned A# [REDACTED (b)(6), (b)(7)(C)] as a result of today's apprehension.\n\nWANTS/WARRANTS:\n\nThe subject has no outstanding wants or warrants.\n\nCRIMINAL HISTORY:\n\nThe subject has no prior criminal history. He was assigned FBI# [REDACTED (b)(7)(E)] as a result of today's apprehension.\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] claims to have left his home in Cazones, Veracruz, Mexico on or about May 1, 2011, and traveled by bus to Reynosa, Mexico. [REDACTED (b)(6), (b)(7)(C)] claims the trip took about one and a half days. [REDACTED (b)(6), (b)(7)(C)] claims to have met with an unknown smuggler, and stayed at an unknown house for two to three days while making arrangements to cross the border. [REDACTED (b)(6), (b)(7)(C)] claims to have crossed the border illegally at night with eight other individuals on or about May 5, 2011, by walking through the desert. [REDACTED (b)(6), (b)(7)(C)] claims to have walked for approximately one week before arriving at an unknown house at an unknown location. [REDACTED (b)(6), (b)(7)(C)] claims to have spent one day at the house before purchasing a bus ticket to Beech Haven, New Jersey.\n\nTRAVEL:\n\n[REDACTED (b)(6), (b)(7)(C)] traveled to Beech Haven, New Jersey, to stay with a friend while looking for employment. [REDACTED (b)(6), (b)(7)(C)] claims to have found employment at a bakery, and remained employed there for approximately five years. [REDACTED (b)(6), (b)(7)(C)] then claims to have moved to Colorado to seek new employment. [REDACTED (b)(6), (b)(7)(C)] claims to have worked in food service in Colorado for approximately five months. He was moving back to New Jersey at the time of today's encounter with the U.S. Border Patrol.\n\nCONSULAR NOTIFICATION:\n\n[REDACTED (b)(6), (b)(7)(C)] was notified of the right to communicate with a consular official from his native country as per Article 36(a)(b) of the Vienna Convention of Consular Relations. The subject acknowledged understanding the right; [REDACTED (b)(6), (b)(7)(C)] requested to speak with a consular official. He understood that the consulate was closed at the time of processing, and that he will be given the opportunity to speak with a consular official during normal business hours. The subject denied having fear of persecution or torture if returned to Mexico. The subject claimed, and appeared, to be in good health.\n\n[REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)]\n\nPROPERTY:\n\nThe subject also has property that will accompany him on his transfer to [REDACTED (b)(7)(E)] County Jail."
+  },
+  "baseCaseId": "F010"
+}

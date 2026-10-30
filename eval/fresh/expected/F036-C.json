@@ -1,0 +1,15 @@
+{
+  "id": "F036-C",
+  "base": "F036",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Selected charge replaced with overstay after admission (INA 237(a)(1)(B)); the record documents entry without inspection.",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

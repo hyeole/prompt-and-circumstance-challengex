@@ -1,0 +1,17 @@
+{
+  "id": "FS04",
+  "base": "FS04",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Clean overstay scenario with a matching charge.",
+  "plants": [],
+  "elementExpectations": {
+    "N5": "present",
+    "N7": "present",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

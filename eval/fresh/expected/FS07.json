@@ -1,0 +1,19 @@
+{
+  "id": "FS07",
+  "base": "FS07",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "The claimed status/classification (permanent resident card, delivery purpose) is removed.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N2"
+    }
+  ],
+  "elementExpectations": {
+    "E1": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": "FS07: removing the purpose of travel also makes N3 incomplete; an N3 finding is adjudicated as a valid observation, not a false flag."
+}

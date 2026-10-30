@@ -1,0 +1,181 @@
+{
+  "id": "F055-H",
+  "title": "Encounter near Fenton, Michigan (2017) [test variant H]",
+  "kind": "synthetic-variant",
+  "split": "fresh",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      240,
+      241,
+      242,
+      243
+    ],
+    "extraction": "Page 240 (I-213) fields transcribed by hand from the page image. Narrative pages 241-243 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Grouping (I-213 + continuation pages with matching header dates and printed totals) and transcribed fields checked visually against page images on 2026-10-30. Not used in any earlier development or evaluation.",
+    "replacements": [],
+    "modifications": [
+      "Form immigration record changed from NEGATIVE to 'POSITIVE - prior removal 2012' with no removal in the narrative."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 242)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 240,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "SAN PEDRO SULA, COPAN, HONDURAS",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "29",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "FAILED TO PROVIDE",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "PWA (AFOOT)",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "05/23/2017 0911",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "FENTON, MI",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 240,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - prior removal 2012",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 240,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] (A# [REDACTED (b)(6), (b)(7)(C)] ) claims to have last entered the United States illegally by crossing the Rio Grande River near Hildalgo, Texas in July of 2014. [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] has no proof that this is when he actually entered the United States, and there is no record stating that this was in fact his last entry date.\n\nTRAVEL:\n\n[REDACTED (b)(6), (b)(7)(C)] claimed to have left his home in San Pedro Sula, Copan, Honduras because he planned to travel to Michigan to reside and work. He claimed that he crossed into both Guatemala and Mexico illegally. [REDACTED (b)(6), (b)(7)(C)] stated that he traveled through Guatemala and Mexico by bus until he reached Reynosa, Tamaulipas, Mexico. Once there, he hired a smuggler to lead him across the United States/Mexico Border. He claimed that he agreed to pay $7000 to the smuggler to lead him across the border. He claims that the smuggler led him and another man illegally into the United States by crossing the Rio Grande River in the July of 2014. He said that after he crossed they walked for one day to a house in McAllen, Texas. He stayed at that house for three (3) days and then traveled by car to Michigan. [REDACTED (b)(6), (b)(7)(C)] said that during his travel, he never passed through any immigration checkpoints. None of [REDACTED (b)(6), (b)(7)(C)] travel claims could be verified. None of [REDACTED (b)(6), (b)(7)(C)] entry/travel information could be verified.\n\nINADMISSIBILITY:\n\nSubject is a native and citizen of Honduras as are both of his parents. He has never had any documents that would allow him to be or remain in the United States legally. Subject is inadmissible under Section 212(a)(6)(A)(I) of the INA, in that he entered the United States at a time or place not designated by the Attorney General and was not then admitted or paroled after inspection by an immigration officer.\n\nFACTS OF ARREST:\n\nAt approximately 8:00 am on May 23, 2017, Border Patrol Agent (BPA) [REDACTED (b)(6), (b)(7)(C)] was dispatched by Supervisory Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] to assist the Michigan State Police (MSP) with identifying three subjects, who had no United States government or state issued identification, on [REDACTED (b)(7)(E)] near Fenton, MI. When stopped by MSP, the three (3) subjects presented the Trooper with Foreign National Identification Cards. BPA [REDACTED (b)(6), (b)(7)(C)] arrived at approximately 9:00 am and identified himself as a United States Border Patrol Agent to the five subjects. Trooper [REDACTED (b)(6), (b)(7)(C)] had pulled over the vehicle for speeding. While assisting Trooper [REDACTED (b)(6), (b)(7)(C)] in identifying the subjects, BPA [REDACTED (b)(6), (b)(7)(C)] determined that three of the subjects were not in possession any valid immigration documents that would allow them to be, or remain in the United States legally. All three subjects freely admitted to being citizens and nationals of Honduras, Guatemala, and Mexico and to have illegally entered the United States, and had no documentation to allow them to remain or be in the United States. They were positively identified as [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] , and [REDACTED (b)(6), (b)(7)(C)] BPA [REDACTED (b)(6), (b)(7)(C)] then took these three subjects into custody. The driver and front seat passenger were both found to be citizens of Mexico, legally present in the United States. Trooper [REDACTED (b)(6), (b)(7)(C)] cited the driver for speeding and released him from the scene with the vehicle. At approximately 9:20 am BPA [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] arrived on scene to assist with transporting the three subjects back to the [REDACTED (b)(7)(E)] Station. Record checks were ran on [REDACTED (b)(6), (b)(7)(C)] , through [REDACTED (b)(7)(E)] Dispatch, and [REDACTED (b)(7)(E)] fingerprinting revealed the following criminal and immigration history:\n\nIMMIGRATION HISTORY:\n\nNONE FOUND\n\nCRIMINAL HISTORY:\n\nNONE FOUND\n\nEMPLOYMENT:\n\n[REDACTED (b)(6), (b)(7)(C)] works for [REDACTED (b)(6), (b)(7)(C)] . He claims that he is paid $12.00 an hour\n\nCONSULAR RIGHTS:\n\nSubject was provided his I-826 rights and advised of his right to speak with the Honduran Consulate, which he declined. Subject was also provided with a list of pro bono legal service providers. Subject was offered a Stipulated Removal, which he declined.\n\nHEALTH:\n\nSubject claims to be, and appears to be, in good health. DISPOSITION: [REDACTED (b)(6), (b)(7)(C)] was processed as a WA/NTA. [REDACTED (b)(6), (b)(7)(C)] his property and money are being transported to the [REDACTED (b)(7)(E)] Police Department."
+  },
+  "baseCaseId": "F055"
+}

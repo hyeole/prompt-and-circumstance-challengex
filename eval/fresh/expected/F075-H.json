@@ -1,0 +1,23 @@
+{
+  "id": "F075-H",
+  "base": "F075",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Form immigration record changed to NEGATIVE; the narrative describes two earlier Border Patrol apprehensions (NTA, voluntary return).",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "previously arrested",
+        "Voluntary Return",
+        "Notice to Appear"
+      ],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F075-H: earlier apprehensions are voluntary return and NTA, not removals; detecting this needs the model, not the removal-based rule."
+}

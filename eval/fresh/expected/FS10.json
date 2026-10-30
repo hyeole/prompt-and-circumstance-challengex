@@ -1,0 +1,17 @@
+{
+  "id": "FS10",
+  "base": "FS10",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Three redacted people; one says he was deported in 2019. This record's form shows a NEGATIVE immigration record and entry in 2021. Attribution cannot be determined from the redacted names.",
+  "plants": [],
+  "elementExpectations": {
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [
+    "deported to Honduras"
+  ],
+  "labelNotes": "FS10: the deportation statement cannot be attributed to this record's subject. A flag citing it as conflicting with the NEGATIVE record is a should-not-flag violation. Routing the case to a person because several people are described is acceptable."
+}

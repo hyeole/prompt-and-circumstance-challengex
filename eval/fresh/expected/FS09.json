@@ -1,0 +1,18 @@
+{
+  "id": "FS09",
+  "base": "FS09",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Advisal, sworn statement, response and supervisory review removed.",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N8"
+    }
+  ],
+  "elementExpectations": {
+    "E1": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

@@ -1,0 +1,62 @@
+{
+  "id": "FS08",
+  "title": "Expedited removal at Sault Ste. Marie (complete)",
+  "kind": "synthetic",
+  "split": "fresh",
+  "context": [
+    "port_of_entry",
+    "expedited_removal"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic scenario (fresh-v1), 2026-10-30",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic; checked by the team against its intended scenario before any run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Clean expedited-removal scenario."
+    ]
+  },
+  "narrative": {
+    "text": "INSPECTION:\nOn November 2, 2024, at approximately 0915 hours, the subject applied for admission at the Sault Ste. Marie port of entry as a pedestrian and presented a Mexican passport with a B1/B2 visa, stating that he was visiting a friend for two weeks. Records checks showed that the subject had been ordered removed from the United States by an immigration judge on May 4, 2018, and was removed through Laredo, Texas, on June 1, 2018. The subject did not have permission to reapply for admission.\nThe subject is inadmissible under Section 212(a)(9)(A)(ii) of the Immigration and Nationality Act, in that he was ordered removed and seeks admission within ten years of removal without permission to reapply.\nPROCESSING:\nThe subject was processed for expedited removal. CBP Officer [REDACTED (b)(6), (b)(7)(C)] advised the subject in Spanish of the charge of inadmissibility, took a sworn statement on Form I-867A/B, and gave him an opportunity to respond. The subject stated that he did not know he needed permission to return. Supervisory CBP Officer [REDACTED (b)(6), (b)(7)(C)] reviewed and approved the expedited removal, and the subject was served Form I-860 and signed the acknowledgment.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport number and country",
+      "value": "[REDACTED (b)(6), (b)(7)(C)], MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Port of entry",
+      "value": "SAULT STE. MARIE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Inspection date and hour",
+      "value": "11/02/2024 0915",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - removed 06/01/2018",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(9)(A)(ii)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic scenario."
+    }
+  ]
+}

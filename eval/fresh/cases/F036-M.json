@@ -1,0 +1,186 @@
+{
+  "id": "F036-M",
+  "title": "Encounter near Freeland, Michigan (2017) [test variant M]",
+  "kind": "synthetic-variant",
+  "split": "fresh",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      156,
+      157,
+      158,
+      159
+    ],
+    "extraction": "Page 156 (I-213) fields transcribed by hand from the page image. Narrative pages 157-159 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Grouping (I-213 + continuation pages with matching header dates and printed totals) and transcribed fields checked visually against page images on 2026-10-30. Not used in any earlier development or evaluation.",
+    "replacements": [],
+    "modifications": [
+      "Second charge added (multi-charge case)."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 158)."
+    },
+    {
+      "citation": "8 U.S.C. 1325(a)",
+      "source": "team-assigned-for-testing",
+      "note": "Second charge added by the team for this test variant."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 156,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "SAN JUAN CHAMULA, CHIAPAS, MEXICO",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "23",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "[REDACTED (b)(6), (b)(7)(C)] BAY CITY, MICHIGAN",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "PWA (AFOOT)",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/29/2017 1200",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "FREELAND, MI",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 156,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - See Narrative",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 156,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] stated that he last entered the United States on 10/15/2012, at approximately 2300 HRS. [REDACTED (b)(6), (b)(7)(C)] claimed that he did not pay a smuggler and crossed alone. [REDACTED (b)(6), (b)(7)(C)] claims that he was not inspected by an immigration officer. [REDACTED (b)(6), (b)(7)(C)] has no evidence to substantiate his claim concerning his illegal entry into the United States.\n\nTRAVEL:\n\n[REDACTED (b)(6), (b)(7)(C)] said that he left his hometown of La Ventana, Cuidad Chamula, Mexico, by bus in October of 2012. [REDACTED (b)(6), (b)(7)(C)] stated that he took various buses across Mexico until he arrived at the U.S./Mexico border near Nogales, AZ., with the intent to illegally cross the border.\n\n[REDACTED (b)(6), (b)(7)(C)] stated that upon arrival at the United States/Mexico border, he waited until nightfall and then crossed the border alone. [REDACTED (b)(6), (b)(7)(C)] claimed that once in the United States, he paid someone to drive him to Michigan. [REDACTED (b)(6), (b)(7)(C)] stated that he could not remember the amount he paid the driver. [REDACTED (b)(6), (b)(7)(C)] stated that he came directly to Michigan because he had a job at the [REDACTED (b)(6), (b)(7)(C)] waiting for him. [REDACTED (b)(6), (b)(7)(C)] stated that he has had this job for over four years. [REDACTED (b)(6), (b)(7)(C)] entry claims could not be substantiated.\n\nINADMISSIBILITY:\n\n[REDACTED (b)(6), (b)(7)(C)] is a citizen of Mexico as are both of his parents. He has never had any documents that would allow him to be or remain in the United States legally. [REDACTED (b)(6), (b)(7)(C)] is inadmissible under Section 212(A)(6)(A)(I) of the Immigration and Nationality Act, as amended, in that he entered the United States at a place not designated by the Attorney General and was not then admitted or paroled after inspection by an immigration officer.\n\nFACTS OF ARREST:\n\nMichigan State Police Trooper [REDACTED (b)(6), (b)(7)(C)] contacted [REDACTED (b)(7)(E)] for assistance with identifying individuals on a traffic stop at [REDACTED (b)(7)(E)] None of the individuals were able to communicate with the Trooper. One had an international driver license, another produced a foreign ID with a postal address, and the third had no identification. The driver of the vehicle, [REDACTED (b)(6), (b)(7)(C)] was issued a citation for speeding and no drivers license. SBPA [REDACTED (b)(6), (b)(7)(C] spoke with all the subjects by telephone and all admitted to being in the United States illegally. After brief interview over the telephone SBPA [REDACTED (b)(6), (b)(7)(] identified the three individuals as [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] ), [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] ). Further checks revealed that [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were arrested by [REDACTED (b)(7)(E)] agents in December of 2014 and served WA/NTAs. The NTAs were not filed due to DAPA eligibility and a change in enforcement priorities at that time. Due the length of time during the traffic stop all three subjects were transported to the Michigan State Police Station in Freeland, Michigan. At approximately 12:00 pm Agent [REDACTED (b)(6), (b)(7)(C)] arrived at the Michigan State Police station in Freeland, Michigan and made contact with Trooper [REDACTED (b)(6), (b)(7)(C)] Trooper [REDACTED (b)(6), (b)(7)(C)] presented the three individuals from the traffic stop. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself as a United States Border Patrol Agent and took custody of all three subjects and transported them to the [REDACTED (b)(7)(E)] Border Patrol Station.\n\nIMMIGRATION HISTORY:\n\n[REDACTED (b)(6), (b)(7)(C)] was arrested by [REDACTED (b)(7)(E)] agents in December of 2014 and served WA/NTA. The NTA was not filed due to DAPA eligibility and a change in enforcement priorities at that time.\n\nCRIMINAL HISTORY: NONE FOUND.\n\nDISPOSITION:\n\nThere is no indication in [REDACTED (b)(7)(E)] that the NTA was cancelled and, according to NRC, both files currently reside at Detroit ERO. [REDACTED (b)(6), (b)(7)(C)] was offered a stipulated removal but declined. [REDACTED (b)(6), (b)(7)(C)] was advised of his administrative rights per form I-826 and signed the form stating he understood his rights, he was processed as a WA/NTA and agents completed an I-200 and I-286 and lodged [REDACTED (b)(6), (b)(7)(C)] in [REDACTED (b)(7)(E)] County Jail without bond. [REDACTED (b)(6), (b)(7)(C)] was advised of his right to speak with the Mexican consulate, to which he declined. [REDACTED (b)(6), (b)(7)(C)] was booked into [REDACTED (b)(7)(E)] County Jail along with his U.S. money pending transfer to Detroit DRO."
+  },
+  "baseCaseId": "F036"
+}

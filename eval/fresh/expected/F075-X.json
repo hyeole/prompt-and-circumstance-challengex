@@ -1,0 +1,21 @@
+{
+  "id": "F075-X",
+  "base": "F075",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Form date of last entry changed to 06/09/2013; the narrative says he crossed the day after a voluntary return on 06/08/2011.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "06/08/2011"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": "F075-X: the narrative gives the entry only relative to 06/08/2011 ('the day after'); detection requires reading the year from that date."
+}

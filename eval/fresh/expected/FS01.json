@@ -1,0 +1,19 @@
+{
+  "id": "FS01",
+  "base": "FS01",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Clean interior scenario.",
+  "plants": [],
+  "elementExpectations": {
+    "N1": "present",
+    "N5": "present",
+    "N7": "present",
+    "N6": "not_applicable",
+    "N2": "not_applicable",
+    "N3": "not_applicable",
+    "N8": "not_applicable"
+  },
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

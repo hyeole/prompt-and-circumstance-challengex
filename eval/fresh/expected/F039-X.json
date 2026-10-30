@@ -1,0 +1,21 @@
+{
+  "id": "F039-X",
+  "base": "F039",
+  "split": "fresh",
+  "datasetVersion": "fresh-v1",
+  "description": "Form date of last entry changed to 02/15/2009; the narrative says February of 2004.",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "February of 2004"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "elementExpectations": {},
+  "shouldNotFlag": [],
+  "labelNotes": ""
+}

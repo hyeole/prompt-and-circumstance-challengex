@@ -1,0 +1,181 @@
+{
+  "id": "F051-E",
+  "title": "Encounter near Escanaba, Michigan (2017) [test variant E]",
+  "kind": "synthetic-variant",
+  "split": "fresh",
+  "provenance": {
+    "source": "CBP, Detroit Sector Forms I-213 and I-44 FY 2012-2019 Part 5 (public, redacted)",
+    "sourceUrl": "https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf",
+    "pdfPages": [
+      222,
+      223,
+      224,
+      225
+    ],
+    "extraction": "Page 222 (I-213) fields transcribed by hand from the page image. Narrative pages 223-225 use embedded PDF text with redaction labels placed by position.",
+    "verification": "Grouping (I-213 + continuation pages with matching header dates and printed totals) and transcribed fields checked visually against page images on 2026-10-30. Not used in any earlier development or evaluation.",
+    "replacements": [],
+    "modifications": [
+      "Manner of entry removed: form field blanked; 'illegally' and the swimming sentence removed."
+    ]
+  },
+  "recordedChargeCode": "I6A",
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "referenceId": "INA-212a6Ai",
+      "source": "stated-in-record",
+      "note": "Citation as stated in the original narrative (PDF page 224)."
+    }
+  ],
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 222,
+      "sourceField": "Family Name (CAPS)"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "GUATEMALA",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Country of Citizenship"
+    },
+    {
+      "path": "subject.birthplace",
+      "label": "City and country of birth",
+      "value": "SANTA CATARINA MITA, JUTIAPA, GUATEMALA",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "City, Province (State) and Country of Birth"
+    },
+    {
+      "path": "subject.age",
+      "label": "Age",
+      "value": "22",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Date of Birth / Age"
+    },
+    {
+      "path": "subject.us_address",
+      "label": "U.S. address",
+      "value": "FAILED TO PROVIDE UNITED STATES ADDRESS",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "U S Address"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "Unknown Date, Unknown Time",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "0 mile(s) of UNK",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "",
+      "status": "absent",
+      "sourcePage": 222,
+      "sourceField": "Date, Place, Time, and Manner of Last Entry"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "PWA Mexico",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Status at Entry"
+    },
+    {
+      "path": "status.when_found",
+      "label": "Status when found",
+      "value": "IN TRAVEL",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Status When Found"
+    },
+    {
+      "path": "status.time_illegally_in_us",
+      "label": "Length of time illegally in U.S.",
+      "value": "OVER 1 YEAR",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Length of Time Illegally in U S"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "05/18/2017 1300",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "At/Near Date/Hour"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ESCANABA, MI",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "At/Near"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Method of Location/Apprehension"
+    },
+    {
+      "path": "encounter.station",
+      "label": "Station / location code",
+      "value": "",
+      "status": "redacted",
+      "sourcePage": 222,
+      "sourceField": "Location Code"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Immigration Record"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Criminal Record"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code words (as printed)",
+      "value": "I6A",
+      "status": "present",
+      "sourcePage": 222,
+      "sourceField": "Charge Code Words(s)"
+    }
+  ],
+  "narrative": {
+    "text": "NARRATIVE:\n\nFacts of Encounter/ Arrest: On May 18, 2017, Unites States Border Patrol agents (BPAs) from the [REDACTED (b)(7)(E)] Michigan Station were conducting [REDACTED (b)(7)(E)] in Escanaba, Michigan. At approximately 12:30 p.m., BPAs [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] observed an Escanaba Police officer conduct a traffic stop near the intersection of [REDACTED (b)(7)(E)] BPAs then pulled behind the officer to assist with the stop if requested.\n\nThe officer from the Escanaba Police Department approached the BPAs, stated that he had pulled the vehicle over for improper display of plate and provided the BPAs with biographical information pertaining to the six occupants of the vehicle. The driver of the vehicle [REDACTED (b)(6), (b)(7)(C)] was issued a citation for Improper Display of Plate and Driving without a license. The vehicle was towed and stored by the Escanaba Police Department. The information identified four of the subjects as being from Guatemala, one subject as being from Mexico and one subject as being from El Salvador. This information was relayed to LBPA [REDACTED (b)(6), (b)(7)(C)] who conducted checks on the subjects indicating the following: one had been ordered removed, one had been voluntarily returned to Mexico seven times, three individuals were negative in the systems, and the last subject was in status. At that time, BPAs [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] approached the vehicle. BPA [REDACTED (b)(6), (b)(7)(C)] identified himself as a Border Patrol agent and asked all subjects whether or not they had any immigration documents to be or remain in the United States legally. Five subjects stated that they did not have any immigration documents. BPA [REDACTED (b)(6), (b)(7)(C)] then asked all subjects individually if they were in the country legally or illegally. All subjects stated that they were in the United States illegally. The subjects who admitted to being in the country illegally were placed under arrest and transported to the Escanaba Police Department until BPAs who could transport them to [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] Station for processing arrived. At approximately 3:20 PM, BPAs left Escanaba, Michigan enroute to the Border Patrol Station in [REDACTED (b)(7)(E)] Michigan. Once at the station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were captured and entered into the [REDACTED (b)(7)(E)] systems. Additional records checks were conducted through Detroit Sector Radio. The results were the following:\n\nIMMIGRATION HISTORY:\n\nNo immigration history.\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] claims to have entered the United States in Laredo around 2015. He then travelled to Houston Texas where he has lived ever since.\n\nINADMISSIBLILITY/DEPORTABLILTY:\n\n212(a)(6)(A)(i) of the Immigration and Nationality Act, as amended, in that you are an alien present in the United States without being admitted or paroled, or who arrived in the United States at any time or place other than as designated by the Attorney General.\n\nCRIMINAL HISTORY:\n\nNo known criminal history.\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/ Notice to Appear. [REDACTED (b)(6), (b)(7)(C)] and his property were transported to the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings. As per the new priorities established by the Executive Order, [REDACTED (b)(6), (b)(7)(C)] was not given a bond because he violated Section 212(a)(6)(A)(i) of the Immigration and Nationality Act. [REDACTED (b)(6), (b)(7)(C)] claimed and appeared to be in good health. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Consulate office of his native [REDACTED (b)(6), (b)(7)(C)] country. [REDACTED (b)(6), (b)(7)(C)] contacted the Guatemalan Consulate at 9:40 P.M. Witnessed by Agent [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services. [REDACTED (b)(6), (b)(7)(C)] claimed to have fear of returning to Guatemala because of violence."
+  },
+  "baseCaseId": "F051"
+}
