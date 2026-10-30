@@ -115,7 +115,9 @@ const norm = (t: string) => t.toLowerCase().replace(/\[[^\]]*\]/g, " ").replace(
  * clauses that name people must agree, otherwise the statement is unclear.
  */
 export function attribution(sentence: Sentence, person: Attr, focus?: string): Attr {
-  if (person === "other") return "other";
+  // The extractor's "other" is checked against the source: it stands unless the clause carrying the fact itself names
+  // the subject and the event there is not a third party's ("Subject's wife entered …" stays "other").
+  if (person === "other") return attribution(sentence, "unclear", focus) === "subject" && !reportsOthersEvent(sentence.text, focus) ? "subject" : "other";
   const clauses = sentence.text.split(CLAUSE_SPLIT).filter((x) => x && x.trim());
   const classes = clauses.map((cl) => clauseAttribution(cl));
   if (focus) {
@@ -145,24 +147,110 @@ export function attribution(sentence: Sentence, person: Attr, focus?: string): A
  */
 export const aboutSubject = (attr: "subject" | "other" | "unclear", multiPerson: boolean) => attr === "subject" || (attr === "unclear" && !multiPerson);
 
+// ---- Event participants and event spans ----
+// A sentence can report someone else's event ("He stated that his wife entered illegally in 2011"; 'He said, "My
+// brother crossed in 2011."'): reporting a statement is not taking part in its event. The participant is the noun phrase
+// governing the event verb, read after the last reporting boundary ("that", a quotation mark, a comma, "said",
+// "stated" …). A possessed relative or companion there ("his wife", "Subject's brother", "her companions") makes the
+// event someone else's; "they"/"we" make it a group's; "he", "she", "I" or "the subject" (alone or coordinated: "he and
+// his wife") make it the speaker's. Anything else ("one of the four men", "the driver", a redacted name) is unknown:
+// such a person could be the subject, so the event is neither excluded nor attributed on this basis.
+const EVENT_VERB_RE = /\b(enter(?:ed|ing|s)?|entry|cross(?:ed|ing|es)?|came|arriv(?:ed|ing|es)|walk(?:ed|ing)|swam|wad(?:ed|ing)|smuggled|removed|removals?|deport(?:ed|ation)|excluded|reinstat\w*|returned|arrested|apprehended|encountered|departed)\b/gi;
+const ENTRY_EVENT_RE = /\b(enter(?:ed|ing|s)?|entry|cross(?:ed|ing|es)?|came|arriv(?:ed|ing|es)|walk(?:ed|ing)|swam|wad(?:ed|ing)|smuggled)\b/gi;
+const REPORTING_CUT_RE = /\bthat\b|["“”]|[,;:]|\b(?:said|says|stated|states|told(?:\s+\w+)?|explained|reported|added)\b/gi;
+const NP_TAIL_RE = /\s+(?:had|has|have|was|were|is|are|been|being|be|also|then|later|first|previously|illegally|allegedly|reportedly|not|never|once|initially|subsequently|already|again|eventually|finally|to|a|an|prior|previous|earlier|expedited|formal)\s*$/i;
+const SELF_NP_RE = /\b(he|she|i|subject|himself|herself)\s*$|\b(he|she|i|subject)\s+and\b|\band\s+(he|she|i|himself|herself)\b/i;
+const THIRD_PARTY_NP_RE = /(?:\b(?:his|her|their|my|our|your)\s+|\b\w+['’]s\s+)(?:[\w-]+\s+){0,2}?(?:wife|husband|spouse|partner|sons?|daughters?|child|children|kids?|brothers?|sisters?|siblings?|mother|father|parents?|cousins?|uncle|aunt|nephew|niece|grand\w+|friends?|girlfriend|boyfriend|companions?|co-?travel+ers?|relatives?|family)\s*$|\bthe other subject\s*$/i;
+const GROUP_NP_RE = /\b(?:they|we)\s*$/i;
+export function eventParticipant(text: string, at: number): "self" | "other" | "group" | "unknown" {
+  // Redaction markers contain commas and parentheses: mask them, and drop appositives ("His companion, [REDACTED], was").
+  let t = text.slice(0, at).replace(/\[[^\]]*\]/g, "@P@").replace(/,\s*@P@(?:\s*@P@)*\s*,/g, " ");
+  const cut = Math.max(0, ...[...t.matchAll(REPORTING_CUT_RE)].map((m) => m.index! + m[0].length));
+  t = " " + t.slice(cut);
+  while (NP_TAIL_RE.test(t)) t = t.replace(NP_TAIL_RE, "");
+  if (SELF_NP_RE.test(t)) return "self";
+  if (THIRD_PARTY_NP_RE.test(t)) return "other";
+  return GROUP_NP_RE.test(t) ? "group" : "unknown";
+}
+// The clause of one event: from the last boundary before its verb to the first one after it. Dates, years and manner
+// wording count for an event only inside its own clause ("entered illegally in 2014; he was married on June 9, 2011").
+const SPAN_BOUNDARIES = [/;/g, /\bbut\b/gi, /\bthat\b/gi, /["“”]/g,
+  // "… and was admitted as a B2 visitor" continues the same entry event; "… and was married" starts another.
+  /,?\s+and\s+(?=(?:he|she|they|i|his|her|the|subject|had|has|is|got|later|then|subsequently|returned|lived|worked|married)\b|(?:was|were)\s+(?!(?:admitted|inspected|paroled|allowed|waved)\b))/gi,
+  /(?<!\bday\s)\b(?:after|before|when|while|until|since|because|whereas)\s+(?=(?:he|she|they|his|her|their|the|a|an|subject)\b|\[)/gi,
+  /,\s+(?=(?:who|which|where)\b)/gi];
+export function eventSpan(text: string, at: number): string {
+  let start = 0, end = text.length;
+  for (const re of SPAN_BOUNDARIES)
+    for (const m of text.matchAll(re)) {
+      const a = m.index!, b = a + m[0].length;
+      if (b <= at) start = Math.max(start, b);
+      else if (a > at) end = Math.min(end, a);
+    }
+  return text.slice(start, end);
+}
+export type SentenceEvent = { verb: string; at: number; participant: "self" | "other" | "group" | "unknown"; span: string };
+export function sentenceEvents(text: string, re: RegExp = EVENT_VERB_RE): SentenceEvent[] {
+  return [...text.matchAll(new RegExp(re.source, "gi"))].map((m) => ({ verb: m[0], at: m.index!, participant: eventParticipant(text, m.index!), span: eventSpan(text, m.index!) }));
+}
+/** Every event in the focused part of the sentence (or the whole sentence) is a third party's. */
+function reportsOthersEvent(text: string, focus?: string): boolean {
+  let from = 0, to = text.length;
+  if (focus) {
+    const i = text.toLowerCase().indexOf(focus.toLowerCase().slice(0, 30));
+    if (i >= 0) { from = i; to = i + focus.length; }
+  }
+  const evs = sentenceEvents(text).filter((e) => e.at >= from && e.at < to);
+  return evs.length > 0 && evs.every((e) => e.participant === "other");
+}
+
 /**
- * Current processing ("processed for expedited removal", "served Form I-860", "pending removal proceedings") is not a
- * PRIOR removal unless the sentence also dates or marks it as past.
+ * Removal processing ("processed for expedited removal", "served Form I-860", "placed in removal proceedings") is an
+ * action, not a completed removal, whether or not it is dated or marked as past: a date or a processing action alone
+ * does not prove that a removal happened. Removal wording outside the processing phrase still counts ("processed for
+ * expedited removal and removed to Mexico").
  */
-const CURRENT_REMOVAL_RE = /\b(processed (for|as) (an )?(expedited )?removal|(reviewed|approved|authori[sz]ed)( and (reviewed|approved|authori[sz]ed))? (the |this |his |her )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/i;
-const PAST_MARKER_RE = /\b(previously|prior|formerly|earlier|before|\d{1,2}\/\d{1,2}\/\d{2,4}|(19|20)\d\d)\b/i;
+const CURRENT_REMOVAL_RE = /\b(processed (for|as) (an )?(expedited )?removal|(reviewed|approved|authori[sz]ed)( and (reviewed|approved|authori[sz]ed))? (the |this |his |her )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/gi;
 // Arrests, apprehensions, Notices to Appear and voluntary returns or departures are not removals; only removal wording
 // (removed, deported, excluded, reinstatement, a removal order) is.
 const REMOVAL_WORD_RE = /\b(removed|removal|deported|deportation|deport|excluded|exclusion|reinstat\w*)\b/i;
 // An offered, declined, refused, pending, future or conditional removal did not happen (F055-H: "offered a
 // Stipulated Removal, which he declined").
 const NOT_HAPPENED_RE = /\b(offered|declined|refused|pending|will be|would be|may be|could be|if (he|she|they) (is|are|was|were))\b/i;
-// An affirmative statement that a removal never happened ("has never been deported", "no prior removals").
-// The negation must govern the removal word itself, within two words: "did not receive a bond … being a reinstate case"
-// is not a denial.
-export const NEGATED_REMOVAL_RE = /\b(never|not|no|without)\s+(?:\w+\s+){0,2}?(removed|deported|removals?|deportations?|excluded|reinstat\w*)\b/i;
-export const isPriorRemoval = (text: string) =>
-  REMOVAL_WORD_RE.test(text) && !NOT_HAPPENED_RE.test(text) && !NEGATED_REMOVAL_RE.test(text) && (!CURRENT_REMOVAL_RE.test(text) || PAST_MARKER_RE.test(text));
+// An affirmative statement that a removal never happened ("has never been deported", "has not at any time been
+// deported", "no record of removal"). The negation must govern the removal word: only auxiliaries, adverbs, articles
+// and history nouns may come between them, so "did not resist and was removed" and "did not receive a bond … being a
+// reinstate case" are not denials.
+const NEG_GAP = "(?:(?:at any time|at any point|ever|yet|once|been|be|being|was|were|had|has|have|previously|formally|officially|physically|actually|any|prior|previous|formal|expedited|ordered|order|of|from|to|the|a|an|record|history|evidence|known)\\s+){0,6}?";
+export const NEGATED_REMOVAL_RE = new RegExp(`(?:\\b(?:never|not|no|without|nor)|n't)\\s+${NEG_GAP}(removed|deported|removals?|deportations?|excluded|exclusions?|reinstat\\w*)\\b`, "i");
+// Polarity is decided per clause, so a denial in one clause does not cancel an affirmative removal in another ("was not
+// deported in 2015, but he was removed in 2017").
+const HISTORY_CLAUSE_SPLIT = /\s*;\s*|,?\s+\b(?:but|however|although|though|whereas|while|yet)\b\s*,?\s*/i;
+const priorRemovalClause = (cl: string) =>
+  !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
+export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause);
+/**
+ * A prior removal whose participant is not a third party: the removal clause's event is not a relative's, companion's or
+ * group's ("Subject stated that his brother was deported in 2012" is the brother's).
+ */
+function ownPriorRemoval(text: string): boolean {
+  return clausesWithOffsets(text).some(({ cl, base }) => {
+    if (!priorRemovalClause(cl)) return false;
+    const m = cl.replace(CURRENT_REMOVAL_RE, (x) => " ".repeat(x.length)).match(REMOVAL_WORD_RE);
+    return !m || eventParticipant(text, base + m.index!) !== "other";
+  });
+}
+/** A clause that denies a removal and whose participant is not a third party ("his brother was never deported" is not). */
+function ownDenial(text: string): boolean {
+  return clausesWithOffsets(text).some(({ cl, base }) => {
+    const m = cl.match(NEGATED_REMOVAL_RE);
+    return !!m && eventParticipant(text, base + m.index! + m[0].length - m[1].length) !== "other";
+  });
+}
+function clausesWithOffsets(text: string): { cl: string; base: number }[] {
+  let at = 0;
+  return text.split(HISTORY_CLAUSE_SPLIT).map((cl) => { const base = text.indexOf(cl, at); at = base + cl.length; return { cl, base }; });
+}
 
 // Prior immigration encounters: an immigration agency's arrest or apprehension, a voluntary return or departure, or a
 // Notice to Appear, marked as past (or dated before this encounter). Criminal arrests by police are not included.
@@ -180,16 +268,23 @@ export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boo
 /**
  * Verified prior-removal statements that count for this subject. The extractor's list is one source; the narrative's
  * own sentences are the other (a successful extraction must not hide a removal the source states, e.g. "Subject …
- * being a reinstate case"). A sentence the extractor says is about another person is left out.
+ * being a reinstate case"). The extractor's "other" label is checked against the source like any attribution: it
+ * stands unless the sentence itself names the subject as the one removed. A third party's removal never counts.
  */
 function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean, c?: CaseRecord): Verified[] {
-  const other = new Set(facts.removal_statements.filter((r) => r.person === "other").map((r) => r.sentence_id));
-  const extracted = facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
-    .filter((v): v is Verified => !!v && isPriorRemoval(v.s.text));
-  const fromSource = sentences.filter((x) => !other.has(x.id) && !extracted.some((v) => v.s.id === x.id) && isPriorRemoval(x.text))
+  const listed = new Map(facts.removal_statements.map((r) => [r.sentence_id, r.person]));
+  const extracted = facts.removal_statements.map((r) => verify(sentences, r.sentence_id, r.quote))
+    .filter((v): v is Verified => !!v && ownPriorRemoval(v.s.text))
+    .filter((v, i, all) => all.findIndex((w) => w.s.id === v.s.id) === i);
+  const fromSource = sentences.filter((x) => !extracted.some((v) => v.s.id === x.id) && ownPriorRemoval(x.text))
     .map((x): Verified => ({ s: x, ev: { kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" } }));
-  return [...extracted, ...fromSource].filter((v) => attributeStatement(sentences, v.s.id, multiPerson, v.ev.quote, c).outcome === "supported");
+  return [...extracted, ...fromSource].filter((v) => attributeStatement(sentences, v.s.id, multiPerson, v.ev.quote, c, listed.get(v.s.id) ?? "unclear").outcome === "supported");
 }
+/** The extractor's person label after checking it against the source ("other" stands unless the source names the subject). */
+const checkedPerson = (sentences: Sentence[], id: string, person: Attr, quote: string): Attr => {
+  const s = sentences.find((x) => x.id === id);
+  return person === "other" && s ? attribution(s, "other", quote) : person;
+};
 
 /** A manner-of-entry claim must use manner wording, not just an entry verb ("came to the United States" says nothing about how). */
 export const MANNER_RE = /\b(illegal(ly)?|without (being )?inspect|not (been )?inspected|uninspected|EWI|swam|swim|wad(ed|ing)|walk(ed|ing)? (across|through)|crossed|crossing|river|fence|between (the )?ports|smuggl|port of entry|visa|passport|crossing card|admitted|paroled|inspected|flew|flight|airport)\b/i;
@@ -242,8 +337,9 @@ const MONTHS = ["january", "february", "march", "april", "may", "june", "july", 
 function monthDays(text: string): string[] {
   const out: string[] = [];
   const t = text.toLowerCase();
-  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) out.push(`${+m[1]}/${+m[2]}`);
-  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2})\\b`, "g"))) out.push(`${MONTHS.indexOf(m[1]) + 1}/${+m[2]}`);
+  // Impossible month/day pairs are not dates (2000 is a leap year, so 2/29 stays valid when no year is given).
+  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) if (realDate(m[3].length === 4 ? +m[3] : 2000, +m[1], +m[2])) out.push(`${+m[1]}/${+m[2]}`);
+  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2})\\b`, "g"))) if (realDate(2000, MONTHS.indexOf(m[1]) + 1, +m[2])) out.push(`${MONTHS.indexOf(m[1]) + 1}/${+m[2]}`);
   for (const m of t.matchAll(/\bday after\b[^.]{0,80}?\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) {
     const d = new Date(Date.UTC(2000, +m[1] - 1, +m[2] + 1));
     out.push(`${d.getUTCMonth() + 1}/${d.getUTCDate()}`);
@@ -339,7 +435,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // only for the date comparison and only if the matched source fragment contains that year.
   // Only U.S. entries are compared with the form; entries into other countries and departures are ignored.
   const entries = facts.entry_statements
-    .filter((e) => isUsEntry(e) && e.person !== "other")
+    .filter((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other")
     .map((e) => {
       const exact = verify(sentences, e.sentence_id, e.quote);
       const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
@@ -429,6 +525,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
     // Attribution in code: explicitly "Subject", or an unattributed statement when the narrative describes only one person.
     const rem = priorRemovals(sentences, facts, multiPerson, c)[0];
+    // Provenance follows the information the finding needs: when the narrative's own text yields the same removal
+    // without any extraction, the finding is rule-based; otherwise it depends on the extractor's output.
+    const remSource = rem && priorRemovals(sentences, EMPTY_FACTS, multiPerson, c).some((v) => v.s.id === rem.s.id) ? "rule" : "model";
     if (!rem && multiPerson) unattributed.push(...priorRemovals(sentences, facts, false)
       .map((v) => ({ sentenceId: v.s.id, fieldPath: "history.immigration_record", detail: `${v.s.id} describes a prior removal; the form records the immigration record as "${imm.value}".` })));
     if (rem)
@@ -436,7 +535,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",
         explanation: `The form records the immigration record as "${imm.value}", but the narrative describes a prior removal or deportation for the subject.`,
         evidence: [ctx(rem.ev, attribution(sentences.find((x) => x.id === rem.ev.sentenceId)!, "unclear"), "removal"), fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
-        humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: "model", severity: "high",
+        humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: remSource, severity: "high",
       });
   }
   // 4c. Prior IMMIGRATION encounters (Border Patrol/CBP/ICE arrests or apprehensions, voluntary returns, Notices to
@@ -451,7 +550,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         id: "F-HISTORY-3", category: "unclear", title: "Prior immigration encounters described while the record is NEGATIVE",
         explanation: `${own.slice(0, 2).map((x) => x.id).join(" and ")} describe${own.length === 1 ? "s" : ""} prior immigration arrests, apprehensions or voluntary returns, but the form records the immigration record as "${imm.value}". These are not removals, but a NEGATIVE record usually means no prior immigration history. A person should confirm.`,
         evidence: [...own.slice(0, 2).map((x): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, attribution(x, "unclear"), "removal")), fieldEv("history.immigration_record")],
-        referenceIds: [], needsHumanReview: true, humanReviewReason: "The narrative's immigration history and the form's record differ: a person should confirm.", source: "model", severity: "medium",
+        // Source text and form only (no extracted statement is used): rule-based.
+        referenceIds: [], needsHumanReview: true, humanReviewReason: "The narrative's immigration history and the form's record differ: a person should confirm.", source: "rule", severity: "medium",
       });
     else if (multiPerson)
       unattributed.push(...prior.map((x) => ({ sentenceId: x.id, fieldPath: "history.immigration_record", detail: `${x.id} describes prior immigration arrests, apprehensions or voluntary returns; the form records the immigration record as "${imm.value}".` })));
@@ -461,11 +561,12 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // The narrative's own wording is checked as well as the extracted statements (FS09: the extractor missed
   // "was removed through Laredo, Texas, on June 1, 2018").
   const denial = imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|excluded)/i.test(imm.value)
-    ? sentences.find((x) => NEGATED_REMOVAL_RE.test(x.text) && REMOVAL_WORD_RE.test(x.text) && !isPriorRemoval(x.text) && attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported")
+    ? sentences.find((x) => ownDenial(x.text) && !isPriorRemoval(x.text) && attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported")
     : undefined;
   // 4d. The form records a prior removal and the narrative affirmatively says, of the subject, that there was none.
-  //     Unlike an omission (4b), this is a conflict between the two sources.
-  if (denial && !sentences.some((x) => isPriorRemoval(x.text)))
+  //     Unlike an omission (4b), this is a conflict between the two sources. Only a removal that is the subject's
+  //     suppresses it: a companion's or another person's removal elsewhere in the narrative does not.
+  if (denial && !priorRemovals(sentences, facts, multiPerson, c).length)
     findings.push({
       id: "F-HISTORY-4", category: "inconsistency", title: "The narrative denies the prior removal the form records",
       explanation: `The form records the immigration record as "${imm!.value}", but ${denial.id} says the subject has no prior removal or deportation.`,
@@ -478,7 +579,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       id: "F-HISTORY-2", category: "unclear", title: "Prior removal on the form is not described in the narrative",
       explanation: `The form records the immigration record as "${imm.value}", but the narrative does not describe any prior removal or deportation.`,
       evidence: [fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
-      humanReviewReason: "The form and the narrative disagree about the immigration history: a person should confirm.", source: "model", severity: "medium",
+      // The form field and the narrative's own text decide this (any removal the extractor could list is also found in
+      // the text), so no extracted statement is needed: rule-based.
+      humanReviewReason: "The form and the narrative disagree about the immigration history: a person should confirm.", source: "rule", severity: "medium",
     });
   }
   const seen = new Set<string>();
@@ -499,7 +602,7 @@ export function checkChargeRequirement(
 ): { status: "likely_mismatch" | "needs_human_review"; explanation: string; evidence: EvidenceRef[] } | null {
   if (!requires) return null;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
-  const allEntries = facts.entry_statements.filter((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
+  const allEntries = facts.entry_statements.filter((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
     .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) })).filter((x) => x.v) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
   const subjectEntries = allEntries.filter((x) => attributeStatement(sentences, x.v.s.id, multiPerson, x.e.quote, c, x.e.person).outcome === "supported");
   // Statements that cannot be attributed to the subject neither support nor contradict the charge: a person decides.
@@ -550,7 +653,7 @@ export const EMPTY_FACTS: FactsOutput = { entry_statements: [], removal_statemen
 
 /** True when the extracted facts contain at least one verified statement saying HOW a non-"other" person entered. */
 export function hasMannerStatement(sentences: Sentence[], facts: FactsOutput): boolean {
-  return facts.entry_statements.some((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
+  return facts.entry_statements.some((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
 }
 
 /** True when a verified statement supports the charge's core requirement (entry manner, or a prior removal). */
@@ -565,7 +668,7 @@ export function supportsRequirement(c: CaseRecord, sentences: Sentence[], facts:
   const fm = field("entry.manner");
   if (requires?.entryManner && fm && formMannerCategory(fm.value) === requires.entryManner) return true;
   return !!requires?.entryManner && facts.entry_statements.some((e) => {
-    if (!isUsEntry(e) || e.person === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
+    if (!isUsEntry(e) || checkedPerson(sentences, e.sentence_id, e.person, e.quote) === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
     const v = verify(sentences, e.sentence_id, e.quote);
     return !!v && attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person).outcome === "supported";
   });
@@ -582,7 +685,7 @@ export function usEntryMannerBySentence(sentences: Sentence[], facts: FactsOutpu
 /** Verified statements that the subject (or an unattributed person) lacks lawful status, with status wording in the quote. */
 export function statusStatements(sentences: Sentence[], facts: FactsOutput): EvidenceRef[] {
   return facts.status_statements
-    .filter((x) => x.person !== "other" && STATUS_RE.test(x.quote))
+    .filter((x) => checkedPerson(sentences, x.sentence_id, x.person, x.quote) !== "other" && STATUS_RE.test(x.quote))
     .map((x) => verify(sentences, x.sentence_id, x.quote)?.ev)
     .filter(Boolean) as EvidenceRef[];
 }
@@ -600,11 +703,19 @@ export function nonUsEntrySentences(facts: FactsOutput, sentences?: Sentence[]):
   if (!sentences) return new Set(ids);
   return new Set(ids.filter((id) => {
     const t = sentences.find((x) => x.id === id)?.text ?? "";
-    return !(US_ENTRY_TEXT_RE.test(t) && !OTHER_COUNTRY_RE.test(t));
+    return !(usEntryText(t) && !OTHER_COUNTRY_RE.test(t));
   }));
 }
-// "United States Border Patrol" and "Customs and Border Protection" name an agency, not a border crossing.
-const US_ENTRY_TEXT_RE = /\b(enter\w*|cross\w*|arriv\w*|came|walk\w*|swam|wad\w*|smuggled)\b[^.;]{0,90}\b(United States|U\.S\.|USA)\b(?!\s+Border\s+(Patrol|Protection))|\b(United States|U\.S\.)\b[^.;]{0,20}\bborder\b(?!\s+(Patrol|Protection))/i;
+const US_ENTRY_TEXT_RE = /\b(enter\w*|cross\w*|arriv\w*|came|walk\w*|swam|wad\w*|smuggled)\b[^.;]{0,90}\b(United States|U\.S\.|USA)\b|\b(United States|U\.S\.)\b[^.;]{0,20}\bborder\b/i;
+// "United States" that is not the destination of an entry: the origin of a trip ("from the United States into
+// France"), an agency ("United States Border Patrol", "Customs and Border Protection") or an institution abroad ("the
+// United States embassy in Paris").
+const US_NAME = "(?:the\\s+)?(?:United States(?:\\s+of\\s+America)?|U\\.S\\.(?:A\\.)?|USA)";
+const NOT_US_DESTINATION_RE = new RegExp(`\\bfrom\\s+${US_NAME}|\\b${US_NAME}\\s+(?:Border\\s+(?:Patrol|Protection)|Customs|Embassy|Consulate|Attorney|Marshals?|Army|Navy|Air\\s+Force|Marines?|Coast\\s+Guard|Department|Government|Citizenship|Immigration)\\b|\\bCustoms\\s+and\\s+Border\\s+Protection\\b`, "gi");
+/** The text describes entering, crossing or arriving into the United States (as a destination). */
+const usEntryText = (t: string) => US_ENTRY_TEXT_RE.test(t.replace(NOT_US_DESTINATION_RE, " @ "));
+/** An event clause that describes leaving the United States or entering another country ("from the United States into France"). */
+const leavesUs = (span: string) => new RegExp(`\\bfrom\\s+${US_NAME}`, "i").test(span) || (OTHER_COUNTRY_RE.test(span) && !usEntryText(span));
 
 // ---- Continuous accounts (one person's statements across adjacent sentences) ----
 // A person of interest is marked by a redaction marker outside parentheses (A#, DOB and COC details are about the same
@@ -654,7 +765,7 @@ export function accountOf(sentences: Sentence[], id: string): Sentence[] {
   return continuousAccounts(sentences).find((c) => c.some((x) => x.id === id)) ?? sentences.filter((x) => x.id === id);
 }
 
-const OTHER_COUNTRY_RE = /\b(into|to|in|entered|crossed)\s+(both\s+)?(Mexico|Guatemala|Honduras|El Salvador|Nicaragua|Belize|Canada)\b/i;
+const OTHER_COUNTRY_RE = /\b(into|to|in|entered|crossed)\s+(both\s+)?(Mexico|Guatemala|Honduras|El Salvador|Nicaragua|Belize|Canada|Costa Rica|Panama|Colombia|Venezuela|Ecuador|Peru|Brazil|Cuba|Haiti|the Dominican Republic|Jamaica|France|Spain|Italy|Germany|the United Kingdom|England|China|India)\b/i;
 const NOT_LAST_ENTRY_RE = /\b(first|initially|originally|previous(ly)?|prior|earlier)\b[^.;]{0,25}\b(entered|entry|came|crossed|arrived)\b/i;
 /** Manner of entry a sentence states, negation-aware ("did not cross through a port of entry" is not an admission). */
 export function statedManner(t: string): "without_inspection" | "admitted" | undefined {
@@ -669,14 +780,19 @@ export function statedManner(t: string): "without_inspection" | "admitted" | und
 export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new Set()): Finding[] {
   const findings: Finding[] = [];
   for (const chain of continuousAccounts(sentences)) {
-    const entries = chain.filter((x) => ENTRY_VERB_RE.test(x.text) && !(nonUs.has(x.id) && !(US_ENTRY_TEXT_RE.test(x.text) && !OTHER_COUNTRY_RE.test(x.text))) && !(OTHER_COUNTRY_RE.test(x.text) && !/\b(United States|U\.S\.)/.test(x.text)) && !NOT_LAST_ENTRY_RE.test(x.text) && !CORRECTION_RE.test(x.text));
+    // The account holder's own entry clauses in each sentence: an entry reported for a relative, a companion or a group, or
+    // a trip away from the United States, is not the account holder's last U.S. entry. Year and manner are read from
+    // those clauses only.
+    const own = new Map(chain.map((x) => [x.id, sentenceEvents(x.text, ENTRY_EVENT_RE).filter((e) => (e.participant === "self" || e.participant === "unknown") && !leavesUs(e.span)).map((e) => e.span).join(" ")]));
+    const entries = chain.filter((x) => own.get(x.id) && !(nonUs.has(x.id) && !(usEntryText(x.text) && !OTHER_COUNTRY_RE.test(x.text))) && !(OTHER_COUNTRY_RE.test(x.text) && !/\b(United States|U\.S\.)/.test(x.text)) && !NOT_LAST_ENTRY_RE.test(x.text) && !CORRECTION_RE.test(x.text));
     const ev = (x: Sentence): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, "unclear", "us_entry");
     const pron = (x: Sentence) => x.text.match(/\b(he|she)\b/i)?.[0] ?? "he";
     let found = false;
     for (let a = 0; a < entries.length && !found; a++) for (let b = a + 1; b < entries.length && !found; b++) {
       const A = entries[a], B = entries[b];
-      const ma = statedManner(A.text), mb = statedManner(B.text);
-      const ya = [...new Set(A.text.match(/\b(19|20)\d\d\b/g) ?? [])], yb = [...new Set(B.text.match(/\b(19|20)\d\d\b/g) ?? [])];
+      const ta = own.get(A.id)!, tb = own.get(B.id)!;
+      const ma = statedManner(ta), mb = statedManner(tb);
+      const ya = [...new Set(ta.match(/\b(19|20)\d\d\b/g) ?? [])], yb = [...new Set(tb.match(/\b(19|20)\d\d\b/g) ?? [])];
       const manner = ma && mb && ma !== mb;
       const year = ya.length === 1 && yb.length === 1 && ya[0] !== yb[0];
       if (!manner && !year) continue;
@@ -691,8 +807,8 @@ export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new
       });
     }
     // Immigration history within the same account: one statement affirms a prior removal, another denies any.
-    const affirms = chain.find((x) => isPriorRemoval(x.text));
-    const denies = chain.find((x) => NEGATED_REMOVAL_RE.test(x.text) && REMOVAL_WORD_RE.test(x.text));
+    const affirms = chain.find((x) => ownPriorRemoval(x.text));
+    const denies = chain.find((x) => ownDenial(x.text));
     if (affirms && denies && affirms.id !== denies.id) {
       const [A, B] = [affirms, denies].sort((a, b) => chain.indexOf(a) - chain.indexOf(b));
       findings.push({
@@ -709,14 +825,21 @@ export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new
 
 // ---- Structured attribution (round 2) ----
 /** Full dates (year-month-day) a sentence states: "06/09/2011", "May 5, 2014"; "the day after 06/08/2011" gives 06/09/2011. */
+// Only real calendar dates count: 02/30/2011, 13/01/2011 and June 31, 2011 are not dates (and are not silently moved to
+// another day). "The day after" a valid date may roll over into the next month or year.
+const realDate = (y: number, m: number, d: number) => m >= 1 && m <= 12 && d >= 1 && d <= new Date(Date.UTC(y, m, 0)).getUTCDate();
 export function fullDates(text: string): string[] {
   const out: string[] = [];
-  const iso = (y: number, m: number, d: number) => { const t = new Date(Date.UTC(y < 100 ? 2000 + y : y, m - 1, d)); return t.toISOString().slice(0, 10); };
+  const iso = (y: number, m: number, d: number, plus = 0) => {
+    const yy = y < 100 ? 2000 + y : y;
+    return realDate(yy, m, d) ? new Date(Date.UTC(yy, m - 1, d + plus)).toISOString().slice(0, 10) : null;
+  };
+  const push = (x: string | null) => { if (x) out.push(x); };
   const t = text.toLowerCase();
   const dayAfter = [...t.matchAll(/\bday after\b[^.]{0,80}?\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)];
-  for (const m of dayAfter) out.push(iso(+m[3], +m[1], +m[2] + 1));
-  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g)) if (!dayAfter.some((d) => d.index! <= m.index! && m.index! <= d.index! + d[0].length)) out.push(iso(+m[3], +m[1], +m[2]));
-  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2}),?\\s+((19|20)\\d\\d)\\b`, "g"))) out.push(iso(+m[3], MONTHS.indexOf(m[1]) + 1, +m[2]));
+  for (const m of dayAfter) push(iso(+m[3], +m[1], +m[2], 1));
+  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g)) if (!dayAfter.some((d) => d.index! <= m.index! && m.index! <= d.index! + d[0].length)) push(iso(+m[3], +m[1], +m[2]));
+  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2}),?\\s+((19|20)\\d\\d)\\b`, "g"))) push(iso(+m[3], MONTHS.indexOf(m[1]) + 1, +m[2]));
   return [...new Set(out)];
 }
 
@@ -736,6 +859,8 @@ export function attributeStatement(sentences: Sentence[], id: string, multiPerso
   const s = sentences.find((x) => x.id === id);
   if (!s) return { outcome: "ambiguous", sentenceIds: [], rationale: "sentence not found" };
   const a = attribution(s, person, focus);
+  // A sentence that names the subject can still report someone else's event ("Subject stated that his brother was deported").
+  if (a === "subject" && reportsOthersEvent(s.text, focus)) return { outcome: "other", sentenceIds: [id], rationale: `${id} names the subject but reports another person's event` };
   if (a === "subject") return { outcome: "supported", sentenceIds: [id], rationale: `${id} names the subject` };
   if (a === "other") return { outcome: "other", sentenceIds: [id], rationale: `${id} is about another person` };
   if (!multiPerson) return { outcome: "supported", sentenceIds: [id], rationale: "only one person is described" };
@@ -752,10 +877,15 @@ export function exactEntryLink(c: CaseRecord, sentences: Sentence[], id: string)
   const s = sentences.find((x) => x.id === id);
   const fd = c.facts.find((f) => f.path === "entry.date" && f.status === "present");
   const fm = c.facts.find((f) => f.path === "entry.manner" && f.status === "present");
-  if (!s || !fd || !fm || !ENTRY_VERB_RE.test(s.text)) return false;
+  if (!s || !fd || !fm) return false;
   const formDate = fullDates(fd.value)[0];
   const cat = formMannerCategory(fm.value);
-  if (!formDate || !cat || !fullDates(s.text).includes(formDate) || statedManner(s.text) !== cat) return false;
+  if (!formDate || !cat) return false;
+  // The date and the manner must belong to the same entry event, and that entry must not be a third party's or a trip
+  // away from the United States: a marriage or removal date elsewhere in the sentence does not count.
+  const linked = sentenceEvents(s.text, ENTRY_EVENT_RE).some((e) => (e.participant === "self" || e.participant === "unknown") && !leavesUs(e.span) &&
+    fullDates(e.span).includes(formDate) && statedManner(e.span) === cat);
+  if (!linked) return false;
   if (accountOf(sentences, id).some((x) => SHARED_ENTRY_RE.test(x.text))) return false;
   return !sentences.some((x) => x.id !== id && fullDates(x.text).includes(formDate));
 }
@@ -765,4 +895,4 @@ export function exactEntryLink(c: CaseRecord, sentences: Sentence[], id: string)
  * entry statement for such a narrative silently skipped the entry comparison, so it is not a completed check.
  */
 export const describesUsEntry = (sentences: Sentence[]) =>
-  sentences.some((x) => US_ENTRY_TEXT_RE.test(x.text) && !/\b(never|not|did not|didn't)\b[^.;]{0,25}\b(enter\w*|cross\w*|arriv\w*)\b/i.test(x.text));
+  sentences.some((x) => usEntryText(x.text) &&!/\b(never|not|did not|didn't)\b[^.;]{0,25}\b(enter\w*|cross\w*|arriv\w*)\b/i.test(x.text));
