@@ -38,3 +38,6 @@ share/
 
 # combined one-page reports (deliverable)
 !docs/reports/*.pdf
+
+# local workspace store (user cases, review history, decisions, uploaded PDFs) - never committed
+data/local/

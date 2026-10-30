@@ -25,7 +25,7 @@ export interface SelectedCharge {
   note?: string;
 }
 
-export type CaseKind = "adapted-public-record" | "synthetic-variant" | "synthetic";
+export type CaseKind = "adapted-public-record" | "synthetic-variant" | "synthetic" | "user-case";
 
 export interface CaseRecord {
   id: string;
@@ -41,7 +41,11 @@ export interface CaseRecord {
     verification: string;
     replacements: { original: string; replacement: string; note: string }[];
     modifications?: string[]; // documented edits for synthetic variants (expected findings live elsewhere)
+    /** Where the narrative text came from. User cases must set this. */
+    textOrigin?: "officer-entered" | "transcribed-from-source" | "synthetic-test";
   };
+  /** Present on cases created in the app: when, and the attached source PDF if any (stored locally, never committed). */
+  userCase?: { createdAt: string; sourcePdf?: { originalName: string; size: number; pages?: number[] } };
   narrative: { text: string; pageSpans?: PageSpan[] };
   facts: FactField[];
   selectedCharges: SelectedCharge[];
@@ -71,6 +75,8 @@ export interface EvidenceRef {
   /** "exact": the quote matched the source after normalizing whitespace, case, quote marks and redaction markers.
    *  "partial": fact comparison only; the shown text is a source fragment that contains the material fact. */
   match?: "exact" | "partial";
+  /** Who and what the cited statement is about, as decided by code (never inferred from redacted names). */
+  context?: { attribution?: "subject" | "unclear" | "other"; event?: string };
 }
 
 export interface Finding {

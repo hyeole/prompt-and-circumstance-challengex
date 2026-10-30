@@ -38,12 +38,12 @@ export const FactsOutput = z.object({
   entry_statements: z
     .array(z.object({
       sentence_id: z.string(), quote: z.string(),
-      event: z.enum(["us_entry", "other_country_entry", "departure", "travel"]).default("us_entry"),
+      event: z.enum(["us_entry", "other_country_entry", "departure", "travel"]).optional(),
       country: z.string().nullable().optional(),
       year: z.number().int().nullable().optional(),
       manner: z.enum(["without_inspection", "admitted", "unknown"]).default("unknown"),
       person: Person,
-      uncertainty: z.enum(["stated", "approximate", "unknown", "does_not_recall"]).default("stated"),
+      uncertainty: z.enum(["stated", "approximate", "unknown", "does_not_recall"]).optional(),
     }))
     .default([]),
   removal_statements: z.array(z.object({ sentence_id: z.string(), quote: z.string(), person: Person })).default([]),
@@ -108,6 +108,9 @@ function showing(v: Verified, fact: string): EvidenceRef {
   return { kind: "sentence", sentenceId: v.s.id, quote: v.s.text, start: v.s.start, end: v.s.end, page: v.s.page, verified: true, match: "exact" };
 }
 
+const EVENT_LABEL: Record<string, string> = { us_entry: "Entry into the U.S.", other_country_entry: "Entry into another country", departure: "Departure", travel: "Travel", removal: "Prior removal" };
+const ctx = (ev: EvidenceRef, attribution: "subject" | "unclear" | "other", event: string): EvidenceRef => ({ ...ev, context: { attribution, event: EVENT_LABEL[event] ?? event } });
+
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
@@ -137,7 +140,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   if (fy) {
     const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy);
     const off = entries.find((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && (x.attr === "subject" || !subjectAgrees));
-    const offEv = off ? showing(off.v, String(off.e.year)) : null;
+    const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
     if (off)
       findings.push({
         id: "F-ENTRY-DATE", category: "inconsistency", title: "Entry date differs from the form",
@@ -156,7 +159,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       findings.push({
         id: "F-ENTRY-DATE-2", category: "inconsistency", title: "Narrative gives two different entry years",
         explanation: `One statement gives ${a.e.year} and another gives ${b.e.year} for the entry.${attributionNote(b.attr)}`,
-        evidence: [showing(a.v, String(a.e.year)), showing(b.v, String(b.e.year))], referenceIds: ["E1"], needsHumanReview: true,
+        evidence: [ctx(showing(a.v, String(a.e.year)), a.attr, "us_entry"), ctx(showing(b.v, String(b.e.year)), b.attr, "us_entry")], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
@@ -171,7 +174,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     findings.push({
       id: "F-ENTRY-MANNER", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
       explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}.${other ? " Another narrative statement agrees with the form." : ""}${attributionNote(conflict.attr)}`,
-      evidence: [conflict.v.ev, ...(other ? [other.v.ev] : []), fieldEv("entry.manner")], referenceIds: ["E3"], needsHumanReview: true,
+      evidence: [ctx(conflict.v.ev, conflict.attr, "us_entry"), ...(other ? [ctx(other.v.ev, other.attr, "us_entry")] : []), fieldEv("entry.manner")], referenceIds: ["E3"], needsHumanReview: true,
       humanReviewReason: "Two accounts of the manner of entry conflict; the facts could support different charges.", source: "model", severity: "high",
     });
   } else if (!fm) {
@@ -181,7 +184,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       findings.push({
         id: "F-ENTRY-MANNER-2", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
         explanation: "One narrative statement describes entry without inspection and another describes admission or inspection at a port.",
-        evidence: [a.v.ev, b.v.ev], referenceIds: ["E3"], needsHumanReview: true,
+        evidence: [ctx(a.v.ev, a.attr, "us_entry"), ctx(b.v.ev, b.attr, "us_entry")], referenceIds: ["E3"], needsHumanReview: true,
         humanReviewReason: "Two accounts of the manner of entry conflict; the facts could support different charges.", source: "model", severity: "high",
       });
   }
@@ -193,7 +196,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       findings.push({
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",
         explanation: `The form records the immigration record as "${imm.value}", but the narrative describes a prior removal or deportation for the subject.`,
-        evidence: [rem.ev, fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
+        evidence: [ctx(rem.ev, attribution(sentences.find((x) => x.id === rem.ev.sentenceId)!, "unclear"), "removal"), fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
         humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
