@@ -1,0 +1,12 @@
+{
+  "id": "G02",
+  "base": "G02",
+  "split": "gen-v1",
+  "datasetVersion": "gen-v1",
+  "description": "Two subjects; the other subject's different year",
+  "plants": [],
+  "shouldNotFlag": [
+    "entered in 2015"
+  ],
+  "labelNotes": "Person control: the other subject's year is someone else's; the subject's own statement agrees with the form."
+}

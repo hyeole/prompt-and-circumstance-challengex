@@ -1,0 +1,18 @@
+{
+  "label": "bounded diagnostic, post-tuning: facts-v2.1 on the 10 longest/failed fact calls (commit 48e9dee); not an evaluation",
+  "dataset": "eval",
+  "split": "all",
+  "only": [
+    "C003-AMB",
+    "C037-CIT",
+    "C001-CIT",
+    "C037-X1",
+    "C021-MC",
+    "C119-AMB"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T18:17:17.591Z",
+  "commit": "48e9dee",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

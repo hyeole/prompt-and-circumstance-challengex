@@ -1,0 +1,95 @@
+{
+  "id": "G08",
+  "title": "Request time and arrest location are not encounter time or entry place",
+  "kind": "synthetic",
+  "split": "gen-v1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic generalization case (gen-v1), 2026-10-30. Not independently held out.",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": []
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn March 12, 2024, at approximately 0815 hours, a Michigan State Police Trooper requested Border Patrol assistance with a traffic stop. Agent [REDACTED (b)(6), (b)(7)(C)] arrived and encountered the subject at approximately 0900 hours near Detroit, Michigan. The subject stated that he is a citizen and national of Mexico and that he does not possess any immigration documents allowing him to be in or remain in the United States legally. The subject presented a Mexican passport.\nENTRY:\nThe subject stated that he crossed the Rio Grande near Brownsville, Texas, on July 1, 2017, without inspection, and was arrested in Detroit in 2024.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was processed for a Notice to Appear and was served with a Warrant of Arrest.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "07/01/2017",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Brownsville, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "03/12/2024 0900",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MONROE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "NTA/WA",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic case."
+    }
+  ]
+}

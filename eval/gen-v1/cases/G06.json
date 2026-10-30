@@ -1,0 +1,95 @@
+{
+  "id": "G06",
+  "title": "Unattributable conflicting account among three people",
+  "kind": "synthetic",
+  "split": "gen-v1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored synthetic generalization case (gen-v1), 2026-10-30. Not independently held out.",
+    "extraction": "Written directly as text.",
+    "verification": "Synthetic.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": []
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn March 12, 2024, at approximately 0910 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] encountered three men near Monroe, Michigan during roving patrol duties. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself as a Border Patrol Agent and questioned all three men as to his citizenship. The subject stated that he is a citizen and national of Mexico and that he does not possess any immigration documents allowing him to be in or remain in the United States legally. The subject presented a Mexican consular identification card. Agent [REDACTED (b)(6), (b)(7)(C)] placed the subject under arrest at approximately 0910 hours.\nENTRY:\n[REDACTED (b)(6), (b)(7)(C)] stated that he entered the United States in 2011 by crossing the river near Hidalgo, Texas. [REDACTED (b)(6), (b)(7)(C)] stated that he entered in 2020 near Eagle Pass, Texas. [REDACTED (b)(6), (b)(7)(C)] stated that he did not remember when he entered.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was processed for a Notice to Appear and was served with a Warrant of Arrest.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "04/02/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Hidalgo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "03/12/2024 0910",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MONROE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "NTA/WA",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Synthetic case."
+    }
+  ]
+}

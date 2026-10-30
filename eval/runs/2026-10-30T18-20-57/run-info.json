@@ -1,0 +1,13 @@
+{
+  "label": "bounded diagnostic, post-tuning: facts-v2.1 on the 10 longest/failed fact calls (commit 48e9dee); not an evaluation",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": [
+    "DS12"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T18:20:57.806Z",
+  "commit": "48e9dee",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

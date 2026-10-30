@@ -29,7 +29,8 @@ const s41 = sid(amb, "at the age of five"), s42 = sid(amb, "border crossing card
 const ent = (id: string, quote: string, country: string, event = "us_entry") => ({ sentence_id: id, quote, event, country, year: null, manner: "unknown", person: "unclear" });
 const scenarios: [string, string | Error, boolean][] = [
   ["accurate extraction", JSON.stringify({ entry_statements: [ent(s41, "claims to have crossed the Mexico-United States border", "United States"), ent(s42, "he entered at the Nogales port of entry using a border crossing card", "United States")] }), false],
-  ["incomplete extraction", EMPTY, false],
+  // An extraction with no entry statement for a narrative that describes an entry is an incomplete check (round 2).
+  ["incomplete extraction", EMPTY, true],
   ["incorrect non-U.S. classification", JSON.stringify({ entry_statements: [ent(s41, "claims to have crossed the Mexico-United States border", "Mexico", "other_country_entry"), ent(s42, "he entered at the Nogales port of entry using a border crossing card", "United States")] }), false],
   ["invalid extraction output", "not json", true],
   ["extraction timeout", new ModelError("timeout", "timeout", 1), true],
@@ -149,4 +150,27 @@ test("fix 4 controls: a criminal arrest by police is not a prior immigration enc
   assert.equal(isPriorImmigrationEncounter("He was previously arrested by the Detroit Police Department for theft.", 2017), false);
   assert.equal(isPriorRemoval("He was granted a voluntary return to Mexico in 2010."), false);
   assert.equal(isPriorImmigrationEncounter("He was granted a voluntary return to Mexico in 2010.", 2017), true);
+});
+
+// ---- Fact-call reliability: a valid but empty extraction is not a completed check ----
+test("reliability: an empty extraction for a narrative that describes a U.S. entry is retried within the budget", async () => {
+  let n = 0;
+  const good = JSON.stringify({ entry_statements: [ent(s41, "claims to have crossed the Mexico-United States border", "United States")] });
+  const complete: Complete = async (system) => ({ text: system === FACTS_SYSTEM_PROMPT ? (n++ === 0 ? EMPTY : good) : REVIEW, attempts: 1 });
+  const r = await reviewCase(amb, complete);
+  const first = r.calls.find((x) => x.role === "facts")!;
+  assert.equal(first.status, "invalid_output");
+  assert.match(first.error ?? "", /no entry statements/);
+  assert.equal(r.calls.find((x) => x.role === "facts-retry")?.status, "ok");
+  assert.ok(!factsFailed(r));
+});
+test("reliability: if the retry is empty too, the check is reported as not completed, never as complete", async () => {
+  const r = await reviewCase(amb, fake(EMPTY));
+  assert.ok(factsFailed(r));
+  assert.equal(r.completion?.status, "partial");
+});
+test("reliability control: an empty extraction is complete when the narrative describes no entry into the United States", async () => {
+  const c0 = load("eval/dev-synthetic/cases/DS09.json");
+  const r = await reviewCase(c0, fake(EMPTY));
+  assert.ok(!factsFailed(r), "a port-of-entry application with no entry wording needs no entry statement");
 });

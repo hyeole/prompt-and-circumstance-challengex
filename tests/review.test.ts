@@ -185,7 +185,10 @@ test("bug C003-CIT: a stated lack of status establishes E6 even if the model say
   const s24 = sid(c, "present in the United States Illegally");
   const r = await reviewCase(c, fake({
     review: review({ elements: [{ element_id: "E6", status: "absent", sentence_ids: [], note: "" }, { element_id: "E7", status: "present", sentence_ids: ["S41"], note: "" }] }),
-    facts: facts({ status_statements: [{ sentence_id: s24, quote: "if he was present in the United States Illegally, and he advised yes", person: "unclear" }] }),
+    // Round 2: an extraction with no entry statement for a narrative that describes one is an incomplete check, so the
+    // fake includes the entry statement a real extraction returns.
+    facts: facts({ status_statements: [{ sentence_id: s24, quote: "if he was present in the United States Illegally, and he advised yes", person: "unclear" }],
+      entry_statements: [{ sentence_id: sid(c, "at the age of five"), quote: "crossed the Mexico-United States border", event: "us_entry", country: "United States", year: null, manner: "unknown", person: "unclear" }] }),
   }));
   assert.equal(r.elements.find((e) => e.elementId === "E6")?.status, "present");
   assert.ok(!r.findings.some((f) => f.id === "M-E6"));
@@ -495,7 +498,9 @@ test("F051-C: 'one had been ordered removed ... the last subject was in status' 
 test("invalid fact output is retried once and the reason is logged without content", async () => {
   let n = 0;
   const complete: Complete = async (system) => {
-    if (system === FACTS_SYSTEM_PROMPT) return { text: n++ === 0 ? "not json at all" : facts(), attempts: 1 };
+    const c37 = load("C037");
+    const ok = facts({ entry_statements: [{ sentence_id: sid(c37, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally", event: "us_entry", country: "United States", year: null, manner: "without_inspection", person: "unclear" }] });
+    if (system === FACTS_SYSTEM_PROMPT) return { text: n++ === 0 ? "not json at all" : ok, attempts: 1 };
     return { text: review(), attempts: 1 };
   };
   const r = await reviewCase(load("C037"), complete);

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "C001-CIT",
+    "ms": 13225,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003-AMB",
+    "ms": 12269,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C021-MC",
+    "ms": 34130,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C037-CIT",
+    "ms": 35867,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C037-X1",
+    "ms": 40399,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C119-AMB",
+    "ms": 13371,
+    "ok": true,
+    "modelStatus": "ok"
+  }
+]

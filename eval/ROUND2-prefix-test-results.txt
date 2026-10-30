@@ -1,0 +1,23 @@
+✔ fix 1 (accurate extraction): the within-account contradiction is kept, and completion reflects the fact call
+✔ fix 1 (extraction timeout): the within-account contradiction is kept, and completion reflects the fact call
+✔ fix 1 (invalid extraction output): the within-account contradiction is kept, and completion reflects the fact call
+✔ fix 2 controls: should-not-flag and clean records gain no history finding (DS09 approval, DS10 processing, FS10 group member)
+✔ fix 3 control: companions sharing a month and day, place and manner stay ambiguous (DS06)
+✔ fix 3 control: the same statement when its year differs from the form stays ambiguous and routed (F075-X)
+✔ fix 4 controls: a criminal arrest by police is not a prior immigration encounter; a voluntary return is not a removal
+✔ reliability control: an empty extraction is complete when the narrative describes no entry into the United States
+✖ failing tests:
+✖ fix 1 (incomplete extraction): the within-account contradiction is kept, and completion reflects the fact call
+✖ fix 1 (incorrect non-U.S. classification): the within-account contradiction is kept, and completion reflects the fact call
+✖ fix 1 control: an extracted entry into another country that the source confirms stays excluded
+✖ fix 2: an explicitly-subject reinstatement in the source conflicts with a NEGATIVE record even if the extractor omits it (C013-X1 S38)
+✖ fix 2: negated, offered, declined and current-processing removals are not prior removals
+✖ fix 2: the source-text history check runs when extraction times out, and the review stays partial
+✖ fix 3 controls: a companion stating the same full date, or a group entry in the account, blocks the exact-entry link
+✖ fix 3: a statement giving the subject's exact recorded entry date and manner is the subject's; its voluntary return is a prior encounter (F075-H S22)
+✖ fix 3: attribution outcomes for pronoun continuity, transitions, mixed clauses, scope words and sections
+✖ fix 4: a form removal against the subject's affirmative denial is a conflict; an omission stays a clarity gap
+✖ fix 4: one account that affirms and denies a prior removal is a within-account contradiction
+✖ full dates: explicit, month-name and 'the day after' forms
+✖ reliability: an empty extraction for a narrative that describes a U.S. entry is retried within the budget
+✖ reliability: if the retry is empty too, the check is reported as not completed, never as complete

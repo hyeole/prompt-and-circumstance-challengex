@@ -1,0 +1,18 @@
+{
+  "lockedAt": "2026-10-30T18:24:23.136Z",
+  "note": "SHA-256 of each label file, written before the frozen build is run on gen-v1. Prepared by the tuning team: not independently held out.",
+  "labels": {
+    "G01": "059b867941d06b64889cf0f3e69b08117c05fda05f69d36f41adfe21a5c1e795",
+    "G02": "a89ea0d526d2e623fb48a026f2a8946931edc6e702c06b7d9a01eae7d8806bcb",
+    "G03": "61e489ec4373d1dc352d8283ea2e9cbdb1d9d1cac7095dff27fd001ced1f27c7",
+    "G04": "297feacf3acb8da5728f73689a1aeaaa68603c1a491744235db29189ff6224c2",
+    "G05": "5b31c78fdd9cb7ba59c0588b08a0ab8dc5c0fe82f3b630a4056f771bad972beb",
+    "G06": "77b288a01b40a84e8ba05deada8d719a5c241e61b3db200615c96354927a8597",
+    "G07": "8d621ac1e81c0661a286425c397ffbe881ea4fbd2f0099978ca2a771a700cacb",
+    "G08": "2fc3631ab49dafb7d75ebd32f05ae4eed854495b0d4c81839554c373d2878e53",
+    "G09": "e2b0e105d4ab7438ba9078e1808fdeb8bac31e5258c7024d460b130f276a9c90",
+    "G10": "7a144558c4dca72d4f6c8ccc4954760233d42ddcd6ece627da38a028d836b289",
+    "G11": "25cfc7b40ec4e48540343df5081821c5f788354f60da0873ffae32c335861054",
+    "G12": "f9160f8460fe87af23c8dab34c53d2c3f8aadd1e3c0366362339c8f7501b6131"
+  }
+}

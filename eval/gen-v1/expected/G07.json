@@ -1,0 +1,12 @@
+{
+  "id": "G07",
+  "base": "G07",
+  "split": "gen-v1",
+  "datasetVersion": "gen-v1",
+  "description": "Companion's removal in a group",
+  "plants": [],
+  "shouldNotFlag": [
+    "deported to Honduras"
+  ],
+  "labelNotes": "Person control: a group member's deportation, not attributable to this subject; at most routed, never a contradiction."
+}

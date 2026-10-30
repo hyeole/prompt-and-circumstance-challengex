@@ -1,0 +1,13 @@
+{
+  "id": "G08",
+  "base": "G08",
+  "split": "gen-v1",
+  "datasetVersion": "gen-v1",
+  "description": "Request time and arrest location are not encounter time or entry place",
+  "plants": [],
+  "shouldNotFlag": [
+    "0815 hours",
+    "arrested in Detroit"
+  ],
+  "labelNotes": "Event controls: the Trooper's request time is not the encounter time; the arrest city is not the entry place."
+}

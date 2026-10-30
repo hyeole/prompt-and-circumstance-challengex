@@ -1,0 +1,14 @@
+{
+  "id": "G11",
+  "base": "G11",
+  "split": "gen-v1",
+  "datasetVersion": "gen-v1",
+  "description": "Reentry charge with no prior removal",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Citation mismatch: 8 U.S.C. 1326 depends on a prior removal; the record is NEGATIVE and the narrative describes none."
+}

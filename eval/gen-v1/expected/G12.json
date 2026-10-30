@@ -1,0 +1,15 @@
+{
+  "id": "G12",
+  "base": "G12",
+  "split": "gen-v1",
+  "datasetVersion": "gen-v1",
+  "description": "Two charges selected",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "multi_charge"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Multi-charge: must go to a person; the tool must not choose."
+}

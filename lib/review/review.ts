@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { encounterTimeMatch, isRequestTime, runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -63,6 +63,7 @@ const FACTS_BUDGET_MS = 55_000;
 function invalidReason(e: unknown): string {
   const issues = (e as { issues?: { path: (string | number)[] }[] }).issues;
   if (issues?.length) return `schema: ${[...new Set(issues.slice(0, 3).map((i) => i.path.join(".") || "(root)"))].join(", ")}`;
+  if (e instanceof Error && /^no entry statements/.test(e.message)) return e.message;
   return "not valid JSON";
 }
 
@@ -260,7 +261,13 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // Invalid output is retried once if enough of the time budget remains; the reason is logged (never the content).
   const factsStart = Date.now();
   const parseFacts = (role: string) => (r: { text: string }) => {
-    try { return normalizeFacts(FactsOutput.parse(extractJSON(r.text))); } catch (e) {
+    try {
+      const facts = normalizeFacts(FactsOutput.parse(extractJSON(r.text)));
+      // Valid but empty: the entry comparison would silently not happen. Treated like invalid output (retried within the
+      // remaining budget, otherwise the check is reported as not completed).
+      if (!facts.entry_statements.length && describesUsEntry(sentences)) throw new Error("no entry statements although the narrative describes an entry into the United States");
+      return facts;
+    } catch (e) {
       const last = calls.find((x) => x.role === role);
       if (last) Object.assign(last, { status: "invalid_output", error: invalidReason(e) });
       throw e;
