@@ -1,0 +1,11 @@
+{
+  "label": "round-2 planned evaluation, post-tuning (frozen rc-round2 = 1b5f59b; not held-out)",
+  "dataset": "eval/fresh",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T18:32:38.969Z",
+  "commit": "1b5f59b",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

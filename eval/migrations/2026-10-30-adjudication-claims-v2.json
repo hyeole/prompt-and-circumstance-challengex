@@ -994,6 +994,96 @@
       "example": "C021-X1 I-3 History record conflict",
       "run": "2026-10-30T16-10-34",
       "date": "2026-10-30"
+    },
+    {
+      "base": "DS08",
+      "key": "missing_element|N2",
+      "claim": "M-N2 |  | ?:neg:entry-manner+status;?:pos:entry-manner+status | element:N2",
+      "case": "DS08",
+      "verdict": "valid_observation",
+      "note": "Round 2 (claim v2): DS08 removes the visa/purpose sentence, so the claimed status is not recorded; same verdict as the original DS08 N2 record.",
+      "example": "DS08 M-N2 Missing: status or classification claimed for admission",
+      "run": "2026-10-30T18-29-08",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|bpa identified himself as a border patrol agent and asked al|five subjects stated that they did not have any immigration",
+      "claim": "U-N1 |  |  | ?/?,?/?,?/?",
+      "verdict": "valid_observation",
+      "note": "Round 2: the narrative says the subjects had no immigration documents but never states what identifying documents this subject had; same standard as the other identity-document observations.",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "run": "2026-10-30T18-32-38",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C003",
+      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+      "claim": "I:encounter time mismatch | 09:50>10:30 |  | ?/?,field:encounter.date_time | UNCERTAIN",
+      "case": "C003-CIT",
+      "explanation": "Form lists encounter at 09:50, narrative states arrest at 10:30.",
+      "verdict": "valid_observation",
+      "note": "Round 2: form encounter 0950 vs narrative arrest 1030 is the real C003 discrepancy (page images checked earlier); same verdict as the C003 time records.",
+      "example": "C003-CIT I-1 Encounter time mismatch",
+      "run": "2026-10-30T18-43-05",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|history.immigration_record|subject did not receive a bond due to the new executive orde",
+      "claim": "F-HISTORY | NEGATIVE | narrative:pos:removal | field:history.immigration_record,subject/Prior removal",
+      "case": "C013-X1",
+      "verdict": "valid_observation",
+      "note": "Round 2: S38 states 'Subject ... being a reinstate case', which presupposes a prior removal order; the form records NEGATIVE. Supported, but it does not cite the plant's anchor sentences, so v2.4 does not credit it as the planted detection.",
+      "example": "C013-X1 F-HISTORY Immigration record conflicts with the narrative",
+      "run": "2026-10-30T18-43-05",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "claim": "I:history record inconsistency | NEGATIVE | narrative:pos:entry-manner | ?/?,field:history.immigration_record",
+      "case": "C021-X1",
+      "verdict": "false_flag",
+      "note": "Round 2: a lawful B2 admission (S33) does not contradict a NEGATIVE prior-immigration record; same standard as the earlier C021-X1 decisions.",
+      "example": "C021-X1 I-3 History record inconsistency",
+      "run": "2026-10-30T18-43-05",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "inconsistency|encounter.date_time|on may 1 2017 at approximately 12:06 pm border patrol statio",
+      "claim": "I:encounter date time mismatch | 05/01/2017>12:06 |  | ?/?,field:encounter.date_time | UNCERTAIN",
+      "case": "C037-AMB",
+      "explanation": "The form field lists 05/01/2017 1335, while the narrative states approximately 12:06 PM on the same day.",
+      "verdict": "false_flag",
+      "note": "Round 2: 12:06 PM is when the station received an FBI agent's call, not the encounter time (1335). The request-time guard does not read 12-hour times: a defect in the evaluated build, disclosed.",
+      "example": "C037-AMB I-1 Encounter date/time mismatch",
+      "run": "2026-10-30T18-43-05",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "G08",
+      "key": "inconsistency|agent arrived and encountered the subject at approximately 0|encounter.location",
+      "claim": "I:encounter location mismatch |  |  | ?/?,field:encounter.location | UNCERTAIN",
+      "case": "G08",
+      "explanation": "Narrative places encounter near Detroit, MI while form lists MONROE, MI.",
+      "verdict": "valid_observation",
+      "note": "Round 2 gen-v1: the case data really conflict (narrative 'near Detroit', form MONROE, MI) because of a team authoring slip in G08; the finding is correct. Label unchanged.",
+      "example": "G08 I-1 Encounter location mismatch",
+      "run": "2026-10-30T18-58-39",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "G10",
+      "key": "unclear|history.immigration_record|the subject stated that in 2013 he was granted a voluntary r",
+      "claim": "F-HISTORY-3 | NEGATIVE>NEGATIVE | ?:neg:removal;?:pos:prior-encounter | field:history.immigration_record,subject/Prior removal",
+      "case": "G10",
+      "verdict": "valid_observation",
+      "note": "Round 2 gen-v1: a prior voluntary return with a NEGATIVE record noted for clarity, which the label anticipates; not a removal conflict.",
+      "example": "G10 F-HISTORY-3 Prior immigration encounters described while the record is NEGATIVE",
+      "run": "2026-10-30T18-58-39",
+      "date": "2026-10-30"
     }
   ],
   "needsReadjudication": [

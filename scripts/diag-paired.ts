@@ -3,7 +3,8 @@
 import { existsSync, readFileSync } from "node:fs";
 
 const [a, b] = process.argv.slice(2);
-const file = process.argv.includes("--default") ? "summary.json" : "summary-v2.3-claims.json";
+const pol = process.argv.includes("--v2.4") ? "v2.4" : "v2.3";
+const file = process.argv.includes("--default") ? "summary.json" : `summary-${pol}-claims.json`;
 type Row = { id: string; completed: boolean; plants: { outcome: string }[]; flags: { id: string; status: string }[]; citation: string; humanReview: boolean; routingExpected: boolean };
 const rows = (d: string) => new Map((JSON.parse(readFileSync(`${d}/${file}`, "utf8")).rows as Row[]).map((r) => [r.id, r]));
 const accounts = (d: string, id: string) => {

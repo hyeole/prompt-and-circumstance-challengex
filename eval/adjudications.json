@@ -840,6 +840,46 @@
       "note": "Final run: treats PWA (AFOOT) as conflicting with an illegal Rio Grande crossing; both are entry without inspection. Same standard as the F055 I-2 record.",
       "example": "F055-H C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
       "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|bpa identified himself as a border patrol agent and asked al|five subjects stated that they did not have any immigration",
+      "verdict": "valid_observation",
+      "note": "Round 2 run 18-32-38: see the claim-layer record for this finding (same verdict and reasoning).",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|history.immigration_record|subject did not receive a bond due to the new executive orde",
+      "verdict": "valid_observation",
+      "note": "Round 2 run 18-43-05: see the claim-layer record for this finding (same verdict and reasoning).",
+      "example": "C013-X1 F-HISTORY Immigration record conflicts with the narrative",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "inconsistency|encounter.date_time|on may 1 2017 at approximately 12:06 pm border patrol statio",
+      "verdict": "false_flag",
+      "note": "Round 2 run 18-43-05: see the claim-layer record for this finding (same verdict and reasoning).",
+      "example": "C037-AMB I-1 Encounter date/time mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "G08",
+      "key": "inconsistency|agent arrived and encountered the subject at approximately 0|encounter.location",
+      "verdict": "valid_observation",
+      "note": "Round 2 run 18-58-39: see the claim-layer record for this finding (same verdict and reasoning).",
+      "example": "G08 I-1 Encounter location mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "G10",
+      "key": "unclear|history.immigration_record|the subject stated that in 2013 he was granted a voluntary r",
+      "verdict": "valid_observation",
+      "note": "Round 2 run 18-58-39: see the claim-layer record for this finding (same verdict and reasoning).",
+      "example": "G10 F-HISTORY-3 Prior immigration encounters described while the record is NEGATIVE",
+      "date": "2026-10-30"
     }
   ]
 }

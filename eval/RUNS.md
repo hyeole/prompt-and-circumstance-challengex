@@ -230,3 +230,15 @@ See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 in
   - completion 75/77; unnecessary routing 3/43; 0 should-not-flag violations.
 - **Same policy (v2.4, original-record layer) against checkpoint `4b10d72`:** detection 36/54 → 42/54; incorrect 5/101 → 4/100.
 - **Report:** `eval/EVALUATION-closeout-7efb231.md`. Historical v2.3 results are unchanged; their v2.4 rescoring is in `summary-v2.4.json` beside each run.
+
+## Round 2 candidate `rc-round2` (`1b5f59b`): planned evaluation, post-tuning, NOT promoted
+- **Runs:** dev `2026-10-30T18-29-08`, fresh `18-32-38`, legacy `18-43-05`, gen-v1 `18-58-39`.
+- **Results (77 cases, v2.4 claim layer):**
+  - detection 41/54 (baseline 42/54);
+  - incorrect flags 2/104 (baseline 2/100);
+  - completion 73/77 (baseline 75/77);
+  - unnecessary routing 5/43 (baseline 3/43).
+- **gen-v1** (team-authored, locked, not held-out): 5/7 detected, 0/7 incorrect.
+- **Bounded diagnostic** of `facts-v2.1` (`18-17-17`, `18-19-47`, `18-20-57`): not adopted.
+- **Post-run patch** P1/P2 is unevaluated.
+- **Report:** `eval/EVALUATION-round2-1b5f59b.md`.
