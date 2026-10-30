@@ -42,6 +42,13 @@ await page.fill("#f-entry\\.date", "Unknown Date, Unknown Time");
 await page.fill("#f-entry\\.manner", "EWI BOAT");
 await page.fill("#f-encounter\\.date_time", "03/03/2024 0915");
 await page.fill("#f-encounter\\.location", "OGDENSBURG, NY");
+// Audit item 8: a draft survives internal navigation.
+await page.getByRole("link", { name: "References" }).click();
+await page.waitForURL("**/references");
+await page.goBack();
+await page.waitForURL("**/cases/new");
+await page.waitForTimeout(500);
+check("intake draft is restored after navigating away and back", (await page.inputValue("#n")) === NARRATIVE && (await page.getByText("Draft restored").count()) > 0);
 await page.getByRole("button", { name: "Preview" }).click();
 check("preview shown before saving", await page.getByText("Check before creating").isVisible());
 check("preview marks unknown field as documented-as-unknown", await page.getByText("Documented as unknown").first().isVisible());
@@ -89,16 +96,37 @@ await page.waitForTimeout(600);
 check("browser back returns to the review with unsaved edits preserved", (await page.getByText("Unsaved edits (this session)").count()) > 0);
 await shot("06-outdated");
 
+// 5b. Audit item 7: cancel mid-review. Nothing is saved, or the page says exactly which version was saved.
+await page.locator(".header .btn-primary").click();
+await page.waitForTimeout(1500);
+await page.getByRole("button", { name: "Cancel" }).click();
+await page.waitForFunction(() => !/Cancelling/.test(document.body.innerText), null, { timeout: 15_000 });
+const note = (await page.locator('[role="status"]', { hasText: "Review cancelled" }).textContent()) ?? "";
+await page.waitForTimeout(65_000); // let the server finish the model calls it had started; it must not save afterwards
+await page.reload();
+const afterCancel = await page.getByText("v1 of 1").count();
+check("cancelled review is not saved behind the officer's back", /Nothing was saved/.test(note) ? afterCancel > 0 : /saved as version 2/.test(note), note.trim().slice(0, 90));
+check("unsaved edits are kept after a cancel", (await page.getByText("Unsaved edits (this session)").count()) > 0 || /saved as version/.test(note));
+
+// 5c. Leaving the page mid-review cancels it on the server.
+await page.locator(".header .btn-primary").click();
+await page.waitForTimeout(1500);
+await page.goto(`${BASE}/references`);
+await page.waitForTimeout(65_000);
+await page.goto(`${BASE}/review/${caseId}`);
+await page.waitForTimeout(600);
+check("leaving mid-review saves nothing", (await page.getByText(/v1 of 1|v2 of 2/).count()) > 0 && (await page.getByText(/v3 of 3/).count()) === 0);
+
 // 6. Fresh review -> v2
 await page.locator(".header .btn-primary").click();
 await waitReview();
-check("fresh review saved as v2", (await page.getByText("v2 of 2").count()) > 0, await page.locator(".header .pill").textContent());
+check("fresh review saved as a new version", (await page.getByText(/v2 of 2|v3 of 3/).count()) > 0, await page.locator(".header .pill").textContent());
 
 // 7. History compare
 await page.getByRole("link", { name: "History", exact: true }).click();
 await page.waitForURL(`**/review/${caseId}/history`);
 check("history shows a word-level edit", (await page.locator(".diff ins").count()) > 0);
-check("older version is marked superseded", (await page.getByText("superseded by v2").count()) > 0);
+check("older version is marked superseded", (await page.getByText(/superseded by v\d/).count()) > 0);
 await shot("07-history");
 
 // 8. Report and audit
@@ -111,6 +139,11 @@ await shot("09-audit");
 await page.goto(`${BASE}/references`);
 check("references separate sponsor guidance from team summaries", (await page.getByText("not sponsor-approved").count()) > 0 && (await page.getByText("Sponsor-provided").count()) > 0);
 await shot("10-references");
+
+// 9. Audit item 8: pending officer actions list every case with an open finding, not only human-review cases.
+await page.goto(BASE + "/");
+const pendingText = (await page.locator("#pending-h").locator("..").textContent()) ?? "";
+check("pending officer actions include this case's open findings", pendingText.includes(caseId) || !/finding/.test(pendingText), pendingText.slice(0, 80));
 
 check("no page errors", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();

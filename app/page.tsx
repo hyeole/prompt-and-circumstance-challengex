@@ -15,7 +15,9 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
   }
   const rows = caseRows("app");
   const recent = rows.filter((r) => r.lastReviewedAt).sort((a, b) => b.lastReviewedAt!.localeCompare(a.lastReviewedAt!)).slice(0, 8);
-  const pending = rows.filter((r) => r.state === "incomplete" || (r.state === "needs_human_review" && (r.openDecisions ?? 0) > 0));
+  // Every case whose latest review is incomplete or has any finding without an officer decision (audit item 8),
+  // whether or not that review required human review.
+  const pending = rows.filter((r) => r.state === "incomplete" || (r.openDecisions ?? 0) > 0);
   const count = (s: string) => rows.filter((r) => r.state === s).length;
 
   return (

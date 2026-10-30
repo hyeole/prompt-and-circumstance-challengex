@@ -2,6 +2,7 @@
 import "server-only";
 import { allCases } from "./caseSource";
 import { getHistory } from "./store";
+import { completionOf } from "./completion";
 import type { CaseRecord } from "./types";
 
 export type CaseGroup = "source" | "variant" | "entered";
@@ -30,7 +31,8 @@ export function caseRows(set: "app" | "eval" = "app"): CaseRow[] {
     if (!last) return { ...base, state: "not_reviewed" as const };
     const decided = h.decisions[last.review.reviewId] ?? {};
     const open = last.review.findings.filter((f) => !decided[f.id] || decided[f.id].state === "open").length;
-    const state: ReviewState = last.completion === "partial" ? "incomplete" : last.review.humanReview.required ? "needs_human_review" : "reviewed";
+    // Recomputed from the review, so reviews saved before the completion field existed follow the same rule.
+    const state: ReviewState = completionOf(last.review).status === "partial" || last.completion === "partial" ? "incomplete" : last.review.humanReview.required ? "needs_human_review" : "reviewed";
     return { ...base, lastReviewedAt: last.savedAt, state, findings: last.review.findings.length, openDecisions: open };
   });
 }

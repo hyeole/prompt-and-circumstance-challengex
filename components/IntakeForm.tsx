@@ -26,6 +26,8 @@ const ORIGIN = {
   "transcribed-from-source": "Transcribed by me from a source document",
   "synthetic-test": "Synthetic test text (not a real case)",
 } as const;
+const DRAFT_KEY = "nc:intake-draft";
+type Draft = { title: string; origin: keyof typeof ORIGIN; narrative: string; sourceDescription: string; pages: string; context: string[]; charges: string[]; facts: Record<string, { value: string; status: Status }>; hadPdf: boolean };
 const CONTEXTS = { interior: "Interior encounter", port_of_entry: "Port of entry (application for admission)", expedited_removal: "Expedited removal" } as const;
 
 export default function IntakeForm() {
@@ -43,6 +45,35 @@ export default function IntakeForm() {
   const [error, setError] = useState<string | null>(null);
 
   const dirty = !!(title || narrative || charges.some(Boolean) || Object.values(facts).some((f) => f.value) || pdf);
+
+  // Draft kept in this browser session, so moving to another page inside the app and back loses nothing (audit
+  // item 8). A PDF cannot be stored this way; the officer is asked to attach it again.
+  const [restored, setRestored] = useState<{ hadPdf: boolean } | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const d = JSON.parse(raw) as Draft;
+        setTitle(d.title); setOrigin(d.origin); setNarrative(d.narrative); setSourceDescription(d.sourceDescription); setPages(d.pages);
+        setContext(d.context); setCharges(d.charges.length ? d.charges : [""]); setFacts((f) => ({ ...f, ...d.facts }));
+        setRestored({ hadPdf: d.hadPdf });
+      }
+    } catch { /* storage unavailable: the draft stays in memory only */ }
+    setLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (!loaded || step === "saving") return;
+    try {
+      if (dirty) sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ title, origin, narrative, sourceDescription, pages, context, charges, facts, hadPdf: !!pdf || !!restored?.hadPdf } satisfies Draft));
+      else sessionStorage.removeItem(DRAFT_KEY);
+    } catch { /* ignore */ }
+  }, [loaded, dirty, step, title, origin, narrative, sourceDescription, pages, context, charges, facts, pdf, restored]);
+  function discardDraft() {
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+    setTitle(""); setOrigin("officer-entered"); setNarrative(""); setSourceDescription(""); setPages(""); setContext([]); setCharges([""]);
+    setFacts(Object.fromEntries(FACTS.map((f) => [f.path, { value: "", status: "absent" as Status }]))); setPdf(null); setRestored(null);
+  }
   useEffect(() => {
     if (!dirty || step === "saving") return;
     const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); };
@@ -83,6 +114,7 @@ export default function IntakeForm() {
         const up = await fetch(`/api/cases/${encodeURIComponent(out.id)}/pdf`, { method: "POST", body: fd });
         if (!up.ok) throw new Error(`The case was created (${out.id}), but the PDF was not attached: ${(await up.json().catch(() => ({}))).error ?? up.status}`);
       }
+      try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       router.push(`/review/${encodeURIComponent(out.id)}`);
     } catch (e) {
       setError((e as Error).message); setStep("preview");
@@ -124,6 +156,13 @@ export default function IntakeForm() {
 
   return (
     <form className="panel" onSubmit={(e) => { e.preventDefault(); if (!problems.length) setStep("preview"); }} noValidate>
+      {restored && (
+        <div className="banner banner-info" role="status" style={{ marginBottom: 12 }}>
+          <Icon name="clock" />
+          <div><strong>Draft restored.</strong> Your unsaved entries from this browser session are back.{restored.hadPdf && !pdf ? " Attach the PDF again; files cannot be kept in a draft." : ""}{" "}
+            <button type="button" className="btn btn-ghost btn-sm" onClick={discardDraft}>Discard draft</button></div>
+        </div>
+      )}
       <div className="form-grid">
         <div className="field" style={{ gridColumn: "1 / -1" }}>
           <label htmlFor="t">Title</label>

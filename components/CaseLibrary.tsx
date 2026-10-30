@@ -52,7 +52,7 @@ export default function CaseLibrary({ rows }: { rows: CaseRow[] }) {
               <tr key={r.id}>
                 <td><Link href={`/review/${encodeURIComponent(r.id)}`}>{r.title}</Link><div className="mono small muted">{r.id}{r.createdAt ? ` · entered ${fmtDate(r.createdAt)}` : ""}</div></td>
                 <td><GroupTag group={r.group} /></td>
-                <td><StatePill state={r.state} />{r.state === "needs_human_review" && (r.openDecisions ?? 0) > 0 && <div className="small muted">{r.openDecisions} without a decision</div>}</td>
+                <td><StatePill state={r.state} />{(r.openDecisions ?? 0) > 0 && <div className="small muted">{r.openDecisions} without a decision</div>}</td>
                 <td className="small">{fmtDate(r.lastReviewedAt) || <span className="muted">—</span>}</td>
                 <td className="small">{r.versions || <span className="muted">0</span>}</td>
                 <td className="small" style={{ whiteSpace: "nowrap" }}>

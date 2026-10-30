@@ -78,6 +78,21 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
   const [detailsOpen, setDetailsOpen] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const seqRef = useRef(0); // guards against stale responses after cancel or retry
+  const requestRef = useRef<string | null>(null); // id of the in-flight review, so it can be cancelled on the server
+  const [cancelNote, setCancelNote] = useState<string | null>(null);
+
+  // Leaving the page (or this case) mid-review cancels the request on the server, so nothing is saved behind the
+  // officer's back. Unsaved edits stay in this browser session either way.
+  useEffect(() => {
+    const leave = () => {
+      if (!requestRef.current) return;
+      try { navigator.sendBeacon("/api/review/cancel", JSON.stringify({ requestId: requestRef.current })); } catch { /* ignore */ }
+      requestRef.current = null;
+      abortRef.current?.abort("cancel");
+    };
+    window.addEventListener("pagehide", leave);
+    return () => { window.removeEventListener("pagehide", leave); leave(); };
+  }, [caseId]);
 
   const reviewed: ReviewResult | null = shown?.review ?? null;
   const outdated = !!reviewed && !viewingOld && snapKey(shown!.snapshot) !== snapKey(current);
@@ -99,14 +114,17 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
   async function runReview() {
     if (phase === "running" || viewingOld) return;
     const seq = ++seqRef.current;
-    setEditing(false); setPhase("running"); setError(null); setElapsed(0); setSelected(null);
+    const requestId = crypto.randomUUID();
+    requestRef.current = requestId;
+    setEditing(false); setPhase("running"); setError(null); setElapsed(0); setSelected(null); setCancelNote(null);
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     const timer = setTimeout(() => ctrl.abort("timeout"), CLIENT_TIMEOUT_MS);
     try {
-      const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ case: current, save: true }), signal: ctrl.signal });
+      const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ case: current, save: true, requestId }), signal: ctrl.signal });
       const body = await res.json().catch(() => ({}));
       if (seq !== seqRef.current) return; // superseded by a cancel or a newer request: ignore the late result
+      requestRef.current = null;
       if (!res.ok) throw new Error(body.error ?? `Review request failed (HTTP ${res.status}).`);
       await refreshHistory();
       discardEdits(); // the reviewed snapshot is now saved as a version
@@ -119,13 +137,34 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
       setPhase("error");
     } finally {
       clearTimeout(timer);
+      if (requestRef.current === requestId) requestRef.current = null;
     }
   }
 
-  function cancel() {
+  /** Cancel on the server first; it says whether the review had already been saved before the cancel arrived. */
+  async function cancel() {
+    const requestId = requestRef.current;
     seqRef.current++;
+    requestRef.current = null;
     abortRef.current?.abort("cancel");
     setPhase("cancelled");
+    setCancelNote("Cancelling…");
+    let outcome: { status?: string; version?: number } = {};
+    if (requestId) {
+      try {
+        const res = await fetch("/api/review/cancel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestId }) });
+        outcome = await res.json();
+      } catch { /* network failure: the history reload below shows what was saved */ }
+    }
+    await refreshHistory().catch(() => {});
+    if (outcome.status === "saved") {
+      discardEdits();
+      setCancelNote(`The review finished before the cancel arrived and was saved as version ${outcome.version}. It is shown below.`);
+    } else if (outcome.status === "cancelled" || outcome.status === "unknown") {
+      setCancelNote(`Nothing was saved from the cancelled request${reviewed ? "; the findings shown are from the previous saved review" : ""}.`);
+    } else {
+      setCancelNote("The server could not confirm the cancel. Check Review history to see whether a new version was saved.");
+    }
   }
 
   async function decide(findingId: string, d: Pick<Decision, "state" | "note">) {
@@ -192,7 +231,7 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
         </section>
       )}
       {viewingOld && <div className="banner banner-info no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}><Icon name="clock" /> <span>Viewing saved version {viewVersion} (read-only, older than the latest). <Link href={`/review/${encodeURIComponent(caseId)}`}>Go to the latest version</Link></span></div>}
-      {phase === "cancelled" && <div className="banner banner-warn no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="status"><Icon name="x" /> <span><strong>Review cancelled.</strong> Nothing was saved from the cancelled request{reviewed ? "; the findings shown are from the previous saved review" : ""}.</span></div>}
+      {phase === "cancelled" && <div className="banner banner-warn no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="status"><Icon name="x" /> <span><strong>Review cancelled.</strong> {cancelNote}</span></div>}
       {error && reviewed && <div className="banner banner-error no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="alert"><Icon name="alert" /> <span><strong>The latest review did not complete.</strong> {error} The findings shown are from the previous saved review.</span></div>}
 
       <div className={`body no-print ${factsOpen ? "" : "facts-collapsed"}`}>

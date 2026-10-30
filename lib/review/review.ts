@@ -121,7 +121,9 @@ function logged<T extends { attempts: number }>(log: CallLog[], role: string, p:
   );
 }
 
-export async function reviewCase(c: CaseRecord, complete: Complete = completeJSON): Promise<ReviewResult> {
+export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJSON, cancel?: AbortSignal): Promise<ReviewResult> {
+  // A cancelled request aborts every model call it started.
+  const complete: Complete = cancel ? (system, user, budget, signal) => completeFn(system, user, budget, signal ? AbortSignal.any([signal, cancel]) : cancel) : completeFn;
   const calls: CallLog[] = [];
   const t0 = Date.now();
   const sentences = splitSentences(c.narrative.text, c.narrative.pageSpans);

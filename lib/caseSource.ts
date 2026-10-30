@@ -11,7 +11,13 @@ export function allCases(set: "app" | "eval" = "app"): CaseRecord[] {
 }
 
 export function findCase(id: string): CaseRecord | null {
-  return getUserCase(id) ?? loadCases("app").find((c) => c.id === id) ?? loadCases("eval").find((c) => c.id === id) ?? null;
+  const user = getUserCase(id);
+  if (user) return user;
+  for (const set of ["app", "eval", "fresh", "dev"] as const) {
+    const c = loadCases(set).find((x) => x.id === id);
+    if (c) return c;
+  }
+  return null;
 }
 
 /** The public CBP PDF is kept locally (never committed). Its page numbers match the sample cases' source pages. */
