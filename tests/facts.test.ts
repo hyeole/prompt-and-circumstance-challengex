@@ -93,3 +93,61 @@ test("a supporting narrative statement prevents a mismatch even if another state
   ], removal_statements: [] };
   assert.equal(checkChargeRequirement(c, ss, facts, { entryManner: "without_inspection" }), null);
 });
+
+test("fact schema: a year given as text is parsed when it has one 4-digit year, otherwise unknown (runs 04-38-25 / 04-48-10)", async () => {
+  const { FactsOutput } = await import("../lib/review/facts");
+  const parse = (year: unknown) => FactsOutput.parse({ entry_statements: [{ sentence_id: "S1", quote: "q", year, manner: "unknown", person: "unclear" }], removal_statements: [] }).entry_statements[0].year;
+  assert.equal(parse("2004"), 2004);
+  assert.equal(parse("around 2004"), 2004);
+  assert.equal(parse("2004 or 2005"), null);
+  assert.equal(parse("unknown"), null);
+  assert.equal(parse(2011), 2011);
+});
+
+// ---- Refinement: "subject" wording is resolved by its scope, each form tested separately ----
+import { attribution } from "../lib/review/facts";
+const att = (text: string) => attribution({ id: "S1", text, start: 0, end: text.length } as never, "unclear");
+test("scope: 'the subject' and a bare 'Subject' are this record's subject", () => {
+  assert.equal(att("The subject stated that he entered in 2015."), "subject");
+  assert.equal(att("Subject arrived at Miami on 12/23/2015."), "subject");
+});
+test("scope: 'each subject' and 'every subject' include this subject", () => {
+  assert.equal(att("Each subject was previously removed to Mexico."), "subject");
+  assert.equal(att("Every subject stated that he crossed illegally."), "subject");
+});
+test("scope: 'both subjects', 'all three subjects' and 'each of the subjects' include this subject", () => {
+  assert.equal(att("Both subjects stated that they entered illegally in 2015."), "subject");
+  assert.equal(att("All three subjects were deported in 2012."), "subject");
+  assert.equal(att("Each of the subjects had been ordered removed."), "subject");
+});
+test("scope: 'one subject', 'a subject' and 'one of the subjects' are unclear", () => {
+  assert.equal(att("One subject had been ordered removed."), "unclear");
+  assert.equal(att("A subject stated he was deported."), "unclear");
+  assert.equal(att("One of the subjects was removed in 2012."), "unclear");
+});
+test("scope: 'the last subject' and 'the second subject' are list members: unclear", () => {
+  assert.equal(att("Checks showed one had been ordered removed and the last subject was in status."), "unclear");
+  assert.equal(att("The second subject was removed in 2010."), "unclear");
+});
+test("scope: 'the other subject' is someone else; 'the subject' in the same sentence still counts", () => {
+  assert.equal(att("The other subject was deported in 2012."), "other");
+  assert.equal(att("The subject said the other subject was deported."), "subject");
+});
+
+// ---- Refinement: arrests, apprehensions, voluntary returns and removals stay distinct ----
+import { isPriorRemoval } from "../lib/review/facts";
+test("history: removals are removals; arrests, apprehensions, NTAs and voluntary returns are not", () => {
+  assert.equal(isPriorRemoval("He was previously removed to Mexico on 03/02/2018."), true);
+  assert.equal(isPriorRemoval("A 06/08/2005 he was arrested by Border Patrol and received an Expedited Removal."), true);
+  assert.equal(isPriorRemoval("He was deported to Honduras in 2019."), true);
+  assert.equal(isPriorRemoval("The second event resulted in a Voluntary Return."), false);
+  assert.equal(isPriorRemoval("He was previously arrested by U.S. Border Patrol on two separate occasions."), false);
+  assert.equal(isPriorRemoval("He was apprehended near Nogales in 2010."), false);
+  assert.equal(isPriorRemoval("The disposition of the 12/20/2004 apprehension was a Notice to Appear."), false);
+  assert.equal(isPriorRemoval("He was permitted to voluntarily depart in 2012."), false);
+  assert.equal(isPriorRemoval("The subject was processed for expedited removal and was served Form I-860."), false);
+});
+test("history: an offered or declined removal did not happen", () => {
+  assert.equal(isPriorRemoval("Subject was offered a Stipulated Removal, which he declined."), false);
+  assert.equal(isPriorRemoval("He will be held pending removal proceedings."), false);
+});

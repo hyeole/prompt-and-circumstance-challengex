@@ -41,7 +41,13 @@ export const FactsOutput = z.object({
       sentence_id: z.string(), quote: z.string(),
       event: z.enum(["us_entry", "other_country_entry", "departure", "travel"]).optional(),
       country: z.string().nullable().optional(),
-      year: z.number().int().nullable().optional(),
+      // The extractor sometimes returns the year as text ("2004", "around 2004"). Accept text with exactly one 4-digit
+      // year; anything else is unknown. A year is used only if the cited sentence itself contains it.
+      year: z.preprocess((v) => {
+        if (typeof v !== "string") return v;
+        const ys = v.match(/\b(19|20)\d\d\b/g);
+        return ys && ys.length === 1 ? Number(ys[0]) : null;
+      }, z.number().int().nullable().optional()),
       manner: z.enum(["without_inspection", "admitted", "unknown"]).default("unknown"),
       person: Person,
       uncertainty: z.enum(["stated", "approximate", "unknown", "does_not_recall"]).optional(),
@@ -61,14 +67,23 @@ export const isUsEntry = (e: Entry) => (e.event ?? "us_entry") === "us_entry" &&
  * sentence literally says "Subject"/"the subject" (singular). "other" is accepted from the extractor; anything else is unclear.
  */
 const EXPLICIT_SUBJECT = /\b(the\s+)?subject(?!s)\b/i;
-/** "one subject", "the last subject", "each subject", "another subject": a member of a group, not this record's subject. */
-const GROUP_MEMBER = /\b(one|another|each|every|other|last|first|second|third|fourth|fifth|remaining|a|any|either|neither)\s+subject(?!s)\b/i;
+// Scope of "subject" wording, resolved per mention:
+// - distributive ("each subject", "both subjects", "all three subjects", "each of the subjects") covers everyone,
+//   so it includes this record's subject;
+// - "the other subject" is someone else;
+// - indefinite ("one subject", "a subject", "one of the subjects") and list members ("the last subject",
+//   "the second subject") could be anyone: unclear.
+const DISTRIBUTIVE_SUBJECT = /\b(each|every)\s+subject\b|\b(both|all)\s+(\w+\s+)?subjects\b|\b(each|all|both) of the subjects\b/i;
+const OTHER_SUBJECT = /\bthe\s+other\s+subject\b/gi;
+const SOME_SUBJECT = /\b(one|another|a|an|any|either|neither|last|first|second|third|fourth|fifth|remaining|each|every)\s+subject(?!s)\b|\bone of the subjects\b/gi;
+
 export function attribution(sentence: Sentence, person: "subject" | "other" | "unclear"): "subject" | "other" | "unclear" {
   if (person === "other") return "other";
-  // Every "subject" mention must refer to this record's subject; a group-member reference makes the sentence unattributed.
-  const mentions = sentence.text.match(new RegExp(EXPLICIT_SUBJECT.source, "gi")) ?? [];
-  const groupRefs = sentence.text.match(new RegExp(GROUP_MEMBER.source, "gi")) ?? [];
-  return mentions.length > groupRefs.length ? "subject" : "unclear";
+  const t = sentence.text;
+  if (DISTRIBUTIVE_SUBJECT.test(t)) return "subject";
+  const rest = t.replace(OTHER_SUBJECT, " ").replace(SOME_SUBJECT, " ");
+  if (EXPLICIT_SUBJECT.test(rest)) return "subject";
+  return new RegExp(OTHER_SUBJECT.source, "i").test(t) ? "other" : "unclear";
 }
 
 /**
@@ -84,7 +99,14 @@ export const aboutSubject = (attr: "subject" | "other" | "unclear", multiPerson:
  */
 const CURRENT_REMOVAL_RE = /\b(processed (for|as) (an )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/i;
 const PAST_MARKER_RE = /\b(previously|prior|formerly|earlier|before|\d{1,2}\/\d{1,2}\/\d{2,4}|(19|20)\d\d)\b/i;
-export const isPriorRemoval = (text: string) => !CURRENT_REMOVAL_RE.test(text) || PAST_MARKER_RE.test(text);
+// Arrests, apprehensions, Notices to Appear and voluntary returns or departures are not removals; only removal wording
+// (removed, deported, excluded, reinstatement, a removal order) is.
+const REMOVAL_WORD_RE = /\b(removed|removal|deported|deportation|deport|excluded|exclusion|reinstat\w*)\b/i;
+// An offered, declined, refused, pending, future or conditional removal did not happen (F055-H: "offered a
+// Stipulated Removal, which he declined").
+const NOT_HAPPENED_RE = /\b(offered|declined|refused|pending|will be|would be|may be|could be|if (he|she|they) (is|are|was|were))\b/i;
+export const isPriorRemoval = (text: string) =>
+  REMOVAL_WORD_RE.test(text) && !NOT_HAPPENED_RE.test(text) && (!CURRENT_REMOVAL_RE.test(text) || PAST_MARKER_RE.test(text));
 
 /** Verified prior-removal statements that count for this subject. */
 function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): Verified[] {
@@ -152,18 +174,70 @@ function monthDays(text: string): string[] {
   return out;
 }
 
+const PORT_CODES: Record<string, string> = { ELP: "El Paso", LAR: "Laredo", NAC: "Naco", NOG: "Nogales", HID: "Hidalgo", BRO: "Brownsville", DRT: "Del Rio", EGP: "Eagle Pass", SAS: "Sasabe", DET: "Detroit", MIA: "Miami", LOS: "Los Angeles", SYS: "San Ysidro", CAL: "Calexico", DOU: "Douglas" };
+/** People described as entering together share the entry facts, so those facts cannot tell them apart. */
+const SHARED_ENTRY_RE = /\b(with|along with) (\w+ ){0,2}(other|others|individuals|people|persons|subjects|companions|aliens|family|friends?|brothers?|sisters?|cousins?|wife|husband|children)\b|\b(he|she) and (\w+ ){0,2}(others?|\w+ (others|individuals|people|subjects))\b|\b(together|as a group|in a group)\b|\b(both|all|they|the (two|three|four|five|group))\b[^.]{0,40}\b(crossed|entered|walked|swam|waded|arrived|came)\b/i;
+const ENTRY_VERB_RE = /\b(cross|crossed|crossing|enter|entered|entry|walked|swam|waded|arrived|came)\b/i;
+
 /**
- * Independent evidence that ties an unattributed statement to THIS record's subject: the statement gives the same
- * entry month and day as the subject's own form (only the year may differ). Place and manner are never links,
- * because people who travel together share them (dev-synthetic DS06: two companions, both "near Nogales").
- * Returns the matched facts, empty when nothing ties the statement to the subject.
+ * Facts on the subject's own form that an unattributed statement matches, other than the disputed one: the entry
+ * month and day, the entry place, and the manner category.
  */
-export function formLinks(c: CaseRecord, text: string, _conflict: "entry.date" | "entry.manner" | "entry.place"): string[] {
-  const f = c.facts.find((x) => x.path === "entry.date" && x.status === "present");
-  const fd = f?.value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
-  return fd && monthDays(text).includes(`${+fd[1]}/${+fd[2]}`) ? [`the entry month and day (${fd[1]}/${fd[2]})`] : [];
+function formMatches(c: CaseRecord, text: string, manner: string | undefined, conflict: "entry.date" | "entry.manner" | "entry.place"): string[] {
+  const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
+  const out: string[] = [];
+  const fd = field("entry.date")?.value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
+  if (fd && monthDays(text).includes(`${+fd[1]}/${+fd[2]}`)) out.push(`the entry month and day (${fd[1]}/${fd[2]})`);
+  const fp = field("entry.place")?.value;
+  if (fp && conflict !== "entry.place") {
+    const names = (fp.match(/[A-Za-z]{3,}/g) ?? []).filter((t) => !/^(miles?|of|unk|unknown|near|the)$/i.test(t)).map((t) => PORT_CODES[t.toUpperCase()] ?? t);
+    const hit = names.find((n) => new RegExp(`\\b${n.replace(/\s+/g, "\\s+")}\\b`, "i").test(text));
+    if (hit) out.push(`the entry place (${hit})`);
+  }
+  const fm = field("entry.manner");
+  const cat = fm ? formMannerCategory(fm.value) : undefined;
+  if (cat && conflict !== "entry.manner" && manner === cat) out.push(`the manner of entry (${fm!.value})`);
+  return out;
 }
-const linkNote = (links: string[]) => ` The statement does not name the subject (several people are described), but it matches this subject's form on ${links.join(" and ")}, so it is treated as about this subject. A person should confirm.`;
+
+/** Manner category stated in a sentence's own wording, when the extractor gave none. */
+function textManner(t: string): "without_inspection" | "admitted" | undefined {
+  if (/\b(illegal(ly)?|without (being )?inspect|not (been )?inspected|EWI|swam|wad(ed|ing)|walk(ed|ing)? (across|through)|river|fence|between (the )?ports|smuggl)/i.test(t)) return "without_inspection";
+  if (/\b(visa|admitted|paroled|inspected|port of entry|flew|airport)\b/i.test(t)) return "admitted";
+  return undefined;
+}
+
+/**
+ * Whether an unattributed statement in a multi-person narrative is uniquely tied to THIS record's subject. One
+ * matching fact is never enough. Identity counts as uniquely supported only when (a) at least two facts other than
+ * the disputed one match the subject's form, (b) no narrative sentence describes people entering together, (c) no
+ * other entry account in the narrative shares any of the matched facts (companions would), and (d) no other
+ * unattributed statement fully agrees with the form, which would suggest the form describes that other person. Returns the matched facts, or [] if not unique.
+ */
+export function linkedToSubject(
+  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, sentenceId: string, conflict: "entry.date" | "entry.manner" | "entry.place",
+): string[] {
+  const s = sentences.find((x) => x.id === sentenceId);
+  if (!s) return [];
+  const own = facts.entry_statements.find((e) => e.sentence_id === sentenceId && isUsEntry(e));
+  const matches = formMatches(c, s.text, own?.manner, conflict);
+  if (matches.length < 2) return [];
+  if (sentences.some((x) => SHARED_ENTRY_RE.test(x.text) && ENTRY_VERB_RE.test(x.text))) return [];
+  // Any other entry account in the narrative that shares one of the matched facts (same place, same manner, same
+  // month and day) could be a companion's, so the match does not single out this subject (DS06: two companions,
+  // both "near Nogales", both illegally).
+  const mannerOf = (x: Sentence) => facts.entry_statements.find((e) => e.sentence_id === x.id && isUsEntry(e))?.manner ?? textManner(x.text);
+  const shared = sentences.some((x) => x.id !== s.id && ENTRY_VERB_RE.test(x.text) &&
+    formMatches(c, x.text, mannerOf(x), conflict).some((m) => matches.includes(m)));
+  if (shared) return [];
+  const fy = formYear(c.facts.find((f) => f.path === "entry.date")?.value ?? "");
+  const fm = c.facts.find((f) => f.path === "entry.manner");
+  const fcat = fm ? formMannerCategory(fm.value) : undefined;
+  const agreesFully = facts.entry_statements.some((e) => e.sentence_id !== sentenceId && isUsEntry(e) && e.person !== "subject" &&
+    (conflict === "entry.date" ? !!fy && e.year === fy : !!fcat && e.manner === fcat));
+  return agreesFully ? [] : matches;
+}
+const linkNote = (links: string[]) => ` The statement does not name the subject (several people are described), but it matches this subject's form on ${links.join(" and ")}, and nothing in the narrative suggests another person shares those facts, so it is treated as about this subject. A person should confirm.`;
 
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
@@ -207,7 +281,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const counts = (x: { attr: "subject" | "other" | "unclear" }) => aboutSubject(x.attr, multiPerson) && (x.attr === "subject" || !subjectAgrees);
     const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && !correctedLater(x, fy));
     // In a multi-person narrative an unattributed statement still counts when the subject's own form links it.
-    const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? formLinks(c, x.v.s.text, "entry.date") : []);
+    const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.date") : []);
     const off = differs.find(counts) ?? differs.find((x) => linksOf(x).length > 0);
     const offLinks = off && !counts(off) ? linksOf(off) : [];
     if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson).map((x) => x.v.s.id));
@@ -238,7 +312,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 3. Manner of entry: narrative statements vs each other and vs the form code.
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
   // Manner wording must be verified exactly and must actually describe a manner of entry.
-  const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? formLinks(c, x.v.s.text, "entry.manner") : []);
+  const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.manner") : []);
   const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && (aboutSubject(x.attr, multiPerson) || mannerLinks(x).length > 0));
   const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
   if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length).map((x) => x.v.s.id));
@@ -278,7 +352,10 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   }
   // 4b. The form records a prior removal, but the narrative describes none at all. One source only, so this is a
   //     clarity gap for a person to resolve, not a contradiction (the narrative may simply omit the history).
-  if (imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|excluded)/i.test(imm.value) && !priorRemovals(sentences, facts, false).length) {
+  // The narrative's own wording is checked as well as the extracted statements (FS09: the extractor missed
+  // "was removed through Laredo, Texas, on June 1, 2018").
+  if (imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|excluded)/i.test(imm.value) &&
+      !priorRemovals(sentences, facts, false).length && !sentences.some((x) => isPriorRemoval(x.text))) {
     findings.push({
       id: "F-HISTORY-2", category: "unclear", title: "Prior removal on the form is not described in the narrative",
       explanation: `The form records the immigration record as "${imm.value}", but the narrative does not describe any prior removal or deportation.`,

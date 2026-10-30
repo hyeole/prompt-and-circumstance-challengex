@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, formLinks, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -336,11 +336,20 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const entryPath = verified.find((v) => v.fieldPath === "entry.date" || v.fieldPath === "entry.manner" || v.fieldPath === "entry.place")?.fieldPath as "entry.date" | "entry.manner" | "entry.place" | undefined;
     const unlinked = (v: EvidenceRef) => {
       const s = sentences.find((x) => x.id === v.sentenceId)!;
-      return attribution(s, "unclear") !== "subject" && !(entryPath && formLinks(c, s.text, entryPath).length);
+      return attribution(s, "unclear") !== "subject" && !(entryPath && factsSettled.ok && linkedToSubject(c, sentences, factsSettled.v, s.id, entryPath).length);
     };
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
         verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
       discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });
+      return;
+    }
+    // (1d) Two narrative statements compared with each other: in a multi-person narrative they may be about two
+    // different people (dev-synthetic DS06), so the claim is routed unless both are about this subject.
+    const citedSentences = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
+    if (iss.type === "inconsistency" && multiPerson && !verified.some((v) => v.fieldPath) && citedSentences.length >= 2 &&
+        citedSentences.some((x) => attribution(x, "unclear") !== "subject")) {
+      discarded.push({ title: iss.title, reason: "Several people are described and the compared statements may be about different people, so they cannot show a contradiction." });
+      humanReasons.push(`Several people are described with redacted names, and ${citedSentences.map((x) => x.id).join(" and ")} may be about different people. A person should decide whether they conflict.`);
       return;
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.

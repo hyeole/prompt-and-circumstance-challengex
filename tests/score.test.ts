@@ -42,3 +42,17 @@ test("a failed fact-extraction call makes an older review partial even if the mo
   assert.equal(isComplete(r), true);
   assert.equal(isComplete({ ...r, calls: [{ role: "facts", status: "failed", ms: 55000, attempts: 1 }] } as ReviewResult), false);
 });
+
+// ---- Refinement: provenance never lets generic routing count as detecting a specific planted issue ----
+test("negative control: a rule-made generic routing finding does not detect a planted inconsistency, element or ambiguity", () => {
+  const routing = f({ id: "R-MULTI-CHARGE", category: "human_review" as Finding["category"], source: "rule", title: "Multiple charges selected", explanation: "More than one charge is selected.", evidence: [{ kind: "field", fieldPath: "selectedCharges", verified: true }] });
+  assert.equal(matches(r, routing, plant), false);
+  assert.equal(matches(r, routing, { type: "missing_element", elementId: "N3" }), false);
+  assert.equal(matches(r, routing, { type: "human_review", reason: "ambiguity", anchors: ["May 5, 2014"] }), false);
+});
+
+test("negative control: a rule-made finding for one element does not detect a different missing element", () => {
+  const n5 = f({ id: "M-N5", category: "missing_element", source: "rule", referenceIds: ["N5"], evidence: [{ kind: "missing", elementId: "N5", verified: true }] });
+  assert.equal(matches(r, n5, { type: "missing_element", elementId: "N3" }), false);
+  assert.equal(matches(r, n5, { type: "missing_element", elementId: "N5" }), true);
+});

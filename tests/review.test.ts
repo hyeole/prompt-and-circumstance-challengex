@@ -168,18 +168,6 @@ test("planted date conflict is still found when the differing statement is expli
   assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
 });
 
-test("form-linked attribution: an unattributed statement matching this subject's form on entry day and place is a contradiction (C045-X1)", async () => {
-  const c = load("C045-X1");
-  const s30 = sid(c, "claims to have last entered"), s35 = sid(c, "February 21, 2015");
-  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
-    { sentence_id: s30, quote: "last entered the United States on February 21, 2012", event: "us_entry", year: 2012, manner: "admitted", person: "unclear" },
-    { sentence_id: s35, quote: "last entered the United States on February 21, 2015", event: "us_entry", year: 2015, manner: "admitted", person: "unclear" },
-  ] }) }));
-  const f = r.findings.find((x) => x.id === "F-ENTRY-DATE");
-  assert.ok(f, "the year conflict is kept: the form links the statement to this subject");
-  assert.match(f!.explanation, /matches this subject's form on the entry month and day/);
-  assert.ok(f!.needsHumanReview);
-});
 
 test("bug C013: entering Mexico is not compared with the U.S. entry field", async () => {
   const c = load("C013");
@@ -477,19 +465,7 @@ test("without a form code or an attributable statement, 'consistent' is still ro
 
 // ---- Post-audit diagnosis fixes (eval/fresh/POST-AUDIT-DIAGNOSIS.md); post-tuning ----
 
-test("form-linked attribution restores F010-X: 'on or about May 5, 2014' vs form 05/05/2011", async () => {
-  const c = loadF("F010-X");
-  const s = sid(c, "May 5, 2014");
-  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "claims to have crossed the border illegally at night with eight other individuals on or about May 5, 2014", event: "us_entry", year: 2014, manner: "without_inspection", person: "unclear" }] }) }));
-  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
-});
 
-test("form-linked attribution restores F075-X: 'the day after ... 06/08/2011' gives 06/09, the form's month and day", async () => {
-  const c = loadF("F075-X");
-  const s = sid(c, "the day after returning to Mexico");
-  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "claimed to have crossed the Rio Grande River into the United States the day after returning to Mexico as a Voluntary Return on 06/08/2011", event: "us_entry", year: 2011, manner: "without_inspection", person: "unclear" }] }) }));
-  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
-});
 
 test("negative control DS06: a companion's different year with no form link stays unflagged", async () => {
   const c = loadD("DS06");
@@ -540,4 +516,87 @@ test("F055-H: a form that records a prior removal the narrative never describes 
   assert.ok(f);
   assert.equal(f!.category, "unclear");
   assert.ok(f!.needsHumanReview);
+});
+
+// ---- Refinement: attribute only when identity is uniquely supported (post-tuning) ----
+const multi = (entry: string) => `ENCOUNTER: Agents stopped a vehicle with two occupants, [REDACTED] and [REDACTED], near Monroe, Michigan. Both subjects were arrested. ENTRY: ${entry} REMOVABILITY: The subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act.`;
+const synth = (entry: string, facts2: { path: string; value: string }[]): CaseRecord => {
+  const c = load("C037");
+  return { ...c, id: "T-ATTR", narrative: { text: multi(entry) }, facts: c.facts.map((f) => facts2.find((x) => x.path === f.path) ? { ...f, ...facts2.find((x) => x.path === f.path)!, status: "present" as const } : f) };
+};
+const form = [{ path: "entry.date", value: "05/05/2011, 1400" }, { path: "entry.place", value: "2 mile(s) W of NOG" }, { path: "entry.manner", value: "EWI AFOOT" }];
+const entryFacts = (c: CaseRecord, needle: string, year: number) => {
+  const s = sid(c, needle);
+  return facts({ entry_statements: [{ sentence_id: s, quote: sentenceText(c, s), event: "us_entry", year, manner: "without_inspection", person: "unclear" }] });
+};
+
+test("unique support: one entry account matching the form on day, place and manner keeps the year conflict, with the reason", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  const f = r.findings.find((x) => x.id === "F-ENTRY-DATE");
+  assert.ok(f);
+  assert.match(f!.explanation, /nothing in the narrative suggests another person shares those facts/);
+});
+
+test("one matching fact is not enough: only the month and day match (no place, no manner)", async () => {
+  const c = synth("[REDACTED] stated that he came to the United States on May 5, 2014.", form);
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: sid(c, "May 5, 2014"), quote: "came to the United States on May 5, 2014", event: "us_entry", year: 2014, manner: "unknown", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+});
+
+test("negative control, shared date: a companion's account gives the same month and day", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014. [REDACTED] stated that he crossed on May 5, 2011.", form);
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok(r.humanReview.reasons.some((x) => /cannot be attributed/.test(x)));
+});
+
+test("negative control, shared manner: a companion's account also crossed illegally", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014. [REDACTED] stated that he walked across the border illegally in 2012.", form);
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+});
+
+test("negative control, travelled together: 'with eight other individuals' (F010-X) stays routed", async () => {
+  const c = loadF("F010-X");
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok(r.humanReview.reasons.some((x) => /cannot be attributed/.test(x)));
+});
+
+test("F075-X stays routed: another account in the narrative crossed 'with about five other individuals' into El Paso", async () => {
+  const c = loadF("F075-X");
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "the day after returning to Mexico", 2011) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+});
+
+test("C045-X1 stays routed: another unattributed account gives the form's own date (February 21, 2012)", async () => {
+  const c = load("C045-X1");
+  const s30 = sid(c, "claims to have last entered"), s35 = sid(c, "February 21, 2015");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
+    { sentence_id: s30, quote: "last entered the United States on February 21, 2012", event: "us_entry", year: 2012, manner: "admitted", person: "unclear" },
+    { sentence_id: s35, quote: "last entered the United States on February 21, 2015", event: "us_entry", year: 2015, manner: "admitted", person: "unclear" },
+  ] }) }));
+  assert.ok(!r.findings.some((x) => x.id.startsWith("F-ENTRY-DATE")));
+});
+
+test("DS06: a model claim comparing two companions' years is routed, not flagged", async () => {
+  const c = loadD("DS06");
+  const a = sid(c, "in 2016"), b = sid(c, "in 2018");
+  const r = await reviewCase(c, fake({ review: review({ issues: [{ type: "inconsistency", title: "Conflicting entry dates", explanation: "The narrative reports two different years of entry, 2016 and 2018.", evidence: [{ sentence_id: a, quote: "entered the United States in 2016" }, { sentence_id: b, quote: "entered the United States in 2018" }], needs_human_review: true, reason: "" }] }) }));
+  assert.ok(!r.findings.some((x) => x.title === "Conflicting entry dates"));
+  assert.ok(r.humanReview.reasons.some((x) => /may be about different people/.test(x)));
+});
+
+test("FS09: a form removal that the narrative does describe in its own words is not a clarity gap, even if extraction missed it", async () => {
+  const r = await reviewCase(loadF("FS09"), fake({}));
+  assert.ok(!r.findings.some((x) => x.id === "F-HISTORY-2"));
+});
+
+test("F075-H: a voluntary return is not a removal, so it is neither a removal conflict nor routed as one", async () => {
+  const c = loadF("F075-H");
+  const s = sid(c, "resulted in a Voluntary Return");
+  const r = await reviewCase(c, fake({ facts: facts({ removal_statements: [{ sentence_id: s, quote: "The second event resulted in a Voluntary Return", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((x) => x.id === "F-HISTORY"));
+  assert.ok(!r.humanReview.reasons.some((x) => x.includes(s) && /cannot be attributed/.test(x)));
 });
