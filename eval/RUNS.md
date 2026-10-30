@@ -142,3 +142,40 @@ The code includes all eight independent-audit fixes. Every flag was adjudicated 
 - Form fields did not count as support for a "consistent" verdict.
 
 Both were fixed in `0ab6dfa`. The diagnosis fixes are in `8864d7b`; they are listed in `eval/fresh/POST-AUDIT-DIAGNOSIS.md`, and `8864d7b` is measured below. Scoring and labels are unchanged.
+
+## Same-policy comparison across builds (scoring policy v2.3, every flag adjudicated by hand)
+
+**Evaluated build vs recorded HEAD.** The "Evaluated build" column is the commit whose production build served the run. The run folder's `run-info.json` records the git HEAD at the moment the run started. These differ only for the two `8864d7b` runs: a docs-only commit (`0fd47be`) was made while the dev-synthetic run was in progress, so fresh and legacy recorded `0fd47be`, while the server kept serving the `8864d7b` build. No server-used file (`lib`, `app`, `components`, `config`) differs between `8864d7b` and `0fd47be`. From `d0ec8c3` on, HEAD was held at the built commit for the whole batch.
+
+Figures are as recorded when each run was scored. Earlier runs keep their original v2.2 files, with the v2.3 rescoring beside them. Nothing was relabelled. fresh-v1's only untouched result remains `2026-10-30T02-48-46` (71% recall, 30% incorrect under v2.2); every row below is post-tuning.
+
+| Dataset | Evaluated build | Run (recorded HEAD) | Change | Completion | Strict recall | Incorrect flags | False flags | Unnecessary routing |
+|---|---|---|---|---|---|---|---|---|
+| dev-synthetic | `e5a47a7` | 2026-10-30T03-03-23 (`e5a47a7`) | post-tuning, before audit | 100% (12/12) | 100% (6/6) | 20% (2/10) | 2 | 20% (2/10) |
+| dev-synthetic | `324c393` | 2026-10-30T03-48-20 (`324c393`) | audit items 1-8 | 100% (12/12) | 100% (6/6) | 0% (0/9) | 0 | 40% (4/10) |
+| dev-synthetic | `8864d7b` | 2026-10-30T04-35-38 (`8864d7b`) | diagnosis fixes | 100% (12/12) | 100% (6/6) | 9% (1/11) | 1 | 0% (0/10) |
+| dev-synthetic | `d0ec8c3` | 2026-10-30T05-12-29 (`d0ec8c3`) | refinements | 100% (12/12) | 100% (6/6) | 0% (0/11) | 0 | 0% (0/10) |
+| fresh-v1 | `e5a47a7` | 2026-10-30T03-05-54 (`e5a47a7`) | post-tuning, before audit | 82% (23/28) | 71% (12/17) | 18% (5/28) | 5 | 28% (5/18) |
+| fresh-v1 | `324c393` | 2026-10-30T03-52-17 (`324c393`) | audit items 1-8 | 89% (25/28) | 47% (8/17) | 21% (4/19) | 4 | 61% (11/18) |
+| fresh-v1 | `8864d7b` | 2026-10-30T04-38-25 (`0fd47be`) | diagnosis fixes | 96% (27/28) | 71% (12/17) | 4% (1/27) | 1 | 22% (4/18) |
+| fresh-v1 | `d0ec8c3` | 2026-10-30T05-15-26 (`d0ec8c3`) | refinements | 96% (27/28) | 53% (9/17) | 0% (0/24) | 0 | 17% (3/18) |
+| legacy | `e5a47a7` | 2026-10-30T03-16-09 (`e5a47a7`) | post-tuning, before audit | 92% (34/37) | 87% (27/31) | 27% (17/62) | 17 | 0% (0/15) |
+| legacy | `324c393` | 2026-10-30T04-06-35 (`324c393`) | audit items 1-8 | 86% (32/37) | 68% (21/31) | 19% (11/57) | 11 | 33% (5/15) |
+| legacy | `8864d7b` | 2026-10-30T04-48-10 (`0fd47be`) | diagnosis fixes | 97% (36/37) | 65% (20/31) | 6% (4/63) | 4 | 7% (1/15) |
+| legacy | `d0ec8c3` | 2026-10-30T05-26-47 (`d0ec8c3`) | refinements | 81% (30/37) | 68% (21/31) | 6% (4/63) | 4 | 7% (1/15) |
+
+**Reading the table.**
+- **Incorrect-flag proportions since `8864d7b` are partly lower because the denominator grew.** The status-document change for N1 added about 20 valid "identifying documents not stated" observations per dataset. The raw false-flag counts are shown beside the proportions for that reason.
+- **Recall moved with the attribution rules, not with the model.**
+  - `324c393` routed every unattributed conflict in multi-person narratives.
+  - `8864d7b` re-linked statements on a single matching fact (month and day).
+  - `d0ec8c3` requires at least two matching facts and unique support. Statements whose companions are described entering with them stay routed: F010-X ("with eight other individuals"), F075-X (another account "with about five other individuals"), C045-X1 (another account gives the form's own date).
+  - The negative controls (shared date, shared manner, travelled together, DS06) pass.
+- **fresh `d0ec8c3` vs `8864d7b`: 9/17 vs 12/17.**
+  - F010-X and F075-X are lost by design (identity not uniquely supported; routed with the sentence named).
+  - F051-C changed with the model: the model called the reentry charge "consistent" this time, and the safety net routed it.
+  - The year-schema fix removed every invalid-output failure. F039-X and F039-G now complete.
+- **legacy `d0ec8c3` completion fell to 81%** because of 7 fact-call timeouts at the full 55 s budget, up from 0 timeouts on `8864d7b`.
+  - The fact-extraction prompt is unchanged between the two builds; only output parsing changed.
+  - Review-call latency rose too (p50 11.4 s to 13.3 s; fact calls 16.9 s to 24.3 s). That points to load on the shared endpoint during the run, but this is not proven and the batch was not rerun.
+  - In partial reviews, only rule findings earn credit, so 3 plants show as "not completed".

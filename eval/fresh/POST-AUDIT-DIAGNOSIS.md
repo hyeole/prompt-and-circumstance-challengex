@@ -64,3 +64,13 @@ New false flags, all on N1 (identifying documents): the post-audit N1 guard did 
 6. **New clarity check:** a form that records a prior removal the narrative never describes (F055-H).
    - It cannot earn detection credit under v2.3, because that plant has no anchor text and a field-only finding must name a planted value. The scorer is left unchanged.
    - Not implemented: prior apprehensions vs a NEGATIVE record. The only planted case (F075-H) is unattributable, so the check would only route it.
+
+## Refinements (commit `d0ec8c3`, evaluated as the production build of `d0ec8c3`)
+The `8864d7b` linking rule (one matching fact) was replaced. It attributed statements that companions could share.
+- **Attribution now requires:** at least two non-disputed facts matching the subject's form; no sentence describing people entering together; no other entry account sharing any matched fact; and no other unattributed account that fully agrees with the form. Negative controls: shared date, shared manner, travelled together, DS06.
+- **"Subject" wording is resolved by scope:** distributive includes the subject; "the other subject" is someone else; indefinite and list-member references are unclear. Each form has its own test.
+- **Provenance:** a scorer negative control confirms that rule-made generic routing never detects a specific plant.
+- **Fact calls:** the logged validation errors were all `entry_statements.N.year`. The schema now accepts text with exactly one 4-digit year; the retry remains a backstop within the budget.
+- **History:** arrests, apprehensions, Notices to Appear and voluntary returns are not removals. Offered, declined or pending removals did not happen.
+
+Results are in `eval/RUNS.md` ("Same-policy comparison across builds").
