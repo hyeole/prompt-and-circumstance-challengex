@@ -208,3 +208,15 @@ See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 in
 - The local tag `checkpoint-4b10d72-eval` marks the commit.
 - Later commits (negation scope, request vs encounter time, documentation-gap routing) are post-tuning source changes. They are **not** the evaluated build until a planned run on their own production build is recorded here.
 - Miss classification: `eval/MISS-CLASSIFICATION-4b10d72.md`. Label questions, kept separate: `eval/LABEL-REVIEW-2026-10-30.md`.
+
+## Targeted post-tuning verification: d95d075 (16 cases; not overall target achievement)
+- **Production build `d95d075`.** Runs: dev `2026-10-30T14-57-41`, fresh `2026-10-30T14-58-11`, legacy `2026-10-30T15-00-15`. Each run was performed once; v2.3 scoring; both layers identical.
+- **Paired with checkpoint `4b10d72` on the same 16 cases:**
+  - completion 15/16 → 14/16;
+  - strict recall 4/9 → 4/9;
+  - incorrect flags 1/20 → 0/18;
+  - unnecessary routing 2/8 → 2/8.
+- **Regressions:**
+  - C003 and C013 were partial (fact-call timeouts);
+  - C012 was routed by the model's own reasons for a claim the code withheld.
+- **Full report:** `eval/TARGETED-VERIFICATION-d95d075.md`.

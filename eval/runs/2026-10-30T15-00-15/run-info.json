@@ -1,0 +1,21 @@
+{
+  "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+  "dataset": "eval",
+  "split": "all",
+  "only": [
+    "C001",
+    "C003",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T15:00:15.808Z",
+  "commit": "d95d075",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

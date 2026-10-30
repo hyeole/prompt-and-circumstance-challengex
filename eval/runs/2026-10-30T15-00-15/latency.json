@@ -1,0 +1,56 @@
+[
+  {
+    "id": "C001",
+    "ms": 31190,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C003",
+    "ms": 55034,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012",
+    "ms": 22611,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-M2",
+    "ms": 20406,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-MC",
+    "ms": 18553,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C012-X1",
+    "ms": 15770,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C013",
+    "ms": 55031,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C013-CIT",
+    "ms": 27341,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "C013-X1",
+    "ms": 31860,
+    "ok": true,
+    "modelStatus": "ok"
+  }
+]

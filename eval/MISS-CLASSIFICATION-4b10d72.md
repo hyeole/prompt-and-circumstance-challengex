@@ -64,3 +64,6 @@ None of these is expected to change strict recall: none of the 18 is a model mis
    - F036's gap observation (one-person path) is unaffected.
 
 **Tests:** 168 pass. The 3 positive tests fail on the checkpoint code; the 3 negative controls pass on both.
+
+## Packet for independent review
+The evidence and reasoning for each of the 14 attribution-limited misses are in `eval/ATTRIBUTION-REVIEW-PACKET-4b10d72.md`.

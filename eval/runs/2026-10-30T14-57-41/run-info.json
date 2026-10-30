@@ -1,0 +1,14 @@
+{
+  "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": [
+    "DS06",
+    "DS12"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T14:57:41.288Z",
+  "commit": "d95d075",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

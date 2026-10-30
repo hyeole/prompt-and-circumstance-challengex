@@ -1,0 +1,17 @@
+{
+  "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+  "dataset": "eval/fresh",
+  "split": "all",
+  "only": [
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F036",
+    "FS10"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T14:58:11.295Z",
+  "commit": "d95d075",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}
