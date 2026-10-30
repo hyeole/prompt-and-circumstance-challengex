@@ -392,6 +392,30 @@
       "note": "Same as FS06: the basis (seeking admission with an altered passport) is stated; the lack-of-status wording of E6 does not fit port-of-entry fraud.",
       "example": "FS07 M-E6 Missing: basis for the immigration violation",
       "date": "2026-10-30"
+    },
+    {
+      "base": "DS10",
+      "key": "inconsistency|history.immigration_record|the subject was processed for expedited removal and was serv",
+      "verdict": "false_flag",
+      "note": "S9 describes the current expedited-removal processing, not a prior removal; the NEGATIVE record is not contradicted. Regression from the post-tuning attribution change.",
+      "example": "DS10 F-HISTORY Immigration record conflicts with the narrative",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F075",
+      "key": "citation|entry.date|travel/residence/work history claimed to have crossed the ri",
+      "verdict": "false_flag",
+      "note": "The model's own explanation says the narrative supports the selected charge; 'mismatch' contradicts it.",
+      "example": "F075-X C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS02",
+      "key": "inconsistency|the subject stated that she entered the united states on or|when first asked the subject said she entered in 2020.",
+      "verdict": "false_flag",
+      "note": "The 2020 answer is corrected and explained in the narrative (pre-run label: should not flag).",
+      "example": "FS02 F-ENTRY-DATE-2 Narrative gives two different entry years",
+      "date": "2026-10-30"
     }
   ]
 }

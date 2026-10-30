@@ -1,0 +1,170 @@
+[
+  {
+    "id": "F010",
+    "ms": 19272,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F010-D",
+    "ms": 20432,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F010-X",
+    "ms": 16048,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F036",
+    "ms": 29295,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F036-C",
+    "ms": 22739,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F036-M",
+    "ms": 22089,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F039",
+    "ms": 18543,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F039-G",
+    "ms": 15229,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F039-X",
+    "ms": 16153,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F051",
+    "ms": 17674,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F051-C",
+    "ms": 19722,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F051-E",
+    "ms": 14953,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F055",
+    "ms": 32100,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F055-A",
+    "ms": 29224,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F055-H",
+    "ms": 36843,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F075",
+    "ms": 21832,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F075-H",
+    "ms": 55017,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "F075-X",
+    "ms": 55015,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS01",
+    "ms": 16245,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS02",
+    "ms": 26842,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS03",
+    "ms": 22442,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS04",
+    "ms": 17431,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS05",
+    "ms": 10055,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS06",
+    "ms": 16396,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS07",
+    "ms": 9118,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS08",
+    "ms": 14709,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS09",
+    "ms": 9247,
+    "ok": true,
+    "modelStatus": "ok"
+  },
+  {
+    "id": "FS10",
+    "ms": 9222,
+    "ok": true,
+    "modelStatus": "ok"
+  }
+]

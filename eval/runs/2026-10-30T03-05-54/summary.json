@@ -1,0 +1,791 @@
+{
+  "run": "eval/runs/2026-10-30T03-05-54",
+  "scoringPolicy": "v2.2",
+  "runInfo": {
+    "label": "post-tuning (eval/fresh, commit e5a47a7)",
+    "dataset": "eval/fresh",
+    "split": "all",
+    "only": null,
+    "concurrency": 1,
+    "startedAt": "2026-10-30T03:05:54.514Z",
+    "commit": "e5a47a7",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 28,
+  "completion": "100% (28/28)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "82% (14/17)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "82% (14/17)",
+    "dev": "n/a",
+    "heldout": "n/a",
+    "missing_element": "100% (6/6)",
+    "inconsistency": "67% (4/6)",
+    "citation": "67% (2/3)",
+    "routing_multi_charge": "100% (1/1)",
+    "routing_ambiguity": "100% (1/1)",
+    "outcomes": "detected: 14, routed_only: 1, missed: 2, not_completed: 0"
+  },
+  "flags": {
+    "issued": 28,
+    "planted": 13,
+    "duplicates": 0,
+    "validObservations": 10,
+    "falseFlags": 5,
+    "unadjudicated": 0,
+    "incorrectProportion": "18% (5/28)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "28% (5/18)",
+  "routingJustifiedByObservation": [
+    "FS06",
+    "FS07"
+  ],
+  "dataset": "eval/fresh",
+  "checklistExpectations": {
+    "accuracy": "97% (36/37)",
+    "mismatches": [
+      {
+        "id": "FS06",
+        "elementId": "N2",
+        "expected": "present",
+        "actual": "absent"
+      }
+    ]
+  },
+  "shouldNotFlagViolations": [
+    {
+      "id": "FS02",
+      "anchor": "entered in 2020",
+      "finding": "F-ENTRY-DATE-2 Narrative gives two different entry years"
+    }
+  ],
+  "evidenceValidity": "100% (28/28)",
+  "evidenceMatch": {
+    "exact": 14,
+    "partial": 1,
+    "unlabelled": 5,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "19.3s",
+    "p90": "36.8s",
+    "max": "55.0s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "F010",
+      "split": "fresh",
+      "base": "F010",
+      "ms": 19272,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4)."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F010-D",
+      "split": "fresh",
+      "base": "F010",
+      "ms": 20432,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4)."
+        },
+        {
+          "id": "M-N7",
+          "finding": "M-N7 missing_element: Missing: disposition and documenting form",
+          "key": "missing_element|N7",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "F010-X",
+      "split": "fresh",
+      "base": "F010",
+      "ms": 16048,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4)."
+        },
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|claims to have crossed the border illegally at night with ei|entry.date",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "F036",
+      "split": "fresh",
+      "base": "F036",
+      "ms": 29295,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "F036-C",
+      "split": "fresh",
+      "base": "F036",
+      "ms": 22739,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner|is inadmissible under section 212(a)(6)(a)(i) of the immigra",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F036-M",
+      "split": "fresh",
+      "base": "F036",
+      "ms": 22089,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F039",
+      "split": "fresh",
+      "base": "F039",
+      "ms": 18543,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "F039-G",
+      "split": "fresh",
+      "base": "F039",
+      "ms": 15229,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F039-X",
+      "split": "fresh",
+      "base": "F039",
+      "ms": 16153,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|claims to have last entered the united states illegally by w|entry.date",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F051",
+      "split": "fresh",
+      "base": "F051",
+      "ms": 17674,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "F051-C",
+      "split": "fresh",
+      "base": "F051",
+      "ms": 19722,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "routed_only"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-HISTORY",
+          "finding": "F-HISTORY inconsistency: Immigration record conflicts with the narrative",
+          "key": "inconsistency|history.immigration_record|this information was relayed to lbpa who conducted checks on",
+          "status": "false_flag",
+          "note": "'One had been ordered removed' refers to an unattributed member of the group, not shown to be this subject; NEGATIVE record is not contradicted."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F051-E",
+      "split": "fresh",
+      "base": "F051",
+      "ms": 14953,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E3",
+          "finding": "M-E3 missing_element: Missing: manner of last entry",
+          "key": "missing_element|E3",
+          "status": "planted"
+        },
+        {
+          "id": "F-HISTORY",
+          "finding": "F-HISTORY inconsistency: Immigration record conflicts with the narrative",
+          "key": "inconsistency|history.immigration_record|this information was relayed to lbpa who conducted checks on",
+          "status": "false_flag",
+          "note": "'One had been ordered removed' refers to an unattributed member of the group, not shown to be this subject; NEGATIVE record is not contradicted."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "F055",
+      "split": "fresh",
+      "base": "F055",
+      "ms": 32100,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "F055-A",
+      "split": "fresh",
+      "base": "F055",
+      "ms": 29224,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-MANNER",
+          "finding": "F-ENTRY-MANNER inconsistency: Conflicting accounts of how the subject entered",
+          "key": "inconsistency|(a# ) claims to have last entered the united states illegall|during a later interview he stated that he entered the unite|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F055-H",
+      "split": "fresh",
+      "base": "F055",
+      "ms": 36843,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry date and place mismatch",
+          "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date|entry.place",
+          "status": "valid_observation",
+          "note": "Documentation gap: narrative states July 2014 near Hidalgo, Texas; form records date and place as unknown."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F075",
+      "split": "fresh",
+      "base": "F075",
+      "ms": 21832,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N5",
+          "finding": "U-N5 unclear: Unclear: specific ground stated and explained",
+          "key": "unclear|was held pending removal proceedings under section 212(a)(6)",
+          "status": "valid_observation",
+          "note": "The sentence cites 212(a)(6)(A)(i) ('held pending removal proceedings under ...') without explaining how the facts satisfy it (sponsor S4)."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F075-H",
+      "split": "fresh",
+      "base": "F075",
+      "ms": 55017,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N5",
+          "finding": "U-N5 unclear: Unclear: specific ground stated and explained",
+          "key": "unclear|was held pending removal proceedings under section 212(a)(6)",
+          "status": "valid_observation",
+          "note": "The sentence cites 212(a)(6)(A)(i) ('held pending removal proceedings under ...') without explaining how the facts satisfy it (sponsor S4)."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F075-X",
+      "split": "fresh",
+      "base": "F075",
+      "ms": 55015,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N5",
+          "finding": "U-N5 unclear: Unclear: specific ground stated and explained",
+          "key": "unclear|was held pending removal proceedings under section 212(a)(6)",
+          "status": "valid_observation",
+          "note": "The sentence cites 212(a)(6)(A)(i) ('held pending removal proceedings under ...') without explaining how the facts satisfy it (sponsor S4)."
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry date conflict",
+          "key": "inconsistency|entry.date|travel/residence/work history claimed to have crossed the ri",
+          "status": "planted"
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)",
+          "key": "citation|entry.date|travel/residence/work history claimed to have crossed the ri",
+          "status": "false_flag",
+          "note": "The model's own explanation says the narrative supports the selected charge; 'mismatch' contradicts it."
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "FS01",
+      "split": "fresh",
+      "base": "FS01",
+      "ms": 16245,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "FS02",
+      "split": "fresh",
+      "base": "FS02",
+      "ms": 26842,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE-2",
+          "finding": "F-ENTRY-DATE-2 inconsistency: Narrative gives two different entry years",
+          "key": "inconsistency|the subject stated that she entered the united states on or|when first asked the subject said she entered in 2020.",
+          "status": "false_flag",
+          "note": "The 2020 answer is corrected and explained in the narrative (pre-run label: should not flag)."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "FS03",
+      "split": "fresh",
+      "base": "FS03",
+      "ms": 22442,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E5",
+          "finding": "M-E5 missing_element: Missing: citizenship or alienage",
+          "key": "missing_element|E5",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "FS04",
+      "split": "fresh",
+      "base": "FS04",
+      "ms": 17431,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "FS05",
+      "split": "fresh",
+      "base": "FS05",
+      "ms": 10055,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "FS05 contains no ground statement."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(6)(A)(i)",
+          "key": "citation|records checks showed that the subject was admitted at john",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "FS06",
+      "split": "fresh",
+      "base": "FS06",
+      "ms": 16396,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "M-N2",
+          "finding": "M-N2 missing_element: Missing: status or classification claimed for admission",
+          "key": "missing_element|N2",
+          "status": "valid_observation",
+          "note": "The narrative never states the classification under which admission was requested. The pre-run label (N2 present) appears wrong; it is kept unchanged and reported as a post-run doubt."
+        }
+      ],
+      "citation": "insufficient_information",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "FS07",
+      "split": "fresh",
+      "base": "FS07",
+      "ms": 9118,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N2",
+          "finding": "M-N2 missing_element: Missing: status or classification claimed for admission",
+          "key": "missing_element|N2",
+          "status": "planted"
+        },
+        {
+          "id": "U-N3",
+          "finding": "U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel",
+          "key": "unclear|cbp officer found that the subject sought admission by prese|the subject presented an indian passport.",
+          "status": "valid_observation",
+          "note": "Purpose of travel was removed in FS07, so N3 is incomplete (anticipated in the pre-run label note)."
+        }
+      ],
+      "citation": "insufficient_information",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "FS08",
+      "split": "fresh",
+      "base": "FS08",
+      "ms": 14709,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "insufficient_information",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "FS09",
+      "split": "fresh",
+      "base": "FS09",
+      "ms": 9247,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N8",
+          "finding": "M-N8 missing_element: Missing: expedited removal: advisal, opportunity to respond, review and service",
+          "key": "missing_element|N8",
+          "status": "planted"
+        }
+      ],
+      "citation": "insufficient_information",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "FS10",
+      "split": "fresh",
+      "base": "FS10",
+      "ms": 9222,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE-2",
+          "finding": "F-ENTRY-DATE-2 inconsistency: Narrative gives two different entry years",
+          "key": "inconsistency|stated that he entered the united states in 2021 by crossing|stated that she entered with her cousin in 2022.",
+          "status": "false_flag",
+          "note": "The 2021 and 2022 statements are by different people (he / she); not a conflict about this subject."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    }
+  ]
+}
