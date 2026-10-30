@@ -70,9 +70,24 @@ function invalidReason(e: unknown): string {
 const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recall)|did not (know|remember|recall)|(could|can) ?not (recall|remember|say)|cannot (recall|remember|say)|unsure|not sure|no recollection|unable to (recall|remember|say|provide))\b/i;
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
 const statesUnknown = (t: string) => UNKNOWN_STATEMENT_RE.test(t) && !/\b(19|20)\d\d\b|\b\d{1,2}\/\d{1,2}\//.test(t);
-/** A citation explanation that says the narrative supports the charge, and one that says it does not. */
-const AFFIRMS_SUPPORT_RE = /\b(narrative|record|facts?) (clearly |also )?(supports?|establish(es)?|documents?|shows?|describes?|states?|is consistent with|are consistent with)\b|\b(supported|documented) by the (narrative|record)\b|\bwhich the (narrative|record) (supports|documents|shows|describes|states)\b/i;
-const DENIES_SUPPORT_RE = /\b(not|never|n't|no longer|fails? to) (clearly )?(support|establish|consistent|document|show|describe|state)/i;
+/**
+ * Whether a citation explanation says the record supports the charge or THIS charge's requirement. A support verb
+ * alone is not enough ("the narrative states the subject entered without inspection" opposes an admission charge):
+ * the supported thing must be the charge itself or the specific requirement, and it must not be negated.
+ */
+function claimsRequirementSupport(text: string, reqs?: Requires): boolean {
+  if (/\b(narrative|record|facts?) (clearly |also )?(supports?|is consistent with|are consistent with) (the |this )?(selected )?charge\b/i.test(text)) return true;
+  const req = reqs?.priorRemoval ? "(prior )?(removal|removed|deport\\w*|reinstat\\w*)"
+    : reqs?.applicationForAdmission ? "appl(ied|ication) for admission"
+    : reqs?.entryManner === "without_inspection" ? "(entry )?without (being )?inspect\\w*|illegal(ly)? (entry|entered|crossed|crossing)|EWI"
+    : reqs?.entryManner === "admitted" ? "(lawful )?admi(tted|ssion)|inspected and admitted|paroled" : null;
+  if (!req) return false;
+  const verb = "(supports?|documents?|establish(es)?|shows?|states?|describes?|confirms?)";
+  const after = new RegExp(`\\b(narrative|record) ${verb}\\b[^.;]{0,30}\\b(${req})`, "i");
+  const before = new RegExp(`\\b(${req})\\b[^.;]{0,40}\\bwhich (the )?(narrative|record) ${verb}\\b`, "i");
+  const negated = new RegExp(`\\b(no|not|never|without any)\\b[^.;]{0,15}\\b(${req})|\\b(does not|doesn't|did not|fails? to) ${verb.replace("(", "(")}`, "i");
+  return (after.test(text) || before.test(text)) && !negated.test(text);
+}
 const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
 const ANY_CITATION_RE = /\b(?:INA|Section)\s*\d{3}\s*\([a-z0-9]+\)(?:\s*\([a-z0-9]+\))*|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}(?:\s*\([a-z0-9]+\))*/gi;
 const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed|s)? (charging|the charge|a charge)|more appropriate|a better charge|alternative charge|could be charged|consider (charging|a different|another))\b|\bcharg\w*\b[^.]*\binstead\b|\binstead\b[^.]*\bcharg/i;
@@ -454,7 +469,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         status = "needs_human_review";
         explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
       }
-      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && AFFIRMS_SUPPORT_RE.test(out.citation.explanation) && !DENIES_SUPPORT_RE.test(out.citation.explanation)) {
+      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && claimsRequirementSupport(out.citation.explanation, reqs)) {
         // The verdict and the model's own explanation disagree (F075-X, C013-X1). The wording is not support: the
         // record establishes the requirement only through verified evidence (checked just above). Without it, unresolved.
         status = "needs_human_review";

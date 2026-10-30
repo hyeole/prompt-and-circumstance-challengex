@@ -685,3 +685,27 @@ test("pre-labelled should-not-flag controls: DS06 and FS10 produce no finding ci
   const r2 = await reviewCase(f, fake({ facts: facts({ removal_statements: [{ sentence_id: s2, quote: "stated that he was deported to Honduras in 2019", person: "unclear" }] }) }));
   assert.ok(!r2.findings.some((x) => (x.category === "inconsistency" || x.category === "unclear") && x.evidence.some((e) => e.sentenceId === s2)));
 });
+
+// ---- Fix 4, corrected after verification: support wording must name the charge or this charge's requirement ----
+const admissionCase = () => {
+  const c = load("C037");
+  return { ...c, facts: c.facts.filter((f) => f.path !== "entry.manner"), selectedCharges: [{ citation: "INA 237(a)(1)(B)", referenceId: "INA-237a1B" }] } as CaseRecord;
+};
+const mismatch = (c: CaseRecord, explanation: string) => reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation, evidence: [{ sentence_id: sid(c, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally" }] } }) }));
+
+test("fix 4 negative control: 'the narrative states [the opposite fact]' is not support (DS12 wording)", async () => {
+  const r = await mismatch(admissionCase(), "The selected charge requires the subject to have been admitted, but the narrative states the subject entered without inspection.");
+  assert.equal(r.citation.status, "likely_mismatch");
+});
+test("fix 4 negative control: 'the narrative describes no prior removal' is not support", async () => {
+  const c0 = load("C037");
+  // No history field, so the deterministic rule only routes; the wording alone decides.
+  const c = { ...c0, facts: c0.facts.filter((f) => f.path !== "history.immigration_record"), selectedCharges: [{ citation: "8 U.S.C. 1326", referenceId: "USC-1326" }] } as CaseRecord;
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation: "The charge requires a prior removal, but the narrative describes no prior removal.", evidence: [{ sentence_id: sid(c, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally" }] } }) }));
+  assert.equal(r.citation.status, "likely_mismatch");
+});
+test("fix 4 positive: 'requires admission, which the narrative documents' without verified support is unresolved", async () => {
+  const r = await mismatch(admissionCase(), "The charge requires lawful admission, which the narrative documents, but the dates are unclear.");
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /^Unresolved/);
+});
