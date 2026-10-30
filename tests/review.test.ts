@@ -146,3 +146,84 @@ test("an unresolved entry conflict prevents a plain 'consistent' citation (desig
   assert.equal(r.citation.status, "needs_human_review");
   assert.match(r.citation.explanation, /unresolved conflict/);
 });
+
+// ---- Regression tests for the final run's confirmed errors (eval/runs/2026-10-29T23-32-42) ----
+
+test("bug C021: a redacted companion's entry year is not a contradiction when an explicit 'Subject' statement agrees with the form", async () => {
+  const c = load("C021");
+  const s4 = sid(c, "Subject entered the United States at the Miami"), s29 = sid(c, "arriving on 06- 01-2016");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
+    { sentence_id: s4, quote: "Subject entered the United States at the Miami International Airport", event: "us_entry", country: "United States", year: 2015, manner: "admitted", person: "subject" },
+    { sentence_id: s29, quote: "entered as a B-1/B2 arriving on 06- 01-2016", event: "us_entry", country: "United States", year: 2016, manner: "admitted", person: "unclear" },
+  ] }) }));
+  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")), JSON.stringify(r.findings.map((f) => f.id)));
+});
+
+test("planted date conflict is still found when the differing statement is explicitly about the subject (C021-X1)", async () => {
+  const c = load("C021-X1");
+  const s4 = sid(c, "Subject entered the United States at the Miami");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
+    { sentence_id: s4, quote: "Subject entered the United States at the Miami International Airport port of entry (MIA) on 12/23/2013", event: "us_entry", country: "United States", year: 2013, manner: "admitted", person: "unclear" },
+  ] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
+});
+
+test("planted date conflict between two unattributed statements is still found (C045-X1)", async () => {
+  const c = load("C045-X1");
+  const s30 = sid(c, "claims to have last entered"), s35 = sid(c, "February 21, 2015");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
+    { sentence_id: s30, quote: "last entered the United States on February 21, 2012", event: "us_entry", year: 2012, manner: "admitted", person: "unclear" },
+    { sentence_id: s35, quote: "last entered the United States on February 21, 2015", event: "us_entry", year: 2015, manner: "admitted", person: "unclear" },
+  ] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
+});
+
+test("bug C013: entering Mexico is not compared with the U.S. entry field", async () => {
+  const c = load("C013");
+  const s6 = sid(c, "illegally entered into Mexico");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Entry facts mismatch", explanation: "Form field indicates entry as PWA (AFOOT) but narrative describes illegal crossing.", evidence: [{ field_path: "entry.manner" }, { sentence_id: s6, quote: "illegally entered into Mexico by walking through the mountains" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: s6, quote: "illegally entered into Mexico by walking through the mountains", event: "other_country_entry", country: "Mexico", year: null, manner: "without_inspection", person: "unclear" }] }),
+  }));
+  assert.ok(!r.findings.some((f) => f.title === "Entry facts mismatch"));
+  assert.ok(r.discarded.some((d) => /another country/.test(d.reason)));
+});
+
+test("bug C003-CIT: a stated lack of status establishes E6 even if the model says absent", async () => {
+  const c = load("C003-CIT");
+  const s24 = sid(c, "present in the United States Illegally");
+  const r = await reviewCase(c, fake({
+    review: review({ elements: [{ element_id: "E6", status: "absent", sentence_ids: [], note: "" }, { element_id: "E7", status: "present", sentence_ids: ["S41"], note: "" }] }),
+    facts: facts({ status_statements: [{ sentence_id: s24, quote: "if he was present in the United States Illegally, and he advised yes", person: "unclear" }] }),
+  }));
+  assert.equal(r.elements.find((e) => e.elementId === "E6")?.status, "present");
+  assert.ok(!r.findings.some((f) => f.id === "M-E6"));
+});
+
+test("a status statement without status wording does not override the model", async () => {
+  const c = load("C003-CIT");
+  const r = await reviewCase(c, fake({
+    review: review({ elements: [{ element_id: "E6", status: "absent", sentence_ids: [], note: "" }] }),
+    facts: facts({ status_statements: [{ sentence_id: "S7", quote: "the Border Patrol station assisted in the identification", person: "unclear" }] }),
+  }));
+  assert.equal(r.elements.find((e) => e.elementId === "E6")?.status, "absent");
+});
+
+test("bug C135-M3: 'came to the United States near Sasabe' does not state a manner of entry", async () => {
+  const c = load("C135-M3");
+  const s = sid(c, "came to the United States near Sasabe");
+  const r = await reviewCase(c, fake({
+    review: review({ elements: [{ element_id: "E3", status: "present", sentence_ids: [s], note: "Narrative states the subject entered near Sasabe" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: s, quote: "came to the United States near Sasabe, Arizona", event: "us_entry", country: "United States", year: null, manner: "without_inspection", person: "unclear" }] }),
+  }));
+  assert.equal(r.elements.find((e) => e.elementId === "E3")?.status, "absent");
+  assert.ok(r.findings.some((f) => f.id === "M-E3"));
+});
+
+test("bug C021-CIT: a date claim that its evidence does not contain is withheld", async () => {
+  const c = load("C021-CIT");
+  const s = sid(c, "At 0412 am");
+  const r = await reviewCase(c, fake({ review: review({ issues: [{ type: "inconsistency", title: "Encounter date mismatch", explanation: "Narrative reports encounter on 4/12/2017 while form field lists 4/16/2017.", evidence: [{ sentence_id: s, quote: "At 0412 am, Sector Dispatch requested" }, { field_path: "encounter.date_time" }], needs_human_review: true, reason: "" }] }) }));
+  assert.ok(!r.findings.some((f) => f.title === "Encounter date mismatch"));
+  assert.ok(r.discarded.some((d) => /4\/12\/2017/.test(d.reason)));
+});

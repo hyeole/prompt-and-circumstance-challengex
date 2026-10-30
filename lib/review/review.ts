@@ -5,7 +5,8 @@ import { sha, splitSentences, locateQuote } from "@/lib/text";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences } from "./facts";
+import { unsupportedValues } from "./support";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
 
@@ -160,6 +161,17 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     if (m.status === "unavailable") return { elementId: el.id, label: el.label, status: "unavailable_redacted", sentenceIds: validIds, fieldPaths: [], note: m.note };
     return { elementId: el.id, label: el.label, status: m.status, sentenceIds: validIds, fieldPaths: [], note: m.note };
   });
+  // Cross-check E6 (basis for the violation): a verified statement with lack-of-status wording establishes it, so a
+  // model "absent"/"unclear" here is not reported (e.g. "asked if he was present illegally, and he advised yes").
+  const e6 = elements.find((e) => e.elementId === "E6");
+  if (e6 && (e6.status === "absent" || e6.status === "unclear") && factsSettled.ok) {
+    const st = statusStatements(sentences, factsSettled.v);
+    if (st.length) {
+      e6.status = "present";
+      e6.sentenceIds = [...new Set(st.map((x) => x.sentenceId!))];
+      e6.note = "Lack of lawful status or documents is stated in the narrative (checked by fact extraction).";
+    }
+  }
   // Cross-check E3 (manner of entry) with the fact extraction: if no form field covers it and no extracted statement
   // says how the subject entered, a model "present" is not trusted.
   const e3 = elements.find((e) => e.elementId === "E3");
@@ -195,6 +207,20 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     const verified = ev.filter(Boolean) as EvidenceRef[];
     if (verified.length < ev.length || verified.length === 0) {
       discarded.push({ title: iss.title, reason: "Quoted evidence could not be matched to the reviewed text." });
+      return;
+    }
+    // Relevance: an exact quote is necessary but not sufficient. (1) A claim about the U.S. entry fields must not rest on a
+    // sentence the extractor identified as entry into another country, a departure, or travel.
+    const nonUs = factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>();
+    if (verified.some((v) => v.fieldPath?.startsWith("entry.")) && verified.some((v) => v.sentenceId && nonUs.has(v.sentenceId))) {
+      discarded.push({ title: iss.title, reason: "The cited sentence describes entry into another country or travel, not the U.S. entry recorded on the form." });
+      return;
+    }
+    // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
+    const evTexts = verified.map((v) => (v.sentenceId ? sentences.find((x) => x.id === v.sentenceId)?.text ?? "" : v.quote ?? ""));
+    const missingValues = unsupportedValues(`${iss.title}. ${iss.explanation}`, evTexts);
+    if (missingValues.length) {
+      discarded.push({ title: iss.title, reason: `The claim relies on ${missingValues.join(", ")}, which does not appear in the cited evidence.` });
       return;
     }
     if (iss.type === "inconsistency" && new Set(verified.map((v) => v.sentenceId ?? v.fieldPath)).size < 2) {
