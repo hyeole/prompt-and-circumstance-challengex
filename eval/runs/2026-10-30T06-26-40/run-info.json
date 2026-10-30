@@ -1,0 +1,15 @@
+{
+  "label": "targeted check, not an evaluation (dev, build 78f2425)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": [
+    "DS06",
+    "DS07",
+    "DS10"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T06:26:40.521Z",
+  "commit": "78f2425",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

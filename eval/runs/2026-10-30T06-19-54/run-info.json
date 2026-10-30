@@ -1,0 +1,22 @@
+{
+  "label": "targeted check, not an evaluation (fresh, build 78f2425)",
+  "dataset": "eval/fresh",
+  "split": "all",
+  "only": [
+    "F010-X",
+    "F075-X",
+    "F039-X",
+    "F055-A",
+    "F055-H",
+    "F075-H",
+    "F051-C",
+    "F039",
+    "FS10",
+    "FS02"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T06:19:54.576Z",
+  "commit": "78f2425",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

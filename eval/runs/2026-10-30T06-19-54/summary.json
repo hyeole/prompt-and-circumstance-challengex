@@ -1,0 +1,400 @@
+{
+  "run": "eval/runs/2026-10-30T06-19-54",
+  "scoringPolicy": "v2.3",
+  "runInfo": {
+    "label": "targeted check, not an evaluation (fresh, build 78f2425)",
+    "dataset": "eval/fresh",
+    "split": "all",
+    "only": [
+      "F010-X",
+      "F075-X",
+      "F039-X",
+      "F055-A",
+      "F055-H",
+      "F075-H",
+      "F051-C",
+      "F039",
+      "FS10",
+      "FS02"
+    ],
+    "concurrency": 1,
+    "startedAt": "2026-10-30T06:19:54.576Z",
+    "commit": "78f2425",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 10,
+  "completion": "90% (9/10)",
+  "partialReviews": [
+    {
+      "id": "F075-X",
+      "modelStatus": "ok",
+      "seconds": 55,
+      "calls": "facts:failed review-1:ok review-2:ok",
+      "plants": "inconsistency=not_completed"
+    }
+  ],
+  "recallCompletedOnly": {
+    "value": "71% (5/7)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "63% (5/8)",
+    "dev": "n/a",
+    "heldout": "n/a",
+    "missing_element": "n/a",
+    "inconsistency": "67% (4/6)",
+    "citation": "0% (0/1)",
+    "routing_multi_charge": "n/a",
+    "routing_ambiguity": "100% (1/1)",
+    "outcomes": "detected: 5, routed_only: 1, missed: 1, not_completed: 1"
+  },
+  "flags": {
+    "issued": 17,
+    "planted": 4,
+    "duplicates": 2,
+    "validObservations": 6,
+    "falseFlags": 0,
+    "unadjudicated": 5,
+    "incorrectProportion": "33% (5/15)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "0% (0/3)",
+  "routingJustifiedByObservation": [
+    "F039",
+    "FS10"
+  ],
+  "dataset": "eval/fresh",
+  "checklistExpectations": {
+    "accuracy": "100% (6/6)",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [
+    {
+      "id": "FS10",
+      "anchor": "deported to Honduras",
+      "finding": "U-ACCOUNT-1 Account that may conflict with this record (attribution unknown)"
+    }
+  ],
+  "evidenceValidity": "100% (17/17)",
+  "evidenceMatch": {
+    "exact": 11,
+    "partial": 0,
+    "unlabelled": 8,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "19.0s",
+    "p90": "55.0s",
+    "max": "55.0s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "F010-X",
+      "split": "fresh",
+      "base": "F010",
+      "ms": 10171,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4)."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|claims to have crossed the border illegally at night with ei|entry.date",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "F039",
+      "split": "fresh",
+      "base": "F039",
+      "ms": 14868,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|he has never had any documents that would allow him to be or|inadmissibility: is a citizen of mexico.",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "F-HISTORY-3",
+          "finding": "F-HISTORY-3 unclear: Prior immigration encounters described while the record is NEGATIVE",
+          "key": "unclear|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|claims to have last entered the united states illegally by w|entry.date",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "F039-X",
+      "split": "fresh",
+      "base": "F039",
+      "ms": 21134,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|he has never had any documents that would allow him to be or",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "F-HISTORY-3",
+          "finding": "F-HISTORY-3 unclear: Prior immigration encounters described while the record is NEGATIVE",
+          "key": "unclear|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|claims to have last entered the united states illegally by w|entry.date",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "F051-C",
+      "split": "fresh",
+      "base": "F051",
+      "ms": 18959,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "routed_only"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|all subjects stated that they were in the united states ille|bpa identified himself as a border patrol agent and asked al|bpa then asked all subjects individually if they were in the|five subjects stated that they did not have any immigration",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|this information was relayed to lbpa who conducted checks on",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "F055-A",
+      "split": "fresh",
+      "base": "F055",
+      "ms": 18869,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|during a later interview he stated that he entered the unite|entry.manner",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F055-H",
+      "split": "fresh",
+      "base": "F055",
+      "ms": 24421,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-HISTORY-2",
+          "finding": "F-HISTORY-2 unclear: Prior removal on the form is not described in the narrative",
+          "key": "unclear|history.immigration_record",
+          "status": "valid_observation",
+          "note": "This is the planted discrepancy (form records a prior removal the narrative never describes). Field-only finding; no detection credit under scoring v2.3 because the plant has no anchor text."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "F075-H",
+      "split": "fresh",
+      "base": "F075",
+      "ms": 21799,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|fingerprint analysis revealed was previously arrested by u.s|history.immigration_record",
+          "status": "planted"
+        },
+        {
+          "id": "U-ACCOUNT-2",
+          "finding": "U-ACCOUNT-2 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|the disposition of the event associated with the apprehensio",
+          "status": "duplicate"
+        },
+        {
+          "id": "U-ACCOUNT-3",
+          "finding": "U-ACCOUNT-3 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|travel/residence/work history claimed to have crossed the ri",
+          "status": "duplicate"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "F075-X",
+      "split": "fresh",
+      "base": "F075",
+      "ms": 55046,
+      "completed": false,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "FS02",
+      "split": "fresh",
+      "base": "FS02",
+      "ms": 17572,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "FS10",
+      "split": "fresh",
+      "base": "FS10",
+      "ms": 9210,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|the three passengers and stated that they are citizens of ho",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|stated that he was deported to honduras in 2019 and returned",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    }
+  ]
+}

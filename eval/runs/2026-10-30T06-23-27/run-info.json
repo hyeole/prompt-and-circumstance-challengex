@@ -1,0 +1,22 @@
+{
+  "label": "targeted check, not an evaluation (legacy, build 78f2425)",
+  "dataset": "eval",
+  "split": "all",
+  "only": [
+    "C001-X1",
+    "C003-AMB",
+    "C012-X1",
+    "C012-M2",
+    "C013-X1",
+    "C045-X1",
+    "C119-AMB",
+    "C119-CIT",
+    "C045",
+    "C037"
+  ],
+  "concurrency": 1,
+  "startedAt": "2026-10-30T06:23:27.369Z",
+  "commit": "78f2425",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

@@ -1,0 +1,150 @@
+{
+  "run": "eval/runs/2026-10-30T06-26-40",
+  "scoringPolicy": "v2.3",
+  "runInfo": {
+    "label": "targeted check, not an evaluation (dev, build 78f2425)",
+    "dataset": "eval/dev-synthetic",
+    "split": "all",
+    "only": [
+      "DS06",
+      "DS07",
+      "DS10"
+    ],
+    "concurrency": 1,
+    "startedAt": "2026-10-30T06:26:40.521Z",
+    "commit": "78f2425",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 3,
+  "completion": "100% (3/3)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "100% (1/1)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "100% (1/1)",
+    "dev": "n/a",
+    "heldout": "n/a",
+    "missing_element": "100% (1/1)",
+    "inconsistency": "n/a",
+    "citation": "n/a",
+    "routing_multi_charge": "n/a",
+    "routing_ambiguity": "n/a",
+    "outcomes": "detected: 1, routed_only: 0, missed: 0, not_completed: 0"
+  },
+  "flags": {
+    "issued": 3,
+    "planted": 1,
+    "duplicates": 0,
+    "validObservations": 1,
+    "falseFlags": 0,
+    "unadjudicated": 1,
+    "incorrectProportion": "33% (1/3)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "0% (0/3)",
+  "routingJustifiedByObservation": [
+    "DS06"
+  ],
+  "dataset": "eval/dev-synthetic",
+  "checklistExpectations": {
+    "accuracy": "100% (12/12)",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [
+    {
+      "id": "DS06",
+      "anchor": "in 2016",
+      "finding": "U-ACCOUNT-1 Account that may conflict with this record (attribution unknown)"
+    }
+  ],
+  "evidenceValidity": "100% (3/3)",
+  "evidenceMatch": {
+    "exact": 1,
+    "partial": 0,
+    "unlabelled": 1,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "15.7s",
+    "p90": "15.8s",
+    "max": "15.8s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "DS06",
+      "split": "dev-synthetic",
+      "base": "DS06",
+      "ms": 15822,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|two occupants and stated that they are citizens of mexico an",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.date|stated that he entered the united states in 2016 by crossing",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "DS07",
+      "split": "dev-synthetic",
+      "base": "DS07",
+      "ms": 15664,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS10",
+      "split": "dev-synthetic",
+      "base": "DS10",
+      "ms": 11196,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N8",
+          "finding": "M-N8 missing_element: Missing: expedited removal: advisal, opportunity to respond, review and service",
+          "key": "missing_element|N8",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    }
+  ]
+}
