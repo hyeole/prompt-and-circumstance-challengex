@@ -1,0 +1,11 @@
+{
+  "label": "fresh-v1 internal evaluation (frozen, tag fresh-eval-v1-frozen)",
+  "dataset": "eval/fresh",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T02:48:46.199Z",
+  "commit": "ab6feb6",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

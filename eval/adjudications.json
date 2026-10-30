@@ -224,6 +224,166 @@
       "note": "Pre-run label: the 2016 statement cannot be attributed to this record's subject (two redacted people); no entry-date conflict should be reported. Known limitation.",
       "example": "DS06 F-ENTRY-DATE Entry date differs from the form",
       "date": "2026-10-30"
+    },
+    {
+      "base": "F010",
+      "key": "missing_element|N5",
+      "verdict": "valid_observation",
+      "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4).",
+      "example": "F010 M-N5 Missing: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|claims to have last entered the united states illegally by w|entry.date|entry.place",
+      "verdict": "valid_observation",
+      "note": "Documentation gap, not a factual contradiction: narrative states February 2004 near Nogales, AZ; form records date and place as unknown.",
+      "example": "F039 I-1 Entry date and place mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|encounter.date_time|facts of arrest: on may 2 2017 border patrol agent (bpa) and",
+      "verdict": "false_flag",
+      "note": "7:50 AM is when a van passed the agents, not the encounter; the form's 0847 is the encounter. Not a conflict.",
+      "example": "F039-X I-5 Encounter time mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|claims to have illegally entered the united states in laredo|entry.manner|entry.place",
+      "verdict": "false_flag",
+      "note": "The place part is a documentation gap, but the claim also treats PWA (AFOOT) as conflicting with an illegal entry, which is wrong.",
+      "example": "F051-C I-1 Entry facts mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|claims to have illegally entered the united states in laredo|entry.place",
+      "verdict": "valid_observation",
+      "note": "Documentation gap: narrative says Laredo around 2015; form records place as unknown.",
+      "example": "F051-C I-2 Entry place and date conflict",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|history.immigration_record|this information was relayed to lbpa who conducted checks on",
+      "verdict": "false_flag",
+      "note": "'One had been ordered removed' refers to an unattributed member of the group, not shown to be this subject; NEGATIVE record is not contradicted.",
+      "example": "F051-C I-3 History immigration record mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date|entry.place",
+      "verdict": "valid_observation",
+      "note": "Documentation gap: narrative states July 2014 near Hidalgo, Texas; form records date and place as unknown.",
+      "example": "F055 I-1 Entry place and date mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date|entry.manner|entry.place",
+      "verdict": "false_flag",
+      "note": "Includes PWA (AFOOT) as conflicting with crossing the Rio Grande, which is consistent.",
+      "example": "F055 I-2 Entry facts mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.place",
+      "verdict": "valid_observation",
+      "note": "Documentation gap: narrative states near Hidalgo, Texas; form place unknown.",
+      "example": "F055-H I-1 Entry place mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date",
+      "verdict": "valid_observation",
+      "note": "Documentation gap: narrative states July 2014; form date unknown.",
+      "example": "F055-H I-2 Entry date mismatch",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F075",
+      "key": "unclear|was held pending removal proceedings under section 212(a)(6)",
+      "verdict": "valid_observation",
+      "note": "The sentence cites 212(a)(6)(A)(i) ('held pending removal proceedings under ...') without explaining how the facts satisfy it (sponsor S4).",
+      "example": "F075 U-N5 Unclear: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS02",
+      "key": "inconsistency|entry.date|when first asked the subject said she entered in 2020.",
+      "verdict": "false_flag",
+      "note": "Pre-run label: the narrative records the correction to 2019 and the subject's explanation; flagging 2020 is a should-not-flag violation.",
+      "example": "FS02 F-ENTRY-DATE Entry date differs from the form",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS05",
+      "key": "missing_element|N5",
+      "verdict": "valid_observation",
+      "note": "FS05 contains no ground statement.",
+      "example": "FS05 M-N5 Missing: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS06",
+      "key": "missing_element|E6",
+      "verdict": "false_flag",
+      "note": "The basis (seeking admission with an altered passport) is stated; E6's lack-of-status wording does not fit this port-of-entry fraud scenario.",
+      "example": "FS06 M-E6 Missing: basis for the immigration violation",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS06",
+      "key": "missing_element|N2",
+      "verdict": "valid_observation",
+      "note": "The narrative never states the classification under which admission was requested. The pre-run label (N2 present) appears wrong; it is kept unchanged and reported as a post-run doubt.",
+      "example": "FS06 M-N2 Missing: status or classification claimed for admission",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS07",
+      "key": "unclear|cbp officer found that the subject sought admission by prese|the subject presented an indian passport.",
+      "verdict": "valid_observation",
+      "note": "Purpose of travel was removed in FS07, so N3 is incomplete (anticipated in the pre-run label note).",
+      "example": "FS07 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS08",
+      "key": "unclear|marie port of entry as a pedestrian and presented a mexican",
+      "verdict": "false_flag",
+      "note": "'stating that he was visiting a friend for two weeks' states the purpose of travel; the purpose pattern missed singular 'a friend'.",
+      "example": "FS08 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS09",
+      "key": "unclear|marie port of entry as a pedestrian and presented a mexican",
+      "verdict": "false_flag",
+      "note": "'stating that he was visiting a friend for two weeks' states the purpose of travel; the purpose pattern missed singular 'a friend'.",
+      "example": "FS09 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS10",
+      "key": "inconsistency|history.immigration_record|stated that he was deported to honduras in 2019 and returned",
+      "verdict": "false_flag",
+      "note": "The deportation statement cannot be attributed to this record's subject (three redacted people); should-not-flag violation.",
+      "example": "FS10 I-1 History record conflict",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS10",
+      "key": "inconsistency|stated that he entered the united states in 2021 by crossing|stated that she entered with her cousin in 2022.",
+      "verdict": "false_flag",
+      "note": "The 2021 and 2022 statements are by different people (he / she); not a conflict about this subject.",
+      "example": "FS10 F-ENTRY-DATE-2 Narrative gives two different entry years",
+      "date": "2026-10-30"
     }
   ]
 }

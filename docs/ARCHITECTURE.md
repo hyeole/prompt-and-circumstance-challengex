@@ -68,3 +68,20 @@ Each review sends **three requests at the same time** to the shared `gpt-oss-20b
 - In the diagnostic run, the samples produced 3 issues before verification. After merging there were 3, and all 3 were reported by every valid sample. So merging added no single-sample flags in this run.
 - The sample is small (7 two-sample reviews). Earlier runs did not record per-sample data, so this cannot be checked for them.
 - The scorer can now compare false-flag rates by agreement in future runs.
+
+## Pages, storage and versions (multi-page app, 2026-10-30)
+
+- **Next.js App Router pages:** `/`, `/cases`, `/cases/new`, `/review/[id]`, `/review/[id]/history`, `/references`, `/report/[id]` and `/audit/[id]`. They share one shell (`components/AppShell.tsx`) with labelled navigation and breadcrumbs, and the Review page reuses the original document, facts and findings components.
+- **Local store** (`lib/store.ts`): JSON files in `data/local/`, which is git-ignored. It holds:
+  - cases created in the app;
+  - one append-only history file per case. Every review the UI runs is saved by `/api/review` as an immutable version (snapshot + result), after checking that the result matches the snapshot;
+  - officer decisions, kept per review and finding and apart from the model output;
+  - uploaded PDFs, viewing only, no text extraction.
+- **Session-only edits:** edits are kept in `sessionStorage` until a review saves them. A warning appears before closing with unsaved edits.
+- **Comparisons** (`lib/compare.ts`): word diff with jsdiff (BSD-3-Clause). Findings are matched only when every cited sentence is unchanged and both reviews completed with the same prompt and reference versions; otherwise the comparison says it is unavailable.
+- **No authentication, database or cloud service.** It is a single-user app on one computer.
+
+## Checklist v2 and case context
+See `docs/SPONSOR-ALIGNMENT.md`.
+
+`lib/review/checklist.ts` infers the case context (interior, port of entry, expedited removal), or takes it from the case, and decides for each item whether it applies: applies, not applicable, or applicability unclear. Items N1, N3, N5, N7 and N8 are detected in code; the remaining items go to the model only when they apply.

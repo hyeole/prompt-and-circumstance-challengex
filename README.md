@@ -10,6 +10,19 @@ It **never** rewrites the narrative, never picks or changes the charge, and neve
 
 *Live review of team test case C012-X1. Two conflicting statements about the manner of entry are highlighted and linked to the form field. The case is routed to human review.*
 
+## Pages
+
+| Page | What it is for |
+|---|---|
+| **Workspace** `/` | Recent cases, pending officer actions, real review statuses, New case |
+| **Cases** `/cases` | Searchable, filterable library: adapted source records, synthetic test variants, entered cases. **New case** `/cases/new` has a preview step |
+| **Review** `/review/[id]` | Document workspace: narrative, form facts, findings, evidence explorer, officer decisions |
+| **Review history** `/review/[id]/history` | Immutable versions, word-level officer edits, new / persisting / resolved findings, notes |
+| **References** `/references` | Unissant guidance (verbatim), team checklist v2, team charge summaries (not sponsor-approved), glossary, versions |
+| **Report** `/report/[id]` and **Audit** `/audit/[id]` | One-page gap report; detailed multi-page audit export with decisions and notes |
+
+Your work is saved on this computer in `data/local/`. That folder is git-ignored and excluded from sharing ZIPs; nothing is uploaded. Edits you have not reviewed yet are kept only for the browser session.
+
 ## What it does
 
 | Area | Behavior |
@@ -65,11 +78,10 @@ Later runs after error analysis are **post-hoc** and do not replace this result.
 
 ## Important limitations
 
-- **References are provisional.** Unissant's charge reference sheet and required-elements list have not been received yet. [`config/references.json`](config/references.json) contains:
-  - required elements taken from the instruction printed on Form I-213;
-  - plain-English paraphrases of public statutory text, compiled by the team.
-
-  Neither is sponsor-verified or legal advice.
+- **References.** On 2026-10-30 Unissant confirmed that it will **not** provide a charge reference sheet or a checklist, and supplied a "Core elements to cover" table as guidance. That table is kept verbatim in [`config/sponsor/`](config/sponsor/).
+  - [`config/references.json`](config/references.json) (checklist v2) is the team's implementation of that guidance plus the Form I-213 instruction. Each item names its sponsor category and the contexts where it applies.
+  - The charge summaries are team paraphrases of public statutory text. They are **not** sponsor-approved and are not legal advice.
+  - See [docs/SPONSOR-ALIGNMENT.md](docs/SPONSOR-ALIGNMENT.md).
 - **Cases are adapted public records.** They come from a redacted public CBP release; see [Data and provenance](#data-and-provenance). The original records are not an answer key.
 - **Evaluation scores are internal.** Planted-error test cases are team-created until Unissant supplies its test set. The single untouched held-out run does not meet the detection and incorrect-flag targets.
 - **The shared endpoint can be slow.** Some reviews hit the 55-second limit and are reported as partial reviews.

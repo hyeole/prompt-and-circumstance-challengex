@@ -159,3 +159,32 @@ The general fixes are in commit `2c9e2d4`. Any held-out number after that is **p
 **Reports.** 37 one-page reports, exported from the production build and checked by `tools/verify_reports.py`. All pass: 1 page, no clipping, footer, human-review marker, every evidence reference, no partial notice where none is due. The 4 partial reviews from the post-hoc run were also exported and pass with the notice present. Combined file: `docs/reports/narrativecheck-case-reports.pdf` (800 KB).
 
 **Demo.** All six beats verified live, then recorded. The beat log during recording matched (see `docs/DEMO-SCRIPT.md`). MP4 conversion is not available on this Mac (Playwright's encoder is VP9-only), so the video is `.webm`.
+
+## 2026-10-30 (Fri) Reliability, sponsor alignment, multi-page app, fresh evaluation
+
+**Reliability:**
+- Traced the final run's 5 wrong flags and 2 misses to source.
+- Extraction v2 records country, event type and uncertainty; attribution is decided in code (only literal "Subject" counts).
+- Claim-support check: dates and times a claim relies on must appear in its evidence.
+- From the adjudicated sample comparison:
+  - PWA/EWI vs "crossed illegally" is no longer a conflict;
+  - Mexico entries are no longer evidence for U.S.-entry conflicts;
+  - removal-supported reentry citations are no longer called mismatches.
+- 1 vs 2 samples: kept 2 (weak evidence, documented in `eval/RUNS.md`).
+
+**Sponsor clarification.** Unissant will not provide a reference sheet or checklist and gave a six-row guidance table.
+- Preserved verbatim.
+- Traceability and gap audit in `docs/SPONSOR-ALIGNMENT.md`.
+- Checklist v2 adds N1–N8, case context, and "not applicable" / "applicability unclear".
+- Legacy scores keep their v1 definitions.
+
+**Multi-page app:**
+- Workspace, Cases (with intake and preview), Review, Review history, References, Report and Audit.
+- Local store with immutable versions and officer decisions.
+- Evidence explorer with side-by-side conflicts.
+- Production build checked; `scripts/e2e-workflow.mjs` passes 18/18 live checks.
+
+**Datasets:**
+- **Legacy benchmark:** 37 cases, unchanged.
+- **dev-synthetic-v1:** 12 cases. Development run: recall 4/6, checklist expectations 50/50, 1 should-not-flag violation (unattributable entry year, kept as a known limitation).
+- **fresh-v1:** 28 cases, prepared and frozen (tag `fresh-eval-v1-frozen`) before its single run.

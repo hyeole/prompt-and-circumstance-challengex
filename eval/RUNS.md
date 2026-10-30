@@ -75,3 +75,15 @@ These are post-tuning diagnostic runs. Each configuration ran twice, and every f
 - One missed prior-removal extraction.
 
 These are inputs for the next reliability step. They are not fixed in these runs.
+
+## fresh-v1 (independent internal evaluation)
+
+| Run | Label | Code | Result |
+|---|---|---|---|
+| **2026-10-30T02-48-46** | **fresh-v1 internal evaluation (untouched)** | tag `fresh-eval-v1-frozen` = `ab6feb6` | recall 71% (12/17), incorrect flags 30% (11/37), routing 2/2, checklist 95%, should-not-flag violations 2, evidence 100%, p50 19.8s. See `eval/fresh/RESULT.md` |
+
+## dev-synthetic-v1 (development)
+
+| Run | Label | Code | Result |
+|---|---|---|---|
+| 2026-10-30T02-40-21 | development | `a5ba61b` | recall 4/6, incorrect flags 25% (2/8), checklist 50/50, should-not-flag violations 1 |
