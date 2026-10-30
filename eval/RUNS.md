@@ -197,3 +197,7 @@ See `eval/EVALUATION-e4dd17b.md`. It covers both adjudication layers, flags by c
 | dev-synthetic | 100% | 100% (6/6) | 0/10 / 0/10 | 0% |
 | fresh-v1 | 96% | 53% (9/17) | 0/25 / 0/25 | 22% (4/18) |
 | legacy | 97% | 71% (22/31) | 3/62 / 1/62 | 7% (1/15) |
+
+## Planned evaluation of the final build `4b10d72`
+
+See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 incorrect flags; the claim layer gives 0/11, 0/26 and 2/63. Completion is 100%, 96% and 95%; strict recall 6/6, 9/17 and 21/31; unnecessary routing 0%, 22% and 7%; no should-not-flag violations. Five known limitations are listed there as candidates for the next change.

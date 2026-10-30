@@ -617,7 +617,7 @@
       "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|history.immigration_record",
       "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
       "claims": [],
-      "status": "uncertain: 2 instances make different claims"
+      "status": "uncertain: 3 instances make different claims"
     },
     {
       "base": "DS06",
@@ -915,6 +915,24 @@
         "F-HISTORY-3 | NEGATIVE>NEGATIVE | form>narrative | neg | field:history.immigration_record,subject/Prior removal"
       ],
       "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|stated that he left his home city of azacualpa in the state",
+      "example": "C037-CIT U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|five subjects stated that they did not have any immigration",
+      "example": "F051-E U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
     }
   ],
   "manual": [
@@ -958,6 +976,26 @@
       "note": "Correction (case-specific): this variant removed the crossing sentences, which were the facts meeting the cited ground, so 'section cited without the facts that satisfy it' is true here. The original false-flag verdict was made for the base narrative and wrongly applied to this variant (2026-10-30T03-16-09 adjudication error).",
       "example": "C037-M3 U-N5 Unclear: specific ground stated and explained",
       "run": "2026-10-30T06-49-35",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS08",
+      "key": "unclear|on september 12 2023 at approximately 1130 hours the subject",
+      "claim": "U-N1 |  | - | neg | ?/?",
+      "verdict": "valid_observation",
+      "note": "Manual (claim-specific): the variant removed the documents presented, so no identity document is stated. In the default layer this flag inherited the verdict recorded for DS08's N2 finding (same sentence, different claim).",
+      "example": "DS08 U-N1 Unclear: identifying documents",
+      "run": "2026-10-30T07-18-04",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|history.immigration_record",
+      "claim": "citation |  | narrative>form | neg | ?/?,field:history.immigration_record",
+      "verdict": "valid_observation",
+      "note": "Manual (claim-specific): the explanation accurately describes the planted NEGATIVE-record vs documented-removal conflict, labelled as a citation mismatch (mis-categorised; no detection credit). Fix-4 gap: 'the form indicates no prior removal' was read as negating the narrative's support, so the verdict was not marked unresolved.",
+      "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "run": "2026-10-30T07-32-13",
       "date": "2026-10-30"
     }
   ]
