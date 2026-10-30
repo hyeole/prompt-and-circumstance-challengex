@@ -209,3 +209,20 @@ Also fixed from the post-tuning runs' false flags:
 - a corrected first answer is not a second entry year (FS02);
 - a model "mismatch" that says the narrative supports the charge is routed (F075-X);
 - mixed model claims keep their supported date or place part instead of being dropped.
+
+## 2026-10-30: Reliability closeout
+**Fixes.** Five independently reproduced defects were fixed (`f5d952b`), each reproduced first:
+- **A. Routing reasons:** a reason is removed only in the parts shown to depend on one specific invalid claim.
+- **B. Claim keys:** claim v2 records source, polarity and topic per clause.
+- **C. Scorer matching (policy v2.4):** the conflict must be about the planted fact and event, and an ambiguity plant needs a finding about conflicting accounts.
+- **D. Attribution:** per-clause subject wording; the group-entry veto is scoped to the statement's own account; contradictions within one continuous account are reported without attributing them.
+- **E. Entry location:** the location must belong to an affirmative entry clause.
+
+**Verification.** 199 tests pass. Of the 24 new tests, 12 defect tests fail on `0810a78`, and the 12 controls pass on both. Also checked: production build, e2e 23/23, and token logging for the timeout diagnosis.
+
+**Final planned evaluation** (frozen `7efb231`):
+- 78% strict detection (target not met), 2% incorrect flags (target met);
+- details in `eval/EVALUATION-closeout-7efb231.md`;
+- C003-AMB's detection depended on a fact-call timeout and is disclosed as a robustness caveat.
+
+**Deliverables.** 77 one-page reports verified. Demo verified (second run) and recorded with captions that describe only actual output.

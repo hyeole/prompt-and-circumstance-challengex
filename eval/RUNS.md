@@ -220,3 +220,13 @@ See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 in
   - C003 and C013 were partial (fact-call timeouts);
   - C012 was routed by the model's own reasons for a claim the code withheld.
 - **Full report:** `eval/TARGETED-VERIFICATION-d95d075.md`.
+
+## Final planned evaluation: rc-closeout (`7efb231`; source `f5d952b`), post-tuning, not held-out
+- **Runs:** dev `2026-10-30T15-57-53`, fresh `2026-10-30T16-00-38`, legacy `2026-10-30T16-10-34`. Each case ran once.
+- **Scoring:** policy v2.4 frozen before the run; claim v2 layer.
+- **Results:**
+  - strict detection 78% (42/54); 74% (40/54) with the C003-AMB caveat;
+  - incorrect flags 2/100 (claim layer) and 4/100 (original-record layer);
+  - completion 75/77; unnecessary routing 3/43; 0 should-not-flag violations.
+- **Same policy (v2.4, original-record layer) against checkpoint `4b10d72`:** detection 36/54 → 42/54; incorrect 5/101 → 4/100.
+- **Report:** `eval/EVALUATION-closeout-7efb231.md`. Historical v2.3 results are unchanged; their v2.4 rescoring is in `summary-v2.4.json` beside each run.

@@ -112,6 +112,22 @@ These findings do not claim the account is this subject's, and make no compariso
 
 **Detection stays below 90% under every alternative.** The gap is the 7 attribution-limited plants and 1 timeout. Counting a routing item that names the sentence as detection would contradict the declared policy, so it is not reported as a score.
 
+## Robustness caveat (found after the run; disclosed, not patched)
+**C003-AMB.** Its two plants were detected in this run by the within-account check, but its fact call had timed out, so the check ran without the extractor's "not a U.S. entry" classifications.
+- In the live demo verification on the same build the fact call succeeded. There, C003-AMB was routed with S42 named, and no within-account finding was produced.
+- The likely cause is that the extractor classifies one of the two sentences as not a U.S. entry. The extracted facts are not stored, so this is **not confirmed**.
+- F055-A and C012-X1 were detected with successful fact calls.
+- Counting C003-AMB as routed gives **74% (40/54)** strict detection. This is a missed detection, not a false flag. The evaluated build is unchanged, and no patch has been made.
+
+## Demo (illustrative)
+`scripts/verify-demo.ts` passed all six beats on the second run; the first run's two failures are kept in `docs/demo-verification.md`. The recording is `recordings/narrativecheck-demo-2026-10-30T16-59-37.webm` (git-ignored; delivered separately). Every review in it is a live call.
+
+**Four recordings were made**, and all are kept on disk:
+1. The first had captions that assumed results the live review did not return.
+2. The second still had one such caption.
+3. The third started from a narrative the first recording had edited and saved. That edit was set aside to `tmp/store-backup/`, so the sample case starts from its original text.
+4. The fourth is the delivered one. Its captions describe only what each live review returned. It shows a partial review (C037-X1) as it happened.
+
 ## Same-policy comparison with checkpoint `4b10d72` (v2.4, original-record layer)
 | | Completion | Strict detection | Incorrect flags | Unnecessary routing |
 |---|---|---|---|---|

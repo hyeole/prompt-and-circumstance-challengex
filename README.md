@@ -72,9 +72,15 @@ Later runs after error analysis are **post-hoc** and do not replace this result.
 
 ## Reports and demo
 
-- **One-page gap reports** for all 37 test cases: [docs/reports/narrativecheck-case-reports.pdf](docs/reports/narrativecheck-case-reports.pdf). They were generated from the final post-tuning run, and each was checked automatically (`tools/verify_reports.py`).
-- **Demo video:** a captioned 3-minute walkthrough of the production build with live reviews. Link to be added once it is uploaded. The beats were verified before recording ([docs/demo-verification.md](docs/demo-verification.md)), and the shot list is in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
-- **Final post-tuning run** on the shipped code (not a held-out claim): 94% strict detection, 12% incorrect flags (10% target not met), 100% routing, 100% evidence validity, 100% completion. See [eval/RUNS.md](eval/RUNS.md).
+- **One-page gap reports** for all 77 evaluation cases: [docs/reports/narrativecheck-case-reports.pdf](docs/reports/narrativecheck-case-reports.pdf).
+  - They were generated from the saved results of the final evaluation of build `7efb231`.
+  - Every report was checked automatically (`tools/verify_reports.py`): 77 of 77 pass, and the 2 partial reviews show the partial-review notice.
+- **Demo video:** a captioned walkthrough of the evaluated production build with live reviews. It is illustrative, since live output varies. The link will be added once it is uploaded. Beats were verified before recording ([docs/demo-verification.md](docs/demo-verification.md)); the shot list is in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
+- **Final planned evaluation** (post-tuning, not held-out) of the frozen build `7efb231` on all three datasets (77 cases): [eval/EVALUATION-closeout-7efb231.md](eval/EVALUATION-closeout-7efb231.md).
+  - **Strict detection: 78% (42/54).** The 90% target is **not met**. It is 74% (40/54) counting C003-AMB as routed (robustness caveat).
+  - **Incorrect flags: 2% (2/100)** in the claim-aware layer, 4% (4/100) in the original-record layer. The 10% target is met.
+  - **Other measures:** completion 97% (75/77), unnecessary routing 7% (3/43), 0 should-not-flag violations, evidence quotes match the source text 100%.
+  - **Remaining misses:** mostly genuine attribution uncertainty in multi-person narratives, routed to a person with the statement named.
 
 ## Important limitations
 
@@ -84,8 +90,8 @@ Later runs after error analysis are **post-hoc** and do not replace this result.
   - See [docs/SPONSOR-ALIGNMENT.md](docs/SPONSOR-ALIGNMENT.md).
 - **Cases are adapted public records.** They come from a redacted public CBP release; see [Data and provenance](#data-and-provenance). The original records are not an answer key.
 - **Evaluation scores are internal.** Planted-error test cases are team-created until Unissant supplies its test set. The single untouched held-out run does not meet the detection and incorrect-flag targets.
-- **The shared endpoint can be slow.** Some reviews hit the 55-second limit and are reported as partial reviews.
-- **Redacted names** often make it impossible to tell which person a statement belongs to. The app notes this and does not assume.
+- **Fact extraction can time out.** 2 of 77 reviews in the final evaluation hit the 55-second limit and were reported as partial. Duration tracks the generated tokens (r = 0.96) at a steady rate, so long generations are the likely cause. This is not proven for the failed calls, and no limit was raised.
+- **Redacted names** often make it impossible to tell which person a statement belongs to. The app routes such statements to a person and names them; it does not assume. This is the main reason the detection target is not met.
 - The tool is decision support. Its output is not a legal determination.
 
 ## Run it

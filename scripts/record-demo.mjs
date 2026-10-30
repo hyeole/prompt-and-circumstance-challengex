@@ -4,7 +4,7 @@
  * Reviews run here are saved to the local store like any officer's review.
  *
  * Usage:  npm run build && npm start (key configured), then
- *         node scripts/record-demo.mjs [--clean C045]
+ *         node scripts/record-demo.mjs [--clean C119]
  * Output: recordings/narrativecheck-demo-<timestamp>.webm (git-ignored), and a log of what each live review returned.
  * Needs once: npx playwright-core install ffmpeg
  */
@@ -13,7 +13,7 @@ import { mkdirSync, renameSync } from "node:fs";
 
 const arg = (k, d) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = process.env.DEMO_BASE_URL ?? "http://localhost:3000";
-const CLEAN = arg("clean", "C045");
+const CLEAN = arg("clean", "C119");
 const OUT = "recordings";
 mkdirSync(OUT, { recursive: true });
 
@@ -57,6 +57,7 @@ async function openFinding(re) {
 
 // 0. Workspace and Cases
 await go("/", "NarrativeCheck reviews an officer's narrative, the case facts and the selected charge. It never rewrites the narrative or picks the charge.");
+await caption("Illustrative demo: every review is a real live call, and live model output can vary between runs. Measured results are in the evaluation report.", 4.5);
 await caption("The Workspace shows real saved statuses and the officer actions still pending.", 4);
 await page.getByRole("link", { name: "Cases", exact: true }).first().click();
 await page.waitForURL("**/cases");
@@ -76,9 +77,11 @@ await page.getByRole("tab", { name: /findings/i }).click();
 // 2. Missing detail, correction, fresh review, history
 await go("/review/C012-M2", "Test variant C012-M2: the team removed the place of entry from the narrative and the form.");
 await runReview();
-await openFinding(/place of last entry|Missing/i);
-await caption("A missing fact has no text to highlight, so the evidence says 'Not stated'.", 4);
-await caption("The officer adds the missing detail in their own words.", 2.5);
+const placeFlagged = await openFinding(/place of last entry/i);
+await caption(placeFlagged
+  ? "A missing fact has no text to highlight, so the evidence says 'Not stated'."
+  : "In this live review the missing place of entry was not reported. Live output varies; measured results are in the evaluation report.", 4);
+await caption("The officer adds the place of entry in their own words.", 2.5);
 await page.getByRole("button", { name: "Edit narrative" }).click();
 const ta = page.locator("#narrative-edit");
 await ta.fill((await ta.inputValue()).replace("via a river.", "via a river near Laredo, Texas."));
@@ -88,15 +91,21 @@ await caption("After an edit, the saved review is marked outdated until a fresh 
 await runReview();
 await page.getByRole("link", { name: "History", exact: true }).click();
 await page.waitForURL("**/history");
-await caption("Review history keeps every version. The officer's edit is shown word by word, and the missing-place finding is listed as resolved.", 6);
+await caption(placeFlagged
+  ? "Review history keeps every version. The officer's edit is shown word by word, and the missing-place finding is listed as resolved."
+  : "Review history keeps every version, and the officer's edit is shown word by word.", 6);
 
 // 3. Contradiction, evidence explorer, officer decision
 await go("/review/C037-X1", "Test variant C037-X1: the team changed the crossing date in the narrative to 2012; the form records 2009.");
 await runReview();
-(await openFinding(/date|year|differ/i)) || (await page.locator(".finding-head").first().click());
-await caption("The evidence explorer shows the narrative statement and the form field side by side, with the exact quote and who it is about.", 6);
+// Captions describe only what this live review actually returned.
+const dateShown = await openFinding(/date differs|entry date|year/i);
+if (dateShown) await caption("The evidence explorer shows the narrative statement and the form field side by side, with the exact quote and who it is about.", 6);
+else if (/incomplete|partial/i.test((await page.locator(".header .pill").textContent()) ?? ""))
+  await caption("This live review was partial: a required check did not finish, so the date comparison was not made. The tool says so instead of reporting 'no conflict'.", 6);
+else await caption("In this live review the date conflict was not reported. Live output varies; measured results are in the evaluation report.", 6);
 const note = page.locator('input[id^="note-"]').first();
-if (await note.count()) {
+if (dateShown && (await note.count())) {
   await note.fill("Will confirm the manner of entry with the subject.");
   await page.getByRole("button", { name: "Acknowledged" }).first().click();
   await caption("The officer's decision and note are saved separately; the finding itself is never changed.", 4);
@@ -105,7 +114,11 @@ if (await note.count()) {
 // 4. Ambiguity and multi-charge
 await go("/review/C003-AMB", "Test variant C003-AMB: a second, conflicting account of how the subject entered.");
 await runReview();
-await caption("Several people are described and names are redacted, so the tool does not decide whose account this is. It routes the case to a person and names the statement.", 5);
+const named = (await page.locator(".hr-account", { hasText: /S42/ }).count()) + (await page.locator(".finding-head", { hasText: /contradicts itself/ }).count()) > 0 ||
+  (await page.getByText(/S42/).count()) > 0;
+await caption(named
+  ? "Several people are described and names are redacted, so the tool does not decide whose account this is. It routes the case to a person and names the statement."
+  : "In this live review the second account was not named. Live output varies; measured results are in the evaluation report.", 5);
 await go("/review/C001-MC", "Test variant C001-MC: two charges are selected.");
 await runReview();
 await caption("Multi-charge cases always go to human review. The tool does not choose between the charges.", 4);

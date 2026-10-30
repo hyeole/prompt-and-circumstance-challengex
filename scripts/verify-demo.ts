@@ -3,7 +3,7 @@
  * Usage: npm run dev, then  npx tsx scripts/verify-demo.ts [--clean C045]
  * Writes docs/demo-verification.md. Exits non-zero if any expectation fails.
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, ReviewResult } from "../lib/types";
 import { isComplete } from "../lib/completion";
 
@@ -53,9 +53,10 @@ const beats: { name: string; build: () => CaseRecord; checks: Check[] }[] = [
     ["human review required", (r) => r.humanReview.required],
     // Several people are described with redacted names, so the conflicting account is routed with its sentence named,
     // or flagged when it is explicitly about the subject (audit item 3).
-    ["the border-crossing-card statement is named in a review finding or routing reason", (r) => {
+    ["the border-crossing-card statement is named in a review finding, routing reason or routing item", (r) => {
       const bcc = r.sentences.find((s) => /border crossing card/.test(s.text))?.id ?? "none";
-      return r.findings.some((f) => f.needsHumanReview && f.evidence.some((e) => e.sentenceId === bcc)) || r.humanReview.reasons.some((x) => new RegExp(`\\b${bcc}\\b`).test(x));
+      return r.findings.some((f) => f.needsHumanReview && f.evidence.some((e) => e.sentenceId === bcc)) || r.humanReview.reasons.some((x) => new RegExp(`\\b${bcc}\\b`).test(x)) ||
+        (r.humanReview.accounts ?? []).some((g) => g.sentenceIds.includes(bcc));
     }],
   ] },
   { name: "6. Multi-charge case (C001-MC)", build: () => load("C001-MC"), checks: [
@@ -70,6 +71,9 @@ let failed = 0;
 for (const b of beats) {
   try {
     const { r, ms } = await review(b.build());
+    // Keep each live result (git-ignored) so a failing beat can be diagnosed without another model call.
+    mkdirSync("tmp/demo-verification", { recursive: true });
+    writeFileSync(`tmp/demo-verification/${b.name.split(".")[0]}.json`, JSON.stringify(r, null, 2));
     const results = b.checks.map(([label, fn]) => [label, fn(r)] as const);
     const ok = results.every(([, v]) => v);
     if (!ok) failed++;

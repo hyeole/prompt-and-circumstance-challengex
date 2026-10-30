@@ -47,6 +47,16 @@ npm test          # unit tests, no key needed
 npm run eval      # live evaluation against team test cases (needs the key)
 ```
 
+## 5. Reproduce the final evaluation's scores (no key, no model calls)
+The saved raw results of the final evaluation are included in the delivery ZIP. They are not in Git.
+```bash
+npx tsx scripts/score-eval.ts eval/runs/2026-10-30T16-10-34 --adjudication-claims
+npx tsx scripts/final-summary.ts eval/runs/2026-10-30T15-57-53 eval/runs/2026-10-30T16-00-38 eval/runs/2026-10-30T16-10-34
+```
+- The first command rescores the legacy run, and writes the summary beside the run.
+- The second prints the tables in `eval/EVALUATION-closeout-7efb231.md`.
+- Re-running the evaluation itself needs the key, and calls the model once per case: `npx tsx scripts/run-eval.ts --dataset <dir> --split all --concurrency 1` against `npm run build && npm start`.
+
 ## If the key leaks
 
 If the key ever appears in a commit, screenshot, or recording: stop, do not push, tell the team, ask Unissant to revoke and reissue it, and clean the Git history before publishing.
