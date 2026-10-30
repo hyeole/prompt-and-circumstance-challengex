@@ -33,11 +33,12 @@ export function applies(item: ChecklistItem, ctx: { contexts: CaseContext[] }): 
 const CITATION_RE = /\b(?:INA|Section|section)?\s*\b(?:212|237|235|275|276)\s*\(\s*a\s*\)|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}/i;
 const EXPLAINS_RE = /\b(in that|because|as an alien|who (has|was|is|arrived|entered)|without (being )?(admitted|paroled|inspected)|remained .* longer than permitted|after (admission|removal|being removed))\b/i;
 const GENERIC_RE = /\b(not credible|not a bona fide|lack(s|ed)? credibility)\b/i;
-const DISPOSITION_RE = /\b(notice to appear|\bNTA\b|warrant of arrest|reinstate(d|ment)?|expedited removal order|I-860|voluntary (return|departure)|served (with )?a?|remanded|turned over to|transferred to (ICE|immigration)|detained pending|released on|processed (as|for) (a |an )?(WA\/NTA|NTA|reinstatement|expedited removal|voluntary))/i;
+export const DISPOSITION_RE = /\b(notice to appear|refused admission|permitted to withdraw|(was|were|has been|have been) (returned|removed) to|released (on|from|pending)|(held|detained) (at|in|pending)|remain(s|ed)? in (custody|detention)|\bWA\/NTA|\bNTA\b|warrant of arrest|reinstate(d|ment)?|expedited removal order|I-860|voluntary (return|departure)|served (with )?a?|remanded|turned over to|transferred to (ICE|immigration)|detained pending|released on|processed (as|for) (a |an )?(WA\/NTA|NTA|reinstatement|expedited removal|voluntary))/i;
+const BASIS_RE = /\b(illegal(ly)? (present|in the United States|entered)|without (any |valid )?(immigration )?(documents|documentation|status)|no (valid |legal )?(immigration )?(documents|documentation|status)|not in possession of any|overst(ay|ayed)|expired|altered|counterfeit|fraudulent(ly)?|fraud|misrepresent(ation|ed)?|invalid (passport|visa|document)|ordered removed|without permission to reapply)\b/i;
 const DOCUMENT_RE = /\b(passport|identification card|ID card|driver'?s license|birth certificate|visa\b|consular (ID|identification)|identity documents?|identification documents?|(no|any) (form of )?identification|did not (have|possess) any (identification|documents))\b/i;
 
 const DOCS_PRESENTED_RE = /\b(presented|presenting|showed|displayed|tendered)\b[^.]{0,80}\b(passport|visa|card|document|permit|license)|\b(passport|visa)\b[^.]{0,40}\b(presented|shown)\b/i;
-const PURPOSE_RE = /\b(purpose (of|for) (his|her|their|the) (trip|travel|visit)|purpose was|for (tourism|business|pleasure|a visit|a conference|medical)|intend(ed|s)? to (visit|work|study|stay|live)|(visit|visiting) (family|friends|relatives))\b/i;
+const PURPOSE_RE = /\b(purpose (of|for) (his|her|their|the) (trip|travel|visit)|purpose was|for (tourism|business|pleasure|a visit|a conference|medical)|intend(ed|s)? to (visit|work|study|stay|live)|(visit|visiting) (a |his |her |their )?(family|friends?|relatives?|cousins?|sons?|daughters?|parents?|brothers?|sisters?|girlfriends?|boyfriends?))\b/i;
 const ADVISAL_RE = /\b(advised|informed|notified)\b[^.]{0,60}\b(charge|inadmissib|removab)/i;
 const RESPONSE_RE = /\b(sworn statement|I-867|opportunity to respond|given (an|the) opportunity|asked (if|whether) (he|she|they) (had|wished|wanted)[^.]{0,40}(add|say|respond))\b/i;
 
@@ -64,6 +65,11 @@ export function detect(item: ChecklistItem, c: CaseRecord, sentences: Sentence[]
     if (ids.length) return { ...base, status: "present", sentenceIds: ids.slice(0, 3), note: "The narrative states the action taken." };
     if (f) return { ...base, status: "present", sentenceIds: [], fieldPaths: [f.path], note: "Recorded in the form's disposition field." };
     return null; // let the model look for less common wording
+  }
+  if (item.id === "E6") {
+    // Basis for the violation: lack of status or documents, overstay, or a fraudulent/invalid document at a port.
+    const ids = sentencesMatching(sentences, BASIS_RE);
+    return ids.length ? { ...base, status: "present", sentenceIds: ids.slice(0, 3), note: "The narrative states the facts behind the violation." } : null;
   }
   if (item.id === "N3") {
     // Application for admission: documents presented AND purpose of travel (the port itself is usually on the form).

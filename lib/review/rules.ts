@@ -72,7 +72,7 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
   // 3. Multiple people in one narrative. Informational only: in the public source the names are redacted,
   // so statements cannot always be attributed. This is a property of the data, not an officer omission.
   const notes: string[] = [];
-  const multi = sentences.filter((s) => /\b(subjects|individuals|(two|three|four|five|both) (subjects|individuals|people|persons|men|women)|all subjects)\b/i.test(s.text));
+  const multi = sentences.filter((s) => /\b(subjects|individuals|passengers|occupants|(two|three|four|five|six|both) (subjects|individuals|people|persons|men|women|passengers|occupants|aliens)|all (subjects|three|four|five)|both of them)\b/i.test(s.text));
   if (multi.length >= 2)
     notes.push(`The narrative describes more than one person (for example ${multi[0].id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
 

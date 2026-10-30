@@ -8,7 +8,8 @@ import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory } from "./facts";
 import { unsupportedValues } from "./support";
-import { applies, caseContext, detect, type ChecklistItem } from "./checklist";
+import { applies, caseContext, detect, DISPOSITION_RE, type ChecklistItem } from "./checklist";
+import { attribution } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
 
@@ -172,6 +173,11 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     if (m.status === "unavailable") return { elementId: el.id, label: el.label, status: "unavailable_redacted", sentenceIds: validIds, fieldPaths: [], note: m.note };
     return { elementId: el.id, label: el.label, status: m.status, sentenceIds: validIds, fieldPaths: [], note: m.note };
   });
+  // N7 (disposition): a model "present" must cite disposition wording; an arrest is not a disposition.
+  const n7 = elements.find((e) => e.elementId === "N7");
+  if (n7 && n7.status === "present" && !n7.fieldPaths.length && !n7.sentenceIds.some((id) => DISPOSITION_RE.test(sentences.find((x) => x.id === id)?.text ?? ""))) {
+    Object.assign(n7, { status: "absent", sentenceIds: [], note: "No sentence states the action taken (an arrest alone is not a disposition)." });
+  }
   // Cross-check E6 (basis for the violation): a verified statement with lack-of-status wording establishes it, so a
   // model "absent"/"unclear" here is not reported (e.g. "asked if he was present illegally, and he advised yes").
   const e6 = elements.find((e) => e.elementId === "E6");
@@ -235,10 +241,19 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
       const byS = usEntryMannerBySentence(sentences, factsSettled.v);
       const cited = verified.filter((v) => v.sentenceId).map((v) => byS.get(v.sentenceId!));
       const otherFields = verified.filter((v) => v.fieldPath && v.fieldPath !== "entry.manner");
-      if (formCat && cited.length > 0 && cited.every((m) => m === formCat) && otherFields.length === 0) {
+      // Also when combined with date/place points: a claim whose manner part is wrong is not a valid conflict.
+      if (formCat && cited.length > 0 && cited.every((m) => m === formCat) && (otherFields.length === 0 || /\b(manner|PWA|EWI|AFOOT|on foot|walk|swim|swam|river|cross)/i.test(iss.explanation))) {
         discarded.push({ title: iss.title, reason: `The form code "${mannerField.quote}" and the cited narrative statement describe the same manner of entry.` });
         return;
       }
+    }
+    // (1c) In a narrative about several people, a statement whose subject cannot be attributed (redacted names) is not
+    // evidence against THIS subject's history fields.
+    const multiPerson = rules.notes.length > 0;
+    if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.")) &&
+        verified.some((v) => v.sentenceId && attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear") !== "subject")) {
+      discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's history." });
+      return;
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
     const evTexts = verified.map((v) => (v.sentenceId ? sentences.find((x) => x.id === v.sentenceId)?.text ?? "" : v.quote ?? ""));
@@ -272,7 +287,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   let factsStatus: "ok" | "failed" = "failed";
   if (factsSettled.ok) {
     factsStatus = "ok";
-    const cmp = compareFacts(c, sentences, factsSettled.v);
+    const cmp = compareFacts(c, sentences, factsSettled.v, rules.notes.length > 0);
     for (const ff of cmp.findings) {
       const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
       for (let i = findings.length - 1; i >= 0; i--) {

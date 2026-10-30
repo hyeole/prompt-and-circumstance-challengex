@@ -114,7 +114,9 @@ const ctx = (ev: EvidenceRef, attribution: "subject" | "unclear" | "other", even
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
-export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput): { findings: Finding[]; dropped: number } {
+const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
+
+export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson = false): { findings: Finding[]; dropped: number } {
   const findings: Finding[] = [];
   let dropped = 0;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
@@ -139,7 +141,13 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const fy = field("entry.date") ? formYear(field("entry.date")!.value) : undefined;
   if (fy) {
     const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy);
-    const off = entries.find((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && (x.attr === "subject" || !subjectAgrees));
+    // A differing year that the narrative itself marks as a first answer later corrected is a resolved discrepancy
+    // (sponsor S5), not a conflict, when the corrected account agrees with the form.
+    const correctedLater = (x: { v: Verified }) => {
+      const i = sentences.findIndex((s) => s.id === x.v.s.id);
+      return CORRECTION_RE.test(x.v.s.text) && sentences.slice(i + 1, i + 3).some((s) => /\b(corrected|explained|clarified)\b/i.test(s.text) && s.text.includes(String(fy)));
+    };
+    const off = entries.find((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && (x.attr === "subject" || !subjectAgrees) && !correctedLater(x));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
     if (off)
       findings.push({
@@ -191,7 +199,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 4. Prior removal described for the subject while the form's immigration record is NEGATIVE.
   const imm = field("history.immigration_record");
   if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
-    const rem = facts.removal_statements.filter((r) => r.person === "subject").map((r) => verify(sentences, r.sentence_id, r.quote)).find(Boolean);
+    // Attribution in code: explicitly "Subject", or an unattributed statement when the narrative describes only one person.
+    const rem = facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
+      .find((v) => v && (attribution(v.s, "unclear") === "subject" || !multiPerson));
     if (rem)
       findings.push({
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",

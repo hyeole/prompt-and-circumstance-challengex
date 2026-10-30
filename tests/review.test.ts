@@ -291,3 +291,56 @@ test("checklist v2: traveler's explanation (N6) is not applicable without a disc
   assert.equal(r.elements.find((e) => e.elementId === "N6")?.status, "absent");
   assert.ok(!r.findings.some((f) => f.referenceIds.includes("N6")), "advisory: shown in the checklist, not issued as a flag");
 });
+
+// ---- Regression tests for errors found in the fresh-v1 internal evaluation (post-tuning fixes) ----
+const loadF = (id: string) => JSON.parse(readFileSync(`eval/fresh/cases/${id}.json`, "utf8")) as CaseRecord;
+
+test("fresh FS08: 'visiting a friend for two weeks' is a stated purpose of travel", async () => {
+  const r = await reviewCase(loadF("FS08"), fake({}));
+  assert.equal(r.elements.find((e) => e.elementId === "N3")?.status, "present");
+});
+
+test("fresh F010-D: an arrest is not a disposition", async () => {
+  const c = loadF("F010-D");
+  const arrest = sid(c, "under arrest");
+  const r = await reviewCase(c, fake({ review: review({ elements: [{ element_id: "N7", status: "present", sentence_ids: [arrest], note: "Subject was placed under arrest" }] }) }));
+  assert.equal(r.elements.find((e) => e.elementId === "N7")?.status, "absent");
+  assert.ok(r.findings.some((f) => f.id === "M-N7"));
+});
+
+test("fresh FS06: an altered passport establishes the basis for the violation (E6)", async () => {
+  const r = await reviewCase(loadF("FS06"), fake({ review: review({ elements: [{ element_id: "E6", status: "absent", sentence_ids: [], note: "" }] }) }));
+  assert.equal(r.elements.find((e) => e.elementId === "E6")?.status, "present");
+});
+
+test("fresh FS02: a first answer the narrative corrects and explains is not an entry-date conflict", async () => {
+  const c = loadF("FS02");
+  const s = sid(c, "she entered in 2020");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [{ sentence_id: s, quote: "the subject said she entered in 2020", event: "us_entry", year: 2020, manner: "unknown", person: "unclear" }] }) }));
+  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")));
+});
+
+test("fresh FS10: an unattributed group member's deportation is not evidence against this subject's record", async () => {
+  const c = loadF("FS10");
+  const s = sid(c, "deported to Honduras");
+  const r = await reviewCase(c, fake({ review: review({ issues: [{ type: "inconsistency", title: "History record conflict", explanation: "Narrative reports a prior removal in 2019, but the form field indicates a negative immigration record.", evidence: [{ sentence_id: s, quote: "stated that he was deported to Honduras in 2019" }, { field_path: "history.immigration_record" }], needs_human_review: true, reason: "" }] }) }));
+  assert.ok(!r.findings.some((f) => f.title === "History record conflict"));
+});
+
+test("fresh F055: a combined date/place claim whose manner part misreads PWA is withheld", async () => {
+  const c = loadF("F055");
+  const s = sid(c, "crossing the Rio Grande River near Hildalgo");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Entry facts mismatch", explanation: "Form fields list entry date, place, and manner (PWA AFOOT) that differ from the river crossing.", evidence: [{ sentence_id: s, quote: "claims to have last entered the United States illegally by crossing the Rio Grande River" }, { field_path: "entry.date" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: s, quote: "claims to have last entered the United States illegally by crossing the Rio Grande River near Hildalgo, Texas", event: "us_entry", year: 2014, manner: "without_inspection", person: "unclear" }] }),
+  }));
+  assert.ok(!r.findings.some((f) => f.title === "Entry facts mismatch"));
+});
+
+test("a documented prior removal in a one-person narrative still contradicts a NEGATIVE record (code-side attribution)", async () => {
+  const c = load("C013-X1");
+  const s = sid(c, "received an Expedited Removal");
+  const r = await reviewCase({ ...c, narrative: { text: sentenceText(c, s) } } as CaseRecord, fake({ facts: facts({ removal_statements: [{ sentence_id: "S1", quote: "was arrested by Border Patrol and received an Expedited Removal", person: "unclear" }] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-HISTORY"));
+});
+function sentenceText(c: CaseRecord, id: string) { return splitSentences(c.narrative.text, c.narrative.pageSpans).find((x) => x.id === id)!.text; }
