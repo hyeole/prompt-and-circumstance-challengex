@@ -56,3 +56,19 @@ test("negative control: a rule-made finding for one element does not detect a di
   assert.equal(matches(r, n5, { type: "missing_element", elementId: "N3" }), false);
   assert.equal(matches(r, n5, { type: "missing_element", elementId: "N5" }), true);
 });
+
+// ---- Fix 5: an adjudication is inherited only for the same claim ----
+import { claimOf } from "../scripts/finding-key";
+test("claims: element findings by element, checks by id, free-text by normalized title (order and wording of 'mismatch' ignored)", () => {
+  assert.equal(claimOf("U-N1", "Unclear: identifying documents"), "N1");
+  assert.equal(claimOf("M-N5", "Missing: specific ground"), "N5");
+  assert.equal(claimOf("F-ENTRY-DATE", "Entry date differs from the form"), "F-ENTRY-DATE");
+  assert.equal(claimOf("C-1", "Possible citation mismatch: INA 212(a)(6)(A)(i)"), "citation");
+  assert.equal(claimOf("I-1", "Encounter time discrepancy"), claimOf("I-2", "Encounter time mismatch"));
+  assert.equal(claimOf("I-1", "Entry date and place mismatch"), claimOf("I-3", "Entry place and date mismatch"));
+});
+test("negative control: different claims on the same evidence do not share a claim", () => {
+  assert.notEqual(claimOf("U-N1", "Unclear: identifying documents"), claimOf("U-N5", "Unclear: specific ground stated and explained"));
+  assert.notEqual(claimOf("I-1", "Entry date conflict"), claimOf("I-1", "Entry manner conflict"));
+  assert.notEqual(claimOf("I-1", "Encounter time discrepancy"), claimOf("R-TIME-MISMATCH", "Encounter time differs between form and narrative"));
+});

@@ -151,3 +151,17 @@ test("history: an offered or declined removal did not happen", () => {
   assert.equal(isPriorRemoval("Subject was offered a Stipulated Removal, which he declined."), false);
   assert.equal(isPriorRemoval("He will be held pending removal proceedings."), false);
 });
+
+// ---- Fix 6: prior immigration encounters, kept distinct from removals ----
+import { isPriorImmigrationEncounter } from "../lib/review/facts";
+test("prior immigration encounters: Border Patrol arrests, voluntary returns and earlier NTAs count", () => {
+  assert.equal(isPriorImmigrationEncounter("He was previously arrested by U.S. Border Patrol on two separate occasions."), true);
+  assert.equal(isPriorImmigrationEncounter("The second event resulted in a Voluntary Return.", 2017), false, "no past marker and no earlier date");
+  assert.equal(isPriorImmigrationEncounter("On 04/28/1999 he was processed as a VR by USBP Douglas, AZ.", 2017), true);
+  assert.equal(isPriorImmigrationEncounter("The disposition of the apprehension on 12/20/2004 was a Notice to Appear.", 2017), true);
+});
+test("prior immigration encounters: the current arrest, criminal arrests and 'no prior' statements do not count", () => {
+  assert.equal(isPriorImmigrationEncounter("Agents placed him under arrest at 1330 hours and he was served a Notice to Appear.", 2017), false);
+  assert.equal(isPriorImmigrationEncounter("He was previously arrested by the Detroit Police Department for driving under the influence."), false);
+  assert.equal(isPriorImmigrationEncounter("Records showed no prior apprehensions by Border Patrol."), false);
+});

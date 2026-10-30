@@ -43,6 +43,28 @@ const BASIS_RE = /\b(illegal(ly)? (present|in the United States|entered)|without
 // Identifying documents: a document the person had, carried, presented or was identified by, or a statement that there
 // were none. Mentioning a document is not enough ("his visa application was denied" identifies no one: audit item 4).
 const ID_DOC = "(passport|identification card|ID card|driver'?s licen[cs]e|birth certificate|consular (ID|identification)( card)?|identity documents?|identification documents?|national (ID|identity card)|voter (ID|card)|cedula|border crossing card|visa)";
+// Place of entry (E2): the sentence must describe the subject's ENTRY (not an arrest or encounter) and locate it. A
+// descriptive location is enough (a named place, a port, a landmark, or a distance and direction from one); a proper
+// place name is not required, but generic wording ("via a river", "the border", "the desert") does not locate an entry.
+const ENTRY_ACT_RE = /\b(enter(ed|ing)?|entry|cross(ed|ing)?|arriv(ed|al|ing)|came (in)?to|swam|swimming|wad(ed|ing)|walk(ed|ing) (across|through|into)|jump(ed)? the fence|smuggled (in)?to|admitted|paroled|applied for admission)\b/i;
+const COUNTRY_RE = /^(the )?(United States|U\.?S\.?A?|America|Mexico|Canada|Guatemala|Honduras|El Salvador|Nicaragua)\b/i;
+export function locatesEntry(text: string): boolean {
+  if (!ENTRY_ACT_RE.test(text)) return false;
+  // Distance and direction from a reference point: "2 miles east of the port", "one mile west of Nogales".
+  if (/\b(\d+(\.\d+)?|one|two|three|four|five|a few|several)\s+(miles?|kilometers?|km)\s+(north|south|east|west|northeast|northwest|southeast|southwest|[NSEW]{1,2})\s+of\b/i.test(text)) return true;
+  // A named or specific crossing point: "the Laredo port of entry", "the Gateway International Bridge", "the Rio Grande".
+  if (/\b[A-Z][a-z]+(\s+[A-Z][a-z]+)*\s+(Port of Entry|port of entry|POE|International Bridge|Bridge|River|Canal|Desert|Mountains?)\b/.test(text) && !/\bBorder Patrol\b\s+(River|Bridge)/.test(text)) return true;
+  // A place after a locating preposition, excluding country-level names: "near Nogales, Arizona", "into Texas".
+  for (const m of text.matchAll(/\b(near|at|in|into|through|outside( of)?|by|along|from|via)\s+((the\s+)?[A-Z][a-zA-Z.]+(\s+[A-Z][a-zA-Z.]+)*)/g)) {
+    const place = m[3];
+    if (COUNTRY_RE.test(place) || /^(the\s+)?(Border|Port|International|Immigration|Border Patrol|Agent|Agents|Officer|CBP|ICE|REDACTED)\b/i.test(place)) continue;
+    if (/^(January|February|March|April|May|June|July|August|September|October|November|December|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/.test(place)) continue;
+    return true;
+  }
+  return false;
+}
+// An arrest or encounter sentence without any entry act describes where the person was found, not where they entered.
+
 export const DOCUMENT_RE = new RegExp(`\\b(had|has|have|carried|carrying|possess(ed|ing)?|in (his|her|their) possession|presented|presenting|produced|provided|showed|displayed|tendered|found|identified (himself|herself|themselves|him|her|them)? ?(with|by|using)|using|received (a copy of)?|obtained|seized|surrendered|copy of)\\b[^.]{0,60}\\b${ID_DOC}s?\\b|\\b${ID_DOC}s?\\b[^.]{0,30}\\b(was|were) (found|presented|produced|located|seized)\\b|\\b(no|any|without) (form of |valid )?(identification|identity documents?|documents)\\b(?! (allowing|that (would )?allow|to (be|remain|live|enter|stay)|permitting))|\\bdid not (have|possess) any (identification|documents)\\b`, "i");
 
 const DOCS_PRESENTED_RE = /\b(presented|presenting|showed|displayed|tendered)\b[^.]{0,80}\b(passport|visa|card|document|permit|license)|\b(passport|visa)\b[^.]{0,40}\b(presented|shown)\b/i;

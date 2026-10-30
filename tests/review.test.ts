@@ -600,3 +600,74 @@ test("F075-H: a voluntary return is not a removal, so it is neither a removal co
   assert.ok(!r.findings.some((x) => x.id === "F-HISTORY"));
   assert.ok(!r.humanReview.reasons.some((x) => x.includes(s) && /cannot be attributed/.test(x)));
 });
+
+// ---- Fixes 1, 2, 4, 6 (post-tuning) ----
+test("fix 2: an unattributed conflicting account becomes one clarity finding that shows the account and the uncertainty (F010-X)", async () => {
+  const c = loadF("F010-X");
+  const s = sid(c, "May 5, 2014");
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  const a = r.findings.filter((x) => x.id.startsWith("U-ACCOUNT"));
+  assert.equal(a.length, 1);
+  assert.equal(a[0].category, "unclear");
+  assert.ok(a[0].needsHumanReview);
+  assert.match(a[0].explanation, /gives 2014 for the entry; the form records the last entry in 2011/);
+  assert.match(a[0].explanation, /not treated as a contradiction/);
+  assert.deepEqual(a[0].evidence.map((e) => e.sentenceId ?? e.fieldPath), [s, "entry.date"]);
+  assert.ok(!r.findings.some((x) => x.category === "inconsistency"), "no contradiction is claimed");
+});
+
+test("fix 2: no account finding duplicates a statement an existing finding already cites", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok(!r.findings.some((x) => x.id.startsWith("U-ACCOUNT")));
+});
+
+test("fix 1: a routed account about the entry qualifies 'consistent' for an entry-manner charge (F010-X)", async () => {
+  const c = loadF("F010-X");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }), facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /cannot be attributed/);
+});
+
+test("fix 1: an account about a past entry does not qualify a port-of-entry application charge (not relevant to it)", async () => {
+  const c = loadD("DS07");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "consistent");
+});
+
+test("fix 4: a 'mismatch' whose explanation says the narrative documents the requirement, without verified support, is unresolved (C013-X1)", async () => {
+  // C013-X1: several people, the removals are unattributed, so nothing verified establishes this subject's prior removal.
+  const c = load("C013-X1");
+  const s = sid(c, "received an Expedited Removal");
+  const r = await reviewCase(c, fake({
+    review: review({ citation: { status: "likely_mismatch", explanation: "The selected charge requires prior removal, which the narrative documents.", evidence: [{ sentence_id: s, quote: "received an Expedited Removal" }] } }),
+    facts: facts({ removal_statements: [{ sentence_id: s, quote: "was arrested by Border Patrol and received an Expedited Removal", person: "unclear" }] }),
+  }));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /Unresolved: the model's verdict is "likely mismatch", but its own explanation/);
+  assert.ok(!r.findings.some((x) => x.id === "C-1"));
+});
+
+test("fix 4: a 'mismatch' that says the narrative does NOT document the requirement stays a mismatch", async () => {
+  const c = load("C119-CIT");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation: "The selected charge requires a prior removal, but the narrative does not document one.", evidence: [{ field_path: "history.immigration_record" }] } }) }));
+  assert.equal(r.citation.status, "likely_mismatch");
+});
+
+test("fix 6: prior Border Patrol arrests about the subject while the record is NEGATIVE are a clarity item, not a removal conflict (F039)", async () => {
+  const r = await reviewCase(loadF("F039"), fake({}));
+  const f = r.findings.find((x) => x.id === "F-HISTORY-3");
+  assert.ok(f);
+  assert.equal(f!.category, "unclear");
+  assert.ok(!r.findings.some((x) => x.id === "F-HISTORY"));
+});
+
+test("fix 6: unattributed prior arrests in a multi-person narrative are an account to attribute, not a finding about the subject (F075-H)", async () => {
+  const c = loadF("F075-H");
+  const r = await reviewCase(c, fake({}));
+  assert.ok(!r.findings.some((x) => x.id === "F-HISTORY-3"));
+  const a = r.findings.find((x) => x.id.startsWith("U-ACCOUNT") && x.evidence.some((e) => e.fieldPath === "history.immigration_record"));
+  assert.ok(a);
+  assert.match(a!.explanation, /prior immigration arrests, apprehensions or voluntary returns/);
+});

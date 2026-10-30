@@ -5,7 +5,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import type { ReviewResult } from "../lib/types";
-import { findingKey } from "./finding-key";
+import { findingClaim, findingKey } from "./finding-key";
 
 const [run, id, fid, verdict, note] = process.argv.slice(2);
 if (!note || !["valid_observation", "false_flag"].includes(verdict)) throw new Error("usage: adjudicate.ts <run> <case> <finding-id> <valid_observation|false_flag> <reason>");
@@ -22,7 +22,8 @@ const db = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {
   items: [],
 };
 const key = findingKey(r, f);
-db.items = db.items.filter((x: { base: string; key: string }) => !(x.base === base && x.key === key));
-db.items.push({ base, key, verdict, note, example: `${id} ${fid} ${f.title}`, date: new Date().toISOString().slice(0, 10) });
+const claim = findingClaim(f);
+db.items = db.items.filter((x: { base: string; key: string; claim?: string }) => !(x.base === base && x.key === key && (x.claim ?? claim) === claim));
+db.items.push({ base, key, claim, verdict, note, example: `${id} ${fid} ${f.title}`, date: new Date().toISOString().slice(0, 10) });
 writeFileSync(file, JSON.stringify(db, null, 2) + "\n");
 console.log(`${verdict}: ${base} ${key}`);

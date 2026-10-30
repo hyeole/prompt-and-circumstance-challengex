@@ -4,7 +4,7 @@ import { matches, isComplete, citesAnchor, type Plant } from "./score-match";
 import type { ReviewResult } from "../lib/types";
 const run = process.argv[2];
 const info = JSON.parse(readFileSync(`eval/runs/${run}/run-info.json`, "utf8"));
-const exp = info.dataset === "eval" ? "eval/expected" : `${info.dataset}/expected`;
+const exp = (info.dataset ?? "eval") === "eval" ? "eval/expected" : `${info.dataset}/expected`;
 for (const f of readdirSync(`eval/runs/${run}/raw`).sort()) {
   const r = JSON.parse(readFileSync(`eval/runs/${run}/raw/${f}`, "utf8")) as ReviewResult;
   const ex = JSON.parse(readFileSync(`${exp}/${r.caseId}.json`, "utf8")) as { description: string; plants: (Plant & { anchors?: string[] })[] };

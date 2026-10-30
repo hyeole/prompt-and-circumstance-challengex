@@ -5,13 +5,13 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, Finding, ReviewResult } from "../lib/types";
-import { findingKey } from "./finding-key";
+import { findingClaim, findingKey } from "./finding-key";
 import { citesAnchor, isComplete, matches, type Plant } from "./score-match";
 
 export const SCORING_POLICY = "v2.3"; // v2.3 = v2.2 + a finding must identify the planted discrepancy; completion covers every required check
 
 type Expected = { id: string; base: string; split: string; description: string; plants: Plant[]; elementExpectations?: Record<string, string>; shouldNotFlag?: string[] };
-type Adjudication = { base: string; key: string; verdict: "valid_observation" | "false_flag"; note: string };
+type Adjudication = { base: string; key: string; claim?: string; verdict: "valid_observation" | "false_flag"; note: string };
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: score-eval.ts eval/runs/<timestamp>");
@@ -86,7 +86,9 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
       const label = `${f.id} ${f.category}: ${f.title}`;
       const pi = ex.plants.findIndex((p) => matches(r, f, p));
       if (pi >= 0) { row.flags.push({ id: f.id, finding: label, key, status: used.has(pi) ? "duplicate" : "planted" }); used.add(pi); continue; }
-      const adj = adjudications.find((a) => a.base === ex.base && a.key === key);
+      // A verdict is inherited only for the same claim on the same evidence (claim recorded since 2026-10-30).
+      const claim = findingClaim(f);
+      const adj = adjudications.find((a) => a.base === ex.base && a.key === key && (!a.claim || a.claim === claim));
       row.flags.push({ id: f.id, finding: label, key, status: adj ? adj.verdict : "unadjudicated", note: adj?.note });
     }
   }

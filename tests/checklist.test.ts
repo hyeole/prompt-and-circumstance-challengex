@@ -87,3 +87,22 @@ test("legacy post-audit false flags: 'received a copy of ... Consular ID' and 'o
   assert.equal(probe("N1", "He had no documents allowing him to be or remain in the United States."), "model");
   assert.equal(probe("N1", "The subject had no identification."), "present");
 });
+
+// ---- Fix 3: place of entry needs a located ENTRY statement (descriptive locations count; arrest locations do not) ----
+import { locatesEntry } from "../lib/review/checklist";
+test("place of entry: descriptive locations of the entry count, without requiring a proper place name", () => {
+  assert.equal(locatesEntry("He entered illegally two miles west of the port of entry."), true);
+  assert.equal(locatesEntry("He crossed the Rio Grande River into the United States."), true);
+  assert.equal(locatesEntry("He crossed the border illegally via a river near Laredo, Texas."), true);
+  assert.equal(locatesEntry("He applied for admission at the Detroit-Windsor Tunnel port of entry."), true);
+});
+test("place of entry: no location, a generic river or desert, a country only, or a date is not a place of entry (C012-M2)", () => {
+  assert.equal(locatesEntry("He claims to have entered into the United States in August 2013 by crossing the border illegally via a river."), false);
+  assert.equal(locatesEntry("He entered the United States illegally."), false);
+  assert.equal(locatesEntry("He walked across the border through the desert."), false);
+  assert.equal(locatesEntry("He crossed into the United States from Mexico."), false);
+});
+test("place of entry: an arrest or encounter location is not the entry location", () => {
+  assert.equal(locatesEntry("He was arrested near Monroe, Michigan."), false);
+  assert.equal(locatesEntry("Border Patrol Agents encountered the subject walking along a highway near Ogdensburg, New York."), false);
+});

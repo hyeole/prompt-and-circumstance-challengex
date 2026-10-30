@@ -108,6 +108,19 @@ const NOT_HAPPENED_RE = /\b(offered|declined|refused|pending|will be|would be|ma
 export const isPriorRemoval = (text: string) =>
   REMOVAL_WORD_RE.test(text) && !NOT_HAPPENED_RE.test(text) && (!CURRENT_REMOVAL_RE.test(text) || PAST_MARKER_RE.test(text));
 
+// Prior immigration encounters: an immigration agency's arrest or apprehension, a voluntary return or departure, or a
+// Notice to Appear, marked as past (or dated before this encounter). Criminal arrests by police are not included.
+const IMMIGRATION_EVENT_RE = /\bvoluntar(y|ily) (return(ed)?|depart(ure|ed))\b|\bprocessed as an? (VR|voluntary return)\b|\bNotice to Appear\b|\b(arrested|apprehended|encountered)\b[^.]{0,60}\b(Border Patrol|USBP|CBP|ICE|immigration)\b|\b(Border Patrol|USBP|CBP|ICE|immigration)\b[^.]{0,60}\b(arrest(ed)?|apprehen(ded|sion))\b/i;
+const PAST_EVENT_RE = /\b(previously|prior|earlier|before|(\w+ )?(separate )?occasions|history)\b/i;
+const NO_PRIOR_RE = /\bno (prior|previous|record of)|\bnever (been )?(arrested|apprehended|encountered)|\bwithout (any )?(prior|previous)|\bnegative (for|in)/i;
+export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boolean {
+  const text = raw.replace(/\bU\.S\./g, "US"); // abbreviation periods must not end the match
+  if (!IMMIGRATION_EVENT_RE.test(text) || NO_PRIOR_RE.test(text)) return false;
+  if (PAST_EVENT_RE.test(text)) return true;
+  const years = (text.match(/\b(19|20)\d\d\b/g) ?? []).map(Number);
+  return encounterYear > 0 && years.some((y) => y < encounterYear);
+}
+
 /** Verified prior-removal statements that count for this subject. */
 function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): Verified[] {
   return facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
@@ -244,10 +257,14 @@ const attributionNote = (p: string) => (p === "unclear" ? " The narrative does n
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
 
-export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson = false): { findings: Finding[]; dropped: number; unattributed: string[] } {
+/** An account that would conflict with this record but cannot be attributed to its subject: routed, never a contradiction. */
+export type UnattributedAccount = { sentenceId: string; fieldPath: string; detail: string };
+const MANNER_LABEL = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
+
+export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson = false): { findings: Finding[]; dropped: number; unattributed: UnattributedAccount[] } {
   const findings: Finding[] = [];
   // Sentences that would conflict with this record but cannot be attributed to its subject: routed, never flagged.
-  const unattributed: string[] = [];
+  const unattributed: UnattributedAccount[] = [];
   let dropped = 0;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
   const fieldEv = (p: string): EvidenceRef => { const f = field(p)!; return { kind: "field", fieldPath: f.path, quote: f.value, page: f.sourcePage, verified: true }; };
@@ -284,7 +301,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.date") : []);
     const off = differs.find(counts) ?? differs.find((x) => linksOf(x).length > 0);
     const offLinks = off && !counts(off) ? linksOf(off) : [];
-    if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson).map((x) => x.v.s.id));
+    if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson)
+      .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.date", detail: `${x.v.s.id} gives ${x.e.year} for the entry; the form records the last entry in ${fy}.` })));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
     if (off)
       findings.push({
@@ -315,7 +333,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.manner") : []);
   const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && (aboutSubject(x.attr, multiPerson) || mannerLinks(x).length > 0));
   const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
-  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length).map((x) => x.v.s.id));
+  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length)
+    .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.manner", detail: `${x.v.s.id} describes ${MANNER_LABEL(x.e.manner)}; the form code "${field("entry.manner")!.value}" indicates ${MANNER_LABEL(fm)}.` })));
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
     const other = known.find((x) => x.e.manner === fm);
@@ -341,7 +360,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
     // Attribution in code: explicitly "Subject", or an unattributed statement when the narrative describes only one person.
     const rem = priorRemovals(sentences, facts, multiPerson)[0];
-    if (!rem && multiPerson) unattributed.push(...priorRemovals(sentences, facts, false).map((v) => v.s.id));
+    if (!rem && multiPerson) unattributed.push(...priorRemovals(sentences, facts, false)
+      .map((v) => ({ sentenceId: v.s.id, fieldPath: "history.immigration_record", detail: `${v.s.id} describes a prior removal; the form records the immigration record as "${imm.value}".` })));
     if (rem)
       findings.push({
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",
@@ -349,6 +369,23 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         evidence: [ctx(rem.ev, attribution(sentences.find((x) => x.id === rem.ev.sentenceId)!, "unclear"), "removal"), fieldEv("history.immigration_record")], referenceIds: [], needsHumanReview: true,
         humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: "model", severity: "high",
       });
+  }
+  // 4c. Prior IMMIGRATION encounters (Border Patrol/CBP/ICE arrests or apprehensions, voluntary returns, Notices to
+  //     Appear) described while the record is NEGATIVE. Kept distinct from removals: a clarity item, not a
+  //     contradiction, because a NEGATIVE record may not cover voluntary returns. Unattributable ones are routed.
+  if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
+    const encYear = Number(field("encounter.date_time")?.value.match(/\b(19|20)\d\d\b/)?.[0] ?? 0);
+    const prior = sentences.filter((x) => isPriorImmigrationEncounter(x.text, encYear) && !isPriorRemoval(x.text));
+    const own = prior.filter((x) => aboutSubject(attribution(x, "unclear"), multiPerson));
+    if (own.length)
+      findings.push({
+        id: "F-HISTORY-3", category: "unclear", title: "Prior immigration encounters described while the record is NEGATIVE",
+        explanation: `${own.slice(0, 2).map((x) => x.id).join(" and ")} describe${own.length === 1 ? "s" : ""} prior immigration arrests, apprehensions or voluntary returns, but the form records the immigration record as "${imm.value}". These are not removals, but a NEGATIVE record usually means no prior immigration history. A person should confirm.`,
+        evidence: [...own.slice(0, 2).map((x): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, attribution(x, "unclear"), "removal")), fieldEv("history.immigration_record")],
+        referenceIds: [], needsHumanReview: true, humanReviewReason: "The narrative's immigration history and the form's record differ: a person should confirm.", source: "model", severity: "medium",
+      });
+    else if (multiPerson)
+      unattributed.push(...prior.map((x) => ({ sentenceId: x.id, fieldPath: "history.immigration_record", detail: `${x.id} describes prior immigration arrests, apprehensions or voluntary returns; the form records the immigration record as "${imm.value}".` })));
   }
   // 4b. The form records a prior removal, but the narrative describes none at all. One source only, so this is a
   //     clarity gap for a person to resolve, not a contradiction (the narrative may simply omit the history).
@@ -363,7 +400,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       humanReviewReason: "The form and the narrative disagree about the immigration history: a person should confirm.", source: "model", severity: "medium",
     });
   }
-  return { findings, dropped, unattributed: [...new Set(unattributed)] };
+  const seen = new Set<string>();
+  return { findings, dropped, unattributed: unattributed.filter((u) => !seen.has(u.sentenceId + u.fieldPath) && seen.add(u.sentenceId + u.fieldPath)) };
 }
 
 /**

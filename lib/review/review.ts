@@ -10,7 +10,7 @@ import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
-import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, type ChecklistItem } from "./checklist";
+import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
@@ -71,8 +71,8 @@ const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recal
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
 const statesUnknown = (t: string) => UNKNOWN_STATEMENT_RE.test(t) && !/\b(19|20)\d\d\b|\b\d{1,2}\/\d{1,2}\//.test(t);
 /** A citation explanation that says the narrative supports the charge, and one that says it does not. */
-const AFFIRMS_SUPPORT_RE = /\b(narrative|record|facts?) (clearly |also )?(supports?|establish(es)?|is consistent with|are consistent with)\b|\bsupported by the (narrative|record)\b|\bwhich the narrative supports\b/i;
-const DENIES_SUPPORT_RE = /\b(not|never|n't|no longer|fails? to) (clearly )?(support|establish|consistent)/i;
+const AFFIRMS_SUPPORT_RE = /\b(narrative|record|facts?) (clearly |also )?(supports?|establish(es)?|documents?|shows?|describes?|states?|is consistent with|are consistent with)\b|\b(supported|documented) by the (narrative|record)\b|\bwhich the (narrative|record) (supports|documents|shows|describes|states)\b/i;
+const DENIES_SUPPORT_RE = /\b(not|never|n't|no longer|fails? to) (clearly )?(support|establish|consistent|document|show|describe|state)/i;
 const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
 const ANY_CITATION_RE = /\b(?:INA|Section)\s*\d{3}\s*\([a-z0-9]+\)(?:\s*\([a-z0-9]+\))*|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}(?:\s*\([a-z0-9]+\))*/gi;
 const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed|s)? (charging|the charge|a charge)|more appropriate|a better charge|alternative charge|could be charged|consider (charging|a different|another))\b|\bcharg\w*\b[^.]*\binstead\b|\binstead\b[^.]*\bcharg/i;
@@ -120,7 +120,8 @@ type CallLog = ReviewResult["calls"][number];
 function logged<T extends { attempts: number }>(log: CallLog[], role: string, p: Promise<T>): Promise<T> {
   const t0 = Date.now();
   return p.then(
-    (v) => (log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts }), v),
+    // Output length (characters only, never content) for latency analysis of slow calls.
+    (v) => (log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts, chars: (v as { text?: string }).text?.length }), v),
     (e) => {
       const cancelled = e instanceof ModelError && /cancelled/i.test(e.message);
       log.push({ role, status: cancelled ? "cancelled" : "failed", ms: Date.now() - t0, attempts: e instanceof ModelError ? e.attempts : 1, error: e instanceof ModelError ? e.kind : "error" });
@@ -138,6 +139,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   const rules = runRules(c, sentences);
   // Several people described (redacted names): only explicitly-"subject" statements count for or against this record.
   const multiPerson = rules.notes.length > 0;
+  const accounts: { sentenceIds: string[]; fieldPath?: string; detail: string }[] = [];
   const selected = c.selectedCharges.filter((s) => s.citation.trim());
   const charge = selected.length === 1 ? findCharge(selected[0].citation, selected[0].referenceId) : undefined;
 
@@ -248,6 +250,12 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   if (n1 && n1.status === "present" && !n1.fieldPaths.length && !n1.sentenceIds.some((id) => DOCUMENT_RE.test(sentences.find((x) => x.id === id)?.text ?? ""))) {
     Object.assign(n1, { status: "unclear", note: "The cited sentence mentions a document but does not say what identifying documents the person had." });
   }
+  // E2 (place of entry): a model "present" must cite a sentence that describes the subject's entry and locates it
+  // (C012-M2: "crossing the border illegally via a river" names no place). Form-field results are untouched.
+  const e2 = elements.find((e) => e.elementId === "E2");
+  if (e2 && e2.status === "present" && !e2.fieldPaths.length && !e2.sentenceIds.some((id) => locatesEntry(sentences.find((x) => x.id === id)?.text ?? ""))) {
+    Object.assign(e2, { status: "absent", sentenceIds: [], note: "No cited sentence says where the subject entered (an arrest or encounter location, or a generic river, border or desert, does not place the entry)." });
+  }
   // N7 (disposition): a model "present" must cite disposition wording; an arrest is not a disposition.
   const n7 = elements.find((e) => e.elementId === "N7");
   if (n7 && n7.status === "present" && !n7.fieldPaths.length && !n7.sentenceIds.some((id) => DISPOSITION_RE.test(sentences.find((x) => x.id === id)?.text ?? ""))) {
@@ -341,6 +349,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
         verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
       discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });
+      accounts.push({ sentenceIds: verified.filter((v) => v.sentenceId && unlinked(v)).map((v) => v.sentenceId!), fieldPath: verified.find((v) => v.fieldPath)?.fieldPath,
+        detail: `The model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"` });
       return;
     }
     // (1d) Two narrative statements compared with each other: in a multi-person narrative they may be about two
@@ -350,6 +360,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         citedSentences.some((x) => attribution(x, "unclear") !== "subject")) {
       discarded.push({ title: iss.title, reason: "Several people are described and the compared statements may be about different people, so they cannot show a contradiction." });
       humanReasons.push(`Several people are described with redacted names, and ${citedSentences.map((x) => x.id).join(" and ")} may be about different people. A person should decide whether they conflict.`);
+      accounts.push({ sentenceIds: citedSentences.map((x) => x.id), detail: `${citedSentences.map((x) => x.id).join(" and ")} give different accounts (the model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"), and they may be about different people.` });
       return;
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
@@ -394,8 +405,32 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       findings.push(ff);
     }
     if (cmp.unattributed.length)
-      humanReasons.push(`Several people are described with redacted names, and ${cmp.unattributed.join(", ")} may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.`);
+      humanReasons.push(`Several people are described with redacted names, and ${[...new Set(cmp.unattributed.map((u) => u.sentenceId))].join(", ")} may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.`);
+    // The fact comparison's accounts come first: they state the conflicting values themselves.
+    accounts.unshift(...cmp.unattributed.map((u) => ({ sentenceIds: [u.sentenceId], fieldPath: u.fieldPath, detail: u.detail })));
     if (cmp.dropped) discarded.push({ title: "Extracted entry statements", reason: `${cmp.dropped} quote(s) could not be matched to the text and were ignored.` });
+  }
+
+  // Accounts that may conflict with this record but cannot be attributed to its subject. Each becomes one clarity
+  // finding that shows the conflicting account and the attribution uncertainty, claims no contradiction, and asks a
+  // person to decide whose account it is. Never added for a statement an existing finding already cites.
+  const citedByFinding = new Set(findings.flatMap((f) => f.evidence.map((e) => e.sentenceId).filter(Boolean)));
+  const accountSeen = new Set<string>();
+  let accountN = 0;
+  for (const a of accounts) {
+    const ids = a.sentenceIds.filter((id) => sentences.some((x) => x.id === id));
+    if (!ids.length || ids.some((id) => citedByFinding.has(id) || accountSeen.has(id))) continue;
+    ids.forEach((id) => accountSeen.add(id));
+    const fieldV = a.fieldPath ? c.facts.find((f) => f.path === a.fieldPath && f.status === "present") : undefined;
+    findings.push({
+      id: `U-ACCOUNT-${++accountN}`, category: "unclear", title: "Account that may conflict with this record (attribution unknown)",
+      explanation: `${a.detail} Several people are described with redacted names, and nothing in the narrative ties ${ids.join(" and ")} uniquely to this record's subject, so this is not treated as a contradiction. A person should decide whose account this is.`,
+      evidence: [
+        ...ids.map((id): EvidenceRef => { const x = sentences.find((y) => y.id === id)!; return { kind: "sentence", sentenceId: id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact", context: { attribution: "unclear", event: a.fieldPath?.startsWith("history.") ? "Prior history" : "Entry into the U.S." } }; }),
+        ...(fieldV ? [{ kind: "field" as const, fieldPath: fieldV.path, quote: fieldV.value, page: fieldV.sourcePage, verified: true }] : []),
+      ],
+      referenceIds: [], needsHumanReview: true, humanReviewReason: "Whose account is this? Several people are described and names are redacted.", source: "model", severity: "low",
+    });
   }
 
   // ---- Citation check
@@ -425,9 +460,10 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
       }
       if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && AFFIRMS_SUPPORT_RE.test(out.citation.explanation) && !DENIES_SUPPORT_RE.test(out.citation.explanation)) {
-        // The model's own explanation says the narrative supports the charge (F075-X): uncertainty, not a mismatch.
+        // The verdict and the model's own explanation disagree (F075-X, C013-X1). The wording is not support: the
+        // record establishes the requirement only through verified evidence (checked just above). Without it, unresolved.
         status = "needs_human_review";
-        explanation = `The model reported a concern but also said the narrative supports the selected charge: ${explanation}`;
+        explanation = `Unresolved: the model's verdict is "likely mismatch", but its own explanation says the record supports or documents what the charge requires, and no verified statement in the record establishes that requirement. A person must decide. Model explanation: ${explanation}`;
       }
       if (status === "consistent") {
         // A "consistent" verdict needs verified support (audit item 6): a verified statement of the fact the charge
@@ -466,15 +502,23 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   }
   // A charge can only be "consistent with the facts" when the facts it depends on are settled. If the record has an
   // unresolved conflict about the entry, the citation check is not a pass: a person must first decide which account is right.
-  const entryConflict = findings.find((f) => f.category === "inconsistency" &&
-    (f.referenceIds.some((r) => ["E1", "E2", "E3"].includes(r)) || f.evidence.some((e) => e.fieldPath?.startsWith("entry."))));
-  if (entryConflict && citation.status === "consistent") {
+  // Only facts the selected charge depends on qualify the verdict: the entry for entry-manner charges, the entry and
+  // history for reentry after removal, nothing about a past entry for an applicant for admission.
+  const relevant = !charge ? ["entry."] : reqs?.priorRemoval ? ["entry.", "history."] : reqs?.applicationForAdmission ? [] : ["entry."];
+  const touches = (f: Finding) => f.evidence.some((e) => relevant.some((p) => e.fieldPath?.startsWith(p))) ||
+    (relevant.includes("entry.") && f.referenceIds.some((r) => ["E1", "E2", "E3"].includes(r)));
+  const entryConflict = findings.find((f) => f.category === "inconsistency" && touches(f));
+  const openAccount = findings.find((f) => f.id.startsWith("U-ACCOUNT") && touches(f));
+  if ((entryConflict || openAccount) && citation.status === "consistent") {
+    const what = relevant.includes("history.") ? "the entry or immigration history" : "the entry";
     citation = {
       ...citation,
       status: "needs_human_review",
-      explanation: `The selected charge fits one account of the facts, but the record has an unresolved conflict about the entry ("${entryConflict.title}"). A person must decide which account is correct before relying on this check.`,
+      explanation: entryConflict
+        ? `The selected charge fits one account of the facts, but the record has an unresolved conflict about ${what}, which this charge depends on ("${entryConflict.title}"). A person must decide which account is correct before relying on this check.`
+        : `The selected charge fits the record, but the narrative contains an account that may conflict with it about ${what}, which this charge depends on, and that account cannot be attributed (${openAccount!.evidence.filter((e) => e.sentenceId).map((e) => e.sentenceId).join(", ")}). Consistency is qualified until a person decides whose account it is.`,
     };
-    humanReasons.push("Citation check depends on conflicting entry facts.");
+    humanReasons.push(entryConflict ? "Citation check depends on conflicting facts the charge relies on." : "Citation check depends on an unattributed account about facts the charge relies on.");
   }
   if (out?.human_review.required) humanReasons.push(...out.human_review.reasons);
   // Completion covers every required check, not only the main model call (audit item 1).
