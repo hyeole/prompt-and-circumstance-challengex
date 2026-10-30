@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -181,7 +181,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // Invalid output is retried once if enough of the time budget remains; the reason is logged (never the content).
   const factsStart = Date.now();
   const parseFacts = (role: string) => (r: { text: string }) => {
-    try { return FactsOutput.parse(extractJSON(r.text)); } catch (e) {
+    try { return normalizeFacts(FactsOutput.parse(extractJSON(r.text))); } catch (e) {
       const last = calls.find((x) => x.role === role);
       if (last) Object.assign(last, { status: "invalid_output", error: invalidReason(e) });
       throw e;
@@ -490,7 +490,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // The more cautious result wins.
     const rank = { not_checked: -1, consistent: 0, insufficient_information: 1, needs_human_review: 2, likely_mismatch: 3 } as const;
-    if (req && rank[req.status] > rank[status]) {
+    // On an equal verdict, the rule's verified evidence replaces model evidence that could not be verified (C037-CIT:
+    // the model said "mismatch" without verifiable evidence while the rule established it from the form).
+    if (req && (rank[req.status] > rank[status] || (req.status === status && evidence.length === 0 && req.evidence.length > 0))) {
       status = req.status;
       explanation = req.explanation + (out ? "" : " (Checked from form fields and rules; the model check was unavailable.)");
       evidence = req.evidence;

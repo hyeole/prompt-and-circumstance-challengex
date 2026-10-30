@@ -709,3 +709,28 @@ test("fix 4 positive: 'requires admission, which the narrative documents' withou
   assert.equal(r.citation.status, "needs_human_review");
   assert.match(r.citation.explanation, /^Unresolved/);
 });
+
+test("C037-CIT: a model 'mismatch' without verifiable evidence adopts the rule's verified evidence when the rule finds the same mismatch", async () => {
+  const c = load("C037-CIT");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation: "The charge requires admission.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "likely_mismatch");
+  assert.ok(r.citation.evidence.some((e) => e.fieldPath === "entry.manner"));
+  assert.ok(r.findings.some((f) => f.id === "C-1" && f.source === "rule"));
+});
+
+test("a statement negating admission ('was never admitted') labelled 'admitted' by the extractor does not support an admission charge", async () => {
+  const c = load("C037-CIT");
+  const s = sid(c, "crossed the US/MEXICO Border illegally");
+  const text = sentenceText(c, s);
+  const r = await reviewCase({ ...c, narrative: { text: text + " He was never admitted or inspected by an immigration officer." } } as CaseRecord,
+    fake({ review: review({ citation: { status: "likely_mismatch", explanation: "x", evidence: [] } }),
+      facts: facts({ entry_statements: [{ sentence_id: "S2", quote: "He was never admitted or inspected by an immigration officer", event: "us_entry", year: null, manner: "admitted", person: "unclear" }] }) }));
+  assert.equal(r.citation.status, "likely_mismatch");
+  assert.ok(r.citation.evidence.some((e) => e.fieldPath === "entry.manner"));
+});
+test("negative control: a real admission statement still supports an admission charge", async () => {
+  const c = load("C037-CIT");
+  const r = await reviewCase({ ...c, facts: c.facts.filter((f) => f.path !== "entry.manner"), narrative: { text: "The subject was admitted at the San Ysidro port of entry as a B2 visitor in 2012." } } as CaseRecord,
+    fake({ facts: facts({ entry_statements: [{ sentence_id: "S1", quote: "The subject was admitted at the San Ysidro port of entry as a B2 visitor in 2012", event: "us_entry", year: 2012, manner: "admitted", person: "subject" }] }) }));
+  assert.notEqual(r.citation.status, "likely_mismatch");
+});

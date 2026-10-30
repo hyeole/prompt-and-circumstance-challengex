@@ -455,6 +455,16 @@ export function checkChargeRequirement(
 }
 
 /** Used when the fact-extraction call did not complete: checks rely on form fields only. */
+/**
+ * Corrects one extraction error before any comparison: a statement that NEGATES admission or inspection ("was never
+ * admitted", "not inspected or admitted", "without being admitted") describes entry without inspection, even if the
+ * extractor labelled it "admitted" because the word appears.
+ */
+const NEGATED_ADMISSION_RE = /\b(never|not|without being|without having been|neither)\b[^.;]{0,25}\b(admitted|inspected|paroled)\b/i;
+export function normalizeFacts(f: FactsOutput): FactsOutput {
+  return { ...f, entry_statements: f.entry_statements.map((e) => (e.manner === "admitted" && NEGATED_ADMISSION_RE.test(e.quote) ? { ...e, manner: "without_inspection" as const } : e)) };
+}
+
 export const EMPTY_FACTS: FactsOutput = { entry_statements: [], removal_statements: [], status_statements: [] };
 
 /** True when the extracted facts contain at least one verified statement saying HOW a non-"other" person entered. */
