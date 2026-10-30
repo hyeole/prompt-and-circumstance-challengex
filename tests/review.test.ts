@@ -415,7 +415,8 @@ test("audit item 5: a narrative that only says the entry date is unknown documen
 });
 
 test("audit item 6: a 'consistent' verdict without verified support is routed to a person", async () => {
-  const r = await reviewCase(load("C037"), fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  const c = load("C037");
+  const r = await reviewCase({ ...c, facts: c.facts.filter((f) => f.path !== "entry.manner") }, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
   assert.equal(r.citation.status, "needs_human_review");
 });
 
@@ -452,4 +453,23 @@ test("audit: a mixed claim keeps its supported date part when only the manner pa
   assert.ok(!kept!.evidence.some((e) => e.fieldPath === "entry.manner"), "the unsupported manner part is removed");
   assert.match(kept!.explanation, /2012/);
   assert.equal(kept!.source, "model", "retained from the model claim, not re-derived by the fact comparison");
+});
+
+// ---- Post-audit runs (2026-10-30T03-48-20, 03-52-17): over-routing found and fixed (post-tuning) ----
+
+test("DS07: INA 212(a)(7)(A)(i)(I) needs an application for admission, not a prior admission", async () => {
+  const c = loadD("DS07");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "consistent");
+});
+
+test("a known form code that meets the charge's requirement is verified support in a multi-person narrative (F010)", async () => {
+  const c = loadF("F010");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "consistent");
+});
+
+test("without a form code or an attributable statement, 'consistent' is still routed (DS11)", async () => {
+  const r = await reviewCase(loadD("DS11"), fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "needs_human_review");
 });

@@ -41,7 +41,7 @@ export default function ReferencesPage() {
             <p className="small">Plain-English summaries of public statutory text in Title 8 of the U.S. Code, written by the team so the citation check has something to compare against. They are not legal advice and were not reviewed by Unissant. NarrativeCheck checks the officer-selected charge against them and never suggests a different charge.</p>
             <table className="table">
               <thead><tr><th>Charge</th><th>Summary</th><th>Core requirement checked in code</th></tr></thead>
-              <tbody>{refs.charges.map((c) => <tr key={c.id}><td className="mono small">{c.citations.join(" / ")}</td><td className="small"><strong>{c.title}.</strong> {c.plainEnglish}</td><td className="small">{"entryManner" in (c.requires ?? {}) ? `Entry manner: ${(c.requires as { entryManner: string }).entryManner.replace(/_/g, " ")}` : "Prior removal documented"}</td></tr>)}</tbody>
+              <tbody>{refs.charges.map((c) => <tr key={c.id}><td className="mono small">{c.citations.join(" / ")}</td><td className="small"><strong>{c.title}.</strong> {c.plainEnglish}</td><td className="small">{"entryManner" in (c.requires ?? {}) ? `Entry manner: ${(c.requires as { entryManner: string }).entryManner.replace(/_/g, " ")}` : "applicationForAdmission" in (c.requires ?? {}) ? "Application for admission described" : "Prior removal documented"}</td></tr>)}</tbody>
             </table>
           </section>
 

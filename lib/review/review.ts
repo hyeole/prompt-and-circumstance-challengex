@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -366,7 +366,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // ---- Citation check
   let citation: ReviewResult["citation"];
   const citeText = selected.map((s) => s.citation).join("; ");
-  const reqs = (charge as { requires?: { entryManner?: string; priorRemoval?: boolean } } | undefined)?.requires;
+  const reqs = (charge as { requires?: Requires } | undefined)?.requires;
   // Deterministic pre-check of the charge's core requirement. Uses extracted facts when available, form fields otherwise.
   const req = !rules.citationPrecheck && charge ? checkChargeRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson) : null;
   if (rules.citationPrecheck) {
@@ -384,7 +384,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         status = "needs_human_review";
         explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
       }
-      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(sentences, factsSettled.v, reqs, multiPerson)) {
+      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(c, sentences, factsSettled.v, reqs, multiPerson)) {
         // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch.
         status = "needs_human_review";
         explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
@@ -397,8 +397,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       if (status === "consistent") {
         // A "consistent" verdict needs verified support (audit item 6): a verified statement of the fact the charge
         // depends on, or, for a charge without a recorded requirement, verified narrative evidence from the model.
-        const supported = reqs && factsSettled.ok ? supportsRequirement(sentences, factsSettled.v, reqs, multiPerson)
-          : !reqs && evidence.some((e) => e.kind === "sentence");
+        const supported = reqs ? supportsRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson)
+          : evidence.some((e) => e.kind === "sentence");
         if (!supported) {
           status = "needs_human_review";
           explanation = reqs && !factsSettled.ok

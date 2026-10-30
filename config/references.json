@@ -1,5 +1,5 @@
 {
-  "version": "team-provisional-2026-10-31",
+  "version": "team-provisional-2026-10-31.1",
   "status": "PROVISIONAL (team implementation choices)",
   "notice": "Unissant confirmed on 2026-10-30 that no charge reference sheet or required-elements checklist will be provided, and supplied a 'Core elements to cover' table as guidance (config/sponsor/unissant-guidance-2026-10-30.json). This checklist (v2) is the team's implementation of that guidance plus the instruction printed on Form I-213: each item names its sponsor category and the case contexts where it applies. The charge summaries are team paraphrases of public statutory text (Title 8 U.S.C.); they are not sponsor-approved and are not legal advice.",
   "historicalNote": "Source records date from FY2012-FY2019. Checks compare narratives against the wording recorded here, not against the rules in force on each record's date.",
@@ -282,7 +282,7 @@
       ],
       "type": "administrative (inadmissibility)",
       "requires": {
-        "entryManner": "admitted"
+        "applicationForAdmission": true
       }
     },
     {
@@ -341,7 +341,8 @@
   "checklistVersion": "v2",
   "sponsorGuidance": "config/sponsor/unissant-guidance-2026-10-30.json",
   "previousVersions": [
-    "eval/archive/references-team-provisional-2026-10-30.json (checklist v1, E1-E7)"
+    "eval/archive/references-team-provisional-2026-10-30.json (checklist v1, E1-E7)",
+    "eval/archive/references-team-provisional-2026-10-31.json (INA 212(a)(7)(A)(i)(I) wrongly required a prior admission; corrected in .1 to an application for admission)"
   ],
   "contexts": {
     "interior": "Interior encounter: located inside the United States (for example by Border Patrol).",

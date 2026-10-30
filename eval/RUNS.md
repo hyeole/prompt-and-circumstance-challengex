@@ -87,3 +87,38 @@ These are inputs for the next reliability step. They are not fixed in these runs
 | Run | Label | Code | Result |
 |---|---|---|---|
 | 2026-10-30T02-40-21 | development | `a5ba61b` | recall 4/6, incorrect flags 25% (2/8), checklist 50/50, should-not-flag violations 1 |
+
+## Post-tuning runs at commit `e5a47a7` (scoring policy v2.2)
+
+All three are **post-tuning**: their code includes fixes informed by the fresh-v1 and earlier errors. fresh-v1's only untouched result stays `2026-10-30T02-48-46`.
+
+| Run | Dataset | Completion | Strict recall | Incorrect flags | Other |
+|---|---|---|---|---|---|
+| 2026-10-30T03-03-23 | dev-synthetic-v1 | 100% (12/12) | 100% (6/6) | 20% (2/10) | checklist 50/50, should-not-flag 1, p50 11.8s |
+| 2026-10-30T03-05-54 | fresh-v1 (post-tuning) | 100% (28/28) | 82% (14/17) | 18% (5/28) | checklist 97%, should-not-flag 1, p50 19.3s |
+| 2026-10-30T03-16-09 | legacy benchmark (37) | 100% (37/37) | 90% (28/31) | 27% (17/62) | 9 of the 17 false flags are the new checklist-v2 item N5 (precise section and explanation), which this run applied to the legacy cases for the first time; p50 19.3s |
+
+Every flag in these runs was adjudicated by hand. Standards used:
+- **N5 with no INA section stated in the narrative:** valid observation (sponsor item S4 not covered).
+- **N5 where the precise section is cited and the facts that meet it are stated elsewhere in the narrative:** false flag.
+- **A lawful B2 admission vs a NEGATIVE immigration record:** false flag.
+- **Current expedited-removal processing read as a prior removal (DS10):** false flag.
+
+## Rescoring under policy v2.3 (reported separately; original results unchanged)
+
+| Run | Label | v2.2 strict recall | v2.2 incorrect | v2.3 completion | v2.3 strict recall | v2.3 incorrect |
+|---|---|---|---|---|---|---|
+| 2026-10-29T22-28-28 | internal held-out (untouched) | 83% (15/18) | 28% (5/18) | 90% (19/21) | 78% (14/18) | 28% (5/18) |
+| 2026-10-29T23-32-42 | post-tuning, shipped v1 code | 94% (29/31) | 12% (5/41) | 97% (36/37) | 94% (29/31) | 12% (5/41) |
+| 2026-10-30T02-40-21 | dev-synthetic development | 67% (4/6) | 25% (2/8) | 100% (12/12) | 67% (4/6) | 25% (2/8) |
+| 2026-10-30T02-48-46 | **fresh-v1 untouched** | **71% (12/17)** | **30% (11/37)** | 89% (25/28) | 65% (11/17) | 30% (11/37) |
+| 2026-10-30T03-03-23 | post-tuning dev-synthetic | 100% (6/6) | 20% (2/10) | 100% (12/12) | 100% (6/6) | 20% (2/10) |
+| 2026-10-30T03-05-54 | post-tuning fresh-v1 | 82% (14/17) | 18% (5/28) | 82% (23/28) | 71% (12/17) | 18% (5/28) |
+| 2026-10-30T03-16-09 | post-tuning legacy | 90% (28/31) | 27% (17/62) | 92% (34/37) | 87% (27/31) | 27% (17/62) |
+
+**Where the differences come from.**
+- **Almost entirely the completion rule.** Reviews whose fact-extraction call timed out are now partial. In a partial review, only rule-made findings earn credit.
+- **The stricter matching rule changed no historical detection.** Every credited inconsistency in these runs already named the planted value or cited the planted sentence.
+- **The audited "font is unreadable" example does not occur in any recorded run.** It is reproduced as a negative-control test.
+
+**Headlines are unchanged and stay labelled as before.** The internal held-out result is 83% / 28% under v2.2. fresh-v1's untouched result is 71% / 30% under v2.2, and the independent audit reproduced those figures. Fixes informed by fresh-v1 are post-tuning, so fresh-v1 cannot support another untouched claim.

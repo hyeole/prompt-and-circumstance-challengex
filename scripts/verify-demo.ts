@@ -3,14 +3,15 @@
  * Usage: npm run dev, then  npx tsx scripts/verify-demo.ts [--clean C045]
  * Writes docs/demo-verification.md. Exits non-zero if any expectation fails.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, ReviewResult } from "../lib/types";
 import { isComplete } from "../lib/completion";
 
 const BASE = process.env.DEMO_BASE_URL ?? "http://localhost:3000";
 const arg = (k: string, d: string) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const CLEAN = arg("clean", "C045");
-const load = (id: string) => JSON.parse(readFileSync(`data/cases/${id}.json`, "utf8")) as CaseRecord;
+const load = (id: string) => JSON.parse(readFileSync(existsSync(`data/cases/${id}.json`) ? `data/cases/${id}.json` : `eval/cases/${id}.json`, "utf8")) as CaseRecord;
+const text = (r: ReviewResult, id?: string) => r.sentences.find((s) => s.id === id)?.text ?? "";
 
 async function review(c: CaseRecord): Promise<{ r: ReviewResult; ms: number }> {
   const t0 = Date.now();
@@ -41,16 +42,21 @@ const beats: { name: string; build: () => CaseRecord; checks: Check[] }[] = [
     ["every required check completed", (r) => isComplete(r)],
     ["place of entry no longer missing", (r) => r.elements.find((e) => e.elementId === "E2")?.status === "present" && !r.findings.some((f) => f.id === "M-E2")],
   ] },
-  { name: "4. Contradiction with both sources linked (C012-X1)", build: () => load("C012-X1"), checks: [
+  { name: "4. Contradiction with both sources linked (C037-X1, one-person narrative)", build: () => load("C037-X1"), checks: [
     ["every required check completed", (r) => isComplete(r)],
-    ["conflict finding cites the tourist-visa sentence and another source", (r) => r.findings.some((f) => f.category === "inconsistency" && f.evidence.length >= 2 && f.evidence.some((e) => e.kind === "sentence" && /tourist visa/.test(r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "")))],
+    ["conflict finding cites the changed 2012 sentence and the form's entry date", (r) => r.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "entry.date") && f.evidence.some((e) => e.kind === "sentence" && /06\/15\/2012/.test(text(r, e.sentenceId))))],
     ["routed to human review", (r) => r.humanReview.required],
     ["citation not shown as plainly consistent", (r) => r.citation.status !== "consistent"],
   ] },
   { name: "5. Ambiguous account routed to a person (C003-AMB)", build: () => load("C003-AMB"), checks: [
     ["every required check completed", (r) => isComplete(r)],
     ["human review required", (r) => r.humanReview.required],
-    ["a review-marked finding cites the border-crossing-card statement", (r) => r.findings.some((f) => f.needsHumanReview && f.evidence.some((e) => e.kind === "sentence" && /border crossing card/.test(r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "")))],
+    // Several people are described with redacted names, so the conflicting account is routed with its sentence named,
+    // or flagged when it is explicitly about the subject (audit item 3).
+    ["the border-crossing-card statement is named in a review finding or routing reason", (r) => {
+      const bcc = r.sentences.find((s) => /border crossing card/.test(s.text))?.id ?? "none";
+      return r.findings.some((f) => f.needsHumanReview && f.evidence.some((e) => e.sentenceId === bcc)) || r.humanReview.reasons.some((x) => new RegExp(`\\b${bcc}\\b`).test(x));
+    }],
   ] },
   { name: "6. Multi-charge case (C001-MC)", build: () => load("C001-MC"), checks: [
     ["multi-charge rule fired", (r) => r.findings.some((f) => f.id === "R-MULTI-CHARGE")],

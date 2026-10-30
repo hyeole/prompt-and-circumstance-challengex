@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, post-audit (eval/fresh, commit 324c393)",
+  "dataset": "eval/fresh",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T03:52:17.363Z",
+  "commit": "324c393",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

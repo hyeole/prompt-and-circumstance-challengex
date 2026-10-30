@@ -91,10 +91,10 @@ await page.waitForURL("**/history");
 await caption("Review history keeps every version. The officer's edit is shown word by word, and the missing-place finding is listed as resolved.", 6);
 
 // 3. Contradiction, evidence explorer, officer decision
-await go("/review/C012-X1", "Test variant C012-X1: the narrative now says he flew in on a tourist visa, which conflicts with the next sentence and the form.");
+await go("/review/C037-X1", "Test variant C037-X1: the team changed the crossing date in the narrative to 2012; the form records 2009.");
 await runReview();
-(await openFinding(/conflict|manner|entered/i)) || (await page.locator(".finding-head").first().click());
-await caption("The evidence explorer shows both statements side by side, with exact quotes, who each is about, and the linked form field.", 6);
+(await openFinding(/date|year|differ/i)) || (await page.locator(".finding-head").first().click());
+await caption("The evidence explorer shows the narrative statement and the form field side by side, with the exact quote and who it is about.", 6);
 const note = page.locator('input[id^="note-"]').first();
 if (await note.count()) {
   await note.fill("Will confirm the manner of entry with the subject.");
@@ -105,7 +105,7 @@ if (await note.count()) {
 // 4. Ambiguity and multi-charge
 await go("/review/C003-AMB", "Test variant C003-AMB: a second, conflicting account of how the subject entered.");
 await runReview();
-await caption("Ambiguous facts are routed to a person, with the reason shown.", 4);
+await caption("Several people are described and names are redacted, so the tool does not decide whose account this is. It routes the case to a person and names the statement.", 5);
 await go("/review/C001-MC", "Test variant C001-MC: two charges are selected.");
 await runReview();
 await caption("Multi-charge cases always go to human review. The tool does not choose between the charges.", 4);
@@ -113,7 +113,7 @@ await caption("Multi-charge cases always go to human review. The tool does not c
 // 5. Reports and references
 await go("/report/C001-MC", "Each review exports a one-page gap report with evidence, page numbers, versions and completion status.");
 await pause(2);
-await go("/audit/C012-X1", "The detailed audit export includes every finding, full evidence, officer decisions and notes, and every model request.");
+await go("/audit/C037-X1", "The detailed audit export includes every finding, full evidence, officer decisions and notes, and every model request.");
 await page.mouse.wheel(0, 900); await pause(2.5);
 await go("/references", "References keep Unissant's guidance, the team's checklist and the team's statute summaries visibly apart.");
 await page.mouse.wheel(0, 700); await pause(3);

@@ -188,3 +188,24 @@ The general fixes are in commit `2c9e2d4`. Any held-out number after that is **p
 - **Legacy benchmark:** 37 cases, unchanged.
 - **dev-synthetic-v1:** 12 cases. Development run: recall 4/6, checklist expectations 50/50, 1 should-not-flag violation (unattributable entry year, kept as a known limitation).
 - **fresh-v1:** 28 cases, prepared and frozen (tag `fresh-eval-v1-frozen`) before its single run.
+
+## 2026-10-30 (Fri, later) Independent audit fixes (all post-tuning)
+
+An independent offline audit of the shared ZIP reproduced fresh-v1's untouched result (71% recall, 30% incorrect flags) and raised eight issues. Each fix has regression tests (`npm test`: 108 tests). The production build passes `scripts/e2e-workflow.mjs` 23/23 with live reviews.
+
+| # | Issue | Fix | Remaining limitation |
+|---|---|---|---|
+| 1 | Completion judged only by `modelStatus` | `lib/completion.ts`: a failed fact call, omitted element outputs or a citation check that did not run make the review **partial**. Unsupported-by-design checks are listed separately. Used by the UI, history, comparison, exports, report verifier, demo verifier and scorer | A failed *second* review sample is not a failure, because the other sample covers the same checks |
+| 2 | Scorer credited a finding that only shared a field | Scoring policy **v2.3** (`scripts/score-match.ts`): a finding must identify the planted discrepancy. Negative-control tests added. Historical runs rescored separately; originals kept | The rule is lexical, so a correct finding worded unusually could be missed |
+| 3 | Unattributed statements in multi-person narratives became contradictions | One rule (`aboutSubject`) for entry date, manner, history, charge requirement and model claims. Unattributable conflicts are **routed to a person with the sentence named**, never flagged | Most adapted source records describe several people with redacted names, so planted conflicts there are now routed, not detected (lower measured recall) |
+| 4 | Keyword matches without context | Disposition "served" needs a form or notice. Identifying documents need possession or presentation. N5 needs the precise section **and** the facts that meet it | Still pattern-based; unusual wording falls back to the model, which is cross-checked |
+| 5 | Mixed known/unknown fields shown as established | Any unknown part qualifies the element ("partly established"). A narrative that only says a fact is unknown is "documented as unknown" | A sentence that both names a date and calls something else unknown is treated as known |
+| 6 | "Consistent" without verified support; citation text vs reference ID | "Consistent" needs a verified statement of the fact the charge depends on (or verified evidence). A citation that disagrees with its reference ID is routed | In multi-person narratives, "consistent" is now rare, because unattributed statements do not support it |
+| 7 | Cancel only aborted the browser fetch | Server-side request registry: a cancel (or a beacon when the page is left) aborts model calls and prevents saving. A late cancel is told the saved version | Kept in memory: a server restart forgets in-flight requests, which then cannot have been saved |
+| 8 | Intake drafts lost on navigation; pending actions incomplete | Session-storage drafts (the PDF must be re-attached); pending actions include every case with an open finding | Drafts live only in the current browser session |
+
+Also fixed from the post-tuning runs' false flags:
+- current expedited-removal processing is not a prior removal (DS10);
+- a corrected first answer is not a second entry year (FS02);
+- a model "mismatch" that says the narrative supports the charge is routed (F075-X);
+- mixed model claims keep their supported date or place part instead of being dropped.

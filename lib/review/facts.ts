@@ -246,8 +246,13 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
  * Deterministic citation check against the selected charge's core requirement (config/references.json "requires").
  * Returns null when the requirement is met or cannot be decided from the extracted facts.
  */
+/** A charge's core factual requirement (config/references.json "requires"). Team-written and provisional. */
+export type Requires = { entryManner?: string; priorRemoval?: boolean; applicationForAdmission?: boolean };
+/** An application for admission or inspection at a port (same wording as the case-context inference). */
+const APPLICATION_RE = /\b(applied|applying|application|applicant) for admission|\b(primary|secondary) inspection\b|presented (himself|herself|themselves) for inspection/i;
+
 export function checkChargeRequirement(
-  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires: { entryManner?: string; priorRemoval?: boolean } | undefined, multiPerson = false,
+  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires: Requires | undefined, multiPerson = false,
 ): { status: "likely_mismatch" | "needs_human_review"; explanation: string; evidence: EvidenceRef[] } | null {
   if (!requires) return null;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
@@ -264,13 +269,16 @@ export function checkChargeRequirement(
     const opposing = subjectEntries.filter((x) => x.e.manner !== requires.entryManner);
     const formOpposes = formCat !== undefined && formCat !== requires.entryManner;
     const unattributedSupport = allEntries.filter((x) => x.e.manner === requires.entryManner && !subjectEntries.includes(x));
-    if (!supporting.length && unattributedSupport.length) return unattributedNote(unattributedSupport.map((x) => x.v.s.id));
+    // The form is about this record's subject: a known form code that agrees settles attribution.
+    if (!supporting.length && unattributedSupport.length && formCat !== requires.entryManner) return unattributedNote(unattributedSupport.map((x) => x.v.s.id));
     if (!supporting.length && formCat !== requires.entryManner && (formOpposes || opposing.length)) {
       const need = requires.entryManner === "admitted" ? "a lawful admission or inspection" : "entry without inspection or admission";
       const ev: EvidenceRef[] = [...(fm && formOpposes ? [{ kind: "field" as const, fieldPath: fm.path, quote: fm.value, page: fm.sourcePage, verified: true }] : []), ...opposing.slice(0, 2).map((x) => x.v.ev)];
       return { status: "likely_mismatch", explanation: `The selected charge depends on ${need}, but the record describes the opposite and does not state ${need}.`, evidence: ev };
     }
   }
+  if (requires.applicationForAdmission && !APPLICATION_RE.test(sentences.map((s) => s.text).join(" ")) && !c.context?.includes("port_of_entry"))
+    return { status: "needs_human_review", evidence: [], explanation: "The selected charge applies to a person applying for admission, but the narrative does not describe an application for admission or an inspection at a port. A person should confirm." };
   if (requires.priorRemoval) {
     const removals = priorRemovals(sentences, facts, multiPerson);
     const imm = field("history.immigration_record");
@@ -293,8 +301,16 @@ export function hasMannerStatement(sentences: Sentence[], facts: FactsOutput): b
 }
 
 /** True when a verified statement supports the charge's core requirement (entry manner, or a prior removal). */
-export function supportsRequirement(sentences: Sentence[], facts: FactsOutput, requires?: { entryManner?: string; priorRemoval?: boolean }, multiPerson = false): boolean {
-  if (requires?.priorRemoval) return priorRemovals(sentences, facts, multiPerson).length > 0;
+export function supportsRequirement(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires?: Requires, multiPerson = false): boolean {
+  // Known form fields are about this record's subject, so a form value that meets the requirement is verified support.
+  const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
+  if (requires?.applicationForAdmission) return APPLICATION_RE.test(sentences.map((s) => s.text).join(" ")) || !!c.context?.includes("port_of_entry");
+  if (requires?.priorRemoval) {
+    const imm = field("history.immigration_record");
+    return (!!imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|excluded)/i.test(imm.value)) || priorRemovals(sentences, facts, multiPerson).length > 0;
+  }
+  const fm = field("entry.manner");
+  if (requires?.entryManner && fm && formMannerCategory(fm.value) === requires.entryManner) return true;
   return !!requires?.entryManner && facts.entry_statements.some((e) => {
     if (!isUsEntry(e) || e.person === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
     const v = verify(sentences, e.sentence_id, e.quote);

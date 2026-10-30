@@ -15,6 +15,18 @@
 | Citation | Selected charge replaced with one whose key facts conflict with the record | Citation status is `likely_mismatch` or `needs_human_review` |
 | Human review | Second charge added, or a conflicting statement added | Human review required = true |
 
+## Scoring policy v2.3 (2026-10-30, `scripts/score-match.ts`), from an independent audit
+Changes from v2.2. Everything not listed here is unchanged.
+- **Completion covers every required check** (`lib/completion.ts`). A review is partial when the model review, the fact extraction, any element output or the citation check did not complete. Checks that cannot run by design (redacted fields, unknown case context, a charge with no team reference) are named but do not make a review partial. Reviews recorded before this field existed are judged from `modelStatus` and the per-call log.
+- **A finding must identify the planted discrepancy.** Sharing a field or sentence is not enough. An inconsistency (or unclear) finding counts only if it:
+  - is about the right fact (date, manner, place or history);
+  - uses conflict language;
+  - is not about presentation (font, legibility, format);
+  - either cites the planted sentence or names the planted value (for example the changed year).
+  Negative-control tests are in `tests/score.test.ts` (including a fabricated "entry date font is unreadable" finding that cites `entry.date`).
+
+**Historical runs are not re-labelled.** Their original v2.2 `summary.json` / `REPORT.md` are kept. The v2.3 rescoring is written beside them as `summary-v2.3.json` / `REPORT-v2.3.md` and reported separately in `RUNS.md`.
+
 ## Scoring policy v2 (2026-10-29, `scripts/score-eval.ts`)
 Policy v1 was used for the early tuning notes in the dev log. Every run in `RUNS.md` has been re-scored with v2 so the numbers can be compared.
 
