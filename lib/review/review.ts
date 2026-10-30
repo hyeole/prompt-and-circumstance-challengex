@@ -3,12 +3,14 @@ import type { CaseRecord, CheckResult, ElementResult, EvidenceRef, Finding, Revi
 import { REFERENCES, REFERENCE_VERSION, findCharge, type RequiredElement } from "@/lib/references";
 import { splitSentences, locateQuote } from "@/lib/text";
 import { sha } from "@/lib/hash";
+import { fieldQuality } from "@/lib/fieldQuality";
+import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear } from "./facts";
 import { unsupportedValues } from "./support";
-import { applies, caseContext, detect, DISPOSITION_RE, type ChecklistItem } from "./checklist";
+import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
 import { completeJSON, extractJSON, MODEL, ModelError, SAMPLES, REASONING_EFFORT } from "@/lib/llm";
@@ -36,6 +38,33 @@ function verifyEvidence(ev: Ev, sentences: Sentence[], c: CaseRecord): EvidenceR
 }
 
 // Statements about whether the SELECTED charge fits belong in the citation check only.
+/**
+ * The date or place part of a model claim, restated from the record, when the cited text supports it: a year that
+ * differs from the form's entry year, or a place that does not appear in the cited text while the form's is known.
+ */
+function supportedEntryPart(c: CaseRecord, path: string, citedText: string): string | null {
+  const f = c.facts.find((x) => x.path === path && x.status === "present" && fieldQuality(x.value) !== "unknown");
+  if (!f) return null;
+  if (path === "entry.date") {
+    const fy = formYear(f.value);
+    const years = [...new Set(citedText.match(/\b(19|20)\d\d\b/g) ?? [])].filter((y) => fy && Number(y) !== fy);
+    return fy && years.length ? `The cited narrative statement gives ${years.join(" and ")} for the entry, but the form records ${fy}.` : null;
+  }
+  if (path === "entry.place") {
+    const tokens = (f.value.match(/[A-Za-z]{3,}/g) ?? []).filter((t) => !/^(miles?|of|unk|unknown|near|the)$/i.test(t));
+    const named = /\b(near|at|in|into|through|via) [A-Z][a-z]+/.test(citedText);
+    return tokens.length && named && !tokens.some((t) => new RegExp(`\\b${t}`, "i").test(citedText)) ? `The cited narrative statement names a different place of entry than the form ("${f.value}").` : null;
+  }
+  return null;
+}
+
+/** A sentence that says a fact is not known ("does not recall when", "date of entry unknown"). */
+const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recall)|did not (know|remember|recall)|(could|can) ?not (recall|remember|say)|cannot (recall|remember|say)|unsure|not sure|no recollection|unable to (recall|remember|say|provide))\b/i;
+// A sentence that also gives a date or year states something known, whatever else it calls unknown.
+const statesUnknown = (t: string) => UNKNOWN_STATEMENT_RE.test(t) && !/\b(19|20)\d\d\b|\b\d{1,2}\/\d{1,2}\//.test(t);
+/** A citation explanation that says the narrative supports the charge, and one that says it does not. */
+const AFFIRMS_SUPPORT_RE = /\b(narrative|record|facts?) (clearly |also )?(supports?|establish(es)?|is consistent with|are consistent with)\b|\bsupported by the (narrative|record)\b|\bwhich the narrative supports\b/i;
+const DENIES_SUPPORT_RE = /\b(not|never|n't|no longer|fails? to) (clearly )?(support|establish|consistent)/i;
 const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
 const ANY_CITATION_RE = /\b(?:INA|Section)\s*\d{3}\s*\([a-z0-9]+\)(?:\s*\([a-z0-9]+\))*|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}(?:\s*\([a-z0-9]+\))*/gi;
 const OTHER_CHARGE_RE = /\b(should (be|have been) charged|recommend(ed|s)? (charging|the charge|a charge)|more appropriate|a better charge|alternative charge|could be charged|consider (charging|a different|another))\b|\bcharg\w*\b[^.]*\binstead\b|\binstead\b[^.]*\bcharg/i;
@@ -97,6 +126,8 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const t0 = Date.now();
   const sentences = splitSentences(c.narrative.text, c.narrative.pageSpans);
   const rules = runRules(c, sentences);
+  // Several people described (redacted names): only explicitly-"subject" statements count for or against this record.
+  const multiPerson = rules.notes.length > 0;
   const selected = c.selectedCharges.filter((s) => s.citation.trim());
   const charge = selected.length === 1 ? findCharge(selected[0].citation, selected[0].referenceId) : undefined;
 
@@ -105,7 +136,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const ctx = caseContext(c, sentences);
   const applicability = new Map(allElements.map((el) => [el.id, applies(el, ctx)]));
   const detected = new Map(allElements.map((el) => [el.id, applicability.get(el.id) === true ? detect(el, c, sentences) : null]));
-  const toCheck = allElements.filter((e) => applicability.get(e.id) === true && !detected.get(e.id) && rules.elementsFromFields.get(e.id)?.status !== "present");
+  const toCheck = allElements.filter((e) => applicability.get(e.id) === true && !detected.get(e.id) && !(rules.elementsFromFields.get(e.id)?.status === "present" && !rules.elementsFromFields.get(e.id)?.qualifier));
 
   const findings: Finding[] = [...rules.findings];
   const discarded: ReviewResult["discarded"] = [];
@@ -162,17 +193,38 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     const det = detected.get(el.id);
     if (det) return det;
     const fromField = rules.elementsFromFields.get(el.id);
-    if (fromField?.status === "present") return fromField;
+    // Fully known form fields settle the element. Fields recorded as unknown (or partly unknown) are documented but
+    // not established, so the narrative is still checked; if it does not state the fact, the qualified field result stands.
+    if (fromField?.status === "present" && !fromField.qualifier) return fromField;
     const m = out?.elements.find((x) => x.element_id === el.id);
     const validIds = (m?.sentence_ids ?? []).filter((id) => sentences.some((s) => s.id === id));
+    if (fromField?.status === "present") {
+      if (m?.status === "present" && validIds.length) {
+        const unknownOnly = validIds.every((id) => statesUnknown(sentences.find((s) => s.id === id)!.text));
+        return unknownOnly ? { ...fromField, sentenceIds: validIds, qualifier: "recorded_unknown", note: "The form and the narrative both record this as unknown. It is documented, but not established." }
+          : { elementId: el.id, label: el.label, status: "present", sentenceIds: validIds, fieldPaths: fromField.fieldPaths, note: `Stated in the narrative. ${fromField.note}` };
+      }
+      return fromField;
+    }
     if (!m) return { elementId: el.id, label: el.label, status: "not_checked", sentenceIds: [], fieldPaths: [], note: out ? "The model did not report on this element." : "Model check unavailable." };
-    if (m.status === "present" && validIds.length) return { elementId: el.id, label: el.label, status: "present", sentenceIds: validIds, fieldPaths: [], note: m.note };
+    if (m.status === "present" && validIds.length) {
+      // A narrative that only says the fact is unknown documents it without establishing it (audit item 5).
+      if (validIds.every((id) => statesUnknown(sentences.find((s) => s.id === id)!.text)))
+        return { elementId: el.id, label: el.label, status: "present", sentenceIds: validIds, fieldPaths: [], qualifier: "recorded_unknown", note: "The narrative records this as unknown. It is documented, but not established." };
+      return { elementId: el.id, label: el.label, status: "present", sentenceIds: validIds, fieldPaths: [], note: m.note };
+    }
     if (m.status === "present") return { elementId: el.id, label: el.label, status: "unclear", sentenceIds: [], fieldPaths: [], note: "Reported present, but no valid sentence reference was given." };
     // absent / unclear / unavailable: redaction or unreadable fields take precedence over "absent"
     if (fromField && (m.status === "absent" || m.status === "unavailable")) return fromField;
     if (m.status === "unavailable") return { elementId: el.id, label: el.label, status: "unavailable_redacted", sentenceIds: validIds, fieldPaths: [], note: m.note };
     return { elementId: el.id, label: el.label, status: m.status, sentenceIds: validIds, fieldPaths: [], note: m.note };
   });
+  // N1 (identifying documents): a model "present" must cite a document the person had or presented, or a statement
+  // that there were none; a sentence that only mentions a document ("his visa application was denied") is not enough.
+  const n1 = elements.find((e) => e.elementId === "N1");
+  if (n1 && n1.status === "present" && !n1.fieldPaths.length && !n1.sentenceIds.some((id) => DOCUMENT_RE.test(sentences.find((x) => x.id === id)?.text ?? ""))) {
+    Object.assign(n1, { status: "unclear", note: "The cited sentence mentions a document but does not say what identifying documents the person had." });
+  }
   // N7 (disposition): a model "present" must cite disposition wording; an arrest is not a disposition.
   const n7 = elements.find((e) => e.elementId === "N7");
   if (n7 && n7.status === "present" && !n7.fieldPaths.length && !n7.sentenceIds.some((id) => DISPOSITION_RE.test(sentences.find((x) => x.id === id)?.text ?? ""))) {
@@ -221,7 +273,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   // ---- Model issues, kept only with verified evidence
   out?.issues.forEach((iss, i) => {
     const ev = iss.evidence.map((x) => verifyEvidence(x, sentences, c));
-    const verified = ev.filter(Boolean) as EvidenceRef[];
+    let verified = ev.filter(Boolean) as EvidenceRef[];
     if (verified.length < ev.length || verified.length === 0) {
       discarded.push({ title: iss.title, reason: "Quoted evidence could not be matched to the reviewed text." });
       return;
@@ -243,16 +295,24 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
       const otherFields = verified.filter((v) => v.fieldPath && v.fieldPath !== "entry.manner");
       // Also when combined with date/place points: a claim whose manner part is wrong is not a valid conflict.
       if (formCat && cited.length > 0 && cited.every((m) => m === formCat) && (otherFields.length === 0 || /\b(manner|PWA|EWI|AFOOT|on foot|walk|swim|swam|river|cross)/i.test(iss.explanation))) {
-        discarded.push({ title: iss.title, reason: `The form code "${mannerField.quote}" and the cited narrative statement describe the same manner of entry.` });
-        return;
+        // The manner part is wrong. Keep any date or place part that the cited text itself supports (audit: separate
+        // mixed claims rather than discarding a real conflict); drop the claim only if nothing supported remains.
+        const citedText = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)?.text ?? "").join(" ");
+        const parts = otherFields.map((v) => ({ path: v.fieldPath!, text: supportedEntryPart(c, v.fieldPath!, citedText) })).filter((x) => x.text);
+        const kept = parts.map((x) => x.text!);
+        const note = `The model's manner-of-entry point was withheld: the form code "${mannerField.quote}" and the cited statement describe the same manner of entry.`;
+        discarded.push({ title: iss.title, reason: kept.length ? `Manner part only. ${note}` : note });
+        if (!kept.length) return;
+        verified = verified.filter((v) => !v.fieldPath || parts.some((x) => x.path === v.fieldPath));
+        iss = { ...iss, title: kept.length > 1 ? "Entry date and place differ from the form" : /year/.test(kept[0]) ? "Entry date differs from the form" : "Place of entry differs from the form", explanation: `${kept.join(" ")} ${note}` };
       }
     }
     // (1c) In a narrative about several people, a statement whose subject cannot be attributed (redacted names) is not
-    // evidence against THIS subject's history fields.
-    const multiPerson = rules.notes.length > 0;
-    if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.")) &&
+    // evidence against THIS subject's entry or history fields (same rule as the fact comparison: facts.aboutSubject).
+    if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
+        verified.every((v) => !v.sentenceId || attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear") !== "subject") &&
         verified.some((v) => v.sentenceId && attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear") !== "subject")) {
-      discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's history." });
+      discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });
       return;
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
@@ -287,7 +347,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   let factsStatus: "ok" | "failed" = "failed";
   if (factsSettled.ok) {
     factsStatus = "ok";
-    const cmp = compareFacts(c, sentences, factsSettled.v, rules.notes.length > 0);
+    const cmp = compareFacts(c, sentences, factsSettled.v, multiPerson);
     for (const ff of cmp.findings) {
       const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
       for (let i = findings.length - 1; i >= 0; i--) {
@@ -296,6 +356,8 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
       }
       findings.push(ff);
     }
+    if (cmp.unattributed.length)
+      humanReasons.push(`Several people are described with redacted names, and ${cmp.unattributed.join(", ")} may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.`);
     if (cmp.dropped) discarded.push({ title: "Extracted entry statements", reason: `${cmp.dropped} quote(s) could not be matched to the text and were ignored.` });
   }
 
@@ -304,7 +366,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const citeText = selected.map((s) => s.citation).join("; ");
   const reqs = (charge as { requires?: { entryManner?: string; priorRemoval?: boolean } } | undefined)?.requires;
   // Deterministic pre-check of the charge's core requirement. Uses extracted facts when available, form fields otherwise.
-  const req = !rules.citationPrecheck && charge ? checkChargeRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs) : null;
+  const req = !rules.citationPrecheck && charge ? checkChargeRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson) : null;
   if (rules.citationPrecheck) {
     citation = { status: rules.citationPrecheck.status, citation: citeText, explanation: rules.citationPrecheck.explanation, evidence: [] };
   } else {
@@ -320,10 +382,27 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
         status = "needs_human_review";
         explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
       }
-      if (!req && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(sentences, factsSettled.v, reqs)) {
+      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(sentences, factsSettled.v, reqs, multiPerson)) {
         // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch.
         status = "needs_human_review";
         explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
+      }
+      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && AFFIRMS_SUPPORT_RE.test(out.citation.explanation) && !DENIES_SUPPORT_RE.test(out.citation.explanation)) {
+        // The model's own explanation says the narrative supports the charge (F075-X): uncertainty, not a mismatch.
+        status = "needs_human_review";
+        explanation = `The model reported a concern but also said the narrative supports the selected charge: ${explanation}`;
+      }
+      if (status === "consistent") {
+        // A "consistent" verdict needs verified support (audit item 6): a verified statement of the fact the charge
+        // depends on, or, for a charge without a recorded requirement, verified narrative evidence from the model.
+        const supported = reqs && factsSettled.ok ? supportsRequirement(sentences, factsSettled.v, reqs, multiPerson)
+          : !reqs && evidence.some((e) => e.kind === "sentence");
+        if (!supported) {
+          status = "needs_human_review";
+          explanation = reqs && !factsSettled.ok
+            ? "The model reported the charge as consistent, but the fact extraction did not complete, so the fact this charge depends on could not be verified."
+            : "The model reported the charge as consistent, but no verified statement of the fact this charge depends on was found. A person should confirm.";
+        }
       }
     }
     // The more cautious result wins.
@@ -361,7 +440,9 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     humanReasons.push("Citation check depends on conflicting entry facts.");
   }
   if (out?.human_review.required) humanReasons.push(...out.human_review.reasons);
-  if (modelStatus !== "ok") humanReasons.push("The model check did not complete, so this review is partial.");
+  // Completion covers every required check, not only the main model call (audit item 1).
+  const completion = computeCompletion({ modelStatus, modelError, calls, elements, citation }, { citationExpected: selected.length > 0 });
+  if (completion.status === "partial") humanReasons.push(`This review is partial: ${completion.failed.map((f) => `${f.check} ${f.reason}`).join("; ")}.`);
 
   // ---- Check summary
   const byCat = (cat: Finding["category"]) => findings.some((f) => f.category === cat);
@@ -369,7 +450,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
   const elementsUnchecked = elements.some((e) => e.status === "not_checked");
   const checks: CheckResult[] = [
     { id: "required_elements", label: "Required elements", status: elementsUnchecked ? (modelOk ? "partial" : "partial") : byCat("missing_element") ? "completed_with_findings" : "completed_no_findings",
-      note: elementsUnchecked ? "Some elements were not checked because the model check was unavailable." : undefined },
+      note: elementsUnchecked ? (modelOk ? "The model returned no output for some elements; they were not checked." : "Some elements were not checked because the model check was unavailable.") : undefined },
     { id: "consistency", label: "Consistency",
       status: !modelOk && factsStatus !== "ok" ? (byCat("inconsistency") ? "partial" : "unavailable") : !modelOk || factsStatus !== "ok" ? "partial" : byCat("inconsistency") ? "completed_with_findings" : "completed_no_findings",
       note: !modelOk && factsStatus !== "ok" ? "Only the rule-based time comparison ran." : factsStatus !== "ok" ? "The entry and history fact comparison did not run." : !modelOk ? "Only the fact comparison and rules ran." : undefined },
@@ -430,6 +511,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     checklistVersion: (REFERENCES as { checklistVersion?: string }).checklistVersion ?? "v1",
     discarded,
     calls: calls.sort((a, b) => a.role.localeCompare(b.role)),
+    completion,
     sampleIssues: { perSample, merged: out?.issues.length ?? 0, inAllSamples: out ? out.issues.filter((i) => agreement(outs, i) === outs.length).length : 0 },
   };
 }

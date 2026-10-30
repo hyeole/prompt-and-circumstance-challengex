@@ -1,14 +1,15 @@
 /**
  * Verifies, with LIVE reviews, that every demo beat behaves as the demo script says before the video is recorded.
- * Usage: npm run dev, then  npx tsx scripts/verify-demo.ts [--clean C037]
+ * Usage: npm run dev, then  npx tsx scripts/verify-demo.ts [--clean C045]
  * Writes docs/demo-verification.md. Exits non-zero if any expectation fails.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, ReviewResult } from "../lib/types";
+import { isComplete } from "../lib/completion";
 
 const BASE = process.env.DEMO_BASE_URL ?? "http://localhost:3000";
 const arg = (k: string, d: string) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
-const CLEAN = arg("clean", "C037");
+const CLEAN = arg("clean", "C045");
 const load = (id: string) => JSON.parse(readFileSync(`data/cases/${id}.json`, "utf8")) as CaseRecord;
 
 async function review(c: CaseRecord): Promise<{ r: ReviewResult; ms: number }> {
@@ -21,13 +22,13 @@ async function review(c: CaseRecord): Promise<{ r: ReviewResult; ms: number }> {
 type Check = [string, (r: ReviewResult) => boolean];
 const beats: { name: string; build: () => CaseRecord; checks: Check[] }[] = [
   { name: `1. Complete case (${CLEAN})`, build: () => load(CLEAN), checks: [
-    ["model check completed", (r) => r.modelStatus === "ok"],
+    ["every required check completed", (r) => isComplete(r)],
     ["no findings", (r) => r.findings.length === 0],
     ["no human-review trigger", (r) => !r.humanReview.required],
     ["citation consistent", (r) => r.citation.status === "consistent"],
   ] },
   { name: "2. Missing detail (C012-M2)", build: () => load("C012-M2"), checks: [
-    ["model check completed", (r) => r.modelStatus === "ok"],
+    ["every required check completed", (r) => isComplete(r)],
     ["place of entry (E2) reported absent", (r) => r.elements.find((e) => e.elementId === "E2")?.status === "absent"],
     ["missing finding has no invented text span", (r) => r.findings.some((f) => f.id === "M-E2" && f.evidence.every((e) => e.kind === "missing"))],
   ] },
@@ -37,17 +38,17 @@ const beats: { name: string; build: () => CaseRecord; checks: Check[] }[] = [
       c.facts = c.facts.map((f) => (f.path === "entry.place" ? { ...f, value: "0 mile(s) of LAR", status: "present" } : f));
       return c;
     }, checks: [
-    ["model check completed", (r) => r.modelStatus === "ok"],
+    ["every required check completed", (r) => isComplete(r)],
     ["place of entry no longer missing", (r) => r.elements.find((e) => e.elementId === "E2")?.status === "present" && !r.findings.some((f) => f.id === "M-E2")],
   ] },
   { name: "4. Contradiction with both sources linked (C012-X1)", build: () => load("C012-X1"), checks: [
-    ["model check completed", (r) => r.modelStatus === "ok"],
+    ["every required check completed", (r) => isComplete(r)],
     ["conflict finding cites the tourist-visa sentence and another source", (r) => r.findings.some((f) => f.category === "inconsistency" && f.evidence.length >= 2 && f.evidence.some((e) => e.kind === "sentence" && /tourist visa/.test(r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "")))],
     ["routed to human review", (r) => r.humanReview.required],
     ["citation not shown as plainly consistent", (r) => r.citation.status !== "consistent"],
   ] },
   { name: "5. Ambiguous account routed to a person (C003-AMB)", build: () => load("C003-AMB"), checks: [
-    ["model check completed", (r) => r.modelStatus === "ok"],
+    ["every required check completed", (r) => isComplete(r)],
     ["human review required", (r) => r.humanReview.required],
     ["a review-marked finding cites the border-crossing-card statement", (r) => r.findings.some((f) => f.needsHumanReview && f.evidence.some((e) => e.kind === "sentence" && /border crossing card/.test(r.sentences.find((s) => s.id === e.sentenceId)?.text ?? "")))],
   ] },

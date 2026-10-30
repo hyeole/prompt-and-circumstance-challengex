@@ -1,6 +1,7 @@
 // Local workspace store: user-created cases, immutable review versions, and officer decisions.
 // Plain JSON files under data/local/ (git-ignored, excluded from sharing ZIPs). Single-user, on this computer only.
 import "server-only";
+import { completionOf } from "./completion";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { CaseRecord, ReviewResult } from "./types";
@@ -89,7 +90,7 @@ export function appendVersion(id: string, snapshot: Snapshot, review: ReviewResu
   const version = h.versions.length + 1;
   h.versions.push({
     version, savedAt: new Date().toISOString(), snapshotHash: snapshotHash(snapshot),
-    snapshot: structuredClone(snapshot), review, completion: review.modelStatus === "ok" ? "complete" : "partial",
+    snapshot: structuredClone(snapshot), review, completion: completionOf(review).status,
   });
   writeJSON(path.join(DIRS.history, `${assertId(id)}.json`), h);
   return version;

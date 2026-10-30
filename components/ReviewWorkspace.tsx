@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { isComplete } from "@/lib/completion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CaseRecord, ReviewResult } from "@/lib/types";
 import type { CaseHistory, Decision } from "@/lib/store";
@@ -141,7 +142,7 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
     if (!reviewed) return { label: "Not reviewed", tone: "neutral" };
     if (viewingOld) return { label: `Viewing version ${viewVersion} (older)`, tone: "neutral" };
     if (outdated) return { label: "Outdated", tone: "warn" };
-    if (reviewed.modelStatus !== "ok") return { label: "Review incomplete", tone: "warn" };
+    if (!isComplete(reviewed)) return { label: "Review incomplete", tone: "warn" };
     return reviewed.humanReview.required ? { label: "Needs human review", tone: "review" } : { label: "Reviewed", tone: "ok" };
   }, [phase, elapsed, reviewed, outdated, viewingOld, viewVersion]);
 

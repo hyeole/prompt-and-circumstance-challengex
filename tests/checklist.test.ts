@@ -57,3 +57,25 @@ test("expedited removal: advisal and opportunity to respond (DS09 present, DS10 
   assert.equal(detect(item("N8", ["expedited_removal"]), d9, splitSentences(d9.narrative.text))?.status, "present");
   assert.equal(detect(item("N8", ["expedited_removal"]), d10, splitSentences(d10.narrative.text))?.status, "absent");
 });
+
+// ---- Independent audit item 4: keyword matches must carry the actual contextual information ----
+const probe = (id: string, text: string) =>
+  detect({ id, label: id, fieldPaths: [] }, { id: "P", facts: [], narrative: { text }, selectedCharges: [] } as never, splitSentences(text))?.status ?? "model";
+
+test("audit item 4: 'served a meal' is not a disposition; 'served Form I-862' is", () => {
+  assert.equal(probe("N7", "The subject was served a meal at the station."), "model");
+  assert.equal(probe("N7", "The subject was served Form I-862, Notice to Appear."), "present");
+});
+
+test("audit item 4: a denied visa application is not an identifying document; a presented passport or 'no documents' is", () => {
+  assert.equal(probe("N1", "His visa application was denied in 2015."), "model");
+  assert.equal(probe("N1", "The subject presented a Mexican passport."), "present");
+  assert.equal(probe("N1", "The subject had no identification documents."), "present");
+});
+
+test("audit item 4: an incomplete 'INA 212(a)' is not a precise ground; a precise section needs the supporting facts", () => {
+  assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)."), "unclear");
+  assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)(6)(A)(i)."), "unclear");
+  assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)(6)(A)(i). He crossed the river illegally."), "present");
+  assert.equal(probe("N5", "The subject is inadmissible under INA 212(a)(6)(A)(i) in that he is present without being admitted."), "present");
+});

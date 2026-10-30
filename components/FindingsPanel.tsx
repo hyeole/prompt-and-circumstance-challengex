@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { completionOf } from "@/lib/completion";
 import type { CaseRecord, EvidenceRef, Finding, ReviewResult } from "@/lib/types";
 import { CATEGORY, CHECK_STATUS, CITATION_STATUS, ELEMENT_STATUS } from "./categories";
 import Icon from "./Icon";
@@ -56,7 +57,8 @@ export default function FindingsPanel(props: {
 
   const counts = Object.fromEntries(COUNT_CATS.map((c) => [c, review.findings.filter((f) => f.category === c).length]));
   const sorted = [...review.findings].sort((a, b) => ORDER.indexOf(a.category) - ORDER.indexOf(b.category));
-  const partial = review.modelStatus !== "ok";
+  const completion = completionOf(review);
+  const partial = completion.status === "partial";
 
   return (
     <aside className={`col review ${outdated ? "is-outdated" : ""}`} aria-label="Review">
@@ -70,7 +72,7 @@ export default function FindingsPanel(props: {
       {partial && (
         <div className="banner banner-warn" style={{ marginBottom: 12 }} role="alert">
           <Icon name="alert" />
-          <div><strong>Partial review.</strong> {review.modelError} Rule-based checks ran; checks marked Unavailable did not run and are not passes.</div>
+          <div><strong>Partial review.</strong> Did not complete: {completion.failed.map((f) => `${f.check} (${f.reason})`).join("; ")}. Checks marked Unavailable or Partial did not fully run and are not passes.</div>
         </div>
       )}
 

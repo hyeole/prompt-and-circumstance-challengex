@@ -1,6 +1,7 @@
 // Comparing two reviewed versions of a case. Findings are matched only when that can be done reliably; otherwise the
 // comparison says so instead of guessing.
 import { diffWords } from "diff";
+import { isComplete } from "./completion";
 import type { Finding, ReviewResult } from "./types";
 
 export type WordChange = { kind: "same" | "added" | "removed"; text: string };
@@ -29,7 +30,7 @@ export interface FindingComparison {
 
 export function compareFindings(before: ReviewResult, after: ReviewResult): FindingComparison {
   const empty = { added: [], persisting: [], resolved: [], unmatched: [] };
-  if (before.modelStatus !== "ok" || after.modelStatus !== "ok")
+  if (!isComplete(before) || !isComplete(after))
     return { available: false, reason: "One of the reviews was partial, so findings cannot be compared.", ...empty };
   if (before.promptVersion !== after.promptVersion || before.referenceVersion !== after.referenceVersion)
     return { available: false, reason: "The reviews used different prompt or reference versions, so findings cannot be compared.", ...empty };

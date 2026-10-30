@@ -30,12 +30,20 @@ export function applies(item: ChecklistItem, ctx: { contexts: CaseContext[] }): 
   return where.some((w) => ctx.contexts.includes(w as CaseContext));
 }
 
+// Any statutory citation, and a precise one: INA 212/237 need at least paragraph and subparagraph ("212(a)(6)(A)");
+// "INA 212(a)" alone does not state a specific ground (audit item 4). 8 U.S.C. 1325/1326 and INA 275/276 are specific.
 const CITATION_RE = /\b(?:INA|Section|section)?\s*\b(?:212|237|235|275|276)\s*\(\s*a\s*\)|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}/i;
+const PRECISE_CITATION_RE = /\b(?:212|237)\s*\(\s*a\s*\)\s*\(\s*\d+\s*\)\s*\(\s*[A-Z]\s*\)|\b(?:275|276)\s*\(\s*a\s*\)|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*13(?:25|26)\b/i;
 const EXPLAINS_RE = /\b(in that|because|as an alien|who (has|was|is|arrived|entered)|without (being )?(admitted|paroled|inspected)|remained .* longer than permitted|after (admission|removal|being removed))\b/i;
 const GENERIC_RE = /\b(not credible|not a bona fide|lack(s|ed)? credibility)\b/i;
-export const DISPOSITION_RE = /\b(notice to appear|refused admission|permitted to withdraw|(was|were|has been|have been) (returned|removed) to|released (on|from|pending)|(held|detained) (at|in|pending)|remain(s|ed)? in (custody|detention)|\bWA\/NTA|\bNTA\b|warrant of arrest|reinstate(d|ment)?|expedited removal order|I-860|voluntary (return|departure)|served (with )?a?|remanded|turned over to|transferred to (ICE|immigration)|detained pending|released on|processed (as|for) (a |an )?(WA\/NTA|NTA|reinstatement|expedited removal|voluntary))/i;
+export const DISPOSITION_RE = /\b(notice to appear|refused admission|permitted to withdraw|(was|were|has been|have been) (returned|removed) to|released (on|from|pending)|(held|detained) (at|in|pending)|remain(s|ed)? in (custody|detention)|\bWA\/NTA|\bNTA\b|warrant of arrest|reinstate(d|ment)?|expedited removal order|I-860|voluntary (return|departure)|served (with )?(an? |the )?(Form )?(I-\d{3}|Notice to Appear|NTA|Notice and Order|warrant|order)|remanded|turned over to|transferred to (ICE|immigration)|detained pending|released on|processed (as|for) (a |an )?(WA\/NTA|NTA|reinstatement|expedited removal|voluntary))/i;
+// Facts that meet a ground, stated anywhere in the narrative: the basis facts (E6) or an illegal / uninspected entry.
+const FACTS_FOR_GROUND_RE = new RegExp(`${EXPLAINS_RE.source}|\\b(crossed|entered|cross|enter)\\b[^.]{0,60}\\billegal(ly)?\\b|\\billegal(ly)? (crossed|cross|crossing|entry|entered)|\\bwithout (being )?(inspection|admission|parole)\\b|\\b(overst(ay|ayed)|remained [^.]{0,40}longer than (permitted|authorized))`, "i");
 const BASIS_RE = /\b(illegal(ly)? (present|in the United States|entered)|without (any |valid )?(immigration )?(documents|documentation|status)|no (valid |legal )?(immigration )?(documents|documentation|status)|not in possession of any|overst(ay|ayed)|expired|altered|counterfeit|fraudulent(ly)?|fraud|misrepresent(ation|ed)?|invalid (passport|visa|document)|ordered removed|without permission to reapply)\b/i;
-const DOCUMENT_RE = /\b(passport|identification card|ID card|driver'?s license|birth certificate|visa\b|consular (ID|identification)|identity documents?|identification documents?|(no|any) (form of )?identification|did not (have|possess) any (identification|documents))\b/i;
+// Identifying documents: a document the person had, carried, presented or was identified by, or a statement that there
+// were none. Mentioning a document is not enough ("his visa application was denied" identifies no one: audit item 4).
+const ID_DOC = "(passport|identification card|ID card|driver'?s licen[cs]e|birth certificate|consular (ID|identification)( card)?|identity documents?|identification documents?|national (ID|identity card)|voter (ID|card)|cedula|border crossing card|visa)";
+export const DOCUMENT_RE = new RegExp(`\\b(had|has|have|carried|carrying|possess(ed|ing)?|in (his|her|their) possession|presented|presenting|produced|provided|showed|displayed|tendered|found|identified (himself|herself|themselves|him|her|them)? ?(with|by|using)|using)\\b[^.]{0,60}\\b${ID_DOC}\\b|\\b${ID_DOC}\\b[^.]{0,30}\\b(was|were) (found|presented|produced|located|seized)\\b|\\b(no|any|without) (form of |valid )?(identification|identity documents?|immigration documents?|documents)\\b|\\bdid not (have|possess) any (identification|documents)\\b`, "i");
 
 const DOCS_PRESENTED_RE = /\b(presented|presenting|showed|displayed|tendered)\b[^.]{0,80}\b(passport|visa|card|document|permit|license)|\b(passport|visa)\b[^.]{0,40}\b(presented|shown)\b/i;
 const PURPOSE_RE = /\b(purpose (of|for) (his|her|their|the) (trip|travel|visit)|purpose was|for (tourism|business|pleasure|a visit|a conference|medical)|intend(ed|s)? to (visit|work|study|stay|live)|(visit|visiting) (a |his |her |their )?(family|friends?|relatives?|cousins?|sons?|daughters?|parents?|brothers?|sisters?|girlfriends?|boyfriends?))\b/i;
@@ -48,12 +56,18 @@ const sentencesMatching = (sentences: Sentence[], re: RegExp) => sentences.filte
 export function detect(item: ChecklistItem, c: CaseRecord, sentences: Sentence[]): ElementResult | null {
   const base = { elementId: item.id, label: item.label, sponsorCategory: item.sponsorCategory, fieldPaths: [] as string[] };
   if (item.id === "N5") {
+    // Both components are required: the precise section and subsection, and the facts that meet it.
     const cites = sentencesMatching(sentences, CITATION_RE);
     if (cites.length) {
-      const explained = cites.filter((id) => EXPLAINS_RE.test(sentences.find((s) => s.id === id)!.text));
-      return explained.length
-        ? { ...base, status: "present", sentenceIds: explained, note: "The narrative states the section and explains how the facts meet it." }
-        : { ...base, status: "unclear", sentenceIds: cites, note: "The narrative cites a section but does not explain how the facts satisfy it." };
+      const precise = cites.filter((id) => PRECISE_CITATION_RE.test(sentences.find((s) => s.id === id)!.text));
+      if (!precise.length) return { ...base, status: "unclear", sentenceIds: cites, note: "A statute is cited, but not the precise section and subsection of the ground relied on." };
+      const explained = precise.filter((id) => EXPLAINS_RE.test(sentences.find((s) => s.id === id)!.text));
+      if (explained.length) return { ...base, status: "present", sentenceIds: explained, note: "The narrative states the precise section and explains how the facts meet it." };
+      // The explanation may be elsewhere: sentences that state the facts behind the violation (as for E6).
+      const facts = sentencesMatching(sentences, FACTS_FOR_GROUND_RE).filter((id) => !precise.includes(id));
+      return facts.length
+        ? { ...base, status: "present", sentenceIds: [...precise.slice(0, 1), ...facts.slice(0, 2)], note: "The narrative states the precise section, and other sentences state the facts that meet it." }
+        : { ...base, status: "unclear", sentenceIds: precise, note: "The narrative cites the section but does not state the facts that satisfy it." };
     }
     const generic = sentencesMatching(sentences, GENERIC_RE);
     if (generic.length) return { ...base, status: "unclear", sentenceIds: generic, note: "Only a general credibility assertion is made; no statutory ground is stated." };

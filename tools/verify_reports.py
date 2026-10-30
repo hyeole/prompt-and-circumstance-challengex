@@ -42,7 +42,9 @@ for name in sorted(os.listdir(rep_dir)):
     hr = "HUMAN REVIEW REQUIRED" in text
     if hr != result["humanReview"]["required"]:
         problems.append("human-review indicator mismatch")
-    partial = result["modelStatus"] != "ok"
+    # Same semantics as lib/completion.ts (a failed fact call also makes the review partial).
+    comp = result.get("completion")
+    partial = comp["status"] == "partial" if comp else (result["modelStatus"] != "ok" or any(c["role"] == "facts" and c["status"] != "ok" for c in result.get("calls", [])))
     if partial != ("PARTIAL REVIEW" in text):
         problems.append("partial-review notice missing" if partial else "unexpected partial-review notice")
     shown = result["findings"][:9]

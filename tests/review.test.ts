@@ -61,10 +61,10 @@ test("bug: model 'mismatch' contradicting a supporting statement became a false 
   assert.ok(!r.findings.some((f) => f.category === "citation"));
 });
 
-test("bug: charge-fit statements were also issued as separate inconsistencies (C001-CIT)", async () => {
-  const c = load("C001-CIT");
+test("bug: charge-fit statements were also issued as separate inconsistencies (C001-CIT; checked on single-person C037-CIT)", async () => {
+  const c = load("C037-CIT");
   const r = await reviewCase(c, fake({
-    review: review({ issues: [{ type: "inconsistency", title: "Subject not admitted but charge requires admission", explanation: "The charge requires admission.", evidence: [{ field_path: "entry.manner" }, { sentence_id: sid(c, "under arrest at 1330"), quote: "placed all subjects under arrest" }], needs_human_review: true, reason: "" }] }),
+    review: review({ issues: [{ type: "inconsistency", title: "Subject not admitted but charge requires admission", explanation: "The charge requires admission.", evidence: [{ field_path: "entry.manner" }, { sentence_id: sid(c, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally" }], needs_human_review: true, reason: "" }] }),
   }));
   assert.ok(!r.findings.some((f) => f.title.startsWith("Subject not admitted")));
   assert.ok(r.discarded.some((d) => /citation check/.test(d.reason)));
@@ -118,10 +118,13 @@ test("no displayed text may recommend or name another charge", async () => {
   assert.ok(!/1325|1326|237\(a\)\(1\)\(B\)|more appropriate/i.test(shown), shown);
 });
 
+const c37 = load("C037-X1");
+const s37 = sid(c37, "on the afternoon of 06/15/2012");
+const conflict37 = facts({ entry_statements: [{ sentence_id: s37, quote: "crossed the US/MEXICO Border illegally, into Naco, Arizona, on the afternoon of 06/15/2012", event: "us_entry", year: 2012, manner: "without_inspection", person: "unclear" }] });
+
 test("merging samples does not double-count the same issue", async () => {
-  const c = load("C012-X1");
-  const s = sid(c, "tourist visa");
-  const issue = { type: "inconsistency", title: "Conflict", explanation: "Two accounts.", evidence: [{ sentence_id: s, quote: "on a tourist visa" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" };
+  const c = c37;
+  const issue = { type: "inconsistency", title: "Conflict", explanation: "Two accounts of the entry date.", evidence: [{ sentence_id: s37, quote: "on the afternoon of 06/15/2012" }, { field_path: "entry.date" }], needs_human_review: true, reason: "" };
   const r = await reviewCase(c, fake({ review: review({ issues: [issue] }) }));
   assert.equal(r.findings.filter((f) => f.category === "inconsistency").length, 1);
   assert.equal(r.modelConfig.samples, 2);
@@ -129,20 +132,17 @@ test("merging samples does not double-count the same issue", async () => {
 
 test("the selected charge itself is kept in any equivalent form", async () => {
   const text = "The facts support INA 212(a)(6)(A)(i), also cited as 8 U.S.C. 1182(a)(6)(A)(i). The subject crossed without inspection.";
-  const r = await reviewCase(load("C001"), fake({ review: review({ citation: { status: "consistent", explanation: text, evidence: [] } }) }));
+  const c = load("C037");
+  const s = sid(c, "crossed the US/MEXICO Border illegally");
+  const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: text, evidence: [] } }),
+    facts: facts({ entry_statements: [{ sentence_id: s, quote: "crossed the US/MEXICO Border illegally", event: "us_entry", year: 2009, manner: "without_inspection", person: "unclear" }] }) }));
+  assert.equal(r.citation.status, "consistent");
   assert.equal(r.citation.explanation, text);
 });
 
 test("an unresolved entry conflict prevents a plain 'consistent' citation (design review item 4)", async () => {
-  const c = load("C012-X1");
-  const visa = sid(c, "tourist visa"), port = sid(c, "did not cross through a designated Port");
-  const r = await reviewCase(c, fake({
-    facts: facts({ entry_statements: [
-      { sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", year: 2013, manner: "admitted", person: "subject" },
-      { sentence_id: port, quote: "did not cross through a designated Port of Entry", year: null, manner: "without_inspection", person: "subject" },
-    ] }),
-  }));
-  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-MANNER"));
+  const r = await reviewCase(c37, fake({ facts: conflict37 }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
   assert.equal(r.citation.status, "needs_human_review");
   assert.match(r.citation.explanation, /unresolved conflict/);
 });
@@ -168,14 +168,16 @@ test("planted date conflict is still found when the differing statement is expli
   assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
 });
 
-test("planted date conflict between two unattributed statements is still found (C045-X1)", async () => {
+test("audit item 3: unattributed statements in a multi-person narrative are routed, not flagged as a contradiction (C045-X1)", async () => {
   const c = load("C045-X1");
   const s30 = sid(c, "claims to have last entered"), s35 = sid(c, "February 21, 2015");
   const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
     { sentence_id: s30, quote: "last entered the United States on February 21, 2012", event: "us_entry", year: 2012, manner: "admitted", person: "unclear" },
     { sentence_id: s35, quote: "last entered the United States on February 21, 2015", event: "us_entry", year: 2015, manner: "admitted", person: "unclear" },
   ] }) }));
-  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
+  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")));
+  assert.ok(r.humanReview.required);
+  assert.ok(r.humanReview.reasons.some((x) => x.includes(s35) && /cannot be attributed/.test(x)));
 });
 
 test("bug C013: entering Mexico is not compared with the U.S. entry field", async () => {
@@ -241,14 +243,25 @@ test("PWA (AFOOT) vs 'illegally crossed ... by swimming' is not a conflict (C013
   assert.ok(r.discarded.some((d) => /same manner of entry/.test(d.reason)));
 });
 
-test("a real manner conflict with the form code is still reported (C012-X1)", async () => {
+test("audit item 3: an unattributed manner claim in a multi-person narrative is routed, not flagged (C012-X1)", async () => {
   const c = load("C012-X1");
   const visa = sid(c, "tourist visa");
   const r = await reviewCase(c, fake({
     review: review({ issues: [{ type: "inconsistency", title: "Visa vs PWA", explanation: "The narrative says a tourist visa; the form says PWA.", evidence: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] }),
     facts: facts({ entry_statements: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", country: "United States", year: 2013, manner: "admitted", person: "unclear" }] }),
   }));
-  assert.ok(r.findings.some((f) => f.category === "inconsistency"));
+  assert.ok(!r.findings.some((f) => f.category === "inconsistency"));
+  assert.ok(r.humanReview.reasons.some((x) => x.includes(visa) && /cannot be attributed/.test(x)));
+});
+
+test("a real manner conflict explicitly about the subject is still reported", async () => {
+  const c = load("C012-X1");
+  const visa = sid(c, "tourist visa");
+  const text = sentences(c).map((x) => (x.id === visa ? x.text.replace(/^.*?claims/, "The subject claims") : x.text)).join(" ");
+  const c2 = { ...c, narrative: { text } } as CaseRecord;
+  const v2 = sid(c2, "tourist visa");
+  const r = await reviewCase(c2, fake({ facts: facts({ entry_statements: [{ sentence_id: v2, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", year: 2013, manner: "admitted", person: "subject" }] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-ENTRY-MANNER"));
 });
 
 test("a model conflict citing an entry into Mexico is withheld even without a form field (C013-X1)", async () => {
@@ -279,15 +292,7 @@ test("checklist v2: traveler's explanation (N6) is not applicable without a disc
   assert.equal(clean.elements.find((e) => e.elementId === "N6")?.status, "not_applicable");
   assert.equal(clean.elements.find((e) => e.elementId === "N3")?.status, "not_applicable", "port-of-entry item on an interior case");
   assert.equal(clean.caseContext?.contexts.join(","), "interior");
-  const c = load("C012-X1");
-  const visa = sid(c, "tourist visa"), port = sid(c, "did not cross through a designated Port");
-  const r = await reviewCase(c, fake({
-    review: review({ elements: [{ element_id: "N6", status: "absent", sentence_ids: [], note: "" }] }),
-    facts: facts({ entry_statements: [
-      { sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", year: 2013, manner: "admitted", person: "unclear" },
-      { sentence_id: port, quote: "did not cross through a designated Port of Entry", event: "us_entry", year: null, manner: "without_inspection", person: "unclear" },
-    ] }),
-  }));
+  const r = await reviewCase(c37, fake({ review: review({ elements: [{ element_id: "N6", status: "absent", sentence_ids: [], note: "" }] }), facts: conflict37 }));
   assert.equal(r.elements.find((e) => e.elementId === "N6")?.status, "absent");
   assert.ok(!r.findings.some((f) => f.referenceIds.includes("N6")), "advisory: shown in the checklist, not issued as a flag");
 });
@@ -343,4 +348,108 @@ test("a documented prior removal in a one-person narrative still contradicts a N
   const r = await reviewCase({ ...c, narrative: { text: sentenceText(c, s) } } as CaseRecord, fake({ facts: facts({ removal_statements: [{ sentence_id: "S1", quote: "was arrested by Border Patrol and received an Expedited Removal", person: "unclear" }] }) }));
   assert.ok(r.findings.some((f) => f.id === "F-HISTORY"));
 });
+const sentences = (c: CaseRecord) => splitSentences(c.narrative.text, c.narrative.pageSpans);
 function sentenceText(c: CaseRecord, id: string) { return splitSentences(c.narrative.text, c.narrative.pageSpans).find((x) => x.id === id)!.text; }
+
+// ---- Regression tests for the post-tuning runs' false flags (eval/runs/2026-10-30T03-03-23, 2026-10-30T03-05-54) ----
+
+const loadD = (id: string) => JSON.parse(readFileSync(`eval/dev-synthetic/cases/${id}.json`, "utf8")) as CaseRecord;
+
+test("dev DS10: current expedited-removal processing is not a prior removal", async () => {
+  const c = loadD("DS10");
+  const s = sid(c, "processed for expedited removal");
+  const r = await reviewCase(c, fake({ facts: facts({ removal_statements: [{ sentence_id: s, quote: "The subject was processed for expedited removal and was served Form I-860", person: "subject" }] }) }));
+  assert.ok(!r.findings.some((f) => f.id === "F-HISTORY"));
+});
+
+test("fresh FS02: a corrected first answer is not a second entry year either", async () => {
+  const c = loadF("FS02");
+  const first = sid(c, "she entered in 2020"), main = sid(c, "on or about September 3, 2019");
+  const r = await reviewCase(c, fake({ facts: facts({ entry_statements: [
+    { sentence_id: main, quote: "she entered the United States on or about September 3, 2019, by wading across the Rio Grande", event: "us_entry", year: 2019, manner: "without_inspection", person: "subject" },
+    { sentence_id: first, quote: "the subject said she entered in 2020", event: "us_entry", year: 2020, manner: "unknown", person: "subject" },
+  ] }) }));
+  assert.ok(!r.findings.some((f) => f.id.startsWith("F-ENTRY-DATE")));
+});
+
+test("fresh F075-X: a model 'mismatch' that says the narrative supports the charge is routed, not flagged, even if the fact call fails", async () => {
+  const c = loadF("F075-X");
+  const s = sid(c, "crossed the Rio Grande River into the United States");
+  const r = await reviewCase(c, fake({
+    facts: new ModelError("timeout", "timeout", 1),
+    review: review({
+      issues: [{ type: "inconsistency", title: "Entry date conflict", explanation: "Narrative indicates entry in 2011, while form fields list 06/09/2013.", evidence: [{ sentence_id: s, quote: "crossed the Rio Grande River into the United States" }, { field_path: "entry.date" }], needs_human_review: true, reason: "" }],
+      citation: { status: "likely_mismatch", explanation: "The selected charge requires entry without inspection, which the narrative supports, but the entry date conflict raises uncertainty about the applicable entry event.", evidence: [{ sentence_id: s, quote: "crossed the Rio Grande River into the United States" }] },
+    }),
+  }));
+  assert.ok(!r.findings.some((f) => f.id === "C-1"));
+  assert.equal(r.citation.status, "needs_human_review");
+});
+
+test("a past removal with a date is still a removal even when it names the expedited-removal form", async () => {
+  const c = loadD("DS10");
+  const r = await reviewCase({ ...c, narrative: { text: "The subject was previously removed on 03/02/2018 and was served Form I-860, Notice and Order of Expedited Removal." } } as CaseRecord,
+    fake({ facts: facts({ removal_statements: [{ sentence_id: "S1", quote: "The subject was previously removed on 03/02/2018", person: "subject" }] }) }));
+  assert.ok(r.findings.some((f) => f.id === "F-HISTORY"));
+});
+
+// ---- Independent audit (items 4-6) ----
+
+test("audit item 5: an unknown encounter date with a known location and method is only partly established", async () => {
+  const c = load("C037");
+  const facts2 = c.facts.map((f) => (f.path === "encounter.date_time" ? { ...f, value: "Unknown Date, Unknown Time", status: "present" as const } : f));
+  const r = await reviewCase({ ...c, facts: facts2 }, fake({}));
+  const e4 = r.elements.find((e) => e.elementId === "E4")!;
+  assert.equal(e4.status, "present");
+  assert.equal(e4.qualifier, "partly_unknown");
+  assert.match(e4.note ?? "", /Unknown Date/);
+});
+
+test("audit item 5: a narrative that only says the entry date is unknown documents it without establishing it", async () => {
+  const c = load("C003");
+  const s = sid(c, "does not recall anything about his illegal entry");
+  const facts2 = c.facts.filter((f) => f.path !== "entry.date");
+  const r = await reviewCase({ ...c, facts: facts2 }, fake({ review: review({ elements: [{ element_id: "E1", status: "present", sentence_ids: [s], note: "" }] }) }));
+  const e1 = r.elements.find((e) => e.elementId === "E1")!;
+  assert.equal(e1.qualifier, "recorded_unknown");
+});
+
+test("audit item 6: a 'consistent' verdict without verified support is routed to a person", async () => {
+  const r = await reviewCase(load("C037"), fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
+  assert.equal(r.citation.status, "needs_human_review");
+});
+
+test("audit item 6: a selected citation that disagrees with its reference ID is routed, never checked against either", async () => {
+  const c = load("C037");
+  const r = await reviewCase({ ...c, selectedCharges: [{ ...c.selectedCharges[0], citation: "INA 237(a)(1)(B)" }] }, fake({}));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /does not match its reference ID/);
+  assert.ok(r.humanReview.required);
+});
+
+test("audit item 1: a failed fact-extraction call makes the review partial even when the model review succeeded", async () => {
+  const r = await reviewCase(load("C037"), fake({ facts: new ModelError("timeout", "timeout", 1) }));
+  assert.equal(r.modelStatus, "ok");
+  assert.equal(r.completion?.status, "partial");
+  assert.ok(r.completion?.failed.some((f) => f.check === "Fact extraction"));
+});
+
+test("audit item 1: elements the model omitted make the review partial", async () => {
+  const r = await reviewCase(load("C037"), fake({ review: review({ elements: [] }) }));
+  assert.equal(r.completion?.status, "partial");
+  assert.ok(r.completion?.failed.some((f) => f.check === "Required elements"));
+});
+
+test("audit: a mixed claim keeps its supported date part when only the manner part is wrong", async () => {
+  const c = load("C037-X1");
+  const s = sid(c, "on the afternoon of 06/15/2012");
+  const r = await reviewCase(c, fake({
+    review: review({ issues: [{ type: "inconsistency", title: "Entry facts mismatch", explanation: "The narrative's crossing differs from the form's EWI AFOOT entry and date.", evidence: [{ sentence_id: s, quote: "crossed the US/MEXICO Border illegally" }, { field_path: "entry.manner" }, { field_path: "entry.date" }], needs_human_review: true, reason: "" }] }),
+    facts: facts({ entry_statements: [{ sentence_id: s, quote: "crossed the US/MEXICO Border illegally, into Naco, Arizona, on the afternoon of 06/15/2012", event: "us_entry", year: null, manner: "without_inspection", person: "unclear" }] }),
+  }));
+  const kept = r.findings.find((f) => f.category === "inconsistency");
+  assert.ok(kept, "the date conflict is retained");
+  assert.ok(!kept!.evidence.some((e) => e.fieldPath === "entry.manner"), "the unsupported manner part is removed");
+  assert.match(kept!.explanation, /2012/);
+  assert.equal(kept!.source, "model", "retained from the model claim, not re-derived by the fact comparison");
+});

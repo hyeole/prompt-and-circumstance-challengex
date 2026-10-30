@@ -65,6 +65,27 @@ export function attribution(sentence: Sentence, person: "subject" | "other" | "u
   return EXPLICIT_SUBJECT.test(sentence.text) ? "subject" : "unclear";
 }
 
+/**
+ * One attribution rule for every comparison against this record (audit item 3): a statement counts for or against
+ * the subject when it is explicitly about "the subject", or when it is unattributed and the narrative describes only
+ * one person. An unattributed statement in a multi-person narrative never counts.
+ */
+export const aboutSubject = (attr: "subject" | "other" | "unclear", multiPerson: boolean) => attr === "subject" || (attr === "unclear" && !multiPerson);
+
+/**
+ * Current processing ("processed for expedited removal", "served Form I-860", "pending removal proceedings") is not a
+ * PRIOR removal unless the sentence also dates or marks it as past.
+ */
+const CURRENT_REMOVAL_RE = /\b(processed (for|as) (an )?(expedited )?removal|(is|are|being) processed|served (with )?(a |the )?(Form )?I-860|Notice and Order of Expedited Removal|pending removal|removal proceedings|will be (removed|held|processed)|placed (in|into) (expedited )?removal)\b/i;
+const PAST_MARKER_RE = /\b(previously|prior|formerly|earlier|before|\d{1,2}\/\d{1,2}\/\d{2,4}|(19|20)\d\d)\b/i;
+export const isPriorRemoval = (text: string) => !CURRENT_REMOVAL_RE.test(text) || PAST_MARKER_RE.test(text);
+
+/** Verified prior-removal statements that count for this subject. */
+function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): Verified[] {
+  return facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
+    .filter((v): v is Verified => !!v && isPriorRemoval(v.s.text) && aboutSubject(attribution(v.s, "unclear"), multiPerson));
+}
+
 /** A manner-of-entry claim must use manner wording, not just an entry verb ("came to the United States" says nothing about how). */
 export const MANNER_RE = /\b(illegal(ly)?|without (being )?inspect|not (been )?inspected|uninspected|EWI|swam|swim|wad(ed|ing)|walk(ed|ing)? (across|through)|crossed|crossing|river|fence|between (the )?ports|smuggl|port of entry|visa|passport|crossing card|admitted|paroled|inspected|flew|flight|airport)\b/i;
 /** A lack-of-status claim must use status wording. */
@@ -116,8 +137,10 @@ const attributionNote = (p: string) => (p === "unclear" ? " The narrative does n
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
 
-export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson = false): { findings: Finding[]; dropped: number } {
+export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson = false): { findings: Finding[]; dropped: number; unattributed: string[] } {
   const findings: Finding[] = [];
+  // Sentences that would conflict with this record but cannot be attributed to its subject: routed, never flagged.
+  const unattributed: string[] = [];
   let dropped = 0;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
   const fieldEv = (p: string): EvidenceRef => { const f = field(p)!; return { kind: "field", fieldPath: f.path, quote: f.value, page: f.sourcePage, verified: true }; };
@@ -134,6 +157,13 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     })
     .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: "subject" | "other" | "unclear" }[];
 
+  // A differing year that the narrative itself marks as a first answer, later corrected and explained with the other
+  // year, is a resolved discrepancy (sponsor S5), not a conflict.
+  const correctedLater = (x: { v: Verified }, otherYear: number) => {
+    const i = sentences.findIndex((s) => s.id === x.v.s.id);
+    return CORRECTION_RE.test(x.v.s.text) && sentences.slice(i + 1, i + 3).some((s) => /\b(corrected|explained|clarified)\b/i.test(s.text) && s.text.includes(String(otherYear)));
+  };
+
   // 1. Entry year vs form date of last entry.
   // A year that differs from the form is a conflict when the statement is explicitly about the subject, or when no
   // explicitly-subject statement agrees with the form. Otherwise, in a narrative about several people with redacted
@@ -141,13 +171,10 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const fy = field("entry.date") ? formYear(field("entry.date")!.value) : undefined;
   if (fy) {
     const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy);
-    // A differing year that the narrative itself marks as a first answer later corrected is a resolved discrepancy
-    // (sponsor S5), not a conflict, when the corrected account agrees with the form.
-    const correctedLater = (x: { v: Verified }) => {
-      const i = sentences.findIndex((s) => s.id === x.v.s.id);
-      return CORRECTION_RE.test(x.v.s.text) && sentences.slice(i + 1, i + 3).some((s) => /\b(corrected|explained|clarified)\b/i.test(s.text) && s.text.includes(String(fy)));
-    };
-    const off = entries.find((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && (x.attr === "subject" || !subjectAgrees) && !correctedLater(x));
+    const counts = (x: { attr: "subject" | "other" | "unclear" }) => aboutSubject(x.attr, multiPerson) && (x.attr === "subject" || !subjectAgrees);
+    const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && !correctedLater(x, fy));
+    const off = differs.find(counts);
+    if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson).map((x) => x.v.s.id));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
     if (off)
       findings.push({
@@ -160,10 +187,11 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 2. Two narrative statements giving different entry years, both with the same attribution (only when the form
   //    check above did not already fire).
   if (!findings.length) {
-    const withYear = entries.filter((x) => x.e.year && x.v.s.text.includes(String(x.e.year)));
+    const withYear = entries.filter((x) => x.e.year && x.v.s.text.includes(String(x.e.year)) && aboutSubject(x.attr, multiPerson));
     const a = withYear[0];
     const b = withYear.find((x) => x.e.year !== a?.e.year && x.attr === a?.attr);
-    if (a && b)
+    // A first answer that the narrative itself corrects and explains is a resolved discrepancy, not a conflict.
+    if (a && b && !correctedLater(a, b.e.year!) && !correctedLater(b, a.e.year!))
       findings.push({
         id: "F-ENTRY-DATE-2", category: "inconsistency", title: "Narrative gives two different entry years",
         explanation: `One statement gives ${a.e.year} and another gives ${b.e.year} for the entry.${attributionNote(b.attr)}`,
@@ -174,8 +202,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 3. Manner of entry: narrative statements vs each other and vs the form code.
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
   // Manner wording must be verified exactly and must actually describe a manner of entry.
-  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? ""));
+  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && aboutSubject(x.attr, multiPerson));
   const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
+  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "")).map((x) => x.v.s.id));
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
     const other = known.find((x) => x.e.manner === fm);
@@ -200,8 +229,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const imm = field("history.immigration_record");
   if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
     // Attribution in code: explicitly "Subject", or an unattributed statement when the narrative describes only one person.
-    const rem = facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
-      .find((v) => v && (attribution(v.s, "unclear") === "subject" || !multiPerson));
+    const rem = priorRemovals(sentences, facts, multiPerson)[0];
+    if (!rem && multiPerson) unattributed.push(...priorRemovals(sentences, facts, false).map((v) => v.s.id));
     if (rem)
       findings.push({
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",
@@ -210,7 +239,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         humanReviewReason: "Conflicting immigration history: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
-  return { findings, dropped };
+  return { findings, dropped, unattributed: [...new Set(unattributed)] };
 }
 
 /**
@@ -218,18 +247,24 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
  * Returns null when the requirement is met or cannot be decided from the extracted facts.
  */
 export function checkChargeRequirement(
-  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires: { entryManner?: string; priorRemoval?: boolean } | undefined,
+  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires: { entryManner?: string; priorRemoval?: boolean } | undefined, multiPerson = false,
 ): { status: "likely_mismatch" | "needs_human_review"; explanation: string; evidence: EvidenceRef[] } | null {
   if (!requires) return null;
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
-  const subjectEntries = facts.entry_statements.filter((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
+  const allEntries = facts.entry_statements.filter((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
     .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) })).filter((x) => x.v) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
+  const subjectEntries = allEntries.filter((x) => aboutSubject(attribution(x.v.s, x.e.person), multiPerson));
+  // Statements that cannot be attributed to the subject neither support nor contradict the charge: a person decides.
+  const unattributedNote = (ids: string[]) => ({ status: "needs_human_review" as const, evidence: [] as EvidenceRef[],
+    explanation: `The facts this charge depends on appear only in statements that cannot be attributed to this record's subject (${ids.join(", ")}; several people are described with redacted names). A person should decide who each statement is about.` });
   if (requires.entryManner) {
     const fm = field("entry.manner");
     const formCat = fm ? formMannerCategory(fm.value) : undefined;
     const supporting = subjectEntries.filter((x) => x.e.manner === requires.entryManner);
     const opposing = subjectEntries.filter((x) => x.e.manner !== requires.entryManner);
     const formOpposes = formCat !== undefined && formCat !== requires.entryManner;
+    const unattributedSupport = allEntries.filter((x) => x.e.manner === requires.entryManner && !subjectEntries.includes(x));
+    if (!supporting.length && unattributedSupport.length) return unattributedNote(unattributedSupport.map((x) => x.v.s.id));
     if (!supporting.length && formCat !== requires.entryManner && (formOpposes || opposing.length)) {
       const need = requires.entryManner === "admitted" ? "a lawful admission or inspection" : "entry without inspection or admission";
       const ev: EvidenceRef[] = [...(fm && formOpposes ? [{ kind: "field" as const, fieldPath: fm.path, quote: fm.value, page: fm.sourcePage, verified: true }] : []), ...opposing.slice(0, 2).map((x) => x.v.ev)];
@@ -237,8 +272,10 @@ export function checkChargeRequirement(
     }
   }
   if (requires.priorRemoval) {
-    const removals = facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote)).filter(Boolean);
+    const removals = priorRemovals(sentences, facts, multiPerson);
     const imm = field("history.immigration_record");
+    const unattributedRemovals = removals.length ? [] : priorRemovals(sentences, facts, false);
+    if (unattributedRemovals.length) return unattributedNote(unattributedRemovals.map((v) => v.s.id));
     if (!removals.length && imm && /^\s*NEGATIVE\b/i.test(imm.value))
       return { status: "likely_mismatch", explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the immigration record is "${imm.value}" and the narrative describes no prior removal.`, evidence: [{ kind: "field", fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] };
     if (!removals.length && facts !== EMPTY_FACTS)
@@ -256,10 +293,13 @@ export function hasMannerStatement(sentences: Sentence[], facts: FactsOutput): b
 }
 
 /** True when a verified statement supports the charge's core requirement (entry manner, or a prior removal). */
-export function supportsRequirement(sentences: Sentence[], facts: FactsOutput, requires?: { entryManner?: string; priorRemoval?: boolean }): boolean {
-  if (requires?.priorRemoval)
-    return facts.removal_statements.some((r) => r.person !== "other" && verify(sentences, r.sentence_id, r.quote));
-  return !!requires?.entryManner && facts.entry_statements.some((e) => isUsEntry(e) && e.person !== "other" && e.manner === requires.entryManner && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
+export function supportsRequirement(sentences: Sentence[], facts: FactsOutput, requires?: { entryManner?: string; priorRemoval?: boolean }, multiPerson = false): boolean {
+  if (requires?.priorRemoval) return priorRemovals(sentences, facts, multiPerson).length > 0;
+  return !!requires?.entryManner && facts.entry_statements.some((e) => {
+    if (!isUsEntry(e) || e.person === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
+    const v = verify(sentences, e.sentence_id, e.quote);
+    return !!v && aboutSubject(attribution(v.s, e.person), multiPerson);
+  });
 }
 
 /** Manner category the extractor assigned to each verified U.S.-entry sentence with manner wording. */

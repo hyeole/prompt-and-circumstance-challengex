@@ -6,14 +6,10 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, Finding, ReviewResult } from "../lib/types";
 import { findingKey } from "./finding-key";
+import { citesAnchor, isComplete, matches, type Plant } from "./score-match";
 
-export const SCORING_POLICY = "v2.2"; // v2.2 = v2.1 definitions + checklist-expectation and should-not-flag metrics
+export const SCORING_POLICY = "v2.3"; // v2.3 = v2.2 + a finding must identify the planted discrepancy; completion covers every required check
 
-type Plant =
-  | { type: "missing_element"; elementId: string }
-  | { type: "inconsistency"; anchors: string[]; fieldPaths: string[] }
-  | { type: "citation" }
-  | { type: "human_review"; reason: "multi_charge" | "ambiguity"; anchors?: string[] };
 type Expected = { id: string; base: string; split: string; description: string; plants: Plant[]; elementExpectations?: Record<string, string>; shouldNotFlag?: string[] };
 type Adjudication = { base: string; key: string; verdict: "valid_observation" | "false_flag"; note: string };
 
@@ -30,29 +26,13 @@ const latency = JSON.parse(readFileSync(`${dir}/latency.json`, "utf8")) as { id:
 const adjudications: Adjudication[] = existsSync("eval/adjudications.json") ? JSON.parse(readFileSync("eval/adjudications.json", "utf8")).items : [];
 const load = (id: string) => (existsSync(`${dir}/raw/${id}.json`) ? (JSON.parse(readFileSync(`${dir}/raw/${id}.json`, "utf8")) as ReviewResult) : null);
 const caseOf = (id: string) => JSON.parse(readFileSync(`${casesDir}/${id}.json`, "utf8")) as CaseRecord;
-const low = (s: string) => s.toLowerCase();
-
-const sentenceText = (r: ReviewResult, id?: string) => low(r.sentences.find((s) => s.id === id)?.text ?? "");
-const citesAnchor = (r: ReviewResult, f: Finding, anchors: string[]) =>
-  f.evidence.some((e) => e.kind === "sentence" && anchors.some((a) => sentenceText(r, e.sentenceId).includes(low(a))));
-
-/** Does this finding specifically address this plant? */
-function matches(r: ReviewResult, f: Finding, p: Plant): boolean {
-  switch (p.type) {
-    case "missing_element": return (f.category === "missing_element" || f.category === "unclear") && f.referenceIds.includes(p.elementId);
-    case "inconsistency": return (f.category === "inconsistency" || f.category === "unclear") &&
-      (citesAnchor(r, f, p.anchors) || f.evidence.some((e) => e.kind === "field" && p.fieldPaths.includes(e.fieldPath!)));
-    case "citation": return f.category === "citation";
-    case "human_review": return p.reason === "multi_charge" ? f.id === "R-MULTI-CHARGE" : f.needsHumanReview && citesAnchor(r, f, p.anchors ?? []);
-  }
-}
 
 type Outcome = "detected" | "routed_only" | "missed" | "not_completed";
 /** Strict outcome per plant. Failed or partial model reviews earn credit only for what the rules decide alone. */
 function outcome(r: ReviewResult | null, p: Plant): Outcome {
   if (!r) return "not_completed";
-  if (r.modelStatus !== "ok") {
-    // Failed or partial model check: only findings produced by deterministic rules can earn credit.
+  if (!isComplete(r)) {
+    // Partial review (any required check failed): only findings produced by deterministic rules can earn credit.
     const ruleHit = r.findings.some((f) => f.source === "rule" && matches(r, f, p));
     return ruleHit ? "detected" : "not_completed";
   }
@@ -93,7 +73,7 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
   const c = caseOf(ex.id);
   const routingExpected = ex.plants.some((p) => p.type === "human_review" || p.type === "inconsistency" || p.type === "citation");
   const row: Row = {
-    id: ex.id, split: ex.split, base: ex.base, ms: lat.ms, completed: r?.modelStatus === "ok", modelStatus: r?.modelStatus ?? "no_result",
+    id: ex.id, split: ex.split, base: ex.base, ms: lat.ms, completed: r ? isComplete(r) : false, modelStatus: r?.modelStatus ?? "no_result",
     plants: ex.plants.map((p) => ({ type: p.type === "human_review" ? `human_review:${p.reason}` : p.type, outcome: outcome(r, p) })),
     flags: [], citation: r?.citation.status ?? "n/a", humanReview: r?.humanReview.required ?? false, routingExpected, evidenceOk: 0, evidenceTotal: 0,
   };
@@ -118,7 +98,7 @@ const elementChecks: { id: string; elementId: string; expected: string; actual: 
 const shouldNotFlagViolations: { id: string; anchor: string; finding: string }[] = [];
 for (const ex of expected) {
   const r = load(ex.id);
-  if (!r || r.modelStatus !== "ok") continue;
+  if (!r || !isComplete(r)) continue;
   for (const [elementId, want] of Object.entries(ex.elementExpectations ?? {}))
     elementChecks.push({ id: ex.id, elementId, expected: want, actual: r.elements.find((e) => e.elementId === elementId)?.status ?? "missing" });
   for (const anchor of ex.shouldNotFlag ?? [])
@@ -181,7 +161,11 @@ const summary = {
   latency: { p50: q(0.5), p90: q(0.9), max: q(0.999), over60s: latency.filter((l) => l.ms > 60_000).length, httpFailures: latency.filter((l) => !l.ok).length },
   rows,
 };
-writeFileSync(`${dir}/summary.json`, JSON.stringify(summary, null, 2));
+// A run already scored under another policy keeps its original files; the rescoring is written beside them.
+let prevPolicy: string | undefined;
+try { prevPolicy = JSON.parse(readFileSync(`${dir}/summary.json`, "utf8")).scoringPolicy; } catch { /* first scoring */ }
+const suffix = prevPolicy && prevPolicy !== SCORING_POLICY ? `-${SCORING_POLICY}` : "";
+writeFileSync(`${dir}/summary${suffix}.json`, JSON.stringify(summary, null, 2));
 
 const md = `# Evaluation run ${dir.split("/").pop()} (scoring policy ${SCORING_POLICY}, dataset ${dataset})
 
@@ -208,7 +192,7 @@ Not Unissant's test set. References are provisional.
 
 Plant outcomes: ${outcomeCounts}.
 
-**Partial reviews (model check did not complete): ${summary.partialReviews.length}.** ${summary.partialReviews.map((p) => `${p.id} (${p.modelStatus}, ${p.seconds}s; ${p.calls}; plants: ${p.plants})`).join("; ") || "none"}.
+**Partial reviews (a required check did not complete): ${summary.partialReviews.length}.** ${summary.partialReviews.map((p) => `${p.id} (${p.modelStatus}, ${p.seconds}s; ${p.calls}; plants: ${p.plants})`).join("; ") || "none"}.
 Recall over completed reviews only (secondary): ${summary.recallCompletedOnly.value}. "routed_only" means the case went to a person without the specific issue being identified; it is not counted as detected.
 Flags issued: ${flags.length} = ${flagCount("planted")} planted + ${flagCount("duplicate")} duplicates + ${flagCount("valid_observation")} adjudicated valid observations + ${flagCount("false_flag")} adjudicated false flags + ${flagCount("unadjudicated")} unadjudicated.
 
@@ -218,7 +202,8 @@ Flags issued: ${flags.length} = ${flagCount("planted")} planted + ${flagCount("d
 |---|---|---|---|---|---|---|
 ${rows.map((r) => `| ${r.id} | ${r.split} | ${(r.ms / 1000).toFixed(1)}s | ${r.completed ? "yes" : r.modelStatus} | ${r.plants.map((p) => `${p.type} (${p.outcome})`).join(", ") || "none"} | ${r.humanReview ? "yes" : "no"}${!r.routingExpected && r.humanReview ? " (not expected)" : ""} | ${r.flags.filter((f) => f.status !== "planted").map((f) => `${f.finding} [${f.status}]`).join("; ")} |`).join("\n")}
 `;
-writeFileSync(`${dir}/REPORT.md`, md);
+writeFileSync(`${dir}/REPORT${suffix}.md`, md);
+if (suffix) console.log(`Rescored under ${SCORING_POLICY}; original ${prevPolicy} files kept.`);
 console.log(md.split("## Per case")[0]);
 if (listUnadjudicated)
   for (const r of rows) for (const f of r.flags) if (f.status === "unadjudicated") console.log(`UNADJ ${r.base} ${r.id} ${f.finding}\n   key=${f.key}`);

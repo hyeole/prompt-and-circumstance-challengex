@@ -155,4 +155,6 @@ export interface ReviewResult {
   calls: { role: string; status: "ok" | "failed" | "cancelled" | "invalid_output"; ms: number; attempts: number; error?: string }[];
   /** Raw issue counts per sample before verification, to check that merging does not just accumulate flags. */
   sampleIssues: { perSample: number[]; merged: number; inAllSamples: number };
+  /** Completion across every required check (lib/completion.ts). Absent on reviews saved before it existed. */
+  completion?: import("./completion").Completion;
 }

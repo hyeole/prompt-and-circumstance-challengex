@@ -1,6 +1,6 @@
 // Deterministic checks. These run on every review, even when the model call fails.
 import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "@/lib/types";
-import { REFERENCES, findCharge } from "@/lib/references";
+import { REFERENCES, chargeIdConflict, findCharge } from "@/lib/references";
 import { fieldQuality } from "@/lib/fieldQuality";
 
 export interface RuleOutput {
@@ -29,12 +29,14 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
       const qs = present.map((f) => fieldQuality(f!.value));
       const qualifier = qs.every((q) => q === "unknown") ? "recorded_unknown" as const
         : qs.every((q) => q === "see_narrative") ? "see_narrative" as const
-        : qs.some((q) => q !== "known") && !qs.includes("known") ? "partly_unknown" as const : undefined;
+        // Any field that is not fully known qualifies the element, even when another field is known (audit item 5):
+        // an unknown encounter date with a known location and method is only partly established.
+        : qs.some((q) => q !== "known") ? "partly_unknown" as const : undefined;
       elementsFromFields.set(el.id, {
         elementId: el.id, label: el.label, status: "present", sentenceIds: [],
         fieldPaths: present.map((f) => f!.path), qualifier,
         note: qualifier === "recorded_unknown" ? "The form records this as unknown. It is documented, but no usable value is recorded."
-          : qualifier === "partly_unknown" ? "The form records this only partly (part of the value is marked unknown)."
+          : qualifier === "partly_unknown" ? `The form records this only partly: ${present.filter((f) => fieldQuality(f!.value) !== "known").map((f) => `${f!.label ?? f!.path} is "${f!.value}"`).join("; ")}.`
           : qualifier === "see_narrative" ? "The form field refers to the narrative." : "Recorded in a structured form field.",
       });
     } else if (fs.some((f) => f?.status === "redacted")) {
@@ -64,6 +66,9 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
     reasons.push("Multiple charges are selected.");
     findings.push(mk("R-MULTI-CHARGE", "human_review", "Multiple charges selected", citationPrecheck.explanation,
       [{ kind: "field", fieldPath: "selectedCharges", verified: true }], [], "Multi-charge case", "medium"));
+  } else if (chargeIdConflict(charges[0].citation, charges[0].referenceId)) {
+    citationPrecheck = { status: "needs_human_review", explanation: `The selected citation "${charges[0].citation}" does not match its reference ID (${charges[0].referenceId}). A person must confirm which charge was selected; the tool does not choose.` };
+    reasons.push("The selected citation and its reference ID disagree.");
   } else if (!findCharge(charges[0].citation, charges[0].referenceId)) {
     citationPrecheck = { status: "insufficient_information", explanation: `"${charges[0].citation}" is not in the loaded charge reference (version ${REFERENCES.version}), so it cannot be checked against reference elements.` };
     reasons.push("Selected charge is not in the loaded reference list.");
