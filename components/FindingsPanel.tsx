@@ -14,6 +14,7 @@ const CITATION_TONE: Record<ReviewResult["citation"]["status"], string> = {
   consistent: "pill-ok", likely_mismatch: "pill-error", needs_human_review: "pill-review", insufficient_information: "pill-neutral", not_checked: "pill-neutral",
 };
 
+const FIELD_LABEL: Record<string, string> = { "entry.date": "entry date", "entry.manner": "manner of entry", "entry.place": "place of entry", "history.immigration_record": "immigration history", narrative: "two narrative accounts" };
 export default function FindingsPanel(props: {
   kase: CaseRecord;
   review: ReviewResult | null;
@@ -84,6 +85,12 @@ export default function FindingsPanel(props: {
             {review.humanReview.reasons.length > 0 && (
               <ul>{review.humanReview.reasons.slice(0, 3).map((r, i) => <li key={i}>{r}</li>)}</ul>
             )}
+            {(review.humanReview.accounts ?? []).map((g, i) => (
+              <div key={i} className="hr-account">
+                <strong>Whose account? ({FIELD_LABEL[g.fieldPath ?? "narrative"] ?? g.fieldPath})</strong> Several people are described with redacted names, and nothing ties {g.sentenceIds.join(", ")} uniquely to this subject. Not treated as a contradiction.
+                <ul>{g.details.map((d, j) => <li key={j}>{d}</li>)}</ul>
+              </div>
+            ))}
           </div>
         </div>
         <div className="counts" role="list" aria-label="Findings by category">

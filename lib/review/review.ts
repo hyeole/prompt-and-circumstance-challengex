@@ -411,27 +411,22 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     if (cmp.dropped) discarded.push({ title: "Extracted entry statements", reason: `${cmp.dropped} quote(s) could not be matched to the text and were ignored.` });
   }
 
-  // Accounts that may conflict with this record but cannot be attributed to its subject. Each becomes one clarity
-  // finding that shows the conflicting account and the attribution uncertainty, claims no contradiction, and asks a
-  // person to decide whose account it is. Never added for a statement an existing finding already cites.
+  // Accounts that may conflict with this record but cannot be attributed to its subject: routing items for a person,
+  // grouped by the fact they concern, each showing the conflicting account. Not findings (no contradiction is
+  // claimed), and never listed for a statement an existing finding already cites.
   const citedByFinding = new Set(findings.flatMap((f) => f.evidence.map((e) => e.sentenceId).filter(Boolean)));
-  const accountSeen = new Set<string>();
-  let accountN = 0;
+  const accountGroups = new Map<string, { fieldPath?: string; sentenceIds: string[]; details: string[] }>();
   for (const a of accounts) {
-    const ids = a.sentenceIds.filter((id) => sentences.some((x) => x.id === id));
-    if (!ids.length || ids.some((id) => citedByFinding.has(id) || accountSeen.has(id))) continue;
-    ids.forEach((id) => accountSeen.add(id));
-    const fieldV = a.fieldPath ? c.facts.find((f) => f.path === a.fieldPath && f.status === "present") : undefined;
-    findings.push({
-      id: `U-ACCOUNT-${++accountN}`, category: "unclear", title: "Account that may conflict with this record (attribution unknown)",
-      explanation: `${a.detail} Several people are described with redacted names, and nothing in the narrative ties ${ids.join(" and ")} uniquely to this record's subject, so this is not treated as a contradiction. A person should decide whose account this is.`,
-      evidence: [
-        ...ids.map((id): EvidenceRef => { const x = sentences.find((y) => y.id === id)!; return { kind: "sentence", sentenceId: id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact", context: { attribution: "unclear", event: a.fieldPath?.startsWith("history.") ? "Prior history" : "Entry into the U.S." } }; }),
-        ...(fieldV ? [{ kind: "field" as const, fieldPath: fieldV.path, quote: fieldV.value, page: fieldV.sourcePage, verified: true }] : []),
-      ],
-      referenceIds: [], needsHumanReview: true, humanReviewReason: "Whose account is this? Several people are described and names are redacted.", source: "model", severity: "low",
-    });
+    const ids = a.sentenceIds.filter((id) => sentences.some((x) => x.id === id) && !citedByFinding.has(id));
+    if (!ids.length) continue;
+    const g = accountGroups.get(a.fieldPath ?? "narrative") ?? { fieldPath: a.fieldPath, sentenceIds: [], details: [] };
+    if (ids.every((id) => g.sentenceIds.includes(id))) continue;
+    g.sentenceIds.push(...ids.filter((id) => !g.sentenceIds.includes(id)));
+    g.details.push(a.detail);
+    accountGroups.set(a.fieldPath ?? "narrative", g);
   }
+  const routedAccounts = [...accountGroups.values()];
+
 
   // ---- Citation check
   let citation: ReviewResult["citation"];
@@ -508,7 +503,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   const touches = (f: Finding) => f.evidence.some((e) => relevant.some((p) => e.fieldPath?.startsWith(p))) ||
     (relevant.includes("entry.") && f.referenceIds.some((r) => ["E1", "E2", "E3"].includes(r)));
   const entryConflict = findings.find((f) => f.category === "inconsistency" && touches(f));
-  const openAccount = findings.find((f) => f.id.startsWith("U-ACCOUNT") && touches(f));
+  const openAccount = routedAccounts.find((g) => relevant.some((p) => (g.fieldPath ?? "entry.").startsWith(p)));
   if ((entryConflict || openAccount) && citation.status === "consistent") {
     const what = relevant.includes("history.") ? "the entry or immigration history" : "the entry";
     citation = {
@@ -516,7 +511,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       status: "needs_human_review",
       explanation: entryConflict
         ? `The selected charge fits one account of the facts, but the record has an unresolved conflict about ${what}, which this charge depends on ("${entryConflict.title}"). A person must decide which account is correct before relying on this check.`
-        : `The selected charge fits the record, but the narrative contains an account that may conflict with it about ${what}, which this charge depends on, and that account cannot be attributed (${openAccount!.evidence.filter((e) => e.sentenceId).map((e) => e.sentenceId).join(", ")}). Consistency is qualified until a person decides whose account it is.`,
+        : `The selected charge fits the record, but the narrative contains an account that may conflict with it about ${what}, which this charge depends on, and that account cannot be attributed (${openAccount!.sentenceIds.join(", ")}). Consistency is qualified until a person decides whose account it is.`,
     };
     humanReasons.push(entryConflict ? "Citation check depends on conflicting facts the charge relies on." : "Citation check depends on an unattributed account about facts the charge relies on.");
   }
@@ -585,7 +580,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     checks,
     elements,
     citation,
-    humanReview: { required, reasons: shownReasons.length ? shownReasons : required ? ["See findings marked for human review."] : [] },
+    humanReview: { required: required || routedAccounts.length > 0, reasons: shownReasons.length ? shownReasons : required ? ["See findings marked for human review."] : [],
+      ...(routedAccounts.length ? { accounts: routedAccounts.map((g) => ({ ...g, details: g.details.map(clean) })) } : {}) },
     findings,
     notes: rules.notes,
     caseContext: ctx,

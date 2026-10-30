@@ -144,7 +144,12 @@ export interface ReviewResult {
   checks: CheckResult[];
   elements: ElementResult[];
   citation: { status: CitationStatus; citation: string; explanation: string; evidence: EvidenceRef[] };
-  humanReview: { required: boolean; reasons: string[] };
+  humanReview: {
+    required: boolean; reasons: string[];
+    /** Accounts that may conflict with this record but cannot be attributed to its subject, grouped by the fact they
+     *  concern. Routing items for a person, not findings: no contradiction is claimed and they are not scored. */
+    accounts?: { fieldPath?: string; sentenceIds: string[]; details: string[] }[];
+  };
   findings: Finding[];
   notes: string[]; // informational context, not flags
   /** Case context used to decide which checklist items apply. */

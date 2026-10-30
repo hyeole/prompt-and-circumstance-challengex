@@ -1,0 +1,876 @@
+{
+  "about": "Claim-aware adjudication migration (2026-10-30). The original records in eval/adjudications.json are unchanged. Each record's claim is the claim of the finding it was recorded on; a record with no identified claim is never inherited under the claim-aware layer. 'manual' holds adjudications made by a person for findings whose claim differs from every original record. Used only with score-eval --adjudication-claims; results are written to separate files.",
+  "claimFunction": "scripts/finding-key.ts findingClaim (kind, ordered values, direction, negation, subject/event of evidence)",
+  "records": [
+    {
+      "base": "C021",
+      "key": "inconsistency|dob: pob: nigeria entered as a b-1/b2 arriving on 06- 01-201|entry.date",
+      "example": "C021 F-ENTRY-DATE Entry date differs from the form",
+      "claims": [
+        "F-ENTRY-DATE | 2016>2015 | narrative>form | pos | ?/?,field:entry.date"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|at 0412 am sector dispatch requested a supervisory border pa|encounter.date_time",
+      "example": "C021-CIT I-1 Encounter date mismatch",
+      "claims": [
+        "I:encounter date mismatch | 4/12/2017>4/16/2017 | narrative>form | pos | ?/?,field:encounter.date_time"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject is removable per section 237(a)(1)(b) of the immigra",
+      "example": "C021-MC F-HISTORY Immigration record conflicts with the narrative",
+      "claims": [
+        "F-HISTORY | NEGATIVE | form>narrative | pos | ?/?,field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "citation|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015",
+      "example": "C021-X1 C-1 Possible citation mismatch: INA 237(a)(1)(B)",
+      "claims": [
+        "citation | B2 | narrative>form | pos | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "inconsistency|claims to have last entered the united states on february 21|entry.place",
+      "example": "C045-X1 I-2 Entry place mismatch",
+      "claims": [
+        "I:entry place mismatch |  | form>narrative | pos | ?/?,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+      "example": "C001 R-TIME-MISMATCH Encounter time differs between form and narrative",
+      "claims": [
+        "R-TIME-MISMATCH | 1435h>1330h | form>narrative | pos | ?/?,field:encounter.date_time"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C003",
+      "key": "missing_element|E6",
+      "example": "C003-CIT M-E6 Missing: basis for the immigration violation",
+      "claims": [
+        "M-E6 |  | narrative>form | neg | element:E6"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|in 2015 left his home town of ocotal nicaragua by bus and tr|once arriving at the mexico/guatemala border illegally enter",
+      "example": "C013-CIT F-ENTRY-MANNER Conflicting accounts of how the subject entered",
+      "claims": [
+        "F-ENTRY-MANNER | PWA>AFOOT | form>narrative | neg | ?/?,?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C003",
+      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+      "example": "C003-M3 I-1 Encounter time discrepancy",
+      "claims": [],
+      "status": "uncertain: 2 instances make different claims"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.date|in 2015 left his home town of ocotal nicaragua by bus and tr",
+      "example": "C013 I-1 Entry date mismatch",
+      "claims": [
+        "I:entry date mismatch | 2015 | form>narrative | pos | ?/?,field:entry.date"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.place|once arriving at the mexico/guatemala border illegally enter",
+      "example": "C013 I-2 Entry place mismatch",
+      "claims": [
+        "I:entry place mismatch |  | form>narrative | pos | ?/?,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|once arriving at the mexico/guatemala border illegally enter",
+      "example": "C013 I-1 Entry facts mismatch",
+      "claims": [
+        "I:entry facts mismatch | PWA>AFOOT | form>narrative | pos | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.date|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+      "example": "C001-CIT I-1 Entry facts conflict with narrative",
+      "claims": [
+        "I:entry facts conflict with narrative | 05/15/2014>EWI>AFOOT | form>narrative | pos | ?/?,field:entry.date,field:entry.manner,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+      "example": "C001-CIT I-1 Entry facts conflict",
+      "claims": [
+        "I:entry facts conflict | EWI>AFOOT | narrative>form | pos | ?/?,field:entry.manner,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "inconsistency|entry.manner|stated that he crossed the rio grande river from matamoros m",
+      "example": "C001-CIT I-2 Entry manner inconsistency",
+      "claims": [
+        "I:entry manner inconsistency | EWI>AFOOT | form>narrative | neg | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "unclear|encounter.location",
+      "example": "C001-CIT Q-2 Encounter location unclear",
+      "claims": [
+        "Q:encounter location unclear |  | narrative>form | neg | field:encounter.location"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.manner",
+      "example": "C012-M2 I-1 Entry manner and date conflict",
+      "claims": [
+        "I:entry manner and date conflict | PWA>AFOOT>2013 | form>narrative | pos | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|eventually illegally crossed the united states/mexico border",
+      "example": "C013 I-1 Entry facts mismatch",
+      "claims": [
+        "I:entry facts mismatch | PWA | narrative>form | pos | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|05/13/2010 was arrested by ice/ero and deported through the|a 06/08/2005 was arrested by border patrol and received an e",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [
+        "citation |  | narrative>form | pos | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|entry.manner|eventually illegally crossed the united states/mexico border",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [
+        "citation |  | narrative>form | pos | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+      "example": "C013-X1 I-1 Entry manner mismatch",
+      "claims": [
+        "I:entry manner mismatch | PWA>AFOOT | narrative>form | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.place|eventually illegally crossed the united states/mexico border",
+      "example": "C013-X1 I-2 Entry place mismatch",
+      "claims": [
+        "I:entry place mismatch |  | form>narrative | pos | ?/?,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "inconsistency|entry.manner|entry.place|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+      "example": "C013-X1 I-3 Entry facts mismatch",
+      "claims": [
+        "I:entry facts mismatch | PWA>AFOOT | form>narrative | pos | ?/?,?/?,field:entry.manner,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|history.immigration_record",
+      "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [
+        "citation | NEGATIVE | narrative>form | neg | field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS08",
+      "key": "missing_element|N2",
+      "example": "DS08 M-N2 Missing: status or classification claimed for admission",
+      "claims": [
+        "M-N2 |  | narrative>form | neg | element:N2"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS10",
+      "key": "citation|the subject is inadmissible under section 212(a)(7)(a)(i)(i)",
+      "example": "DS10 C-1 Possible citation mismatch: INA 212(a)(7)(A)(i)(I)",
+      "claims": [
+        "citation | B1>B2 | narrative>form | pos | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS12",
+      "key": "missing_element|N5",
+      "example": "DS12 M-N5 Missing: specific ground stated and explained",
+      "claims": [
+        "M-N5 |  | narrative>form | neg | element:N5"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS06",
+      "key": "inconsistency|entry.date|stated that he entered the united states in 2016 by crossing",
+      "example": "DS06 F-ENTRY-DATE Entry date differs from the form",
+      "claims": [
+        "F-ENTRY-DATE | 2016>2018 | narrative>form | neg | field:entry.date,unclear/Entry into the U.S."
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F010",
+      "key": "missing_element|N5",
+      "example": "F010 M-N5 Missing: specific ground stated and explained",
+      "claims": [
+        "M-N5 |  | narrative>form | neg | element:N5"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|claims to have last entered the united states illegally by w|entry.date|entry.place",
+      "example": "F039 I-1 Entry date and place mismatch",
+      "claims": [
+        "I:entry date and place mismatch | 2004 | narrative>form | pos | ?/?,field:entry.date,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|encounter.date_time|facts of arrest: on may 2 2017 border patrol agent (bpa) and",
+      "example": "F039-X I-5 Encounter time mismatch",
+      "claims": [
+        "I:encounter time mismatch | 7:50>08:47 | narrative>form | pos | ?/?,field:encounter.date_time"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|claims to have illegally entered the united states in laredo|entry.manner|entry.place",
+      "example": "F051-C I-1 Entry facts mismatch",
+      "claims": [
+        "I:entry facts mismatch | 2015>PWA | narrative>form | pos | ?/?,field:entry.manner,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|claims to have illegally entered the united states in laredo|entry.place",
+      "example": "F051-C I-2 Entry place and date conflict",
+      "claims": [
+        "I:entry place and date conflict | 2015 | form>narrative | pos | ?/?,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "inconsistency|history.immigration_record|this information was relayed to lbpa who conducted checks on",
+      "example": "F051-C I-3 History immigration record mismatch",
+      "claims": [
+        "I:history immigration record mismatch | NEGATIVE | form>narrative | pos | ?/?,field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date|entry.place",
+      "example": "F055 I-1 Entry place and date mismatch",
+      "claims": [
+        "I:entry place and date mismatch | 2014 | narrative>form | pos | ?/?,field:entry.date,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date|entry.manner|entry.place",
+      "example": "F055 I-2 Entry facts mismatch",
+      "claims": [
+        "I:entry facts mismatch |  | form>narrative | pos | ?/?,field:entry.date,field:entry.manner,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.place",
+      "example": "F055-H I-1 Entry place mismatch",
+      "claims": [
+        "I:entry place mismatch |  | form>narrative | pos | ?/?,field:entry.place"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F055",
+      "key": "inconsistency|(a# ) claims to have last entered the united states illegall|entry.date",
+      "example": "F055-H I-2 Entry date mismatch",
+      "claims": [
+        "I:entry date mismatch | 2014 | form>narrative | pos | ?/?,field:entry.date"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F075",
+      "key": "unclear|was held pending removal proceedings under section 212(a)(6)",
+      "example": "F075 U-N5 Unclear: specific ground stated and explained",
+      "claims": [
+        "U-N5 |  | narrative>form | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS02",
+      "key": "inconsistency|entry.date|when first asked the subject said she entered in 2020.",
+      "example": "FS02 F-ENTRY-DATE Entry date differs from the form",
+      "claims": [
+        "F-ENTRY-DATE | 2020>2019 | narrative>form | pos | field:entry.date,subject/Entry into the U.S."
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS05",
+      "key": "missing_element|N5",
+      "example": "FS05 M-N5 Missing: specific ground stated and explained",
+      "claims": [
+        "M-N5 |  | narrative>form | neg | element:N5"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS06",
+      "key": "missing_element|E6",
+      "example": "FS06 M-E6 Missing: basis for the immigration violation",
+      "claims": [
+        "M-E6 |  | narrative>form | neg | element:E6"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS06",
+      "key": "missing_element|N2",
+      "example": "FS06 M-N2 Missing: status or classification claimed for admission",
+      "claims": [
+        "M-N2 |  | narrative>form | neg | element:N2"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS07",
+      "key": "unclear|cbp officer found that the subject sought admission by prese|the subject presented an indian passport.",
+      "example": "FS07 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "claims": [
+        "U-N3 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS08",
+      "key": "unclear|marie port of entry as a pedestrian and presented a mexican",
+      "example": "FS08 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "claims": [
+        "U-N3 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS09",
+      "key": "unclear|marie port of entry as a pedestrian and presented a mexican",
+      "example": "FS09 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
+      "claims": [
+        "U-N3 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS10",
+      "key": "inconsistency|history.immigration_record|stated that he was deported to honduras in 2019 and returned",
+      "example": "FS10 I-1 History record conflict",
+      "claims": [
+        "I:history record conflict | 2019 | narrative>form | pos | ?/?,field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS10",
+      "key": "inconsistency|stated that he entered the united states in 2021 by crossing|stated that she entered with her cousin in 2022.",
+      "example": "FS10 F-ENTRY-DATE-2 Narrative gives two different entry years",
+      "claims": [
+        "F-ENTRY-DATE-2 | 2021>2022 | narrative>form | neg | unclear/Entry into the U.S.,unclear/Entry into the U.S."
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS07",
+      "key": "missing_element|E6",
+      "example": "FS07 M-E6 Missing: basis for the immigration violation",
+      "claims": [
+        "M-E6 |  | narrative>form | neg | element:E6"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS10",
+      "key": "inconsistency|history.immigration_record|the subject was processed for expedited removal and was serv",
+      "example": "DS10 F-HISTORY Immigration record conflicts with the narrative",
+      "claims": [
+        "F-HISTORY | NEGATIVE | form>narrative | pos | field:history.immigration_record,subject/Prior removal"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F075",
+      "key": "citation|entry.date|travel/residence/work history claimed to have crossed the ri",
+      "example": "F075-X C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
+      "claims": [
+        "citation |  | narrative>form | neg | ?/?,field:entry.date"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS02",
+      "key": "inconsistency|the subject stated that she entered the united states on or|when first asked the subject said she entered in 2020.",
+      "example": "FS02 F-ENTRY-DATE-2 Narrative gives two different entry years",
+      "claims": [
+        "F-ENTRY-DATE-2 | 2019>2020 | - | pos | subject/Entry into the U.S.,subject/Entry into the U.S."
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C001",
+      "key": "missing_element|N5",
+      "example": "C001-X1 M-N5 Missing: specific ground stated and explained",
+      "claims": [
+        "M-N5 |  | narrative>form | neg | element:N5"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C135",
+      "key": "missing_element|N5",
+      "example": "C135-MC M-N5 Missing: specific ground stated and explained",
+      "claims": [
+        "M-N5 |  | narrative>form | neg | element:N5"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C003",
+      "key": "unclear|will be held pending removal proceedings for violating secti",
+      "example": "C003-M3 U-N5 Unclear: specific ground stated and explained",
+      "claims": [
+        "U-N5 |  | narrative>form | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|a notice to appear is being executed on as per section 212(a",
+      "example": "C037-X1 U-N5 Unclear: specific ground stated and explained",
+      "claims": [
+        "U-N5 |  | narrative>form | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C119",
+      "key": "unclear|237(a)(1)(b) nonimmigrant overstay",
+      "example": "C119-X1 U-N5 Unclear: specific ground stated and explained",
+      "claims": [
+        "U-N5 |  | narrative>form | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "example": "C021-X1 I-2 Immigration record mismatch",
+      "claims": [
+        "I:immigration record mismatch | B2 | form>narrative | pos | ?/?,field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS08",
+      "key": "missing_element|N1",
+      "example": "DS08 M-N1 Missing: identifying documents",
+      "claims": [
+        "M-N1 |  | narrative>form | neg | element:N1"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "citation|claims to have entered the united states in laredo around 20|entry.manner",
+      "example": "F051-E C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
+      "claims": [
+        "citation |  | narrative>form | neg | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C003",
+      "key": "unclear|received a copy of mexican consular id.",
+      "example": "C003-M3 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "unclear|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015",
+      "example": "C021-CIT U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C021",
+      "key": "unclear|dob: pob: nigeria entered as a b-1/b2 arriving on 06- 01-201|dob: pob: nigeria entered as a b1/b2 arriving on 12-23-2015|reveals to be an overstay.|reveals to be an overstay.",
+      "example": "C021-X1 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?,?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "unclear|readily admitted to being a citizen of nicaragua who was ill",
+      "example": "C013-X1 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national",
+      "example": "C045-CIT U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national|records checks conducted on the vehicles and their registere",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21",
+      "example": "C045-X1 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|entry.manner",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [
+        "citation |  | narrative>form | pos | ?/?,field:entry.manner"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e|history.immigration_record",
+      "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [],
+      "status": "uncertain: 2 instances make different claims"
+    },
+    {
+      "base": "DS06",
+      "key": "unclear|two occupants and stated that they are citizens of mexico an",
+      "example": "DS06 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS11",
+      "key": "unclear|the subject stated that he has no documents allowing him to",
+      "example": "DS11 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|he has never had any documents that would allow him to be or|inadmissibility: is a citizen of mexico.",
+      "example": "F039-G U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|he has never had any documents that would allow him to be or",
+      "example": "F039-X U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|claims to have illegally entered the united states in laredo",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|bpa identified himself as a border patrol agent and asked al|bpa then asked all subjects individually if they were in the|five subjects stated that they did not have any immigration",
+      "example": "F051-E U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?,?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS10",
+      "key": "unclear|the three passengers and stated that they are citizens of ho",
+      "example": "FS10 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|the other two individuals (nicaragua and (nicaragua ) admitt",
+      "example": "C012-M2 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united|he stated that he did not cross through a designated port of",
+      "example": "C012-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+      "example": "C012-X1 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|later in the interview he stated that he was admitted at the",
+      "example": "C037-AMB U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|stated that he and five others crossed the us/mexico border",
+      "example": "C037-CIT U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|border patrol agent informed agents from the border patrol s",
+      "example": "C037-X1 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21|last entered the united states on february 21 2012 through t",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C135",
+      "key": "unclear|both subjects were asked if they had any immigration documen|neither subject could produce any documentation that permitt|the subjects were asked if they were in the united states le",
+      "example": "C135-M2 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C135",
+      "key": "unclear|both subjects were asked if they had any immigration documen|the subjects were asked if they were in the united states le",
+      "example": "C135-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS06",
+      "key": "inconsistency|stated that he entered the united states in 2016 by crossing|stated that he entered the united states in 2018 by walking",
+      "example": "DS06 I-1 Conflicting entry dates",
+      "claims": [
+        "I:conflicting entry dates | 2016>2018 | narrative>form | pos | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "inconsistency|encounter.date_time|facts of arrest: on april 8 2017 at approximately 2000 hours",
+      "example": "C012-X1 I-2 Encounter time discrepancy",
+      "claims": [
+        "I:encounter time discrepancy | 2000>2040 | narrative>form | pos | ?/?,field:encounter.date_time"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F055",
+      "key": "unclear|history.immigration_record",
+      "example": "F055-H F-HISTORY-2 Prior removal on the form is not described in the narrative",
+      "claims": [
+        "F-HISTORY-2 | POSITIVE>2012 | form>narrative | neg | field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "FS09",
+      "key": "unclear|history.immigration_record",
+      "example": "FS09 F-HISTORY-2 Prior removal on the form is not described in the narrative",
+      "claims": [
+        "F-HISTORY-2 | POSITIVE>06/01/2018 | form>narrative | neg | field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "DS08",
+      "key": "unclear|on september 12 2023 at approximately 1130 hours the subject",
+      "example": "DS08 U-N2 Unclear: status or classification claimed for admission",
+      "claims": [
+        "U-N2 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+      "example": "F039 I-3 Immigration record inconsistency",
+      "claims": [
+        "I:immigration record inconsistency | NEGATIVE | form>narrative | pos | ?/?,field:history.immigration_record"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|one evening he and a group of two other subjects walked acro|travel: states that he found a smuggler in nogales sonora me",
+      "example": "F039-G U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|claims to have illegally entered the united states in laredo|he claims to have swam the river to cross the border.",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|he stated that he did not cross through a designated port of",
+      "example": "C012-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national|is inadmissible under section 237(a)(1)(b) of the immigratio",
+      "example": "C045 U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "missing_element|N1",
+      "example": "C037-M3 M-N1 Missing: identifying documents",
+      "claims": [
+        "M-N1 |  | narrative>form | neg | element:N1"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "claims": [
+        "citation |  | narrative>form | pos | ?/?"
+      ],
+      "status": "claim identified"
+    }
+  ],
+  "manual": []
+}

@@ -57,18 +57,28 @@ test("negative control: a rule-made finding for one element does not detect a di
   assert.equal(matches(r, n5, { type: "missing_element", elementId: "N5" }), true);
 });
 
-// ---- Fix 5: an adjudication is inherited only for the same claim ----
-import { claimOf } from "../scripts/finding-key";
-test("claims: element findings by element, checks by id, free-text by normalized title (order and wording of 'mismatch' ignored)", () => {
-  assert.equal(claimOf("U-N1", "Unclear: identifying documents"), "N1");
-  assert.equal(claimOf("M-N5", "Missing: specific ground"), "N5");
-  assert.equal(claimOf("F-ENTRY-DATE", "Entry date differs from the form"), "F-ENTRY-DATE");
-  assert.equal(claimOf("C-1", "Possible citation mismatch: INA 212(a)(6)(A)(i)"), "citation");
-  assert.equal(claimOf("I-1", "Encounter time discrepancy"), claimOf("I-2", "Encounter time mismatch"));
-  assert.equal(claimOf("I-1", "Entry date and place mismatch"), claimOf("I-3", "Entry place and date mismatch"));
+// ---- Claim-aware adjudication layer: a verdict is inherited only for an identical claim ----
+import { findingClaim } from "../scripts/finding-key";
+const claimF = (o: Partial<Finding>) => findingClaim(f(o));
+const ent = (attribution: "subject" | "unclear" | "other") => ({ kind: "sentence" as const, sentenceId: "S1", quote: "q", verified: true, context: { attribution, event: "Entry into the U.S." } });
+
+test("claims: an identical finding makes the identical claim", () => {
+  const a = { id: "I-1", title: "Entry date conflict", explanation: "The narrative gives 2014, but the form records 2011.", evidence: [ent("subject"), field] };
+  assert.equal(claimF(a), claimF({ ...a, id: "I-3" }));
 });
-test("negative control: different claims on the same evidence do not share a claim", () => {
-  assert.notEqual(claimOf("U-N1", "Unclear: identifying documents"), claimOf("U-N5", "Unclear: specific ground stated and explained"));
-  assert.notEqual(claimOf("I-1", "Entry date conflict"), claimOf("I-1", "Entry manner conflict"));
-  assert.notEqual(claimOf("I-1", "Encounter time discrepancy"), claimOf("R-TIME-MISMATCH", "Encounter time differs between form and narrative"));
+test("claims: different wording of the title is not treated as the same claim (manual adjudication needed)", () => {
+  assert.notEqual(claimF({ id: "I-1", title: "Encounter time discrepancy", explanation: "Form 0950, narrative 1030." }), claimF({ id: "I-1", title: "Encounter time mismatch", explanation: "Form 0950, narrative 1030." }));
+  assert.notEqual(claimF({ id: "I-1", title: "Entry date and place mismatch", explanation: "x" }), claimF({ id: "I-1", title: "Entry place and date mismatch", explanation: "x" }));
+});
+test("claims: negation, compared values, direction, subject and event are all part of the claim", () => {
+  const base = { id: "C-1", title: "Possible citation mismatch", explanation: "The charge requires a prior removal, which the narrative documents.", evidence: [field] };
+  assert.notEqual(claimF(base), claimF({ ...base, explanation: "The charge requires a prior removal, which the narrative does not document." }), "negation");
+  const d = { id: "F-ENTRY-DATE", title: "Entry date differs from the form", evidence: [ent("subject"), field] };
+  assert.notEqual(claimF({ ...d, explanation: "The narrative gives 2014; the form records 2011." }), claimF({ ...d, explanation: "The narrative gives 2012; the form records 2011." }), "values");
+  assert.notEqual(claimF({ ...d, explanation: "The narrative gives 2014; the form records 2011." }), claimF({ ...d, explanation: "The form records 2014; the narrative gives 2011." }), "direction and order");
+  assert.notEqual(claimF({ ...d, explanation: "x 2014 y 2011", evidence: [ent("subject"), field] }), claimF({ ...d, explanation: "x 2014 y 2011", evidence: [ent("unclear"), field] }), "subject");
+  assert.notEqual(claimF({ ...d, explanation: "x", evidence: [{ ...ent("subject"), context: { attribution: "subject", event: "Prior removal" } }] }), claimF({ ...d, explanation: "x", evidence: [ent("subject")] }), "event");
+});
+test("claims: a missing element and an unclear element are different claims", () => {
+  assert.notEqual(claimF({ id: "M-N1", title: "Missing: identifying documents", explanation: "x" }), claimF({ id: "U-N1", title: "Unclear: identifying documents", explanation: "x" }));
 });

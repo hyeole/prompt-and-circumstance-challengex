@@ -48,6 +48,12 @@ export default function PrintReport({ kase, review, decisions = {}, edited, vers
               <ul>{review.humanReview.reasons.slice(0, 4).map((r, i) => <li key={i}>{trunc(r, 160)}</li>)}</ul>
             </>
           )}
+          {(review.humanReview.accounts ?? []).length > 0 && (
+            <>
+              <h3>Accounts a person must attribute (not contradictions)</h3>
+              <ul>{review.humanReview.accounts!.map((g, i) => <li key={i}>{g.sentenceIds.join(", ")}: {trunc(g.details.join(" "), 160)}</li>)}</ul>
+            </>
+          )}
         </div>
         <div>
           <h3>Checklist{review.checklistVersion ? ` (${review.checklistVersion})` : ""}</h3>

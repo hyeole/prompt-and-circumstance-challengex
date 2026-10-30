@@ -602,26 +602,7 @@ test("F075-H: a voluntary return is not a removal, so it is neither a removal co
 });
 
 // ---- Fixes 1, 2, 4, 6 (post-tuning) ----
-test("fix 2: an unattributed conflicting account becomes one clarity finding that shows the account and the uncertainty (F010-X)", async () => {
-  const c = loadF("F010-X");
-  const s = sid(c, "May 5, 2014");
-  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
-  const a = r.findings.filter((x) => x.id.startsWith("U-ACCOUNT"));
-  assert.equal(a.length, 1);
-  assert.equal(a[0].category, "unclear");
-  assert.ok(a[0].needsHumanReview);
-  assert.match(a[0].explanation, /gives 2014 for the entry; the form records the last entry in 2011/);
-  assert.match(a[0].explanation, /not treated as a contradiction/);
-  assert.deepEqual(a[0].evidence.map((e) => e.sentenceId ?? e.fieldPath), [s, "entry.date"]);
-  assert.ok(!r.findings.some((x) => x.category === "inconsistency"), "no contradiction is claimed");
-});
 
-test("fix 2: no account finding duplicates a statement an existing finding already cites", async () => {
-  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
-  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
-  assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
-  assert.ok(!r.findings.some((x) => x.id.startsWith("U-ACCOUNT")));
-});
 
 test("fix 1: a routed account about the entry qualifies 'consistent' for an entry-manner charge (F010-X)", async () => {
   const c = loadF("F010-X");
@@ -663,11 +644,44 @@ test("fix 6: prior Border Patrol arrests about the subject while the record is N
   assert.ok(!r.findings.some((x) => x.id === "F-HISTORY"));
 });
 
-test("fix 6: unattributed prior arrests in a multi-person narrative are an account to attribute, not a finding about the subject (F075-H)", async () => {
-  const c = loadF("F075-H");
-  const r = await reviewCase(c, fake({}));
+
+// ---- Fix 2 as routing items (not findings), grouped by fact ----
+test("fix 2: an unattributed conflicting account is a routing item showing the account and the uncertainty, not a finding (F010-X)", async () => {
+  const c = loadF("F010-X");
+  const s = sid(c, "May 5, 2014");
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(!r.findings.some((x) => x.evidence.some((e) => e.sentenceId === s)), "no finding cites the unattributed account");
+  const g = r.humanReview.accounts?.find((x) => x.fieldPath === "entry.date");
+  assert.ok(g);
+  assert.deepEqual(g!.sentenceIds, [s]);
+  assert.match(g!.details.join(" "), /gives 2014 for the entry; the form records the last entry in 2011/);
+  assert.ok(r.humanReview.required);
+});
+
+test("fix 2: several unattributed history sentences become one routing item for that fact (F075-H)", async () => {
+  const r = await reviewCase(loadF("F075-H"), fake({}));
+  const groups = (r.humanReview.accounts ?? []).filter((x) => x.fieldPath === "history.immigration_record");
+  assert.equal(groups.length, 1);
+  assert.ok(groups[0].sentenceIds.length >= 2);
+  assert.match(groups[0].details.join(" "), /prior immigration arrests, apprehensions or voluntary returns/);
   assert.ok(!r.findings.some((x) => x.id === "F-HISTORY-3"));
-  const a = r.findings.find((x) => x.id.startsWith("U-ACCOUNT") && x.evidence.some((e) => e.fieldPath === "history.immigration_record"));
-  assert.ok(a);
-  assert.match(a!.explanation, /prior immigration arrests, apprehensions or voluntary returns/);
+});
+
+test("fix 2: no routing item for a statement an existing finding already cites", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok(!(r.humanReview.accounts ?? []).length);
+});
+
+test("pre-labelled should-not-flag controls: DS06 and FS10 produce no finding citing the unattributable statement", async () => {
+  const d = loadD("DS06");
+  const r1 = await reviewCase(d, fake({ facts: entryFacts(d, "in 2016", 2016) }));
+  const s1 = sid(d, "in 2016");
+  assert.ok(!r1.findings.some((x) => (x.category === "inconsistency" || x.category === "unclear") && x.evidence.some((e) => e.sentenceId === s1)));
+  assert.ok(r1.humanReview.accounts?.some((g) => g.sentenceIds.includes(s1)), "still routed to a person");
+  const f = loadF("FS10");
+  const s2 = sid(f, "deported to Honduras");
+  const r2 = await reviewCase(f, fake({ facts: facts({ removal_statements: [{ sentence_id: s2, quote: "stated that he was deported to Honduras in 2019", person: "unclear" }] }) }));
+  assert.ok(!r2.findings.some((x) => (x.category === "inconsistency" || x.category === "unclear") && x.evidence.some((e) => e.sentenceId === s2)));
 });

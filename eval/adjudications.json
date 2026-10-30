@@ -1,5 +1,5 @@
 {
-  "about": "Manual adjudication of findings that match no planted issue. Each was checked against the case text and source PDF page. Adjudicated by the team (prepared by Claude Code, to be confirmed by Harshal Yeole). Keyed by base case so the same finding is judged the same way in every variant and run. Since 2026-10-30 each item also records the finding's claim; a verdict is inherited only when base case, evidence key and claim all match (scripts/finding-key.ts).",
+  "about": "Manual adjudication of findings that match no planted issue. Each was checked against the case text and source PDF page. Adjudicated by the team (prepared by Claude Code, to be confirmed by Harshal Yeole). Keyed by base case so the same finding is judged the same way in every variant and run.",
   "items": [
     {
       "base": "C021",
@@ -7,8 +7,7 @@
       "verdict": "false_flag",
       "note": "S29 describes a second person (a B-1/B-2 arrival on 06-01-2016), not this record's subject, whose entry 12/23/2015 matches the form.",
       "example": "C021 F-ENTRY-DATE Entry date differs from the form",
-      "date": "2026-10-29",
-      "claim": "F-ENTRY-DATE"
+      "date": "2026-10-29"
     },
     {
       "base": "C021",
@@ -16,8 +15,7 @@
       "verdict": "false_flag",
       "note": "Misreads the time '0412 am' in S10 as the date 4/12; the narrative's encounter facts do not conflict with 04/16/2017 0730.",
       "example": "C021-CIT I-1 Encounter date mismatch",
-      "date": "2026-10-29",
-      "claim": "I:date encounter"
+      "date": "2026-10-29"
     },
     {
       "base": "C021",
@@ -25,8 +23,7 @@
       "verdict": "false_flag",
       "note": "'Subject is removable per Section 237(a)(1)(B)' states the current charge, not a past removal.",
       "example": "C021-MC F-HISTORY Immigration record conflicts with the narrative",
-      "date": "2026-10-29",
-      "claim": "F-HISTORY"
+      "date": "2026-10-29"
     },
     {
       "base": "C021",
@@ -34,8 +31,7 @@
       "verdict": "false_flag",
       "note": "The record documents admission as a B2 visitor (S27, S33), which is what 237(a)(1)(B) depends on; the model's own explanation says the facts support the charge.",
       "example": "C021-X1 C-1 Possible citation mismatch: INA 237(a)(1)(B)",
-      "date": "2026-10-29",
-      "claim": "citation"
+      "date": "2026-10-29"
     },
     {
       "base": "C045",
@@ -43,8 +39,7 @@
       "verdict": "false_flag",
       "note": "'LAR' in the form is the location code for Laredo, which is where the narrative says the subject entered; no conflict.",
       "example": "C045-X1 I-2 Entry place mismatch",
-      "date": "2026-10-29",
-      "claim": "I:entry place"
+      "date": "2026-10-29"
     },
     {
       "base": "C001",
@@ -52,8 +47,7 @@
       "verdict": "valid_observation",
       "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm.",
       "example": "C001 R-TIME-MISMATCH Encounter time differs between form and narrative",
-      "date": "2026-10-29",
-      "claim": "R-TIME-MISMATCH"
+      "date": "2026-10-29"
     },
     {
       "base": "C003",
@@ -61,8 +55,7 @@
       "verdict": "false_flag",
       "note": "The basis is stated: S23 he admitted being a citizen of Mexico; S24 asked if he was present illegally, he advised yes.",
       "example": "C003-CIT M-E6 Missing: basis for the immigration violation",
-      "date": "2026-10-29",
-      "claim": "E6"
+      "date": "2026-10-29"
     },
     {
       "base": "C013",
@@ -70,8 +63,7 @@
       "verdict": "false_flag",
       "note": "Cited sentence describes entering legally into Honduras, not the United States; there is no conflicting account of the U.S. entry.",
       "example": "C013-CIT F-ENTRY-MANNER Conflicting accounts of how the subject entered",
-      "date": "2026-10-29",
-      "claim": "F-ENTRY-MANNER"
+      "date": "2026-10-29"
     },
     {
       "base": "C003",
@@ -79,8 +71,7 @@
       "verdict": "valid_observation",
       "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'.",
       "example": "C003-M3 I-1 Encounter time discrepancy",
-      "date": "2026-10-29",
-      "claim": "I:encounter time"
+      "date": "2026-10-29"
     },
     {
       "base": "C013",
@@ -88,8 +79,7 @@
       "verdict": "false_flag",
       "note": "The form records the U.S. entry date as unknown; '2015' in the cited sentence is when he left Nicaragua, not a U.S. entry date.",
       "example": "C013 I-1 Entry date mismatch",
-      "date": "2026-10-29",
-      "claim": "I:date entry"
+      "date": "2026-10-29"
     },
     {
       "base": "C013",
@@ -97,8 +87,7 @@
       "verdict": "false_flag",
       "note": "The cited sentence describes entering Mexico through the mountains, not the place of U.S. entry.",
       "example": "C013 I-2 Entry place mismatch",
-      "date": "2026-10-29",
-      "claim": "I:entry place"
+      "date": "2026-10-29"
     },
     {
       "base": "C013",
@@ -106,8 +95,7 @@
       "verdict": "false_flag",
       "note": "Compares the form's U.S. entry manner with a sentence about illegally entering Mexico (S6); no conflicting account of the U.S. entry.",
       "example": "C013 I-1 Entry facts mismatch",
-      "date": "2026-10-29",
-      "claim": "I:entry facts"
+      "date": "2026-10-29"
     },
     {
       "base": "C001",
@@ -115,8 +103,7 @@
       "verdict": "valid_observation",
       "note": "Real place discrepancy: form p.1 '5 mile(s) S of LAR' (Laredo) vs p.3 'crossed the Rio Grande River from Matamoros' (opposite Brownsville). Attribution uncertain in this multi-person narrative; any manner part of the claim is not a conflict.",
       "example": "C001-CIT I-1 Entry facts conflict with narrative",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "C001",
@@ -124,8 +111,7 @@
       "verdict": "valid_observation",
       "note": "Real place discrepancy: form p.1 '5 mile(s) S of LAR' (Laredo) vs p.3 'crossed the Rio Grande River from Matamoros' (opposite Brownsville). Attribution uncertain in this multi-person narrative; any manner part of the claim is not a conflict.",
       "example": "C001-CIT I-1 Entry facts conflict",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "C001",
@@ -133,8 +119,7 @@
       "verdict": "false_flag",
       "note": "Crossing the Rio Grande on foot is consistent with EWI AFOOT; later car and bus travel is not the manner of entry.",
       "example": "C001-CIT I-2 Entry manner inconsistency",
-      "date": "2026-10-30",
-      "claim": "I:entry manner"
+      "date": "2026-10-30"
     },
     {
       "base": "C001",
@@ -142,8 +127,7 @@
       "verdict": "false_flag",
       "note": "The encounter location is recorded on the form; 'unclear' was used for information not repeated in the narrative.",
       "example": "C001-CIT Q-2 Encounter location unclear",
-      "date": "2026-10-30",
-      "claim": "Q:encounter location unclear"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -151,8 +135,7 @@
       "verdict": "false_flag",
       "note": "PWA (AFOOT) is consistent with crossing illegally via a river; an unknown form date does not conflict with a narrative date.",
       "example": "C012-M2 I-1 Entry manner and date conflict",
-      "date": "2026-10-30",
-      "claim": "I:date entry manner"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -160,8 +143,7 @@
       "verdict": "false_flag",
       "note": "PWA means present without admission; an illegal crossing is consistent with it.",
       "example": "C013 I-1 Entry facts mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -169,8 +151,7 @@
       "verdict": "false_flag",
       "note": "The model's own explanation says the narrative supports the selected 1326(a) charge; 'mismatch' contradicts it.",
       "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -178,8 +159,7 @@
       "verdict": "false_flag",
       "note": "The model's own explanation says the narrative supports the selected 1326(a) charge; 'mismatch' contradicts it.",
       "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -187,8 +167,7 @@
       "verdict": "false_flag",
       "note": "Cites entry into Mexico; the U.S. crossing by swimming is consistent with PWA (AFOOT).",
       "example": "C013-X1 I-1 Entry manner mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry manner"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -196,8 +175,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap, not a contradiction: narrative states near Laredo, Texas; form place recorded as unknown.",
       "example": "C013-X1 I-2 Entry place mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry place"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -205,8 +183,7 @@
       "verdict": "false_flag",
       "note": "Mixes entry into Mexico with the U.S. crossing; PWA (AFOOT) is consistent with the U.S. crossing.",
       "example": "C013-X1 I-3 Entry facts mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -214,8 +191,7 @@
       "verdict": "false_flag",
       "note": "The narrative does describe prior removals (Expedited Removal 06/08/2005; deportations 2010 and 2015); the extraction missed them, so 'no prior removal' is wrong.",
       "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "DS08",
@@ -223,8 +199,7 @@
       "verdict": "valid_observation",
       "note": "DS08 removes the sentence with the visa and the stated purpose, so the claimed status/classification is indeed not recorded (sponsor S1).",
       "example": "DS08 M-N2 Missing: status or classification claimed for admission",
-      "date": "2026-10-30",
-      "claim": "N2"
+      "date": "2026-10-30"
     },
     {
       "base": "DS10",
@@ -232,8 +207,7 @@
       "verdict": "false_flag",
       "note": "Using a B1/B2 visitor visa while intending to work is what 212(a)(7)(A)(i)(I) covers; the narrative supports the charge.",
       "example": "DS10 C-1 Possible citation mismatch: INA 212(a)(7)(A)(i)(I)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "DS12",
@@ -241,8 +215,7 @@
       "verdict": "valid_observation",
       "note": "DS12 has no ground statement (the GROUND block was not included), so the specific ground is genuinely not stated (sponsor S4).",
       "example": "DS12 M-N5 Missing: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "DS06",
@@ -250,8 +223,7 @@
       "verdict": "false_flag",
       "note": "Pre-run label: the 2016 statement cannot be attributed to this record's subject (two redacted people); no entry-date conflict should be reported. Known limitation.",
       "example": "DS06 F-ENTRY-DATE Entry date differs from the form",
-      "date": "2026-10-30",
-      "claim": "F-ENTRY-DATE"
+      "date": "2026-10-30"
     },
     {
       "base": "F010",
@@ -259,8 +231,7 @@
       "verdict": "valid_observation",
       "note": "No INA section is stated anywhere in the F010 narrative (sponsor S4).",
       "example": "F010 M-N5 Missing: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -268,8 +239,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap, not a factual contradiction: narrative states February 2004 near Nogales, AZ; form records date and place as unknown.",
       "example": "F039 I-1 Entry date and place mismatch",
-      "date": "2026-10-30",
-      "claim": "I:date entry place"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -277,8 +247,7 @@
       "verdict": "false_flag",
       "note": "7:50 AM is when a van passed the agents, not the encounter; the form's 0847 is the encounter. Not a conflict.",
       "example": "F039-X I-5 Encounter time mismatch",
-      "date": "2026-10-30",
-      "claim": "I:encounter time"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -286,8 +255,7 @@
       "verdict": "false_flag",
       "note": "The place part is a documentation gap, but the claim also treats PWA (AFOOT) as conflicting with an illegal entry, which is wrong.",
       "example": "F051-C I-1 Entry facts mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -295,8 +263,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap: narrative says Laredo around 2015; form records place as unknown.",
       "example": "F051-C I-2 Entry place and date conflict",
-      "date": "2026-10-30",
-      "claim": "I:date entry place"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -304,8 +271,7 @@
       "verdict": "false_flag",
       "note": "'One had been ordered removed' refers to an unattributed member of the group, not shown to be this subject; NEGATIVE record is not contradicted.",
       "example": "F051-C I-3 History immigration record mismatch",
-      "date": "2026-10-30",
-      "claim": "I:history immigration record"
+      "date": "2026-10-30"
     },
     {
       "base": "F055",
@@ -313,8 +279,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap: narrative states July 2014 near Hidalgo, Texas; form records date and place as unknown.",
       "example": "F055 I-1 Entry place and date mismatch",
-      "date": "2026-10-30",
-      "claim": "I:date entry place"
+      "date": "2026-10-30"
     },
     {
       "base": "F055",
@@ -322,8 +287,7 @@
       "verdict": "false_flag",
       "note": "Includes PWA (AFOOT) as conflicting with crossing the Rio Grande, which is consistent.",
       "example": "F055 I-2 Entry facts mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry facts"
+      "date": "2026-10-30"
     },
     {
       "base": "F055",
@@ -331,8 +295,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap: narrative states near Hidalgo, Texas; form place unknown.",
       "example": "F055-H I-1 Entry place mismatch",
-      "date": "2026-10-30",
-      "claim": "I:entry place"
+      "date": "2026-10-30"
     },
     {
       "base": "F055",
@@ -340,8 +303,7 @@
       "verdict": "valid_observation",
       "note": "Documentation gap: narrative states July 2014; form date unknown.",
       "example": "F055-H I-2 Entry date mismatch",
-      "date": "2026-10-30",
-      "claim": "I:date entry"
+      "date": "2026-10-30"
     },
     {
       "base": "F075",
@@ -349,8 +311,7 @@
       "verdict": "valid_observation",
       "note": "The sentence cites 212(a)(6)(A)(i) ('held pending removal proceedings under ...') without explaining how the facts satisfy it (sponsor S4).",
       "example": "F075 U-N5 Unclear: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "FS02",
@@ -358,8 +319,7 @@
       "verdict": "false_flag",
       "note": "Pre-run label: the narrative records the correction to 2019 and the subject's explanation; flagging 2020 is a should-not-flag violation.",
       "example": "FS02 F-ENTRY-DATE Entry date differs from the form",
-      "date": "2026-10-30",
-      "claim": "F-ENTRY-DATE"
+      "date": "2026-10-30"
     },
     {
       "base": "FS05",
@@ -367,8 +327,7 @@
       "verdict": "valid_observation",
       "note": "FS05 contains no ground statement.",
       "example": "FS05 M-N5 Missing: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "FS06",
@@ -376,8 +335,7 @@
       "verdict": "false_flag",
       "note": "The basis (seeking admission with an altered passport) is stated; E6's lack-of-status wording does not fit this port-of-entry fraud scenario.",
       "example": "FS06 M-E6 Missing: basis for the immigration violation",
-      "date": "2026-10-30",
-      "claim": "E6"
+      "date": "2026-10-30"
     },
     {
       "base": "FS06",
@@ -385,8 +343,7 @@
       "verdict": "valid_observation",
       "note": "The narrative never states the classification under which admission was requested. The pre-run label (N2 present) appears wrong; it is kept unchanged and reported as a post-run doubt.",
       "example": "FS06 M-N2 Missing: status or classification claimed for admission",
-      "date": "2026-10-30",
-      "claim": "N2"
+      "date": "2026-10-30"
     },
     {
       "base": "FS07",
@@ -394,8 +351,7 @@
       "verdict": "valid_observation",
       "note": "Purpose of travel was removed in FS07, so N3 is incomplete (anticipated in the pre-run label note).",
       "example": "FS07 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
-      "date": "2026-10-30",
-      "claim": "N3"
+      "date": "2026-10-30"
     },
     {
       "base": "FS08",
@@ -403,8 +359,7 @@
       "verdict": "false_flag",
       "note": "'stating that he was visiting a friend for two weeks' states the purpose of travel; the purpose pattern missed singular 'a friend'.",
       "example": "FS08 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
-      "date": "2026-10-30",
-      "claim": "N3"
+      "date": "2026-10-30"
     },
     {
       "base": "FS09",
@@ -412,8 +367,7 @@
       "verdict": "false_flag",
       "note": "'stating that he was visiting a friend for two weeks' states the purpose of travel; the purpose pattern missed singular 'a friend'.",
       "example": "FS09 U-N3 Unclear: application for admission: port, documents presented, purpose of travel",
-      "date": "2026-10-30",
-      "claim": "N3"
+      "date": "2026-10-30"
     },
     {
       "base": "FS10",
@@ -421,8 +375,7 @@
       "verdict": "false_flag",
       "note": "The deportation statement cannot be attributed to this record's subject (three redacted people); should-not-flag violation.",
       "example": "FS10 I-1 History record conflict",
-      "date": "2026-10-30",
-      "claim": "I:history record"
+      "date": "2026-10-30"
     },
     {
       "base": "FS10",
@@ -430,8 +383,7 @@
       "verdict": "false_flag",
       "note": "The 2021 and 2022 statements are by different people (he / she); not a conflict about this subject.",
       "example": "FS10 F-ENTRY-DATE-2 Narrative gives two different entry years",
-      "date": "2026-10-30",
-      "claim": "F-ENTRY-DATE-2"
+      "date": "2026-10-30"
     },
     {
       "base": "FS07",
@@ -439,8 +391,7 @@
       "verdict": "false_flag",
       "note": "Same as FS06: the basis (seeking admission with an altered passport) is stated; the lack-of-status wording of E6 does not fit port-of-entry fraud.",
       "example": "FS07 M-E6 Missing: basis for the immigration violation",
-      "date": "2026-10-30",
-      "claim": "E6"
+      "date": "2026-10-30"
     },
     {
       "base": "DS10",
@@ -448,8 +399,7 @@
       "verdict": "false_flag",
       "note": "S9 describes the current expedited-removal processing, not a prior removal; the NEGATIVE record is not contradicted. Regression from the post-tuning attribution change.",
       "example": "DS10 F-HISTORY Immigration record conflicts with the narrative",
-      "date": "2026-10-30",
-      "claim": "F-HISTORY"
+      "date": "2026-10-30"
     },
     {
       "base": "F075",
@@ -457,8 +407,7 @@
       "verdict": "false_flag",
       "note": "The model's own explanation says the narrative supports the selected charge; 'mismatch' contradicts it.",
       "example": "F075-X C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "FS02",
@@ -466,8 +415,7 @@
       "verdict": "false_flag",
       "note": "The 2020 answer is corrected and explained in the narrative (pre-run label: should not flag).",
       "example": "FS02 F-ENTRY-DATE-2 Narrative gives two different entry years",
-      "date": "2026-10-30",
-      "claim": "F-ENTRY-DATE-2"
+      "date": "2026-10-30"
     },
     {
       "base": "C001",
@@ -475,8 +423,7 @@
       "verdict": "valid_observation",
       "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form.",
       "example": "C001-X1 M-N5 Missing: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "C135",
@@ -484,8 +431,7 @@
       "verdict": "valid_observation",
       "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form.",
       "example": "C135-MC M-N5 Missing: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "C003",
@@ -493,8 +439,7 @@
       "verdict": "false_flag",
       "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
       "example": "C003-M3 U-N5 Unclear: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "C037",
@@ -502,8 +447,7 @@
       "verdict": "false_flag",
       "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
       "example": "C037-X1 U-N5 Unclear: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "C119",
@@ -511,8 +455,7 @@
       "verdict": "false_flag",
       "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
       "example": "C119-X1 U-N5 Unclear: specific ground stated and explained",
-      "date": "2026-10-30",
-      "claim": "N5"
+      "date": "2026-10-30"
     },
     {
       "base": "C021",
@@ -520,8 +463,7 @@
       "verdict": "false_flag",
       "note": "A lawful B2 admission does not contradict a NEGATIVE immigration record (no prior violations/removals); same standard as the earlier C021 adjudication.",
       "example": "C021-X1 I-2 Immigration record mismatch",
-      "date": "2026-10-30",
-      "claim": "I:immigration record"
+      "date": "2026-10-30"
     },
     {
       "base": "DS08",
@@ -529,8 +471,7 @@
       "verdict": "valid_observation",
       "note": "The variant removed the documents presented; the narrative no longer says what identifying documents the subject had ('documents in his possession' names none). A real gap caused by the planted removal, under another checklist item.",
       "example": "DS08 M-N1 Missing: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -538,8 +479,7 @@
       "verdict": "false_flag",
       "note": "The variant removed the manner of entry; 'entered in Laredo' does not state an admission, so the mismatch is an inference, not a record conflict (the gap is reported as the missing manner).",
       "example": "F051-E C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "C003",
@@ -547,8 +487,7 @@
       "verdict": "false_flag",
       "note": "'received a copy of [the subject's] Mexican Consular ID' states an identity document; the post-audit N1 guard does not recognise 'received a copy of'.",
       "example": "C003-M3 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C021",
@@ -556,8 +495,7 @@
       "verdict": "false_flag",
       "note": "The narrative states the agent 'obtained both Subjects passports'; identity documents are stated (the N1 guard does not recognise 'obtained').",
       "example": "C021-CIT U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C021",
@@ -565,8 +503,7 @@
       "verdict": "false_flag",
       "note": "The narrative states the agent 'obtained both Subjects passports'; identity documents are stated (the N1 guard does not recognise 'obtained').",
       "example": "C021-X1 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -574,8 +511,7 @@
       "verdict": "valid_observation",
       "note": "Only status documents are mentioned ('no documents allowing him to be or remain'); no identity documents are stated.",
       "example": "C013-X1 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C045",
@@ -583,8 +519,7 @@
       "verdict": "valid_observation",
       "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
       "example": "C045-CIT U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C045",
@@ -592,8 +527,7 @@
       "verdict": "valid_observation",
       "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
       "example": "C045-MC U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C045",
@@ -601,8 +535,7 @@
       "verdict": "valid_observation",
       "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated.",
       "example": "C045-X1 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -610,8 +543,7 @@
       "verdict": "false_flag",
       "note": "The narrative documents prior removals (the charge's requirement); the PWA manner code does not conflict with a reentry charge. Same standard as the earlier C013 adjudication.",
       "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -619,8 +551,7 @@
       "verdict": "valid_observation",
       "note": "Mis-categorised: the explanation and evidence describe the planted NEGATIVE-record vs documented-removals conflict, not a charge mismatch. Real discrepancy, but no detection credit (wrong category).",
       "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
+      "date": "2026-10-30"
     },
     {
       "base": "DS06",
@@ -628,8 +559,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "DS06 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "DS11",
@@ -637,8 +567,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "DS11 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -646,8 +575,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F039-G U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -655,8 +583,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F039-X U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -664,8 +591,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F051 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -673,8 +599,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F051-E U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "FS10",
@@ -682,8 +607,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "FS10 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -691,8 +615,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C012-M2 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -700,8 +623,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C012-MC U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -709,8 +631,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C012-X1 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C037",
@@ -718,8 +639,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C037-AMB U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C037",
@@ -727,8 +647,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C037-CIT U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C037",
@@ -736,8 +655,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C037-X1 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C045",
@@ -745,8 +663,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C045-MC U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C135",
@@ -754,8 +671,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C135-M2 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C135",
@@ -763,8 +679,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C135-MC U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "DS06",
@@ -772,8 +687,7 @@
       "verdict": "false_flag",
       "note": "Two different redacted people give 2016 and 2018 (pre-run label: should not flag). The narrative-only claim escaped the multi-person rule, which only covered claims citing a form field.",
       "example": "DS06 I-1 Conflicting entry dates",
-      "date": "2026-10-30",
-      "claim": "I:dates entry"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -781,8 +695,7 @@
       "verdict": "false_flag",
       "note": "'approximately 2000 hours' is when the Trooper requested assistance, not the encounter time (same standard as the time-rule exclusion of call/request times).",
       "example": "C012-X1 I-2 Encounter time discrepancy",
-      "date": "2026-10-30",
-      "claim": "I:encounter time"
+      "date": "2026-10-30"
     },
     {
       "base": "F055",
@@ -790,8 +703,7 @@
       "verdict": "valid_observation",
       "note": "This is the planted discrepancy (form records a prior removal the narrative never describes). Field-only finding; no detection credit under scoring v2.3 because the plant has no anchor text.",
       "example": "F055-H F-HISTORY-2 Prior removal on the form is not described in the narrative",
-      "date": "2026-10-30",
-      "claim": "F-HISTORY-2"
+      "date": "2026-10-30"
     },
     {
       "base": "FS09",
@@ -799,8 +711,7 @@
       "verdict": "false_flag",
       "note": "The narrative does describe the removal ('was removed through Laredo, Texas, on June 1, 2018'); the extractor missed it and the new check relied only on extracted statements.",
       "example": "FS09 F-HISTORY-2 Prior removal on the form is not described in the narrative",
-      "date": "2026-10-30",
-      "claim": "F-HISTORY-2"
+      "date": "2026-10-30"
     },
     {
       "base": "DS08",
@@ -808,8 +719,7 @@
       "verdict": "valid_observation",
       "note": "The variant removed the documents presented, which also removed the classification claimed for admission; a real gap caused by the planted change (same standard as DS08 M-N1).",
       "example": "DS08 U-N2 Unclear: status or classification claimed for admission",
-      "date": "2026-10-30",
-      "claim": "N2"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -817,8 +727,7 @@
       "verdict": "valid_observation",
       "note": "The form's NEGATIVE record conflicts with the narrative's own record of this subject's prior arrest and two voluntary returns; the finding correctly calls them arrests and processing, not removals (consistent with the F075-H label).",
       "example": "F039 I-3 Immigration record inconsistency",
-      "date": "2026-10-30",
-      "claim": "I:immigration record"
+      "date": "2026-10-30"
     },
     {
       "base": "F039",
@@ -826,8 +735,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F039-G U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "F051",
@@ -835,8 +743,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F051 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C012",
@@ -844,8 +751,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C012-MC U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C045",
@@ -853,8 +759,7 @@
       "verdict": "valid_observation",
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "C045 U-N1 Unclear: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C037",
@@ -862,8 +767,7 @@
       "verdict": "valid_observation",
       "note": "C037 names no identity document of the subject (the 'consular officer' sentence concerns the right to speak with one). Same N1 standard.",
       "example": "C037-M3 M-N1 Missing: identifying documents",
-      "date": "2026-10-30",
-      "claim": "N1"
+      "date": "2026-10-30"
     },
     {
       "base": "C013",
@@ -871,61 +775,6 @@
       "verdict": "false_flag",
       "note": "Same claim as the earlier C013 false flag: the narrative documents the prior removal the charge requires; entry-manner facts do not conflict with a reentry charge.",
       "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
-      "date": "2026-10-30",
-      "claim": "citation"
-    },
-    {
-      "base": "C003",
-      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
-      "claim": "R-TIME-MISMATCH",
-      "verdict": "valid_observation",
-      "note": "Rechecked 2026-10-30: same claim as \"C003-M3 I-1 Encounter time discrepancy\". Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'.",
-      "example": "C003-AMB R-TIME-MISMATCH Encounter time differs between form and narrative",
-      "date": "2026-10-30"
-    },
-    {
-      "base": "C013",
-      "key": "inconsistency|entry.manner|eventually illegally crossed the united states/mexico border",
-      "claim": "I:entry manner",
-      "verdict": "false_flag",
-      "note": "Rechecked 2026-10-30: same claim as \"C013 I-1 Entry facts mismatch\". PWA means present without admission; an illegal crossing is consistent with it.",
-      "example": "C013 I-2 Entry Manner Mismatch",
-      "date": "2026-10-30"
-    },
-    {
-      "base": "F039",
-      "key": "inconsistency|claims to have last entered the united states illegally by w|entry.date|entry.place",
-      "claim": "I:entry facts",
-      "verdict": "valid_observation",
-      "note": "Rechecked 2026-10-30: same claim as \"F039 I-1 Entry date and place mismatch\". Documentation gap, not a factual contradiction: narrative states February 2004 near Nogales, AZ; form records date and place as unknown.",
-      "example": "F039-G I-1 Entry facts mismatch",
-      "date": "2026-10-30"
-    },
-    {
-      "base": "F051",
-      "key": "inconsistency|history.immigration_record|this information was relayed to lbpa who conducted checks on",
-      "claim": "F-HISTORY",
-      "verdict": "false_flag",
-      "note": "Rechecked 2026-10-30: same claim as \"F051-C I-3 History immigration record mismatch\". 'One had been ordered removed' refers to an unattributed member of the group, not shown to be this subject; NEGATIVE record is not contradicted.",
-      "example": "F051-C F-HISTORY Immigration record conflicts with the narrative",
-      "date": "2026-10-30"
-    },
-    {
-      "base": "C013",
-      "key": "inconsistency|entry.manner|once arriving at the mexico/guatemala border illegally enter",
-      "claim": "I:entry manner",
-      "verdict": "false_flag",
-      "note": "Rechecked 2026-10-30: same claim as \"C013 I-1 Entry facts mismatch\". Compares the form's U.S. entry manner with a sentence about illegally entering Mexico (S6); no conflicting account of the U.S. entry.",
-      "example": "C013-CIT I-1 Entry manner mismatch",
-      "date": "2026-10-30"
-    },
-    {
-      "base": "C021",
-      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
-      "claim": "I:history record",
-      "verdict": "false_flag",
-      "note": "Rechecked 2026-10-30: same claim as \"C021-X1 I-2 Immigration record mismatch\". A lawful B2 admission does not contradict a NEGATIVE immigration record (no prior violations/removals); same standard as the earlier C021 adjudication.",
-      "example": "C021-X1 I-3 History record conflict",
       "date": "2026-10-30"
     }
   ]
