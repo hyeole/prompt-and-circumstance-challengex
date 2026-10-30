@@ -1,0 +1,11 @@
+{
+  "label": "planned evaluation, post-tuning (eval/dev-synthetic, build e4dd17b)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T06:37:21.720Z",
+  "commit": "e4dd17b",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

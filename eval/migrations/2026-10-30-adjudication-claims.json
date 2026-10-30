@@ -870,7 +870,95 @@
         "citation |  | narrative>form | pos | ?/?"
       ],
       "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|criminal history:|none",
+      "example": "C037-AMB U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|stated that he and five others crossed the us/mexico border|stated that he left his home city of azacualpa in the state|stated that he paid approximately $5 000.00 usd to illegally|stated that he travelled by bus for approximately one day be|stated that he used the services of a local smuggler to help|stated that he was driven to orlando florida where he lived|stated that they walked for five days and were picked-up by",
+      "example": "C037-CIT U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?,?/?,?/?,?/?,?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21|freely and readily admitted to being a citizen and national",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|five subjects stated that they did not have any immigration",
+      "example": "F051-E U-N1 Unclear: identifying documents",
+      "claims": [
+        "U-N1 |  | - | neg | ?/?,?/?"
+      ],
+      "status": "claim identified"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+      "example": "F039-X F-HISTORY-3 Prior immigration encounters described while the record is NEGATIVE",
+      "claims": [
+        "F-HISTORY-3 | NEGATIVE>NEGATIVE | form>narrative | neg | field:history.immigration_record,subject/Prior removal"
+      ],
+      "status": "claim identified"
     }
   ],
-  "manual": []
+  "manual": [
+    {
+      "base": "C003",
+      "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+      "claim": "R-TIME-MISMATCH | 0950h>1030h | form>narrative | pos | ?/?,field:encounter.date_time",
+      "verdict": "valid_observation",
+      "note": "Manual (claim-specific): form encounter 0950 vs narrative arrest 1030. The two times differ on the source pages (I-213 p.9 vs p.12); the finding states that encounter and arrest times may legitimately differ and asks for confirmation.",
+      "example": "C003 R-TIME-MISMATCH Encounter time differs between form and narrative",
+      "run": "2026-10-30T06-49-35",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "claim": "I:history record conflict | NEGATIVE | form>narrative | pos | ?/?,field:history.immigration_record",
+      "verdict": "false_flag",
+      "note": "Manual (claim-specific): a lawful B2 admission and the overstay now charged do not contradict a NEGATIVE record of prior violations or removals.",
+      "example": "C021-X1 I-3 History record conflict",
+      "run": "2026-10-30T06-49-35",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C003",
+      "key": "unclear|will be held pending removal proceedings for violating secti",
+      "claim": "U-N5 |  | narrative>form | neg | ?/?",
+      "case": "C003-M3",
+      "verdict": "valid_observation",
+      "note": "Correction (case-specific): this variant removed the crossing sentences, which were the facts meeting the cited ground, so 'section cited without the facts that satisfy it' is true here. The original false-flag verdict was made for the base narrative and wrongly applied to this variant (2026-10-30T03-16-09 adjudication error).",
+      "example": "C003-M3 U-N5 Unclear: specific ground stated and explained",
+      "run": "2026-10-30T06-49-35",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|a notice to appear is being executed on as per section 212(a",
+      "claim": "U-N5 |  | narrative>form | neg | ?/?",
+      "case": "C037-M3",
+      "verdict": "valid_observation",
+      "note": "Correction (case-specific): this variant removed the crossing sentences, which were the facts meeting the cited ground, so 'section cited without the facts that satisfy it' is true here. The original false-flag verdict was made for the base narrative and wrongly applied to this variant (2026-10-30T03-16-09 adjudication error).",
+      "example": "C037-M3 U-N5 Unclear: specific ground stated and explained",
+      "run": "2026-10-30T06-49-35",
+      "date": "2026-10-30"
+    }
+  ]
 }

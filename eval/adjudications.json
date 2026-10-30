@@ -776,6 +776,46 @@
       "note": "Same claim as the earlier C013 false flag: the narrative documents the prior removal the charge requires; entry-manner facts do not conflict with a reentry charge.",
       "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
       "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|criminal history:|none",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C037-AMB U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|stated that he and five others crossed the us/mexico border|stated that he left his home city of azacualpa in the state|stated that he paid approximately $5 000.00 usd to illegally|stated that he travelled by bus for approximately one day be|stated that he used the services of a local smuggler to help|stated that he was driven to orlando florida where he lived|stated that they walked for five days and were picked-up by",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C037-CIT U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|claims to have last entered the united states on february 21|freely and readily admitted to being a citizen and national",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C045-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|all subjects stated that they were in the united states ille|five subjects stated that they did not have any immigration",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F051-E U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+      "verdict": "valid_observation",
+      "note": "The narrative records this subject's prior Border Patrol arrest and two voluntary returns while the form's record is NEGATIVE; the finding correctly calls them encounters, not removals (same standard as F039 I-3).",
+      "example": "F039-X F-HISTORY-3 Prior immigration encounters described while the record is NEGATIVE",
+      "date": "2026-10-30"
     }
   ]
 }

@@ -29,11 +29,14 @@ const adjudications: Adjudication[] = existsSync("eval/adjudications.json") ? JS
 // layer on, a verdict is inherited only when base case, evidence key AND claim are identical; anything else is left
 // unadjudicated for a person. Results are written beside the default ones (suffix "-claims"), never over them.
 const CLAIMS = process.argv.includes("--adjudication-claims");
-type ClaimMigration = { records: { base: string; key: string; example: string; claims: string[] }[]; manual: (Adjudication & { claim: string; example: string })[] };
+type ClaimMigration = { records: { base: string; key: string; example: string; claims: string[] }[]; manual: (Adjudication & { claim: string; example: string; case?: string })[] };
 const migration: ClaimMigration | null = CLAIMS ? JSON.parse(readFileSync("eval/migrations/2026-10-30-adjudication-claims.json", "utf8")) : null;
-function adjudicationFor(base: string, key: string, claim: string): Adjudication | undefined {
+// A case-specific manual record (a variant whose text differs from the case the original verdict was made on) takes
+// precedence over records that apply to every variant of the base case.
+function adjudicationFor(base: string, key: string, claim: string, caseId: string): Adjudication | undefined {
   if (!migration) return adjudications.find((a) => a.base === base && a.key === key);
-  const manual = migration.manual.find((m) => m.base === base && m.key === key && m.claim === claim);
+  const manual = migration.manual.find((m) => m.case === caseId && m.base === base && m.key === key && m.claim === claim)
+    ?? migration.manual.find((m) => !m.case && m.base === base && m.key === key && m.claim === claim);
   if (manual) return manual;
   return adjudications.find((a) => a.base === base && a.key === key &&
     migration.records.some((m) => m.base === base && m.key === key && m.example === (a as { example?: string }).example && m.claims.includes(claim)));
@@ -100,7 +103,7 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
       const label = `${f.id} ${f.category}: ${f.title}`;
       const pi = ex.plants.findIndex((p) => matches(r, f, p));
       if (pi >= 0) { row.flags.push({ id: f.id, finding: label, key, status: used.has(pi) ? "duplicate" : "planted" }); used.add(pi); continue; }
-      const adj = adjudicationFor(ex.base, key, findingClaim(f));
+      const adj = adjudicationFor(ex.base, key, findingClaim(f), ex.id);
       row.flags.push({ id: f.id, finding: label, key, status: adj ? adj.verdict : "unadjudicated", note: adj?.note });
     }
   }

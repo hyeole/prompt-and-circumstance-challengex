@@ -1,0 +1,11 @@
+{
+  "label": "planned evaluation, post-tuning (eval, build e4dd17b)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T06:49:35.812Z",
+  "commit": "e4dd17b",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

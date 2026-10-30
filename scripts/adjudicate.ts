@@ -3,6 +3,7 @@
  * Usage: npx tsx scripts/adjudicate.ts <run-dir> <case-id> <finding-id> <valid_observation|false_flag> "<reason>" [--claim]
  * --claim: record a manual adjudication for this finding's exact claim in the claim migration
  * (eval/migrations/2026-10-30-adjudication-claims.json) instead; the original records are never changed by it.
+ * --case: with --claim, the record applies only to this case (a variant whose text differs from the base case).
  * Adjudications are stored per BASE case in eval/adjudications.json and reused across variants and runs.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -22,8 +23,9 @@ if (process.argv.includes("--claim")) {
   const mfile = "eval/migrations/2026-10-30-adjudication-claims.json";
   const m = JSON.parse(readFileSync(mfile, "utf8"));
   const key = findingKey(r, f), claim = findingClaim(f);
-  m.manual = (m.manual ?? []).filter((x: { base: string; key: string; claim: string }) => !(x.base === base && x.key === key && x.claim === claim));
-  m.manual.push({ base, key, claim, verdict, note, example: `${id} ${fid} ${f.title}`, run: run.split("/").pop(), date: new Date().toISOString().slice(0, 10) });
+  const only = process.argv.includes("--case") ? id : undefined;
+  m.manual = (m.manual ?? []).filter((x: { base: string; key: string; claim: string; case?: string }) => !(x.base === base && x.key === key && x.claim === claim && x.case === only));
+  m.manual.push({ base, key, claim, ...(only ? { case: only } : {}), verdict, note, example: `${id} ${fid} ${f.title}`, run: run.split("/").pop(), date: new Date().toISOString().slice(0, 10) });
   writeFileSync(mfile, JSON.stringify(m, null, 2) + "\n");
   console.log(`${verdict} (claim-specific): ${base} ${key}`);
   process.exit(0);
