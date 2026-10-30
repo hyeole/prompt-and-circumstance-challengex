@@ -201,3 +201,10 @@ See `eval/EVALUATION-e4dd17b.md`. It covers both adjudication layers, flags by c
 ## Planned evaluation of the final build `4b10d72`
 
 See `eval/EVALUATION-4b10d72.md`. The default layer gives 0/11, 0/26 and 4/63 incorrect flags; the claim layer gives 0/11, 0/26 and 2/63. Completion is 100%, 96% and 95%; strict recall 6/6, 9/17 and 21/31; unnecessary routing 0%, 22% and 7%; no should-not-flag violations. Five known limitations are listed there as candidates for the next change.
+
+## Checkpoint: 4b10d72 (not a target-met release)
+- Production build `4b10d72` and its evaluation (dev `2026-10-30T07-18-04`, fresh `07-21-02`, legacy `07-32-13`; report `eval/EVALUATION-4b10d72.md`) are preserved as a **checkpoint**.
+- They are not a release that meets targets, and no target is claimed as met.
+- The local tag `checkpoint-4b10d72-eval` marks the commit.
+- Later commits (negation scope, request vs encounter time, documentation-gap routing) are post-tuning source changes. They are **not** the evaluated build until a planned run on their own production build is recorded here.
+- Miss classification: `eval/MISS-CLASSIFICATION-4b10d72.md`. Label questions, kept separate: `eval/LABEL-REVIEW-2026-10-30.md`.

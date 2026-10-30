@@ -734,3 +734,62 @@ test("negative control: a real admission statement still supports an admission c
     fake({ facts: facts({ entry_statements: [{ sentence_id: "S1", quote: "The subject was admitted at the San Ysidro port of entry as a B2 visitor in 2012", event: "us_entry", year: 2012, manner: "admitted", person: "subject" }] }) }));
   assert.notEqual(r.citation.status, "likely_mismatch");
 });
+
+// ---- Limitations found in the 4b10d72 evaluation (post-tuning) ----
+test("fix-4 negation scope: 'which the narrative documents but the form indicates no prior removal' is narrative support, so unresolved (C013-X1)", async () => {
+  const c = load("C013-X1");
+  const s = sid(c, "received an Expedited Removal");
+  const r = await reviewCase(c, fake({
+    review: review({ citation: { status: "likely_mismatch", explanation: "Selected charge 8 USC 1326(a) requires prior removal, which the narrative documents but the form indicates no prior removal.", evidence: [{ sentence_id: s, quote: "received an Expedited Removal" }] } }),
+    facts: facts({ removal_statements: [{ sentence_id: s, quote: "was arrested by Border Patrol and received an Expedited Removal", person: "unclear" }] }),
+  }));
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /^Unresolved/);
+});
+test("fix-4 negation scope, negative control: negation inside the narrative's own clause still blocks support", async () => {
+  const c0 = load("C037");
+  const c = { ...c0, facts: c0.facts.filter((f) => f.path !== "history.immigration_record"), selectedCharges: [{ citation: "8 U.S.C. 1326", referenceId: "USC-1326" }] } as CaseRecord;
+  const ev = [{ sentence_id: sid(c, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally" }];
+  for (const explanation of [
+    "The charge requires prior removal; the narrative states the subject was never removed, but the form is positive.",
+    "The charge requires a prior removal, but the narrative documents no prior removal, while the form records one.",
+  ]) {
+    const r = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation, evidence: ev } }) }));
+    assert.equal(r.citation.status, "likely_mismatch", explanation);
+  }
+});
+
+const timeClaim = (c: CaseRecord, needle: string, quote: string, t: string) => reviewCase(c, fake({
+  review: review({ issues: [{ type: "inconsistency", title: "Encounter time discrepancy", explanation: `Narrative reports ${t} hours while form field lists 2040 hours for the same encounter date.`, evidence: [{ sentence_id: sid(c, needle), quote }, { field_path: "encounter.date_time" }], needs_human_review: true, reason: "" }] }),
+}));
+test("request vs encounter time: a Trooper's request time is not the encounter time (C012-M2)", async () => {
+  const r = await timeClaim(load("C012-M2"), "requested assistance", "at approximately 2000 hours", "2000");
+  assert.ok(!r.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  assert.ok(r.discarded.some((d) => /call or request, not the encounter/.test(d.reason)));
+});
+test("request vs encounter time, negative controls: an encounter time, or a different arrest time beside a request time, is still compared", async () => {
+  const c0 = load("C012-M2");
+  const swap = (from: string, to: string) => ({ ...c0, narrative: { text: c0.narrative.text.replace(from, to) } }) as CaseRecord;
+  const enc = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "Border Patrol Agents encountered three individuals near the highway");
+  const r1 = await timeClaim(enc, "encountered three individuals", "at approximately 2000 hours", "2000");
+  assert.ok(r1.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  const both = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 2130 hours");
+  const r2 = await timeClaim(both, "arrested three individuals at 2130", "at 2130 hours", "2130");
+  assert.ok(r2.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+});
+
+const gapClaim = (c: CaseRecord, fields: string[]) => reviewCase(c, fake({
+  review: review({ issues: [{ type: "inconsistency", title: "Entry conflict", explanation: "Narrative cites a July 2014 crossing of the Rio Grande near Hidalgo; the form differs.", evidence: [{ sentence_id: sid(c, "July of 2014"), quote: "crossing the Rio Grande River near Hildalgo, Texas in July of 2014" }, ...fields.map((f) => ({ field_path: f }))], needs_human_review: true, reason: "" }] }),
+}));
+test("documentation gap: an unattributed account against form fields recorded as unknown is not routed (F055)", async () => {
+  const r = await gapClaim(loadF("F055"), ["entry.date", "entry.place"]);
+  assert.ok(!(r.humanReview.accounts ?? []).some((g) => g.fieldPath === "entry.date" || g.fieldPath === "entry.place"));
+  assert.ok(!r.findings.some((f) => f.category === "inconsistency"));
+});
+test("documentation gap, negative control: the same account is still routed when a cited form value is known", async () => {
+  const c0 = loadF("F055");
+  const c = { ...c0, facts: c0.facts.map((f) => f.path === "entry.date" ? { ...f, value: "05/23/2011" } : f) } as CaseRecord;
+  const r = await gapClaim(c, ["entry.date", "entry.place"]);
+  assert.ok((r.humanReview.accounts ?? []).some((g) => g.sentenceIds.includes(sid(c, "July of 2014"))));
+  assert.ok(!r.findings.some((f) => f.category === "inconsistency"));
+});

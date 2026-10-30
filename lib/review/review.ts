@@ -5,7 +5,7 @@ import { splitSentences, locateQuote } from "@/lib/text";
 import { sha } from "@/lib/hash";
 import { fieldQuality } from "@/lib/fieldQuality";
 import { computeCompletion } from "@/lib/completion";
-import { runRules } from "./rules";
+import { encounterTimeMatch, isRequestTime, runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
@@ -85,8 +85,19 @@ function claimsRequirementSupport(text: string, reqs?: Requires): boolean {
   const verb = "(supports?|documents?|establish(es)?|shows?|states?|describes?|confirms?)";
   const after = new RegExp(`\\b(narrative|record) ${verb}\\b[^.;]{0,30}\\b(${req})`, "i");
   const before = new RegExp(`\\b(${req})\\b[^.;]{0,40}\\bwhich (the )?(narrative|record) ${verb}\\b`, "i");
-  const negated = new RegExp(`\\b(no|not|never|without any)\\b[^.;]{0,15}\\b(${req})|\\b(does not|doesn't|did not|fails? to) ${verb.replace("(", "(")}`, "i");
-  return (after.test(text) || before.test(text)) && !negated.test(text);
+  // Negation counts only inside the clause that states the support: "which the narrative documents, but the form indicates
+  // no prior removal" is support from the narrative; the "no" belongs to the form's clause (C013-X1).
+  const negated = new RegExp(`\\b(no|not|never|without any)\\b[^.;]{0,15}\\b(${req})|\\b(does not|doesn't|did not|fails? to) ${verb}`, "i");
+  const clauseOf = (m: RegExpExecArray) => {
+    const head = text.slice(0, m.index);
+    const start = Math.max(head.lastIndexOf("."), head.lastIndexOf(";"), head.search(/\b(but|while|whereas|however|although)\b(?![\s\S]*\b(but|while|whereas|however|although)\b)/i));
+    const tail = text.slice(m.index + m[0].length).match(/^[^.;]*?(?=\b(but|while|whereas|however|although)\b|[.;]|$)/i)?.[0] ?? "";
+    return text.slice(start + 1, m.index) + m[0] + tail;
+  };
+  return [after, before].some((re) => {
+    const m = re.exec(text);
+    return !!m && !negated.test(clauseOf(m));
+  });
 }
 const CHARGE_FIT_RE = /\b(selected charge|the charge|this charge|charge requires|charge (is|does not|doesn't)|requires? (a )?(prior )?(admission|removal))\b/i;
 const ANY_CITATION_RE = /\b(?:INA|Section)\s*\d{3}\s*\([a-z0-9]+\)(?:\s*\([a-z0-9]+\))*|\b8\s*U\.?\s*S\.?\s*C\.?\s*§?\s*\d{4}(?:\s*\([a-z0-9]+\))*/gi;
@@ -364,6 +375,10 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
         verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
       discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });
+      // A form field recorded as unknown has nothing to conflict with: an unattributed statement against it is a
+      // documentation gap, not an account a person must attribute (F055). Route only when a cited form value is known.
+      const knownField = verified.some((v) => v.fieldPath && fieldQuality(c.facts.find((f) => f.path === v.fieldPath && f.status === "present")?.value ?? "") !== "unknown");
+      if (!knownField) return;
       accounts.push({ sentenceIds: verified.filter((v) => v.sentenceId && unlinked(v)).map((v) => v.sentenceId!), fieldPath: verified.find((v) => v.fieldPath)?.fieldPath,
         detail: `The model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"` });
       return;
@@ -377,6 +392,17 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       humanReasons.push(`Several people are described with redacted names, and ${citedSentences.map((x) => x.id).join(" and ")} may be about different people. A person should decide whether they conflict.`);
       accounts.push({ sentenceIds: citedSentences.map((x) => x.id), detail: `${citedSentences.map((x) => x.id).join(" and ")} give different accounts (the model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"), and they may be about different people.` });
       return;
+    }
+    // (1e) An encounter-time conflict must compare the encounter time. A time the narrative gives for a call or request
+    // ("at 2000 hours, a Trooper requested assistance") is not the encounter time (C012-M2; same exclusion as the time rule).
+    if (iss.type === "inconsistency" && verified.some((v) => v.fieldPath === "encounter.date_time")) {
+      const formTimes = new Set(verified.filter((v) => v.fieldPath === "encounter.date_time").flatMap((v) => v.quote?.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? []));
+      const cited = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!.text);
+      const claimed = [...new Set(`${iss.title} ${iss.explanation}`.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? [])].filter((t) => !formTimes.has(t) && cited.some((x) => x.includes(t)));
+      if (claimed.length && claimed.every((t) => cited.every((x) => !x.includes(t) || (isRequestTime(x, t) && encounterTimeMatch(x)?.[1] !== t)))) {
+        discarded.push({ title: iss.title, reason: `The narrative gives ${claimed.join(", ")} hours as the time of a call or request, not the encounter, so it cannot conflict with the form's encounter time.` });
+        return;
+      }
     }
     // (2) Dates, years and clock times the claim relies on must appear in the cited evidence.
     const evTexts = verified.map((v) => (v.sentenceId ? sentences.find((x) => x.id === v.sentenceId)?.text ?? "" : v.quote ?? ""));

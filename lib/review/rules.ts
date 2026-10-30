@@ -89,9 +89,7 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
       // The time must belong to the arrest/encounter itself, e.g. "placed ... under arrest at 1330 hours",
       // not to a later step such as "arrested and transported to the station at 2145 hours".
       // Both word orders: "placed under arrest at 1330 hours" and "At approximately 1030 hours, X was placed under arrest".
-      const m =
-        s.text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?!\s*:)(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?![^.;]{0,40}\b(?:request|call|receiv|dispatch))/i) ??
-        s.text.match(/\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?:(?!transport|process|book|arriv|request|call|receiv|dispatch)[^.;]){0,80}?\b(?:placed under arrest|arrested|apprehended|detained|encountered)\b/i);
+      const m = encounterTimeMatch(s.text);
       if (m && m[1] !== formTime && Math.abs(toMin(m[1]) - toMin(formTime)) >= 30) {
         findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
           `The form records the encounter at ${formTime} hours, but the narrative gives ${m[1]} hours for the arrest. The difference may be legitimate (for example, encounter versus arrest time), but it should be confirmed.`,
@@ -102,6 +100,23 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
     }
   }
   return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck, notes };
+}
+
+/**
+ * A clock time the sentence ties to the arrest or encounter itself, e.g. "placed ... under arrest at 1330 hours" or
+ * "At approximately 1030 hours, X was placed under arrest". Not a later step ("transported ... at 2145 hours") and not
+ * the time a call or request was made or received.
+ */
+export function encounterTimeMatch(text: string): RegExpMatchArray | null {
+  return text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?!\s*:)(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?![^.;]{0,40}\b(?:request|call|receiv|dispatch))/i) ??
+    text.match(/\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?:(?!transport|process|book|arriv|request|call|receiv|dispatch)[^.;]){0,80}?\b(?:placed under arrest|arrested|apprehended|detained|encountered)\b/i);
+}
+
+/** Whether the sentence gives this clock time for a call, request or dispatch ("at 2000 hours, a Trooper requested assistance"). */
+export function isRequestTime(text: string, hhmm: string): boolean {
+  const t = `(?:approximately\\s+)?${hhmm}\\s*(?:hours|hrs)?`;
+  return new RegExp(`\\b${t}\\b[^.;]{0,60}\\b(?:request|call|receiv|dispatch|radio|notif)`, "i").test(text) ||
+    new RegExp(`\\b(?:request|call|receiv|dispatch|radio|notif)\\w*[^.;]{0,40}\\bat\\s+${t}\\b`, "i").test(text);
 }
 
 const toMin = (hhmm: string) => parseInt(hhmm.slice(0, 2)) * 60 + parseInt(hhmm.slice(2));
