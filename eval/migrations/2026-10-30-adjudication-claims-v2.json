@@ -960,6 +960,40 @@
       "run": "2026-10-30T07-32-13",
       "date": "2026-10-30",
       "migratedFromV1Claim": "citation |  | narrative>form | neg | ?/?,field:history.immigration_record"
+    },
+    {
+      "base": "F055",
+      "key": "citation|entry.manner|he claims that the smuggler led him and another man illegall",
+      "claim": "citation | PWA | ?:pos:entry-manner+charge;form:pos:entry-manner+charge;narrative:pos:status | ?/?,field:entry.manner | UNCERTAIN",
+      "case": "F055-H",
+      "explanation": "The selected charge of INA 212(a)(6)(A)(i) requires that the subject entered the United States without inspection or at an undesignated place. The narrative indicates entry by smuggler across the Rio Grande, which is consistent with unlawful entry, but the form fields list the manner as PWA, creating a mismatch that may affect charge consistency.",
+      "verdict": "false_flag",
+      "note": "Manual (final run, claim v2): the 'mismatch' treats PWA (AFOOT) as conflicting with an illegal Rio Grande crossing; both describe entry without inspection, which is what 212(a)(6)(A)(i) depends on. Same standard as the F055 I-2 record.",
+      "example": "F055-H C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
+      "run": "2026-10-30T16-00-38",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "FS06",
+      "key": "missing_element|N2",
+      "claim": "M-N2 |  | ?:pos:entry-manner+status;narrative:neg:status | element:N2",
+      "case": "FS06",
+      "verdict": "valid_observation",
+      "note": "Manual (final run, claim v2): the narrative never states the classification under which admission was requested; same verdict as the original FS06 M-N2 record, whose claim could not be identified because the model's note varies.",
+      "example": "FS06 M-N2 Missing: status or classification claimed for admission",
+      "run": "2026-10-30T16-00-38",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "claim": "I:history record conflict | NEGATIVE | narrative:pos:entry-manner | ?/?,field:history.immigration_record",
+      "case": "C021-X1",
+      "verdict": "false_flag",
+      "note": "Manual (final run, claim v2): S33 documents a lawful B2 admission (12/23/2015) and its period; that does not contradict a NEGATIVE prior-immigration record. Same standard as the C021-X1 I-2 record and the v1 manual decision on this finding.",
+      "example": "C021-X1 I-3 History record conflict",
+      "run": "2026-10-30T16-10-34",
+      "date": "2026-10-30"
     }
   ],
   "needsReadjudication": [

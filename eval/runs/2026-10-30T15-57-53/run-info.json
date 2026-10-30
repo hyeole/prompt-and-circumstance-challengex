@@ -1,0 +1,11 @@
+{
+  "label": "final planned evaluation, post-tuning (frozen rc-closeout = 7efb231; source f5d952b; not held-out)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T15:57:53.581Z",
+  "commit": "7efb231",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

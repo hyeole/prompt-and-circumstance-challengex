@@ -832,6 +832,14 @@
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F051-E U-N1 Unclear: identifying documents",
       "date": "2026-10-30"
+    },
+    {
+      "base": "F055",
+      "key": "citation|entry.manner|he claims that the smuggler led him and another man illegall",
+      "verdict": "false_flag",
+      "note": "Final run: treats PWA (AFOOT) as conflicting with an illegal Rio Grande crossing; both are entry without inspection. Same standard as the F055 I-2 record.",
+      "example": "F055-H C-1 Possible citation mismatch: INA 212(a)(6)(A)(i)",
+      "date": "2026-10-30"
     }
   ]
 }
