@@ -1,0 +1,359 @@
+{
+  "run": "eval/runs/2026-10-30T05-12-29",
+  "scoringPolicy": "v2.3",
+  "runInfo": {
+    "label": "post-tuning, refinements (eval/dev-synthetic, build d0ec8c3)",
+    "dataset": "eval/dev-synthetic",
+    "split": "all",
+    "only": null,
+    "concurrency": 1,
+    "startedAt": "2026-10-30T05:12:29.839Z",
+    "commit": "d0ec8c3",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 12,
+  "completion": "100% (12/12)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "100% (6/6)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "100% (6/6)",
+    "dev": "n/a",
+    "heldout": "n/a",
+    "missing_element": "100% (4/4)",
+    "inconsistency": "100% (1/1)",
+    "citation": "100% (1/1)",
+    "routing_multi_charge": "n/a",
+    "routing_ambiguity": "n/a",
+    "outcomes": "detected: 6, routed_only: 0, missed: 0, not_completed: 0"
+  },
+  "flags": {
+    "issued": 11,
+    "planted": 6,
+    "duplicates": 0,
+    "validObservations": 5,
+    "falseFlags": 0,
+    "unadjudicated": 0,
+    "incorrectProportion": "0% (0/11)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "0% (0/10)",
+  "routingJustifiedByObservation": [
+    "DS06",
+    "DS11"
+  ],
+  "dataset": "eval/dev-synthetic",
+  "checklistExpectations": {
+    "accuracy": "100% (50/50)",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [],
+  "evidenceValidity": "100% (11/11)",
+  "evidenceMatch": {
+    "exact": 2,
+    "partial": 0,
+    "unlabelled": 5,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "14.2s",
+    "p90": "19.4s",
+    "max": "24.2s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "DS01",
+      "split": "dev-synthetic",
+      "base": "DS01",
+      "ms": 18457,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS02",
+      "split": "dev-synthetic",
+      "base": "DS02",
+      "ms": 16961,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N7",
+          "finding": "M-N7 missing_element: Missing: disposition and documenting form",
+          "key": "missing_element|N7",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS03",
+      "split": "dev-synthetic",
+      "base": "DS03",
+      "ms": 11973,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS04",
+      "split": "dev-synthetic",
+      "base": "DS04",
+      "ms": 19401,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS05",
+      "split": "dev-synthetic",
+      "base": "DS05",
+      "ms": 14190,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|entry.date|the subject stated that he entered the united states in augu",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS06",
+      "split": "dev-synthetic",
+      "base": "DS06",
+      "ms": 10505,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|two occupants and stated that they are citizens of mexico an",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS07",
+      "split": "dev-synthetic",
+      "base": "DS07",
+      "ms": 12402,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS08",
+      "split": "dev-synthetic",
+      "base": "DS08",
+      "ms": 17583,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N1",
+          "finding": "M-N1 missing_element: Missing: identifying documents",
+          "key": "missing_element|N1",
+          "status": "valid_observation",
+          "note": "The variant removed the documents presented; the narrative no longer says what identifying documents the subject had ('documents in his possession' names none). A real gap caused by the planted removal, under another checklist item."
+        },
+        {
+          "id": "U-N2",
+          "finding": "U-N2 unclear: Unclear: status or classification claimed for admission",
+          "key": "unclear|on september 12 2023 at approximately 1130 hours the subject",
+          "status": "valid_observation",
+          "note": "The variant removed the documents presented, which also removed the classification claimed for admission; a real gap caused by the planted change (same standard as DS08 M-N1)."
+        },
+        {
+          "id": "U-N3",
+          "finding": "U-N3 unclear: Unclear: application for admission: port, documents presented, purpose of travel",
+          "key": "unclear|cbp officer found that the subject's stated purpose did not|when asked about the letter the subject stated that he inten",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "DS09",
+      "split": "dev-synthetic",
+      "base": "DS09",
+      "ms": 10736,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS10",
+      "split": "dev-synthetic",
+      "base": "DS10",
+      "ms": 10324,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N8",
+          "finding": "M-N8 missing_element: Missing: expedited removal: advisal, opportunity to respond, review and service",
+          "key": "missing_element|N8",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS11",
+      "split": "dev-synthetic",
+      "base": "DS11",
+      "ms": 8656,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|the subject stated that he has no documents allowing him to",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS12",
+      "split": "dev-synthetic",
+      "base": "DS12",
+      "ms": 24182,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "DS12 has no ground statement (the GROUND block was not included), so the specific ground is genuinely not stated (sponsor S4)."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner|the subject stated that he entered the united states on or a",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    }
+  ]
+}

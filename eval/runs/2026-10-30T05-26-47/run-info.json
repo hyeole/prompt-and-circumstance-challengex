@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, refinements (eval, build d0ec8c3)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T05:26:47.830Z",
+  "commit": "d0ec8c3",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

@@ -712,6 +712,38 @@
       "note": "The narrative does describe the removal ('was removed through Laredo, Texas, on June 1, 2018'); the extractor missed it and the new check relied only on extracted statements.",
       "example": "FS09 F-HISTORY-2 Prior removal on the form is not described in the narrative",
       "date": "2026-10-30"
+    },
+    {
+      "base": "DS08",
+      "key": "unclear|on september 12 2023 at approximately 1130 hours the subject",
+      "verdict": "valid_observation",
+      "note": "The variant removed the documents presented, which also removed the classification claimed for admission; a real gap caused by the planted change (same standard as DS08 M-N1).",
+      "example": "DS08 U-N2 Unclear: status or classification claimed for admission",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "inconsistency|06/28/1995: shows subject was arrested; location unknown 03/|history.immigration_record",
+      "verdict": "valid_observation",
+      "note": "The form's NEGATIVE record conflicts with the narrative's own record of this subject's prior arrest and two voluntary returns; the finding correctly calls them arrests and processing, not removals (consistent with the F075-H label).",
+      "example": "F039 I-3 Immigration record inconsistency",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F039",
+      "key": "unclear|one evening he and a group of two other subjects walked acro|travel: states that he found a smuggler in nogales sonora me",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F039-G U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "F051",
+      "key": "unclear|claims to have illegally entered the united states in laredo|he claims to have swam the river to cross the border.",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "F051 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
     }
   ]
 }
