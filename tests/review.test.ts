@@ -793,3 +793,64 @@ test("documentation gap, negative control: the same account is still routed when
   assert.ok((r.humanReview.accounts ?? []).some((g) => g.sentenceIds.includes(sid(c, "July of 2014"))));
   assert.ok(!r.findings.some((f) => f.category === "inconsistency"));
 });
+
+// ---- Model routing reasons that only repeat a claim withheld as invalid (targeted verification of d95d075) ----
+const withReasons = (o: Record<string, unknown>, reasons: string[]) => review({ ...o, human_review: { required: true, reasons } });
+const c013Manner = (reasons: string[], extraIssues: unknown[] = []) => {
+  const c = load("C013");
+  const s8 = sid(c, "eventually illegally crossed");
+  return reviewCase(c, fake({
+    review: withReasons({ issues: [{ type: "inconsistency", title: "Entry manner conflict", explanation: "Narrative states subject entered illegally, while form entry.manner indicates PWA.", evidence: [{ sentence_id: s8, quote: "eventually illegally crossed the United States/Mexico Border near Laredo" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }, ...extraIssues] }, reasons),
+    facts: facts({ entry_statements: [{ sentence_id: s8, quote: "eventually illegally crossed the United States/Mexico Border near Laredo, Texas by swimming", event: "us_entry", country: "United States", year: null, manner: "without_inspection", person: "subject" }] }),
+  }));
+};
+test("routing echo (C012 pattern): a manner-conflict reason whose claim was withheld as the same manner is not kept, nor its generic follow-on", async () => {
+  const r = await c013Manner(["Entry manner conflict between form and narrative", "Potential impact on charge determination"]);
+  assert.ok(!r.humanReview.reasons.some((x) => /Entry manner conflict between|Potential impact on charge/.test(x)));
+  assert.ok(r.discarded.some((d) => d.title === "Model routing reason" && /only repeats a claim that was withheld/.test(d.reason)));
+});
+test("routing echo (F036 pattern): date/place conflict reasons for claims against unknown form values are not kept", async () => {
+  const c = loadF("F055");
+  const s = sid(c, "July of 2014");
+  const r = await reviewCase(c, fake({ review: withReasons({ issues: [{ type: "inconsistency", title: "Entry date and place mismatch", explanation: "Narrative cites July 2014 near Hidalgo; form entry.date is Unknown.", evidence: [{ sentence_id: s, quote: "crossing the Rio Grande River near Hildalgo, Texas in July of 2014" }, { field_path: "entry.date" }, { field_path: "entry.place" }], needs_human_review: true, reason: "" }] },
+    ["Conflicting entry date and place information", "Need to resolve which source is accurate for charge determination"]) }));
+  assert.ok(!r.humanReview.reasons.some((x) => /Conflicting entry date and place information|which source is accurate/.test(x)));
+});
+test("routing echo (C012-M2 pattern): an encounter-time reason for a request-time claim is not kept", async () => {
+  const c = load("C012-M2");
+  const r = await reviewCase(c, fake({ review: withReasons({ issues: [{ type: "inconsistency", title: "Encounter time discrepancy", explanation: "Narrative reports 2000 hours while form field lists 2040 hours.", evidence: [{ sentence_id: sid(c, "requested assistance"), quote: "at approximately 2000 hours" }, { field_path: "encounter.date_time" }], needs_human_review: true, reason: "" }] },
+    ["Encounter time discrepancy between narrative and form field."]) }));
+  assert.ok(!r.humanReview.reasons.some((x) => /Encounter time discrepancy between narrative and form field/.test(x)));
+});
+test("routing echo, negative control: genuine attribution uncertainty keeps the model's reason (F010-X, account routed)", async () => {
+  const c = loadF("F010-X");
+  const s = sid(c, "May 5, 2014");
+  const r = await reviewCase(c, fake({ review: withReasons({ issues: [{ type: "inconsistency", title: "Entry date conflict", explanation: "Narrative gives 2014; form entry.date 05/05/2011.", evidence: [{ sentence_id: s, quote: "on or about May 5, 2014" }, { field_path: "entry.date" }], needs_human_review: true, reason: "" }] },
+    ["Conflicting entry date between narrative and form"]), facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(r.humanReview.reasons.includes("Conflicting entry date between narrative and form"));
+  assert.ok(r.humanReview.accounts?.some((g) => g.sentenceIds.includes(s)));
+});
+test("routing echo, negative controls: independent reasons, reasons naming a person, and facts still in a kept finding are kept", async () => {
+  const r = await c013Manner([
+    "Entry manner conflict between form and narrative",
+    "Multiple charges could apply to these facts",
+    "It is unclear which subject the manner statement belongs to; a conflict is possible",
+    "Conflicting encounter time",
+  ]);
+  assert.ok(!r.humanReview.reasons.includes("Entry manner conflict between form and narrative"));
+  assert.ok(r.humanReview.reasons.includes("Multiple charges could apply to these facts"));
+  assert.ok(r.humanReview.reasons.includes("It is unclear which subject the manner statement belongs to; a conflict is possible"));
+  assert.ok(r.humanReview.reasons.includes("Conflicting encounter time"), "time was never withheld, so it is kept");
+});
+test("routing echo, negative control: a claim withheld only because its quote could not be verified is not shown invalid, so its reason stays", async () => {
+  const c = load("C013");
+  const r = await reviewCase(c, fake({ review: withReasons({ issues: [{ type: "inconsistency", title: "Entry manner conflict", explanation: "Form PWA vs narrative.", evidence: [{ sentence_id: "S8", quote: "text that is not in the narrative" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] },
+    ["Entry manner conflict between form and narrative"]) }));
+  assert.ok(r.humanReview.reasons.includes("Entry manner conflict between form and narrative"));
+});
+test("routing echo, negative control: the generic follow-on stays while a real conflict finding remains", async () => {
+  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const r = await reviewCase(c, fake({ review: withReasons({}, ["Need to resolve which source is accurate for charge determination"]), facts: entryFacts(c, "May 5, 2014", 2014) }));
+  assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok(r.humanReview.reasons.includes("Need to resolve which source is accurate for charge determination"));
+});

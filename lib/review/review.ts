@@ -70,7 +70,43 @@ function invalidReason(e: unknown): string {
 const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recall)|did not (know|remember|recall)|(could|can) ?not (recall|remember|say)|cannot (recall|remember|say)|unsure|not sure|no recollection|unable to (recall|remember|say|provide))\b/i;
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
 const statesUnknown = (t: string) => UNKNOWN_STATEMENT_RE.test(t) && !/\b(19|20)\d\d\b|\b\d{1,2}\/\d{1,2}\//.test(t);
+
+/** Which facts a text is about: entry date, place, manner, encounter time, immigration history. */
+function factsOf(t: string): Set<string> {
+  const f = new Set<string>();
+  if (/\b(dates?|years?|when)\b|\b(19|20)\d\d\b|entry\.date/i.test(t)) f.add("date");
+  if (/\b(place|location|where|port)\b|entry\.place/i.test(t)) f.add("place");
+  if (/\b(manner|PWA|EWI|inspect\w*|visa|crossing card|admi(tted|ssion))\b|entry\.manner/i.test(t)) f.add("manner");
+  if (/\b(encounter time|arrest time|times?|hours)\b|encounter\.date_time/i.test(t)) f.add("time");
+  if (/\b(remov\w*|deport\w*|immigration (history|record)|prior (arrest|apprehension)s?)\b|history\./i.test(t)) f.add("history");
+  return f;
+}
+const CONFLICT_RE = /\b(conflict\w*|mismatch\w*|discrepan\w*|inconsisten\w*|differ\w*|contradict\w*)\b/i;
+// A generic follow-on that has no content of its own: it only says the conflict above matters.
+const FOLLOW_ON_RE = /\b(which (source|account|one|version) is (accurate|correct)|impact on (the )?charge|charge determination)\b/i;
 /**
+ * The model's own routing reasons, minus those that only repeat a claim withheld as invalid. A reason is removed when it
+ * describes a conflict, every fact it names was the subject of an invalid withheld claim, and no kept finding or routed
+ * account is about that fact. Generic follow-ons ("which source is accurate for charge determination") go only when no
+ * conflict reason, finding or account about the entry, time or history remains. Everything else is kept, including
+ * reasons about attribution, multiple charges or anything the code did not check.
+ */
+export function modelRoutingReasons(reasons: string[], invalidClaims: string[], standing: string[]): { reasons: string[]; removed: string[] } {
+  const invalid = new Set(invalidClaims.flatMap((t) => [...factsOf(t)]));
+  const stand = new Set(standing.flatMap((t) => [...factsOf(t)]));
+  const echo = (r: string) => {
+    const f = [...factsOf(r)];
+    return CONFLICT_RE.test(r) && f.length > 0 && f.every((x) => invalid.has(x) && !stand.has(x)) && !/\b(person|subject|who|whom|whose|attribut\w*|individual)\b/i.test(r);
+  };
+  const removed = reasons.filter(echo);
+  let kept = reasons.filter((r) => !echo(r));
+  if (removed.length && standing.length === 0 && !kept.some((r) => CONFLICT_RE.test(r) || factsOf(r).size > 0)) {
+    const followOns = kept.filter((r) => FOLLOW_ON_RE.test(r));
+    removed.push(...followOns);
+    kept = kept.filter((r) => !followOns.includes(r));
+  }
+  return { reasons: kept, removed };
+}/**
  * Whether a citation explanation says the record supports the charge or THIS charge's requirement. A support verb
  * alone is not enough ("the narrative states the subject entered without inspection" opposes an admission charge):
  * the supported thing must be the charge itself or the specific requirement, and it must not be negated.
@@ -328,6 +364,10 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   }
 
   // ---- Model issues, kept only with verified evidence
+  // Model claims withheld because they were shown invalid (not merely unverifiable or unattributable): their facts, so
+  // that a model routing reason that only repeats one of them is not kept as a reason to route.
+  const invalidClaims: string[] = [];
+  const invalidate = (iss: { title: string; explanation: string }, ev: EvidenceRef[]) => invalidClaims.push(`${iss.title} ${iss.explanation} ${ev.map((v) => v.fieldPath ?? "").join(" ")}`);
   out?.issues.forEach((iss, i) => {
     const ev = iss.evidence.map((x) => verifyEvidence(x, sentences, c));
     let verified = ev.filter(Boolean) as EvidenceRef[];
@@ -340,6 +380,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const nonUs = factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>();
     if (iss.type === "inconsistency" && verified.some((v) => v.sentenceId && nonUs.has(v.sentenceId))) {
       discarded.push({ title: iss.title, reason: "The cited sentence describes entry into another country or travel, not the U.S. entry, so it cannot show a conflict about the U.S. entry." });
+      invalidate(iss, verified);
       return;
     }
     // (1b) A claimed conflict between the form's manner-of-entry code and a narrative sentence the extractor classified in
@@ -359,7 +400,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         const kept = parts.map((x) => x.text!);
         const note = `The model's manner-of-entry point was withheld: the form code "${mannerField.quote}" and the cited statement describe the same manner of entry.`;
         discarded.push({ title: iss.title, reason: kept.length ? `Manner part only. ${note}` : note });
-        if (!kept.length) return;
+        if (!kept.length) { invalidate(iss, verified); return; }
         verified = verified.filter((v) => !v.fieldPath || parts.some((x) => x.path === v.fieldPath));
         iss = { ...iss, title: kept.length > 1 ? "Entry date and place differ from the form" : /year/.test(kept[0]) ? "Entry date differs from the form" : "Place of entry differs from the form", explanation: `${kept.join(" ")} ${note}` };
       }
@@ -378,7 +419,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       // A form field recorded as unknown has nothing to conflict with: an unattributed statement against it is a
       // documentation gap, not an account a person must attribute (F055). Route only when a cited form value is known.
       const knownField = verified.some((v) => v.fieldPath && fieldQuality(c.facts.find((f) => f.path === v.fieldPath && f.status === "present")?.value ?? "") !== "unknown");
-      if (!knownField) return;
+      if (!knownField) { invalidate(iss, verified); return; }
       accounts.push({ sentenceIds: verified.filter((v) => v.sentenceId && unlinked(v)).map((v) => v.sentenceId!), fieldPath: verified.find((v) => v.fieldPath)?.fieldPath,
         detail: `The model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"` });
       return;
@@ -401,6 +442,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       const claimed = [...new Set(`${iss.title} ${iss.explanation}`.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? [])].filter((t) => !formTimes.has(t) && cited.some((x) => x.includes(t)));
       if (claimed.length && claimed.every((t) => cited.every((x) => !x.includes(t) || (isRequestTime(x, t) && encounterTimeMatch(x)?.[1] !== t)))) {
         discarded.push({ title: iss.title, reason: `The narrative gives ${claimed.join(", ")} hours as the time of a call or request, not the encounter, so it cannot conflict with the form's encounter time.` });
+        invalidate(iss, verified);
         return;
       }
     }
@@ -409,6 +451,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const missingValues = unsupportedValues(`${iss.title}. ${iss.explanation}`, evTexts);
     if (missingValues.length) {
       discarded.push({ title: iss.title, reason: `The claim relies on ${missingValues.join(", ")}, which does not appear in the cited evidence.` });
+      invalidate(iss, verified);
       return;
     }
     if (iss.type === "inconsistency" && new Set(verified.map((v) => v.sentenceId ?? v.fieldPath)).size < 2) {
@@ -558,7 +601,14 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     };
     humanReasons.push(entryConflict ? "Citation check depends on conflicting facts the charge relies on." : "Citation check depends on an unattributed account about facts the charge relies on.");
   }
-  if (out?.human_review.required) humanReasons.push(...out.human_review.reasons);
+  if (out?.human_review.required) {
+    const kept = modelRoutingReasons(out.human_review.reasons, invalidClaims, [
+      ...findings.filter((f) => f.category === "inconsistency" || f.category === "unclear").map((f) => `${f.title} ${f.explanation} ${f.evidence.map((e) => e.fieldPath ?? "").join(" ")}`),
+      ...routedAccounts.map((g) => `${g.fieldPath ?? "entry.date entry.place entry.manner"} ${g.details.join(" ")}`),
+    ]);
+    for (const r of kept.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" only repeats a claim that was withheld as invalid, so it is not a reason to route.` });
+    humanReasons.push(...kept.reasons);
+  }
   // Completion covers every required check, not only the main model call (audit item 1).
   const completion = computeCompletion({ modelStatus, modelError, calls, elements, citation }, { citationExpected: selected.length > 0 });
   if (completion.status === "partial") humanReasons.push(`This review is partial: ${completion.failed.map((f) => `${f.check} ${f.reason}`).join("; ")}.`);
