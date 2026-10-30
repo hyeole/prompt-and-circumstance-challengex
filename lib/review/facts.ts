@@ -603,7 +603,8 @@ export function nonUsEntrySentences(facts: FactsOutput, sentences?: Sentence[]):
     return !(US_ENTRY_TEXT_RE.test(t) && !OTHER_COUNTRY_RE.test(t));
   }));
 }
-const US_ENTRY_TEXT_RE = /\b(enter\w*|cross\w*|arriv\w*|came|walk\w*|swam|wad\w*|smuggled)\b[^.;]{0,60}\b(United States|U\.S\.|USA)\b|\b(United States|U\.S\.)\b[^.;]{0,20}\bborder\b/i;
+// "United States Border Patrol" and "Customs and Border Protection" name an agency, not a border crossing.
+const US_ENTRY_TEXT_RE = /\b(enter\w*|cross\w*|arriv\w*|came|walk\w*|swam|wad\w*|smuggled)\b[^.;]{0,90}\b(United States|U\.S\.|USA)\b(?!\s+Border\s+(Patrol|Protection))|\b(United States|U\.S\.)\b[^.;]{0,20}\bborder\b(?!\s+(Patrol|Protection))/i;
 
 // ---- Continuous accounts (one person's statements across adjacent sentences) ----
 // A person of interest is marked by a redaction marker outside parentheses (A#, DOB and COC details are about the same

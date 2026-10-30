@@ -174,3 +174,28 @@ test("reliability control: an empty extraction is complete when the narrative de
   const r = await reviewCase(c0, fake(EMPTY));
   assert.ok(!factsFailed(r), "a port-of-entry application with no entry wording needs no entry statement");
 });
+
+// ---- Post-evaluation patch (after the rc-round2 evaluation; NOT part of the evaluated build) ----
+import { describesUsEntry } from "../lib/review/facts";
+import { to24h } from "../lib/review/review";
+test("patch P1: the agency name 'United States Border Patrol' does not describe an entry (C003-M3 regression)", () => {
+  assert.equal(describesUsEntry(seq("Agent [REDACTED] identified himself as a United States Border Patrol Agent.")), false);
+  assert.equal(describesUsEntry(seq("He worked with U.S. Customs and Border Protection officers.")), false);
+  assert.equal(describesUsEntry(ss(load("eval/cases/C003-M3.json"))), false);
+  assert.equal(describesUsEntry(seq("He crossed the Mexico-United States border at the age of five.")), true, "control: a crossing still counts");
+  assert.equal(describesUsEntry(seq("He entered the United States near El Paso.")), true, "control");
+});
+test("patch P2: a 12-hour call time is not the encounter time (C037-AMB I-1); a 12-hour encounter time is still compared", async () => {
+  assert.equal(to24h("at approximately 12:06 PM, the station received a call"), "at approximately 1206 hours, the station received a call");
+  assert.equal(to24h("at 1:30 p.m."), "at 1330 hours");
+  const c = load("eval/cases/C037-AMB.json");
+  const s3 = sid(c, "received a call");
+  const claim = (sentence: string, quote: string) => JSON.stringify({ elements: [], issues: [{ type: "inconsistency", title: "Encounter date/time mismatch", explanation: "The form field lists 05/01/2017 1335, while the narrative states approximately 12:06 PM on the same day.", evidence: [{ sentence_id: sentence, quote }, { field_path: "encounter.date_time" }], needs_human_review: true, reason: "" }], citation: { status: "consistent", explanation: "Supported.", evidence: [] }, human_review: { required: false, reasons: [] } });
+  const run = (cc: CaseRecord, sentence: string, quote: string) => reviewCase(cc, async (system) => ({ text: system === FACTS_SYSTEM_PROMPT ? EMPTY : claim(sentence, quote), attempts: 1 }));
+  const r = await run(c, s3, "at approximately 12:06 PM");
+  assert.ok(!r.findings.some((f) => f.title === "Encounter date/time mismatch"));
+  assert.ok(r.discarded.some((d) => /call or request, not the encounter/.test(d.reason)));
+  const enc = { ...c, narrative: { text: c.narrative.text.replace("Border Patrol Station received a call from an FBI Task Force Agent", "Border Patrol Agents encountered the subject near the station") } } as CaseRecord;
+  const r2 = await run(enc, sid(enc, "encountered the subject near the station"), "at approximately 12:06 PM");
+  assert.ok(r2.findings.some((f) => f.title === "Encounter date/time mismatch"), "control: an encounter time in 12-hour form is still compared");
+});

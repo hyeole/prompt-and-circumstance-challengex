@@ -67,6 +67,14 @@ function invalidReason(e: unknown): string {
   return "not valid JSON";
 }
 
+/** Rewrite 12-hour clock times ("12:06 PM", "1:30 p.m.") as 24-hour times with "hours" ("1206 hours", "1330 hours"). */
+export function to24h(t: string): string {
+  return t.replace(/\b(\d{1,2}):(\d{2})\s*([ap])\.?\s?m\b\.?/gi, (_m, h: string, mm: string, ap: string) => {
+    let hh = Number(h) % 12;
+    if (/p/i.test(ap)) hh += 12;
+    return `${String(hh).padStart(2, "0")}${mm} hours`;
+  });
+}
 /** A sentence that says a fact is not known ("does not recall when", "date of entry unknown"). */
 const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recall)|did not (know|remember|recall)|(could|can) ?not (recall|remember|say)|cannot (recall|remember|say)|unsure|not sure|no recollection|unable to (recall|remember|say|provide))\b/i;
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
@@ -477,8 +485,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     // ("at 2000 hours, a Trooper requested assistance") is not the encounter time (C012-M2; same exclusion as the time rule).
     if (iss.type === "inconsistency" && verified.some((v) => v.fieldPath === "encounter.date_time")) {
       const formTimes = new Set(verified.filter((v) => v.fieldPath === "encounter.date_time").flatMap((v) => v.quote?.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? []));
-      const cited = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!.text);
-      const claimed = [...new Set(`${iss.title} ${iss.explanation}`.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? [])].filter((t) => !formTimes.has(t) && cited.some((x) => x.includes(t)));
+      // 12-hour times ("12:06 PM") are read as the 24-hour times the form and the time rule use ("1206 hours").
+      const cited = verified.filter((v) => v.sentenceId).map((v) => to24h(sentences.find((x) => x.id === v.sentenceId)!.text));
+      const claimed = [...new Set(to24h(`${iss.title} ${iss.explanation}`).match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? [])].filter((t) => !formTimes.has(t) && cited.some((x) => x.includes(t)));
       if (claimed.length && claimed.every((t) => cited.every((x) => !x.includes(t) || (isRequestTime(x, t) && encounterTimeMatch(x)?.[1] !== t)))) {
         discarded.push({ title: iss.title, reason: `The narrative gives ${claimed.join(", ")} hours as the time of a call or request, not the encounter, so it cannot conflict with the form's encounter time.` });
         invalidate(iss, verified);
