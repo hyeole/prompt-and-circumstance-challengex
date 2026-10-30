@@ -42,3 +42,18 @@ test("disposition and identifying documents are detected from narrative wording"
   const c1 = load("C001");
   assert.equal(detect(item("N1"), c1, ss(c1))?.status, "present", "C001 mentions identification cards and a driver's license");
 });
+
+test("port of entry: documents presented and purpose of travel are both needed (DS07 present, DS08 not present)", () => {
+  const load2 = (id: string) => JSON.parse(readFileSync(`eval/dev-synthetic/cases/${id}.json`, "utf8")) as CaseRecord;
+  const d7 = load2("DS07"), d8 = load2("DS08");
+  assert.equal(detect(item("N3", ["port_of_entry"]), d7, splitSentences(d7.narrative.text))?.status, "present");
+  // DS08 still records the officer's finding that he intended to work, so "unclear" (one of the two parts) is right.
+  assert.ok(["absent", "unclear"].includes(detect(item("N3", ["port_of_entry"]), d8, splitSentences(d8.narrative.text))?.status ?? ""));
+});
+
+test("expedited removal: advisal and opportunity to respond (DS09 present, DS10 absent)", () => {
+  const load2 = (id: string) => JSON.parse(readFileSync(`eval/dev-synthetic/cases/${id}.json`, "utf8")) as CaseRecord;
+  const d9 = load2("DS09"), d10 = load2("DS10");
+  assert.equal(detect(item("N8", ["expedited_removal"]), d9, splitSentences(d9.narrative.text))?.status, "present");
+  assert.equal(detect(item("N8", ["expedited_removal"]), d10, splitSentences(d10.narrative.text))?.status, "absent");
+});

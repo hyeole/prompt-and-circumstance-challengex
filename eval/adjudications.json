@@ -192,6 +192,38 @@
       "note": "The narrative does describe prior removals (Expedited Removal 06/08/2005; deportations 2010 and 2015); the extraction missed them, so 'no prior removal' is wrong.",
       "example": "C013-X1 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
       "date": "2026-10-30"
+    },
+    {
+      "base": "DS08",
+      "key": "missing_element|N2",
+      "verdict": "valid_observation",
+      "note": "DS08 removes the sentence with the visa and the stated purpose, so the claimed status/classification is indeed not recorded (sponsor S1).",
+      "example": "DS08 M-N2 Missing: status or classification claimed for admission",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS10",
+      "key": "citation|the subject is inadmissible under section 212(a)(7)(a)(i)(i)",
+      "verdict": "false_flag",
+      "note": "Using a B1/B2 visitor visa while intending to work is what 212(a)(7)(A)(i)(I) covers; the narrative supports the charge.",
+      "example": "DS10 C-1 Possible citation mismatch: INA 212(a)(7)(A)(i)(I)",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS12",
+      "key": "missing_element|N5",
+      "verdict": "valid_observation",
+      "note": "DS12 has no ground statement (the GROUND block was not included), so the specific ground is genuinely not stated (sponsor S4).",
+      "example": "DS12 M-N5 Missing: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "DS06",
+      "key": "inconsistency|entry.date|stated that he entered the united states in 2016 by crossing",
+      "verdict": "false_flag",
+      "note": "Pre-run label: the 2016 statement cannot be attributed to this record's subject (two redacted people); no entry-date conflict should be reported. Known limitation.",
+      "example": "DS06 F-ENTRY-DATE Entry date differs from the form",
+      "date": "2026-10-30"
     }
   ]
 }

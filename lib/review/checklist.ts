@@ -36,6 +36,11 @@ const GENERIC_RE = /\b(not credible|not a bona fide|lack(s|ed)? credibility)\b/i
 const DISPOSITION_RE = /\b(notice to appear|\bNTA\b|warrant of arrest|reinstate(d|ment)?|expedited removal order|I-860|voluntary (return|departure)|served (with )?a?|remanded|turned over to|transferred to (ICE|immigration)|detained pending|released on|processed (as|for) (a |an )?(WA\/NTA|NTA|reinstatement|expedited removal|voluntary))/i;
 const DOCUMENT_RE = /\b(passport|identification card|ID card|driver'?s license|birth certificate|visa\b|consular (ID|identification)|identity documents?|identification documents?|(no|any) (form of )?identification|did not (have|possess) any (identification|documents))\b/i;
 
+const DOCS_PRESENTED_RE = /\b(presented|presenting|showed|displayed|tendered)\b[^.]{0,80}\b(passport|visa|card|document|permit|license)|\b(passport|visa)\b[^.]{0,40}\b(presented|shown)\b/i;
+const PURPOSE_RE = /\b(purpose (of|for) (his|her|their|the) (trip|travel|visit)|purpose was|for (tourism|business|pleasure|a visit|a conference|medical)|intend(ed|s)? to (visit|work|study|stay|live)|(visit|visiting) (family|friends|relatives))\b/i;
+const ADVISAL_RE = /\b(advised|informed|notified)\b[^.]{0,60}\b(charge|inadmissib|removab)/i;
+const RESPONSE_RE = /\b(sworn statement|I-867|opportunity to respond|given (an|the) opportunity|asked (if|whether) (he|she|they) (had|wished|wanted)[^.]{0,40}(add|say|respond))\b/i;
+
 const sentencesMatching = (sentences: Sentence[], re: RegExp) => sentences.filter((s) => re.test(s.text)).map((s) => s.id);
 
 /** Deterministic result for items that do not need the model. Returns null when the model should decide. */
@@ -59,6 +64,22 @@ export function detect(item: ChecklistItem, c: CaseRecord, sentences: Sentence[]
     if (ids.length) return { ...base, status: "present", sentenceIds: ids.slice(0, 3), note: "The narrative states the action taken." };
     if (f) return { ...base, status: "present", sentenceIds: [], fieldPaths: [f.path], note: "Recorded in the form's disposition field." };
     return null; // let the model look for less common wording
+  }
+  if (item.id === "N3") {
+    // Application for admission: documents presented AND purpose of travel (the port itself is usually on the form).
+    const docs = sentencesMatching(sentences, DOCS_PRESENTED_RE);
+    const purpose = sentencesMatching(sentences, PURPOSE_RE);
+    if (docs.length && purpose.length) return { ...base, status: "present", sentenceIds: [...new Set([...docs, ...purpose])].slice(0, 4), note: "Documents presented and the stated purpose of travel are recorded." };
+    if (docs.length || purpose.length) return { ...base, status: "unclear", sentenceIds: [...docs, ...purpose].slice(0, 3), note: docs.length ? "Documents presented are recorded, but the stated purpose of travel is not." : "The stated purpose of travel is recorded, but not the documents presented." };
+    return { ...base, status: "absent", sentenceIds: [], note: "Neither the documents presented nor the stated purpose of travel is recorded." };
+  }
+  if (item.id === "N8") {
+    // Expedited removal: advised of the charge AND given an opportunity to respond (sworn statement).
+    const adv = sentencesMatching(sentences, ADVISAL_RE);
+    const resp = sentencesMatching(sentences, RESPONSE_RE);
+    if (adv.length && resp.length) return { ...base, status: "present", sentenceIds: [...new Set([...adv, ...resp])].slice(0, 4), note: "The advisal of the charge and the opportunity to respond are recorded." };
+    if (adv.length || resp.length) return { ...base, status: "unclear", sentenceIds: [...adv, ...resp].slice(0, 3), note: adv.length ? "The advisal is recorded, but not the opportunity to respond." : "A sworn statement or response is recorded, but not the advisal of the charge." };
+    return { ...base, status: "absent", sentenceIds: [], note: "Neither the advisal of the charge nor an opportunity to respond is recorded." };
   }
   if (item.id === "N1") {
     const f = c.facts.find((x) => x.path === "documents.passport" && x.status === "present" && fieldQuality(x.value) !== "unknown");

@@ -1,0 +1,11 @@
+{
+  "label": "dev-synthetic development run (commit a5ba61b)",
+  "dataset": "eval/dev-synthetic",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T02:40:21.817Z",
+  "commit": "a5ba61b",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

@@ -12,7 +12,10 @@ if (!note || !["valid_observation", "false_flag"].includes(verdict)) throw new E
 const r = JSON.parse(readFileSync(`${run}/raw/${id}.json`, "utf8")) as ReviewResult;
 const f = r.findings.find((x) => x.id === fid);
 if (!f) throw new Error(`${fid} not found in ${id}`);
-const base = (JSON.parse(readFileSync(`eval/expected/${id}.json`, "utf8")) as { base: string }).base;
+let dataset = "eval";
+try { dataset = JSON.parse(readFileSync(`${run}/run-info.json`, "utf8")).dataset ?? "eval"; } catch { /* legacy run */ }
+const expDir = dataset === "eval" ? "eval/expected" : `${dataset}/expected`;
+const base = (JSON.parse(readFileSync(`${expDir}/${id}.json`, "utf8")) as { base: string }).base;
 const file = "eval/adjudications.json";
 const db = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {
   about: "Manual adjudication of findings that match no planted issue. Each was checked against the case text and source PDF page. Adjudicated by the team (prepared by Claude Code, to be confirmed by Harshal Yeole). Keyed by base case so the same finding is judged the same way in every variant and run.",
