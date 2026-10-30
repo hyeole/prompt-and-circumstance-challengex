@@ -47,7 +47,7 @@ The last row is a secondary, paired view on the same cases, not a headline figur
 | Case | Baseline → `1b5f59b` → round 3 | Cause | Due to round-3 code? |
 |---|---|---|---|
 | F075-H | missed → detected → **detected** | Round-2 exact-entry link (kept) | No (round 2) |
-| C037-X1 | detected → not completed → **detected** | The fact call completed this time (`F-ENTRY-DATE`) | No (run variance) |
+| C037-X1 | detected → not completed → **detected** | The fact call completed this time (`F-ENTRY-DATE`) | No (run-to-run variation in the model call; inferred, not confirmed) |
 | C003-M3 | detected → not completed → **not completed** | All three calls (facts and both review samples) timed out at 55 s. The P1 fix for its round-2 regression could not be exercised live; it is verified offline only | No |
 | F010-D | detected → detected → **not completed** | Fact-call timeout; the missing-element plant is credited only from a complete review | No (timeout) |
 
@@ -96,9 +96,14 @@ This pattern is consistent with slower endpoint responses during the run. It is 
 - **G06, credited under v2.4 but questionable.**
   - **What happened:** `F-ENTRY-DATE` treats S8 ("[REDACTED] … entered the United States in 2011 by crossing the river near Hidalgo") as the subject's. It matches the form's entry place (Hidalgo) and manner (EWI), and no other account shares them; the two-fact link rule predates round 2.
   - **Conflict with the label:** the label's note expects routing with no contradiction asserted.
-  - **Not caused by the round-3 code:** offline, `1b5f59b` and `4cf02c3` produce identical results for identical extractions. The finding appears whenever the extractor supplies S8's manner, so the change is extraction variance.
+  - **Not caused by the round-3 code:** offline, `1b5f59b` and `4cf02c3` produce identical results for identical extractions, and the finding appears whenever the extractor supplies S8's manner. The difference between the runs is therefore **inferred** to be extraction variance. This is **not confirmed**: raw results do not store the extracted facts.
+  - **Follow-up (uncommitted, offline):** place and manner alone no longer establish identity. G06 is now routed; see `G06-G09-FIXES.md`.
   - **Treatment:** the credit is reported as questionable, and the label is unchanged.
-- **G09:** complete this time, but the plant is still missed. **Correction (after commit `e102fdc`):** an earlier version of this report said the model judged the manner present; that was wrong. E3 is marked `present`/`recorded_unknown` by the deterministic field-coverage rule, because the form records `entry.manner` as "UNK", and the result is the same in `1b5f59b`. The deterministic charge-support check noticed the missing manner statement and routed the case. See `ROUND3-EVIDENCE-G06-G09.md`.
+- **G09:** complete this time, but the plant is still missed.
+  - **Correction (after commit `e102fdc`):** an earlier version of this report said the model judged the manner present; that was wrong.
+  - **Actual cause:** the form records `entry.manner` as "UNK", and the deterministic field-coverage rule treats a field recorded as unknown as documented. When the narrative does not state the manner, that field result stands as `present`/`recorded_unknown`. The model's own E3 output is not used in that case. The result is the same in `1b5f59b`.
+  - **Routing:** the deterministic charge-support check noticed that no statement of the manner exists, and routed the case.
+  - **Follow-up (uncommitted, offline):** a manner of entry recorded only as unknown, with a checked narrative that does not state it, is now `unclear`. See `G06-G09-FIXES.md` and `ROUND3-EVIDENCE-G06-G09.md`.
 
 ## Assessment against the stopping criteria
 | Criterion | Result |
@@ -106,7 +111,7 @@ This pattern is consistent with slower endpoint responses during the run. It is 
 | Reliable 85–87% detection | **Not reached**: 76% (41/54). On the 62 cases complete in all builds, 32/42 |
 | Sponsor target ≥90% | **Not met** |
 | Incorrect flags ≤10% | **Met**: 3/101 (claim layer), 4/101 (original-record layer) |
-| No unresolved regressions introduced by these changes | No outcome regression is attributable to the round-3 code. The **completion regression (67/77) is unresolved**: the diagnostics point to endpoint latency, but the cause is unconfirmed. G06's credit is questionable |
+| No unresolved regressions introduced by these changes | No outcome regression is attributable to the round-3 code. The **completion regression (67/77) is unresolved**: slower endpoint responses are an inference from timing, and the cause is unconfirmed. G06's credit is questionable |
 
 ## Recommendation
 1. **Keep `7efb231` / `49a12be` as the deliverable.** `rc-round3` is not promoted, because its completion in this run is far below the baseline and the cause is not confirmed.
@@ -117,6 +122,6 @@ This pattern is consistent with slower endpoint responses during the run. It is 
    - 90% is not reachable with the current approach.
 3. **The round-3 code is safer, not more sensitive.** It removes the false-positive and attribution defects found by the independent review, with no detection change offline or live. Promoting it should depend on reliability alone. That would need a completion-matched run of the same frozen build at another time, which is not authorized and is not started.
 4. **Reliability is the main remaining limit:**
-   - fact-call timeouts (2–9 per 77, varying with the endpoint);
+   - fact-call timeouts (2–9 per 77; the variation is inferred to come from the endpoint, not confirmed);
    - the 55 s budget;
    - the `describesUsEntry` wording gap, documented in `RUN-CONFIG-round3.md`.

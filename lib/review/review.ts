@@ -338,6 +338,13 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         return unknownOnly ? { ...fromField, sentenceIds: validIds, qualifier: "recorded_unknown", note: "The form and the narrative both record this as unknown. It is documented, but not established." }
           : { elementId: el.id, label: el.label, status: "present", sentenceIds: validIds, fieldPaths: fromField.fieldPaths, note: `Stated in the narrative. ${fromField.note}` };
       }
+      // The manner of entry is the fact charges depend on. A form that records it only as unknown, with a narrative
+      // that was checked and does not state it, leaves it unestablished: unclear for a person, not "present" (G09). It
+      // is not "absent" either, since the officer did record it as unknown. Other elements recorded as unknown keep
+      // the documented-unknown result.
+      if (el.id === "E3" && fromField.qualifier === "recorded_unknown" && m && !(factsSettled.ok && hasMannerStatement(sentences, factsSettled.v)))
+        return { elementId: el.id, label: el.label, status: "unclear", sentenceIds: [], fieldPaths: fromField.fieldPaths,
+          note: "The form records the manner of entry as unknown, and the narrative does not state how the subject entered. The charge depends on this fact, so a person should confirm it." };
       return fromField;
     }
     if (!m) return { elementId: el.id, label: el.label, status: "not_checked", sentenceIds: [], fieldPaths: [], note: out ? "The model did not report on this element." : "Model check unavailable." };

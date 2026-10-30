@@ -400,7 +400,8 @@ function textManner(t: string): "without_inspection" | "admitted" | undefined {
 /**
  * Whether an unattributed statement in a multi-person narrative is uniquely tied to THIS record's subject. One
  * matching fact is never enough. Identity counts as uniquely supported only when (a) at least two facts other than
- * the disputed one match the subject's form, (b) no narrative sentence describes people entering together, (c) no
+ * the disputed one match the subject's form, one of them being the entry month and day (a place and a manner alone
+ * describe a shared route, not a person), (b) no narrative sentence describes people entering together, (c) no
  * other entry account in the narrative shares any of the matched facts (companions would), and (d) no other
  * unattributed statement fully agrees with the form, which would suggest the form describes that other person. Returns the matched facts, or [] if not unique.
  */
@@ -412,6 +413,9 @@ export function linkedToSubject(
   const own = facts.entry_statements.find((e) => e.sentence_id === sentenceId && isUsEntry(e));
   const matches = formMatches(c, s.text, own?.manner, conflict);
   if (matches.length < 2) return [];
+  // The place and the manner describe a route, which people who crossed together share: on their own they do not
+  // identify a person (G06). The link needs the form's entry month and day, a fact specific to one entry.
+  if (!matches.some((m) => m.startsWith("the entry month and day"))) return [];
   // A group entry vetoes the link only when it is part of THIS statement's own account (the statement itself, or the
   // sentences continuing it): a group entry described elsewhere in the narrative may be other people's.
   if (accountOf(sentences, s.id).some((x) => SHARED_ENTRY_RE.test(x.text) && ENTRY_VERB_RE.test(x.text))) return [];
