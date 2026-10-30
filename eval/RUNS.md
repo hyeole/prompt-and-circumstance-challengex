@@ -187,3 +187,13 @@ Figures are as recorded when each run was scored. Earlier runs keep their origin
 - **Original result:** completion 81% (30/37), strict recall 68% (21/31), incorrect 4/63 (4 false flags), unnecessary routing 7% (1/15).
 - **The 7 fact-call timeouts did not recur, and the same 21 plants were detected.** The variability is in endpoint latency. One repeat cannot prove load as the cause.
 - **Details:** per-call timings, the case-by-case missed-plant table, the inherited-adjudication recheck and the flags by category are in `eval/MISSED-PLANTS-d0ec8c3.md`.
+
+## Planned evaluation on the `e4dd17b` build (fixes 1-6, accounts as routing items)
+
+See `eval/EVALUATION-e4dd17b.md`. It covers both adjudication layers, flags by category, the remaining missed plants, the item-7 measurement, and an adjudication error found and corrected in the claim layer (C003-M3 and C037-M3 U-N5).
+
+| Dataset | Completion | Strict recall | Incorrect (default / claim layer) | Unnecessary routing |
+|---|---|---|---|---|
+| dev-synthetic | 100% | 100% (6/6) | 0/10 / 0/10 | 0% |
+| fresh-v1 | 96% | 53% (9/17) | 0/25 / 0/25 | 22% (4/18) |
+| legacy | 97% | 71% (22/31) | 3/62 / 1/62 | 7% (1/15) |
