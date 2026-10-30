@@ -15,6 +15,26 @@
 | Citation | Selected charge replaced with one whose key facts conflict with the record | Citation status is `likely_mismatch` or `needs_human_review` |
 | Human review | Second charge added, or a conflicting statement added | Human review required = true |
 
+## Scoring policy v2.4 (2026-10-30, `scripts/score-match.ts`, `scripts/finding-key.ts`), from an independent review
+**Matching an inconsistency plant.** The fact is now checked per clause and per event.
+- Some clause must state the conflict about the planted fact: for an entry-year plant, a date conflict about the entry.
+- A clause saying that fact agrees disqualifies the finding ("entry location differs; dates agree").
+- A conflict about another event's date (birth, arrest, encounter) does not count.
+
+**Matching an ambiguity plant.** It needs a finding marked for human review that:
+- cites the anchor;
+- is about conflicting or unattributable accounts of the entry.
+
+An element-check finding citing the same sentence (for example "identifying documents") does not count.
+
+**Claim-aware adjudication, claim v2.** The claim records, clause by clause, which source states it (form or narrative), what it is about, and whether that clause negates it. So "the form reports no prior removal; the narrative documents a removal" and its reverse are different claims.
+- A free-text model claim whose source or topic cannot be identified is UNCERTAIN. It is never inherited, and a person adjudicates it for that case and explanation only.
+- Original records (`eval/adjudications.json`) and the v1 migration are unchanged. The v2 migration is `eval/migrations/2026-10-30-adjudication-claims-v2.json`: 86 of 104 original records have a certain v2 claim, and 5 of 6 v1 manual decisions carry forward.
+- `scripts/adjudicate.ts` no longer replaces an existing original record.
+
+**Rescoring.** Historical runs keep their v2.3 files. v2.4 rescoring is written beside them (`summary-v2.4.json`, `REPORT-v2.4.md`).
+- Over all 43 runs with raw outputs, 7 of 455 plant outcomes change, all from detected to missed. All 7 are in the `e4dd17b` runs (`06-19-54`, `06-23-27`). There, an unattributed account had been issued as an "Account that may conflict … attribution unknown" finding, which states no contradiction about the planted fact (`scripts/diag-policy-diff.ts`).
+
 ## Scoring policy v2.3 (2026-10-30, `scripts/score-match.ts`), from an independent audit
 Changes from v2.2. Everything not listed here is unchanged.
 - **Completion covers every required check** (`lib/completion.ts`). A review is partial when the model review, the fact extraction, any element output or the citation check did not complete. Checks that cannot run by design (redacted fields, unknown case context, a charge with no team reference) are named but do not make a review partial. Reviews recorded before this field existed are judged from `modelStatus` and the per-call log.

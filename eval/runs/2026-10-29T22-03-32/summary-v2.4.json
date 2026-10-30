@@ -1,0 +1,527 @@
+{
+  "run": "eval/runs/2026-10-29T22-03-32",
+  "scoringPolicy": "v2.4",
+  "adjudicationLayer": "key only",
+  "runInfo": {},
+  "cases": 16,
+  "completion": "63% (10/16)",
+  "partialReviews": [
+    {
+      "id": "C001-M3",
+      "modelStatus": "failed",
+      "seconds": 55.3,
+      "calls": "n/a",
+      "plants": "missing_element=not_completed"
+    },
+    {
+      "id": "C001-MC",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "human_review:multi_charge=detected"
+    },
+    {
+      "id": "C003",
+      "modelStatus": "failed",
+      "seconds": 55.1,
+      "calls": "n/a",
+      "plants": "none"
+    },
+    {
+      "id": "C003-AMB",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "human_review:ambiguity=not_completed, inconsistency=not_completed"
+    },
+    {
+      "id": "C003-M3",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "missing_element=not_completed"
+    },
+    {
+      "id": "C012-M2",
+      "modelStatus": "failed",
+      "seconds": 55,
+      "calls": "n/a",
+      "plants": "missing_element=not_completed"
+    }
+  ],
+  "recallCompletedOnly": {
+    "value": "100% (7/7)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "62% (8/13)",
+    "dev": "62% (8/13)",
+    "heldout": "n/a",
+    "missing_element": "0% (0/3)",
+    "inconsistency": "75% (3/4)",
+    "citation": "100% (3/3)",
+    "routing_multi_charge": "100% (2/2)",
+    "routing_ambiguity": "0% (0/1)",
+    "outcomes": "detected: 8, routed_only: 0, missed: 0, not_completed: 5"
+  },
+  "flags": {
+    "issued": 17,
+    "planted": 8,
+    "duplicates": 0,
+    "validObservations": 6,
+    "falseFlags": 0,
+    "unadjudicated": 3,
+    "incorrectProportion": "18% (3/17)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "71% (5/7)",
+  "routingJustifiedByObservation": [
+    "C001",
+    "C001-M3"
+  ],
+  "dataset": "eval",
+  "checklistExpectations": {
+    "accuracy": "n/a",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [],
+  "evidenceValidity": "100% (17/17)",
+  "evidenceMatch": {
+    "exact": 0,
+    "partial": 0,
+    "unlabelled": 23,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "51.9s",
+    "p90": "55.1s",
+    "max": "55.3s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "C001",
+      "split": "dev",
+      "base": "C001",
+      "ms": 30707,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry facts conflict with form fields",
+          "key": "inconsistency|entry.date|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+          "status": "valid_observation",
+          "note": "Real place discrepancy: form p.1 '5 mile(s) S of LAR' (Laredo) vs p.3 'crossed the Rio Grande River from Matamoros' (opposite Brownsville). Attribution uncertain in this multi-person narrative; any manner part of the claim is not a conflict."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C001-CIT",
+      "split": "dev",
+      "base": "C001",
+      "ms": 41180,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|agent then asked the subjects if they had any documents that|stated that he left his home country peten poptun guatemala",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C001-M3",
+      "split": "dev",
+      "base": "C001",
+      "ms": 55330,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        }
+      ],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C001-MC",
+      "split": "dev",
+      "base": "C001",
+      "ms": 55025,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C001-X1",
+      "split": "dev",
+      "base": "C001",
+      "ms": 29339,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry facts conflict",
+          "key": "inconsistency|entry.date|entry.manner|entry.place|stated that he crossed the rio grande river from matamoros m",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C003",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55080,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [],
+      "flags": [],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C003-AMB",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55030,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "not_completed"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C003-CIT",
+      "split": "dev",
+      "base": "C003",
+      "ms": 54847,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: 8 U.S.C. 1326",
+          "key": "citation|history.immigration_record",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C003-M3",
+      "split": "dev",
+      "base": "C003",
+      "ms": 55037,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C012",
+      "split": "dev",
+      "base": "C012",
+      "ms": 47769,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry date conflict",
+          "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.date",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C012-M2",
+      "split": "dev",
+      "base": "C012",
+      "ms": 55040,
+      "completed": false,
+      "modelStatus": "failed",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "not_completed"
+        }
+      ],
+      "flags": [],
+      "citation": "not_checked",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C012-MC",
+      "split": "dev",
+      "base": "C012",
+      "ms": 44416,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:multi_charge",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-MULTI-CHARGE",
+          "finding": "R-MULTI-CHARGE human_review: Multiple charges selected",
+          "key": "human_review|selectedCharges",
+          "status": "planted"
+        },
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry date inconsistency",
+          "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.date",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012-X1",
+      "split": "dev",
+      "base": "C012",
+      "ms": 33735,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry facts conflict with form fields",
+          "key": "inconsistency|(dob: coc: nicaragua) claims to have entered into the united|entry.manner|entry.place|he stated that he did not cross through a designated port of",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C013",
+      "split": "dev",
+      "base": "C013",
+      "ms": 39025,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "C013-CIT",
+      "split": "dev",
+      "base": "C013",
+      "ms": 33177,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-1",
+          "finding": "I-1 inconsistency: Entry facts conflict with form fields",
+          "key": "inconsistency|entry.date|entry.manner|entry.place|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner|eventually illegally crossed the united states/mexico border|once arriving at the mexico/guatemala border illegally enter",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C013-X1",
+      "split": "dev",
+      "base": "C013",
+      "ms": 51893,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "I-2",
+          "finding": "I-2 inconsistency: Immigration history inconsistent with form field",
+          "key": "inconsistency|02/23/2015 was encountered by ice/dro at the atascosa county|05/13/2010 was arrested by ice/ero and deported through the|a 06/08/2005 was arrested by border patrol and received an e|he returned to nicaragua from houston tx on 06/28/2005.|he was deported through the new orleans port of entry to nic|he was subsequently taken into custody and received a reinst|history.immigration_record",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    }
+  ]
+}

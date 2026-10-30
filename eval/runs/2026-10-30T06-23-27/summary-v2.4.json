@@ -1,0 +1,435 @@
+{
+  "run": "eval/runs/2026-10-30T06-23-27",
+  "scoringPolicy": "v2.4",
+  "adjudicationLayer": "key only",
+  "runInfo": {
+    "label": "targeted check, not an evaluation (legacy, build 78f2425)",
+    "dataset": "eval",
+    "split": "all",
+    "only": [
+      "C001-X1",
+      "C003-AMB",
+      "C012-X1",
+      "C012-M2",
+      "C013-X1",
+      "C045-X1",
+      "C119-AMB",
+      "C119-CIT",
+      "C045",
+      "C037"
+    ],
+    "concurrency": 1,
+    "startedAt": "2026-10-30T06:23:27.369Z",
+    "commit": "78f2425",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 10,
+  "completion": "100% (10/10)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "40% (4/10)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "40% (4/10)",
+    "dev": "50% (3/6)",
+    "heldout": "25% (1/4)",
+    "missing_element": "100% (1/1)",
+    "inconsistency": "17% (1/6)",
+    "citation": "0% (0/1)",
+    "routing_multi_charge": "n/a",
+    "routing_ambiguity": "100% (2/2)",
+    "outcomes": "detected: 4, routed_only: 1, missed: 5, not_completed: 0"
+  },
+  "flags": {
+    "issued": 23,
+    "planted": 4,
+    "duplicates": 4,
+    "validObservations": 9,
+    "falseFlags": 0,
+    "unadjudicated": 6,
+    "incorrectProportion": "32% (6/19)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "0% (0/3)",
+  "routingJustifiedByObservation": [
+    "C012-M2"
+  ],
+  "dataset": "eval",
+  "checklistExpectations": {
+    "accuracy": "n/a",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [],
+  "evidenceValidity": "100% (23/23)",
+  "evidenceMatch": {
+    "exact": 13,
+    "partial": 0,
+    "unlabelled": 9,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "17.8s",
+    "p90": "31.3s",
+    "max": "31.3s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "C001-X1",
+      "split": "dev",
+      "base": "C001",
+      "ms": 16176,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|agent and agent placed all subjects under arrest at 1330 hou|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 1 At/Near Date/Hour reads 03/22/2017 1435 (checked on the page image); page 3 says 'placed all subjects under arrest at 1330 hours'. The finding says it may be legitimate and asks a person to confirm."
+        },
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.date|stated that he crossed the rio grande river from matamoros m",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "U-ACCOUNT-2",
+          "finding": "U-ACCOUNT-2 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|is detained and served with a notice to appear before an imm",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 4,
+      "evidenceTotal": 4
+    },
+    {
+      "id": "C003-AMB",
+      "split": "dev",
+      "base": "C003",
+      "ms": 12789,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "R-TIME-MISMATCH",
+          "finding": "R-TIME-MISMATCH inconsistency: Encounter time differs between form and narrative",
+          "key": "inconsistency|at approximately 1030 hours was placed under arrest for his|encounter.date_time",
+          "status": "valid_observation",
+          "note": "Real discrepancy in the source: I-213 page 9 At/Near Date/Hour reads 03/27/2017 0950 (checked on the page image); page 12 says 'At approximately 1030 hours, [subject] was placed under arrest'."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.manner|he later told agents that he entered at the nogales port of",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012-M2",
+      "split": "dev",
+      "base": "C012",
+      "ms": 20041,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-E2",
+          "finding": "M-E2 missing_element: Missing: place of last entry",
+          "key": "missing_element|E2",
+          "status": "planted"
+        },
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    },
+    {
+      "id": "C012-X1",
+      "split": "dev",
+      "base": "C012",
+      "ms": 16645,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|(dob: coc: nicaragua) claims to have entered into the united",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C013-X1",
+      "split": "dev",
+      "base": "C013",
+      "ms": 29803,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|readily admitted to being a citizen of nicaragua who was ill",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documents allowing him to be or remain'); no identity documents are stated."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|a 06/08/2005 was arrested by border patrol and received an e|history.immigration_record",
+          "status": "planted"
+        },
+        {
+          "id": "U-ACCOUNT-2",
+          "finding": "U-ACCOUNT-2 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|05/13/2010 was arrested by ice/ero and deported through the|history.immigration_record",
+          "status": "duplicate"
+        },
+        {
+          "id": "U-ACCOUNT-3",
+          "finding": "U-ACCOUNT-3 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|he was subsequently taken into custody and received a reinst|history.immigration_record",
+          "status": "duplicate"
+        },
+        {
+          "id": "U-ACCOUNT-4",
+          "finding": "U-ACCOUNT-4 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|he was deported through the new orleans port of entry to nic|history.immigration_record",
+          "status": "duplicate"
+        },
+        {
+          "id": "U-ACCOUNT-5",
+          "finding": "U-ACCOUNT-5 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|history.immigration_record|was served with a reinstatement of his original prior order",
+          "status": "duplicate"
+        },
+        {
+          "id": "U-ACCOUNT-6",
+          "finding": "U-ACCOUNT-6 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|02/23/2015 was encountered by ice/dro at the atascosa county|history.immigration_record",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "U-ACCOUNT-7",
+          "finding": "U-ACCOUNT-7 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.place|eventually illegally crossed the united states/mexico border",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 8,
+      "evidenceTotal": 8
+    },
+    {
+      "id": "C037",
+      "split": "heldout",
+      "base": "C037",
+      "ms": 17820,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|border patrol agent informed agents from the border patrol s",
+          "status": "valid_observation",
+          "note": "No identity document of the subject is stated anywhere in the narrative; only status documents ('documents allowing him to be/remain') are mentioned. Same standard as the C013/C045 adjudications."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C045",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 14237,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national|records checks conducted on the vehicles and their registere",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C045-X1",
+      "split": "heldout",
+      "base": "C045",
+      "ms": 18266,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-N1",
+          "finding": "U-N1 unclear: Unclear: identifying documents",
+          "key": "unclear|freely and readily admitted to being a citizen and national",
+          "status": "valid_observation",
+          "note": "Only status documents are mentioned ('no documentation to allow him to be in or remain'); 'no driver's licenses' concerns the vehicles' registered owners; no identity documents of the subject are stated."
+        },
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.date|last entered the united states on february 21 2015 through t",
+          "status": "unadjudicated"
+        },
+        {
+          "id": "U-ACCOUNT-2",
+          "finding": "U-ACCOUNT-2 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|claims to have last entered the united states on february 21|entry.place",
+          "status": "unadjudicated"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 3,
+      "evidenceTotal": 3
+    },
+    {
+      "id": "C119-AMB",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 31327,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "human_review:ambiguity",
+          "outcome": "detected"
+        },
+        {
+          "type": "inconsistency",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "U-ACCOUNT-1",
+          "finding": "U-ACCOUNT-1 unclear: Account that may conflict with this record (attribution unknown)",
+          "key": "unclear|entry.manner|he also stated that he first entered the united states by wa",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "C119-CIT",
+      "split": "heldout",
+      "base": "C119",
+      "ms": 15432,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "routed_only"
+        }
+      ],
+      "flags": [],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    }
+  ]
+}
