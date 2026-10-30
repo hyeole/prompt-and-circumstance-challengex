@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { encounterTimeMatch, isRequestTime, runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, buildFactsPrompt, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -71,40 +71,66 @@ const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recal
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
 const statesUnknown = (t: string) => UNKNOWN_STATEMENT_RE.test(t) && !/\b(19|20)\d\d\b|\b\d{1,2}\/\d{1,2}\//.test(t);
 
-/** Which facts a text is about: entry date, place, manner, encounter time, immigration history. */
+/**
+ * Which record facts a text is about. Each must be qualified as the entry (or encounter-time, or prior-removal) fact:
+ * "birth date", "arrest date" or an unqualified "date" are not the entry date.
+ */
 function factsOf(t: string): Set<string> {
   const f = new Set<string>();
-  if (/\b(dates?|years?|when)\b|\b(19|20)\d\d\b|entry\.date/i.test(t)) f.add("date");
-  if (/\b(place|location|where|port)\b|entry\.place/i.test(t)) f.add("place");
-  if (/\b(manner|PWA|EWI|inspect\w*|visa|crossing card|admi(tted|ssion))\b|entry\.manner/i.test(t)) f.add("manner");
-  if (/\b(encounter time|arrest time|times?|hours)\b|encounter\.date_time/i.test(t)) f.add("time");
-  if (/\b(remov\w*|deport\w*|immigration (history|record)|prior (arrest|apprehension)s?)\b|history\./i.test(t)) f.add("history");
+  const entry = "(entry|entered|enter|arriv\\w*|crossing|crossed)";
+  if (new RegExp(`\\b${entry}\\b[^;.:]{0,30}\\b(dates?|years?|months?)\\b|\\b(dates?|years?|months?) of (last )?entry\\b|entry\\.date`, "i").test(t)) f.add("entry date");
+  if (new RegExp(`\\b${entry}\\b[^;.:]{0,30}\\b(places?|locations?|ports?)\\b|\\b(place|location|port) of (last )?entry\\b|entry\\.place`, "i").test(t)) f.add("entry place");
+  if (new RegExp(`\\b${entry}\\b[^;.:]{0,30}\\bmanners?\\b|\\bmanner of (last )?entry\\b|entry\\.manner`, "i").test(t)) f.add("entry manner");
+  if (/\b(encounter|arrest|apprehension) times?\b|\btimes? of (the )?(encounter|arrest|apprehension)\b|encounter\.date_time/i.test(t)) f.add("encounter time");
+  if (/\b(prior|previous) (removal|deportation)s?\b|\bimmigration (history|record)\b|history\.immigration/i.test(t)) f.add("immigration history");
   return f;
 }
 const CONFLICT_RE = /\b(conflict\w*|mismatch\w*|discrepan\w*|inconsisten\w*|differ\w*|contradict\w*)\b/i;
-// A generic follow-on that has no content of its own: it only says the conflict above matters.
-const FOLLOW_ON_RE = /\b(which (source|account|one|version) is (accurate|correct)|impact on (the )?charge|charge determination)\b/i;
+// Words that carry no concern of their own in a routing reason: conflict wording, the two sources, and filler.
+const GENERIC = new Set("conflict conflicts conflicting mismatch mismatches mismatched discrepancy discrepancies inconsistent inconsistency inconsistencies differ differs different difference differences contradict contradicts contradiction contradictory between form forms field fields narrative narratives information info record records the and with for from regarding about data value values listed lists list reported reports states stated says said shows indicates entry entries last potential possible apparent noted noted there this that these those its their his her are was were has have had".split(" "));
+// A generic follow-on with no concern of its own: it only says that some conflict matters.
+const FOLLOW_ON = new Set("need needs needed resolve resolved determine determined determining which what source sources accurate correct correctly impact impacts potential potentially charge charging determination decision decide one version account accounts verify verified verification confirm confirmed review reviewed officer officers human should must".split(" "));
+const words = (t: string) => (t.toLowerCase().match(/[a-z][a-z'-]{2,}/g) ?? []);
 /**
- * The model's own routing reasons, minus those that only repeat a claim withheld as invalid. A reason is removed when it
- * describes a conflict, every fact it names was the subject of an invalid withheld claim, and no kept finding or routed
- * account is about that fact. Generic follow-ons ("which source is accurate for charge determination") go only when no
- * conflict reason, finding or account about the entry, time or history remains. Everything else is kept, including
- * reasons about attribution, multiple charges or anything the code did not check.
+ * The model's own routing reasons, minus parts shown to depend on one specific claim the code withheld as invalid.
+ * Each reason is split into its parts (";", ":" and sentence breaks). A part is dependent on an invalid claim only when:
+ * it describes a conflict; it names at least one qualified record fact (entry date, place or manner, encounter time,
+ * immigration history) and every fact it names was the subject of that SAME claim; no kept finding or routed account
+ * is about any of those facts; it does not mention a person, subject or attribution; and every other word it uses
+ * appears in that claim or is generic conflict wording. A shared keyword is never enough: "Birth date conflict between
+ * passport and form" names no entry fact and has its own words, so it stays. Independent parts of a mixed reason are
+ * kept ("Entry date conflict; identity cannot be determined" keeps "identity cannot be determined"). A reason whose
+ * only content is a generic follow-on ("Potential impact on charge determination") goes only when a dependent part was
+ * removed and nothing else about a conflict remains: no kept finding or account, and no kept conflict reason.
  */
 export function modelRoutingReasons(reasons: string[], invalidClaims: string[], standing: string[]): { reasons: string[]; removed: string[] } {
-  const invalid = new Set(invalidClaims.flatMap((t) => [...factsOf(t)]));
   const stand = new Set(standing.flatMap((t) => [...factsOf(t)]));
-  const echo = (r: string) => {
-    const f = [...factsOf(r)];
-    return CONFLICT_RE.test(r) && f.length > 0 && f.every((x) => invalid.has(x) && !stand.has(x)) && !/\b(person|subject|who|whom|whose|attribut\w*|individual)\b/i.test(r);
+  const claims = invalidClaims.map((t) => ({ facts: factsOf(t), words: new Set(words(t)) }));
+  const PERSON = /\b(person|people|subjects?|who|whom|whose|attribut\w*|individuals?|identity|identit\w*)\b/i;
+  const dependent = (part: string) => {
+    if (!CONFLICT_RE.test(part) || PERSON.test(part)) return false;
+    const f = [...factsOf(part)];
+    if (!f.length || f.some((x) => stand.has(x))) return false;
+    return claims.some((c) => f.every((x) => c.facts.has(x)) && words(part).every((w) => GENERIC.has(w) || c.words.has(w) || ["date", "dates", "place", "places", "location", "manner", "time", "encounter", "history", "immigration", "prior", "removal", "year"].includes(w)));
   };
-  const removed = reasons.filter(echo);
-  let kept = reasons.filter((r) => !echo(r));
-  if (removed.length && standing.length === 0 && !kept.some((r) => CONFLICT_RE.test(r) || factsOf(r).size > 0)) {
-    const followOns = kept.filter((r) => FOLLOW_ON_RE.test(r));
-    removed.push(...followOns);
-    kept = kept.filter((r) => !followOns.includes(r));
+  const followOn = (part: string) => !CONFLICT_RE.test(part) && words(part).length > 0 && words(part).every((w) => FOLLOW_ON.has(w) || GENERIC.has(w));
+  const removed: string[] = [];
+  const kept: string[] = [];
+  const pendingFollowOns: string[] = [];
+  for (const r of reasons) {
+    const parts = r.split(/\s*;\s*|:\s+|\.\s+(?=[A-Z])/).map((x) => x.trim().replace(/\.$/, "")).filter(Boolean);
+    const dep = parts.filter(dependent);
+    if (!dep.length) { (parts.every(followOn) ? pendingFollowOns : kept).push(r); continue; }
+    const rest = parts.filter((x) => !dep.includes(x));
+    if (rest.every(followOn)) { removed.push(r); continue; } // the whole reason is the withheld claim plus "this matters"
+    removed.push(...dep);
+    kept.push(rest.join("; "));
   }
+  // A follow-on depends on the conflict it qualifies; that dependence is established only when a dependent part was
+  // removed and no other conflict remains anywhere in the review.
+  const otherConflict = standing.length > 0 || kept.some((r) => CONFLICT_RE.test(r) || factsOf(r).size > 0);
+  if (removed.length && !otherConflict) removed.push(...pendingFollowOns);
+  else kept.push(...pendingFollowOns);
   return { reasons: kept, removed };
 }/**
  * Whether a citation explanation says the record supports the charge or THIS charge's requirement. A support verb
@@ -183,7 +209,13 @@ function logged<T extends { attempts: number }>(log: CallLog[], role: string, p:
   const t0 = Date.now();
   return p.then(
     // Output length (characters only, never content) for latency analysis of slow calls.
-    (v) => (log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts, chars: (v as { text?: string }).text?.length }), v),
+    // Output length (characters only, never content) and token counts reported by the endpoint, for latency analysis.
+    (v) => {
+      const u = (v as { usage?: { completion_tokens?: number; prompt_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } } }).usage;
+      log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts, chars: (v as { text?: string }).text?.length,
+        ...(u ? { tokens: { prompt: u.prompt_tokens, completion: u.completion_tokens, reasoning: u.completion_tokens_details?.reasoning_tokens } } : {}) });
+      return v;
+    },
     (e) => {
       const cancelled = e instanceof ModelError && /cancelled/i.test(e.message);
       log.push({ role, status: cancelled ? "cancelled" : "failed", ms: Date.now() - t0, attempts: e instanceof ModelError ? e.attempts : 1, error: e instanceof ModelError ? e.kind : "error" });
@@ -411,7 +443,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const entryPath = verified.find((v) => v.fieldPath === "entry.date" || v.fieldPath === "entry.manner" || v.fieldPath === "entry.place")?.fieldPath as "entry.date" | "entry.manner" | "entry.place" | undefined;
     const unlinked = (v: EvidenceRef) => {
       const s = sentences.find((x) => x.id === v.sentenceId)!;
-      return attribution(s, "unclear") !== "subject" && !(entryPath && factsSettled.ok && linkedToSubject(c, sentences, factsSettled.v, s.id, entryPath).length);
+      return attribution(s, "unclear", v.quote) !== "subject" && !(entryPath && factsSettled.ok && linkedToSubject(c, sentences, factsSettled.v, s.id, entryPath).length);
     };
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
         verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
@@ -493,6 +525,18 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     // The fact comparison's accounts come first: they state the conflicting values themselves.
     accounts.unshift(...cmp.unattributed.map((u) => ({ sentenceIds: [u.sentenceId], fieldPath: u.fieldPath, detail: u.detail })));
     if (cmp.dropped) discarded.push({ title: "Extracted entry statements", reason: `${cmp.dropped} quote(s) could not be matched to the text and were ignored.` });
+  }
+
+  // Conflicts within one person's continuous account (deterministic; no comparison with the form and no claim that the
+  // account is this subject's). A model inconsistency citing the same sentences is superseded; rule findings are kept.
+  for (const af of accountConflicts(sentences, factsSettled.ok ? nonUsEntrySentences(factsSettled.v) : new Set<string>())) {
+    const ids = af.evidence.map((e) => e.sentenceId);
+    if (findings.some((f) => f.source !== "model" && f.category === "inconsistency" && f.evidence.some((e) => e.sentenceId && ids.includes(e.sentenceId)))) continue;
+    for (let i = findings.length - 1; i >= 0; i--) {
+      const f = findings[i];
+      if (f.source === "model" && f.category === "inconsistency" && f.evidence.some((e) => e.sentenceId && ids.includes(e.sentenceId))) findings.splice(i, 1);
+    }
+    findings.push(af);
   }
 
   // Accounts that may conflict with this record but cannot be attributed to its subject: routing items for a person,
@@ -606,7 +650,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       ...findings.filter((f) => f.category === "inconsistency" || f.category === "unclear").map((f) => `${f.title} ${f.explanation} ${f.evidence.map((e) => e.fieldPath ?? "").join(" ")}`),
       ...routedAccounts.map((g) => `${g.fieldPath ?? "entry.date entry.place entry.manner"} ${g.details.join(" ")}`),
     ]);
-    for (const r of kept.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" only repeats a claim that was withheld as invalid, so it is not a reason to route.` });
+    for (const r of kept.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" depends only on a claim that was withheld as invalid, so it is not a reason to route.` });
     humanReasons.push(...kept.reasons);
   }
   // Completion covers every required check, not only the main model call (audit item 1).

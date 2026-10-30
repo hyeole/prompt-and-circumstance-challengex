@@ -48,8 +48,36 @@ const ID_DOC = "(passport|identification card|ID card|driver'?s licen[cs]e|birth
 // place name is not required, but generic wording ("via a river", "the border", "the desert") does not locate an entry.
 const ENTRY_ACT_RE = /\b(enter(ed|ing)?|entry|cross(ed|ing)?|arriv(ed|al|ing)|came (in)?to|swam|swimming|wad(ed|ing)|walk(ed|ing) (across|through|into)|jump(ed)? the fence|smuggled (in)?to|admitted|paroled|applied for admission)\b/i;
 const COUNTRY_RE = /^(the )?(United States|U\.?S\.?A?|America|Mexico|Canada|Guatemala|Honduras|El Salvador|Nicaragua)\b/i;
+// The parts of a sentence that describe an affirmative entry act, each cut at the first later event (arrest,
+// encounter, departure, return), so "entered in 2014 and was arrested in Detroit" yields only "entered in 2014".
+const LATER_EVENT_RE = /\b(arrest\w*|apprehend\w*|encounter\w*|detain\w*|stopp?ed|found|located|caught|depart\w*|left|returned|deported|removed|transport\w*|booked|processed)\b/i;
+const NEGATED_ENTRY_RE = /\b(never|not|did not|didn't|has not|had not|have not|no)\b[^,;]{0,25}$/i;
+function entrySpans(text: string): string[] {
+  const clauses = text.split(/\s*;\s*|,?\s+\b(?:and|but|then|before|after|where)\b\s+(?=(?:was|were|is|he|she|they|later|then|subsequently|agents?|officers?|troopers?|police)\b)|\.\s+/i);
+  const spans: string[] = [];
+  for (const cl of clauses) {
+    const m = ENTRY_ACT_RE.exec(cl);
+    if (!m) continue;
+    if (NEGATED_ENTRY_RE.test(cl.slice(0, m.index))) continue; // "never entered", "did not cross"
+    // "entry" inside "<Place> port of entry" is the place itself: start the span at the place name.
+    const port = /((?:[A-Z][a-z.]+\s+)+)(?:Port|port) of $/.exec(cl.slice(0, m.index));
+    // When the only entry wording is the place name "port of entry", the clause must describe someone seeking entry
+    // there (presenting, applying, arriving), not a deportation through it or a call to it.
+    if (port && !ENTRY_ACT_RE.test(cl.slice(m.index + m[0].length)) &&
+        (!/\b(presented|presenting|applied|applying|sought|seeking|as a pedestrian|arrived|arriving|inspected|admitted|paroled|crossed|entered)\b/i.test(cl) || LATER_EVENT_RE.test(cl.slice(0, port.index)))) continue;
+    const rest = cl.slice(port ? port.index : m.index);
+    const head = rest.length - cl.slice(m.index).length + m[0].length;
+    const stop = rest.slice(head).search(LATER_EVENT_RE);
+    spans.push(stop >= 0 ? rest.slice(0, head + stop) : rest);
+  }
+  return spans;
+}
+
 export function locatesEntry(text: string): boolean {
   if (!ENTRY_ACT_RE.test(text)) return false;
+  return entrySpans(text).some(locatesSpan);
+}
+function locatesSpan(text: string): boolean {
   // Distance and direction from a reference point: "2 miles east of the port", "one mile west of Nogales".
   if (/\b(\d+(\.\d+)?|one|two|three|four|five|a few|several)\s+(miles?|kilometers?|km)\s+(north|south|east|west|northeast|northwest|southeast|southwest|[NSEW]{1,2})\s+of\b/i.test(text)) return true;
   // A named or specific crossing point: "the Laredo port of entry", "the Gateway International Bridge", "the Rio Grande".

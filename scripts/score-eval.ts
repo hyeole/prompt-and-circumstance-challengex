@@ -5,10 +5,15 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { CaseRecord, Finding, ReviewResult } from "../lib/types";
-import { findingClaim, findingKey } from "./finding-key";
+import { findingClaimV2, findingKey } from "./finding-key";
 import { citesAnchor, isComplete, matches, type Plant } from "./score-match";
 
-export const SCORING_POLICY = "v2.3"; // v2.3 = v2.2 + a finding must identify the planted discrepancy; completion covers every required check
+// v2.3 = v2.2 + a finding must identify the planted discrepancy; completion covers every required check.
+// v2.4 = v2.3 + the discrepancy must be stated about the planted fact of the planted event (a clause that says that fact
+// agrees, or a conflict about another fact or event, does not count); an ambiguity plant needs a review-marked finding
+// about conflicting or unattributable accounts; the claim-aware layer uses claim v2 (per-clause source and polarity).
+// Historical v2.3 outputs are kept; v2.4 rescoring is written beside them.
+export const SCORING_POLICY = "v2.4";
 
 type Expected = { id: string; base: string; split: string; description: string; plants: Plant[]; elementExpectations?: Record<string, string>; shouldNotFlag?: string[] };
 type Adjudication = { base: string; key: string; verdict: "valid_observation" | "false_flag"; note: string };
@@ -29,12 +34,16 @@ const adjudications: Adjudication[] = existsSync("eval/adjudications.json") ? JS
 // layer on, a verdict is inherited only when base case, evidence key AND claim are identical; anything else is left
 // unadjudicated for a person. Results are written beside the default ones (suffix "-claims"), never over them.
 const CLAIMS = process.argv.includes("--adjudication-claims");
-type ClaimMigration = { records: { base: string; key: string; example: string; claims: string[] }[]; manual: (Adjudication & { claim: string; example: string; case?: string })[] };
-const migration: ClaimMigration | null = CLAIMS ? JSON.parse(readFileSync("eval/migrations/2026-10-30-adjudication-claims.json", "utf8")) : null;
+type ClaimMigration = { records: { base: string; key: string; example: string; claims: string[] }[]; manual: (Adjudication & { claim: string; example: string; case?: string; explanation?: string })[] };
+const MIGRATION = "eval/migrations/2026-10-30-adjudication-claims-v2.json";
+const migration: ClaimMigration | null = CLAIMS ? JSON.parse(readFileSync(MIGRATION, "utf8")) : null;
 // A case-specific manual record (a variant whose text differs from the case the original verdict was made on) takes
 // precedence over records that apply to every variant of the base case.
-function adjudicationFor(base: string, key: string, claim: string, caseId: string): Adjudication | undefined {
+function adjudicationFor(base: string, key: string, claim: string, caseId: string, explanation: string): Adjudication | undefined {
   if (!migration) return adjudications.find((a) => a.base === base && a.key === key);
+  // An UNCERTAIN claim identifies too little to be shared: its manual decision applies only to the same case and the
+  // same explanation text, and it is never inherited from an original record.
+  if (claim.endsWith("UNCERTAIN")) return migration.manual.find((m) => m.case === caseId && m.base === base && m.key === key && m.claim === claim && m.explanation === explanation);
   const manual = migration.manual.find((m) => m.case === caseId && m.base === base && m.key === key && m.claim === claim)
     ?? migration.manual.find((m) => !m.case && m.base === base && m.key === key && m.claim === claim);
   if (manual) return manual;
@@ -103,7 +112,7 @@ for (const ex of expected.sort((a, b) => a.id.localeCompare(b.id))) {
       const label = `${f.id} ${f.category}: ${f.title}`;
       const pi = ex.plants.findIndex((p) => matches(r, f, p));
       if (pi >= 0) { row.flags.push({ id: f.id, finding: label, key, status: used.has(pi) ? "duplicate" : "planted" }); used.add(pi); continue; }
-      const adj = adjudicationFor(ex.base, key, findingClaim(f), ex.id);
+      const adj = adjudicationFor(ex.base, key, findingClaimV2(f), ex.id, f.explanation);
       row.flags.push({ id: f.id, finding: label, key, status: adj ? adj.verdict : "unadjudicated", note: adj?.note });
     }
   }
@@ -141,7 +150,7 @@ let info: Record<string, unknown> = {};
 try { info = JSON.parse(readFileSync(`${dir}/run-info.json`, "utf8")); } catch { /* older runs: see eval/RUNS.md */ }
 
 const summary = {
-  run: dir, scoringPolicy: SCORING_POLICY, adjudicationLayer: CLAIMS ? "claims (eval/migrations/2026-10-30-adjudication-claims.json)" : "key only", runInfo: info, cases: rows.length,
+  run: dir, scoringPolicy: SCORING_POLICY, adjudicationLayer: CLAIMS ? `claims v2 (${MIGRATION})` : "key only", runInfo: info, cases: rows.length,
   completion: pct(rows.filter((r) => r.completed).length, rows.length),
   partialReviews: rows.filter((r) => !r.completed).map((r) => {
     const res = load(r.id);

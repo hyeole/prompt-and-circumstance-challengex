@@ -131,7 +131,9 @@ test("scope: 'the last subject' and 'the second subject' are list members: uncle
 });
 test("scope: 'the other subject' is someone else; 'the subject' in the same sentence still counts", () => {
   assert.equal(att("The other subject was deported in 2012."), "other");
-  assert.equal(att("The subject said the other subject was deported."), "subject");
+  // Closeout D: wording is resolved for the fact, not the sentence. Without a fact, a clause naming both people is
+  // unclear (earlier versions returned "subject" here, which let the other subject's deportation count for this one).
+  assert.equal(att("The subject said the other subject was deported."), "unclear");
 });
 
 // ---- Refinement: arrests, apprehensions, voluntary returns and removals stay distinct ----

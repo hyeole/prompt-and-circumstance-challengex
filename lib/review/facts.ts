@@ -77,13 +77,65 @@ const DISTRIBUTIVE_SUBJECT = /\b(each|every)\s+subject\b|\b(both|all)\s+(\w+\s+)
 const OTHER_SUBJECT = /\bthe\s+other\s+subject\b/gi;
 const SOME_SUBJECT = /\b(one|another|a|an|any|either|neither|last|first|second|third|fourth|fifth|remaining|each|every)\s+subject(?!s)\b|\bone of the subjects\b/gi;
 
-export function attribution(sentence: Sentence, person: "subject" | "other" | "unclear"): "subject" | "other" | "unclear" {
+// A sentence can describe several people in separate clauses ("Both subjects were interviewed; one subject said he
+// entered in 2014"). Wording is resolved for the clause that carries the fact, never for the sentence as a whole.
+const CLAUSE_SPLIT = /\s*;\s*|,?\s+\b(?:but|while|whereas|then)\b\s+|,?\s+(?:and\s+)?(?=\b(?:one|another|the other|a|an|each|every|neither|either)\s+(?:of the\s+)?subjects?\b)/i;
+type Attr = "subject" | "other" | "unclear";
+/** Person references in a clause, in order: distributive, the other subject, indefinite/list member, explicit subject. */
+function references(cl: string): { at: number; attr: Attr }[] {
+  const refs: { at: number; attr: Attr }[] = [];
+  // Each kind is matched on the text with the earlier kinds blanked out; blanking keeps offsets.
+  let t = cl;
+  const take = (re: RegExp, attr: Attr) => {
+    for (const m of t.matchAll(new RegExp(re.source, "gi"))) refs.push({ at: m.index!, attr });
+    t = t.replace(new RegExp(re.source, "gi"), (m) => " ".repeat(m.length));
+  };
+  take(DISTRIBUTIVE_SUBJECT, "subject");
+  take(OTHER_SUBJECT, "other");
+  take(SOME_SUBJECT, "unclear");
+  take(EXPLICIT_SUBJECT, "subject");
+  return refs.sort((a, b) => a.at - b.at);
+}
+/** A clause's attribution: with a fact position, the nearest person reference before it; otherwise all must agree. */
+function clauseAttribution(cl: string, at?: number): Attr | null {
+  const refs = references(cl);
+  if (!refs.length) return null;
+  if (at !== undefined) {
+    const before = refs.filter((r) => r.at <= at);
+    return (before.at(-1) ?? refs[0]).attr;
+  }
+  return refs.every((r) => r.attr === refs[0].attr) ? refs[0].attr : "unclear";
+}
+const norm = (t: string) => t.toLowerCase().replace(/\[[^\]]*\]/g, " ").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+
+/**
+ * Attribution of a statement. With `focus` (the quoted fact), the clause containing it decides. A clause with no
+ * person wording of its own inherits from the clause before it, unless its own subject is a singular pronoun
+ * ("Both subjects were arrested; he said he entered in 2014": "he" is one of them, unclear which). Without `focus`, all
+ * clauses that name people must agree, otherwise the statement is unclear.
+ */
+export function attribution(sentence: Sentence, person: Attr, focus?: string): Attr {
   if (person === "other") return "other";
-  const t = sentence.text;
-  if (DISTRIBUTIVE_SUBJECT.test(t)) return "subject";
-  const rest = t.replace(OTHER_SUBJECT, " ").replace(SOME_SUBJECT, " ");
-  if (EXPLICIT_SUBJECT.test(rest)) return "subject";
-  return new RegExp(OTHER_SUBJECT.source, "i").test(t) ? "other" : "unclear";
+  const clauses = sentence.text.split(CLAUSE_SPLIT).filter((x) => x && x.trim());
+  const classes = clauses.map((cl) => clauseAttribution(cl));
+  if (focus) {
+    const f = norm(focus).slice(0, 40);
+    let i = f ? clauses.findIndex((cl) => norm(cl).includes(f.slice(0, 25))) : -1;
+    if (i < 0) i = clauses.findIndex((cl) => f.split(" ").filter((w) => w.length > 3).every((w) => norm(cl).includes(w)));
+    if (i >= 0) {
+      // Position of the fact inside its clause: the first content word of the quote that appears there.
+      const word = f.split(" ").find((w) => w.length > 3 && clauses[i].toLowerCase().includes(w));
+      const at = word ? clauses[i].toLowerCase().indexOf(word) : undefined;
+      const own = clauseAttribution(clauses[i], at);
+      if (own) return own;
+      if (/^\W*(and\s+)?(he|she|him|his|her)\b/i.test(clauses[i]) || /\b(he|she)\s+(said|stated|claimed|admitted|told|entered|crossed)\b/i.test(clauses[i])) return "unclear";
+      for (let j = i - 1; j >= 0; j--) if (classes[j]) return classes[j]!;
+      return "unclear";
+    }
+  }
+  const named = classes.filter((x): x is Attr => !!x);
+  if (!named.length) return "unclear";
+  return named.every((x) => x === named[0]) ? named[0] : "unclear";
 }
 
 /**
@@ -124,7 +176,7 @@ export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boo
 /** Verified prior-removal statements that count for this subject. */
 function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): Verified[] {
   return facts.removal_statements.filter((r) => r.person !== "other").map((r) => verify(sentences, r.sentence_id, r.quote))
-    .filter((v): v is Verified => !!v && isPriorRemoval(v.s.text) && aboutSubject(attribution(v.s, "unclear"), multiPerson));
+    .filter((v): v is Verified => !!v && isPriorRemoval(v.s.text) && aboutSubject(attribution(v.s, "unclear", v.ev.quote), multiPerson));
 }
 
 /** A manner-of-entry claim must use manner wording, not just an entry verb ("came to the United States" says nothing about how). */
@@ -235,7 +287,9 @@ export function linkedToSubject(
   const own = facts.entry_statements.find((e) => e.sentence_id === sentenceId && isUsEntry(e));
   const matches = formMatches(c, s.text, own?.manner, conflict);
   if (matches.length < 2) return [];
-  if (sentences.some((x) => SHARED_ENTRY_RE.test(x.text) && ENTRY_VERB_RE.test(x.text))) return [];
+  // A group entry vetoes the link only when it is part of THIS statement's own account (the statement itself, or the
+  // sentences continuing it): a group entry described elsewhere in the narrative may be other people's.
+  if (accountOf(sentences, s.id).some((x) => SHARED_ENTRY_RE.test(x.text) && ENTRY_VERB_RE.test(x.text))) return [];
   // Any other entry account in the narrative that shares one of the matched facts (same place, same manner, same
   // month and day) could be a companion's, so the match does not single out this subject (DS06: two companions,
   // both "near Nogales", both illegally).
@@ -277,7 +331,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     .map((e) => {
       const exact = verify(sentences, e.sentence_id, e.quote);
       const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
-      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person) : "unclear" as const };
+      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person, e.quote) : "unclear" as const };
     })
     .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: "subject" | "other" | "unclear" }[];
 
@@ -420,7 +474,7 @@ export function checkChargeRequirement(
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
   const allEntries = facts.entry_statements.filter((e) => isUsEntry(e) && e.person !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
     .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) })).filter((x) => x.v) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
-  const subjectEntries = allEntries.filter((x) => aboutSubject(attribution(x.v.s, x.e.person), multiPerson));
+  const subjectEntries = allEntries.filter((x) => aboutSubject(attribution(x.v.s, x.e.person, x.e.quote), multiPerson));
   // Statements that cannot be attributed to the subject neither support nor contradict the charge: a person decides.
   const unattributedNote = (ids: string[]) => ({ status: "needs_human_review" as const, evidence: [] as EvidenceRef[],
     explanation: `The facts this charge depends on appear only in statements that cannot be attributed to this record's subject (${ids.join(", ")}; several people are described with redacted names). A person should decide who each statement is about.` });
@@ -486,7 +540,7 @@ export function supportsRequirement(c: CaseRecord, sentences: Sentence[], facts:
   return !!requires?.entryManner && facts.entry_statements.some((e) => {
     if (!isUsEntry(e) || e.person === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
     const v = verify(sentences, e.sentence_id, e.quote);
-    return !!v && aboutSubject(attribution(v.s, e.person), multiPerson);
+    return !!v && aboutSubject(attribution(v.s, e.person, e.quote), multiPerson);
   });
 }
 
@@ -510,4 +564,91 @@ export function statusStatements(sentences: Sentence[], facts: FactsOutput): Evi
 export function nonUsEntrySentences(facts: FactsOutput): Set<string> {
   const us = new Set(facts.entry_statements.filter(isUsEntry).map((e) => e.sentence_id));
   return new Set(facts.entry_statements.filter((e) => !isUsEntry(e) && !us.has(e.sentence_id)).map((e) => e.sentence_id));
+}
+
+// ---- Continuous accounts (one person's statements across adjacent sentences) ----
+// A person of interest is marked by a redaction marker outside parentheses (A#, DOB and COC details are about the same
+// person) that is not an official's name ("Agent [REDACTED]"). Identical markers are never taken to be one person.
+const PERSON_MARK_RE = /\[REDACTED \(b\)\(6\)[^\]]*\](\s*\[REDACTED \(b\)\(6\)[^\]]*\])*/g;
+const OFFICIAL_BEFORE_RE = /\b(Agents?|BPA|SBPA|Officers?|Troopers?|Deputy|Detective|Sergeant|Sgt\.?|Supervisor[a-z]*|Special Agent|SA|Investigator)\s*$/i;
+const GROUP_REF_RE = /\b(subjects|individuals|occupants|passengers|they|them|both|others|each other|group)\b/i;
+// Redaction markers become "@P@" (a person) or "@X@" (other redactions) before parenthesised details are removed,
+// since the markers themselves contain parentheses.
+const people = (text: string) => text.replace(PERSON_MARK_RE, " @P@ ").replace(/\[REDACTED[^\]]*\]/g, " @X@ ").replace(/\([^()]*\)/g, " ");
+function peopleOfInterest(text: string): number {
+  const t = people(text);
+  return [...t.matchAll(/@P@/g)].filter((m) => !OFFICIAL_BEFORE_RE.test(t.slice(Math.max(0, m.index! - 40), m.index!))).length;
+}
+/** The first reference to a person in a sentence: a third-person singular pronoun, a person of interest, or anything else. */
+function firstReference(text: string): "pronoun" | "other" | null {
+  const t = people(text);
+  const cands: [number, "pronoun" | "other"][] = [];
+  const p = t.search(/\b(he|she)\b/i); if (p >= 0) cands.push([p, "pronoun"]);
+  const m = t.search(/@P@/); if (m >= 0) cands.push([m, "other"]);
+  const g = t.search(/\b(subjects?|individuals?|occupants?|passengers?|they|both|all|agents?|BPA|officers?|troopers?|him|his|her)\b/i); if (g >= 0) cands.push([g, "other"]);
+  cands.sort((a, b) => a[0] - b[0]);
+  return cands[0]?.[1] ?? null;
+}
+/**
+ * Continuous accounts: a sentence about exactly one person of interest (and no group), followed by adjacent sentences
+ * whose first person reference is "he"/"she" and that introduce nobody else. Anything less certain ends the account.
+ */
+export function continuousAccounts(sentences: Sentence[]): Sentence[][] {
+  const out: Sentence[][] = [];
+  for (let i = 0; i < sentences.length; i++) {
+    const s = sentences[i];
+    if (peopleOfInterest(s.text) !== 1 || GROUP_REF_RE.test(people(s.text))) continue;
+    const chain = [s];
+    for (let j = i + 1; j < sentences.length; j++) {
+      const n = sentences[j];
+      if (firstReference(n.text) !== "pronoun" || peopleOfInterest(n.text) > 0 || GROUP_REF_RE.test(people(n.text))) break;
+      chain.push(n);
+    }
+    if (chain.length > 1) { out.push(chain); i += chain.length - 1; }
+  }
+  return out;
+}
+/** The sentences of the continuous account containing this sentence (just the sentence if it is in none). */
+export function accountOf(sentences: Sentence[], id: string): Sentence[] {
+  return continuousAccounts(sentences).find((c) => c.some((x) => x.id === id)) ?? sentences.filter((x) => x.id === id);
+}
+
+const OTHER_COUNTRY_RE = /\b(into|to|in|entered|crossed)\s+(both\s+)?(Mexico|Guatemala|Honduras|El Salvador|Nicaragua|Belize|Canada)\b/i;
+const NOT_LAST_ENTRY_RE = /\b(first|initially|originally|previous(ly)?|prior|earlier)\b[^.;]{0,25}\b(entered|entry|came|crossed|arrived)\b/i;
+/** Manner of entry a sentence states, negation-aware ("did not cross through a port of entry" is not an admission). */
+export function statedManner(t: string): "without_inspection" | "admitted" | undefined {
+  if (/\b(not|never|without|didn't|did not)\b[^.;]{0,40}\b(port of entry|inspected|admitted|paroled|visa|designated)\b/i.test(t)) return "without_inspection";
+  return textManner(t);
+}
+/**
+ * Conflicts within one continuous account: two statements by the same person (per continuousAccounts) that disagree
+ * about the manner or year of the last U.S. entry. This does not say the account is this subject's, and makes no
+ * comparison with the form; first or previous entries, entries into other countries and corrected answers are skipped.
+ */
+export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new Set()): Finding[] {
+  const findings: Finding[] = [];
+  for (const chain of continuousAccounts(sentences)) {
+    const entries = chain.filter((x) => ENTRY_VERB_RE.test(x.text) && !nonUs.has(x.id) && !(OTHER_COUNTRY_RE.test(x.text) && !/\b(United States|U\.S\.)/.test(x.text)) && !NOT_LAST_ENTRY_RE.test(x.text) && !CORRECTION_RE.test(x.text));
+    const ev = (x: Sentence): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, "unclear", "us_entry");
+    const pron = (x: Sentence) => x.text.match(/\b(he|she)\b/i)?.[0] ?? "he";
+    let found = false;
+    for (let a = 0; a < entries.length && !found; a++) for (let b = a + 1; b < entries.length && !found; b++) {
+      const A = entries[a], B = entries[b];
+      const ma = statedManner(A.text), mb = statedManner(B.text);
+      const ya = [...new Set(A.text.match(/\b(19|20)\d\d\b/g) ?? [])], yb = [...new Set(B.text.match(/\b(19|20)\d\d\b/g) ?? [])];
+      const manner = ma && mb && ma !== mb;
+      const year = ya.length === 1 && yb.length === 1 && ya[0] !== yb[0];
+      if (!manner && !year) continue;
+      found = true;
+      const what = manner ? `how this person entered: ${A.id} describes ${MANNER_LABEL(ma!)}, ${B.id} describes ${MANNER_LABEL(mb!)}` : `when this person last entered: ${A.id} gives ${ya[0]}, ${B.id} gives ${yb[0]}`;
+      findings.push({
+        id: "F-ACCOUNT", category: "inconsistency", title: manner ? "One person's account of the entry contradicts itself (manner)" : "One person's account of the entry contradicts itself (year)",
+        explanation: `${A.id} and ${B.id} are one continuous account (${B.id} continues it with "${pron(B)}"), but they disagree about ${what}. The narrative does not establish whether this person is this record's subject, so this is not stated as a conflict with the form. A person must resolve the account and decide whose it is.`,
+        evidence: [ev(A), ev(B)], referenceIds: [manner ? "E3" : "E1"], needsHumanReview: true,
+        humanReviewReason: "One person's account of the entry contradicts itself; a person must decide which statement is correct and whose account it is.",
+        source: "rule", severity: "medium",
+      });
+    }
+  }
+  return findings;
 }

@@ -239,8 +239,11 @@ test("audit item 3: an unattributed manner claim in a multi-person narrative is 
     review: review({ issues: [{ type: "inconsistency", title: "Visa vs PWA", explanation: "The narrative says a tourist visa; the form says PWA.", evidence: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa" }, { field_path: "entry.manner" }], needs_human_review: true, reason: "" }] }),
     facts: facts({ entry_statements: [{ sentence_id: visa, quote: "by flying into Chicago O'Hare International Airport on a tourist visa", event: "us_entry", country: "United States", year: 2013, manner: "admitted", person: "unclear" }] }),
   }));
-  assert.ok(!r.findings.some((f) => f.category === "inconsistency"));
-  assert.ok(r.humanReview.reasons.some((x) => x.includes(visa) && /cannot be attributed/.test(x)));
+  // No conflict with the FORM is claimed for the unattributed statement. (Closeout D: S17 and S18 are one person's
+  // continuous account and contradict each other; that within-account finding claims nothing about the form.)
+  assert.ok(!r.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.kind === "field")));
+  assert.ok(r.findings.filter((f) => f.category === "inconsistency").every((f) => f.id === "F-ACCOUNT"));
+  assert.ok(r.humanReview.reasons.some((x) => x.includes(visa) && /cannot be attributed/.test(x)) || r.findings.some((f) => f.id === "F-ACCOUNT" && f.evidence.some((e) => e.sentenceId === visa)));
 });
 
 test("a real manner conflict explicitly about the subject is still reported", async () => {
@@ -807,7 +810,7 @@ const c013Manner = (reasons: string[], extraIssues: unknown[] = []) => {
 test("routing echo (C012 pattern): a manner-conflict reason whose claim was withheld as the same manner is not kept, nor its generic follow-on", async () => {
   const r = await c013Manner(["Entry manner conflict between form and narrative", "Potential impact on charge determination"]);
   assert.ok(!r.humanReview.reasons.some((x) => /Entry manner conflict between|Potential impact on charge/.test(x)));
-  assert.ok(r.discarded.some((d) => d.title === "Model routing reason" && /only repeats a claim that was withheld/.test(d.reason)));
+  assert.ok(r.discarded.some((d) => d.title === "Model routing reason" && /depends only on a claim that was withheld/.test(d.reason)));
 });
 test("routing echo (F036 pattern): date/place conflict reasons for claims against unknown form values are not kept", async () => {
   const c = loadF("F055");
