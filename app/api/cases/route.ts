@@ -23,6 +23,7 @@ const NewCase = z.object({
   pdfPages: z.array(z.number().int().min(1).max(5000)).max(50).optional(),
   facts: z.array(z.object({ path: z.enum(FACT_PATHS), label: z.string().max(80), value: z.string().max(500), status: z.enum(["present", "redacted", "absent", "unreadable", "not_applicable"]) })).max(40),
   charges: z.array(z.string().trim().min(3).max(100)).min(1).max(5),
+  context: z.array(z.enum(["interior", "port_of_entry", "expedited_removal"])).max(3).optional(),
 });
 
 export async function POST(req: Request) {
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
     facts: d.facts.map((f) => ({ ...f, value: f.status === "present" ? f.value.trim() : "" })),
     selectedCharges: d.charges.map((citation) => ({ citation, source: "officer-selected" as const })),
     userCase: { createdAt: new Date().toISOString() },
+    context: d.context?.length ? d.context : undefined,
   };
   saveUserCase(c);
   return NextResponse.json({ id });

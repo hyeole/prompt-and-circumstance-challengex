@@ -1,7 +1,8 @@
 // Review pipeline: rules -> one model call -> schema validation -> evidence verification -> merged result.
 import type { CaseRecord, CheckResult, ElementResult, EvidenceRef, Finding, ReviewResult, Sentence } from "@/lib/types";
 import { REFERENCES, REFERENCE_VERSION, findCharge, type RequiredElement } from "@/lib/references";
-import { sha, splitSentences, locateQuote } from "@/lib/text";
+import { splitSentences, locateQuote } from "@/lib/text";
+import { sha } from "@/lib/hash";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
@@ -196,7 +197,7 @@ export async function reviewCase(c: CaseRecord, complete: Complete = completeJSO
     if (e.status === "absent") {
       findings.push({
         id: `M-${e.elementId}`, category: "missing_element", title: `Missing: ${e.label.toLowerCase()}`,
-        explanation: `${ref.description} The narrative and form fields reviewed do not state this.${e.note ? " Model note: " + e.note : ""}`,
+        explanation: `${ref.description} The narrative and form fields reviewed do not state this.${e.note ? " Note: " + e.note : ""}`,
         evidence: [{ kind: "missing", elementId: e.elementId, verified: true }], referenceIds: [e.elementId],
         needsHumanReview: false, source: "model", severity: ref.severity as Finding["severity"],
       });

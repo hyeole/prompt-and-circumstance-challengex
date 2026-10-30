@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { sha } from "../lib/text";
+import { sha } from "../lib/hash";
 
 process.env.NC_STORE_DIR = mkdtempSync(path.join(tmpdir(), "nc-store-"));
 const store = await import("../lib/store");

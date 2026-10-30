@@ -4,7 +4,7 @@ import "server-only";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { CaseRecord, ReviewResult } from "./types";
-import { sha } from "./text";
+import { sha } from "./hash";
 
 const ROOT = process.env.NC_STORE_DIR ?? path.join(process.cwd(), "data", "local");
 const DIRS = { cases: path.join(ROOT, "cases"), history: path.join(ROOT, "history"), uploads: path.join(ROOT, "uploads") };

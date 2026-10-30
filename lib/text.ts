@@ -1,7 +1,5 @@
-import { createHash } from "node:crypto";
 import type { Sentence, PageSpan } from "./types";
 
-export const sha = (s: string) => createHash("sha256").update(s).digest("hex").slice(0, 16);
 
 /** Matches normalized redaction tokens such as "[REDACTED (b)(6), (b)(7)(C)]". */
 export const REDACTION_RE = /\[REDACTED[^\]]*\]/g;

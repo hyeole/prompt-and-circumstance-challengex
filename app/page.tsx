@@ -1,21 +1,80 @@
-import { loadCases } from "@/lib/cases";
-import { REFERENCES } from "@/lib/references";
-import Workspace from "@/components/Workspace";
+import Link from "next/link";
+import AppShell from "@/components/AppShell";
+import Icon from "@/components/Icon";
+import { GroupTag, StatePill, fmtDate } from "@/components/StateTag";
+import { caseRows } from "@/lib/workspaceData";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ set?: string; case?: string }> }) {
-  const { set, case: initial } = await searchParams;
-  const cases = loadCases(set === "eval" ? "eval" : "app");
+export default async function WorkspacePage({ searchParams }: { searchParams: Promise<{ case?: string; set?: string }> }) {
+  // Old links (/?case=ID) still open the review page.
+  const { case: legacy, set } = await searchParams;
+  if (legacy) {
+    const { redirect } = await import("next/navigation");
+    redirect(`/review/${encodeURIComponent(legacy)}${set === "eval" ? "?set=eval" : ""}`);
+  }
+  const rows = caseRows("app");
+  const recent = rows.filter((r) => r.lastReviewedAt).sort((a, b) => b.lastReviewedAt!.localeCompare(a.lastReviewedAt!)).slice(0, 8);
+  const pending = rows.filter((r) => r.state === "incomplete" || (r.state === "needs_human_review" && (r.openDecisions ?? 0) > 0));
+  const count = (s: string) => rows.filter((r) => r.state === s).length;
+
   return (
-    <Workspace
-      cases={cases}
-      initialCaseId={cases.some((c) => c.id === initial) ? initial : undefined}
-      caseSet={set === "eval" ? "eval" : "app"}
-      elements={REFERENCES.requiredElements.map((e) => ({ id: e.id, label: e.label }))}
-      referenceVersion={REFERENCES.version}
-      referenceNotice={REFERENCES.notice}
-      glossary={REFERENCES.formGlossary}
-    />
+    <AppShell crumbs={[{ label: "Workspace" }]} actions={<Link className="btn btn-primary" href="/cases/new"><Icon name="plus" size={14} /> New case</Link>}>
+      <main className="page" id="main">
+        <div className="page-inner">
+          <h1 className="page-title">Workspace</h1>
+          <p className="lede">Review officer-written narratives against the case facts and the selected charge. Everything shown here is saved on this computer.</p>
+
+          <div className="stat-row" aria-label="Cases by review status">
+            <Link className="stat" href="/cases?state=not_reviewed"><div className="n">{count("not_reviewed")}</div><div className="l">Not reviewed</div></Link>
+            <Link className="stat" href="/cases?state=incomplete"><div className="n">{count("incomplete")}</div><div className="l">Review incomplete</div></Link>
+            <Link className="stat" href="/cases?state=needs_human_review"><div className="n">{count("needs_human_review")}</div><div className="l">Needs human review</div></Link>
+            <Link className="stat" href="/cases?state=reviewed"><div className="n">{count("reviewed")}</div><div className="l">Reviewed</div></Link>
+          </div>
+
+          <div className="grid-2">
+            <section className="panel" aria-labelledby="pending-h">
+              <h2 id="pending-h">Pending officer actions <span className="count">{pending.length}</span></h2>
+              {pending.length === 0 ? (
+                <p className="empty-note">Nothing pending. Cases appear here when a review is incomplete or has findings without an officer decision.</p>
+              ) : (
+                <ul className="list-plain">
+                  {pending.map((r) => (
+                    <li key={r.id}>
+                      <Link className="row-link" href={`/review/${encodeURIComponent(r.id)}`}>
+                        <span className="t">{r.title}</span>
+                        <StatePill state={r.state} />
+                        <span className="s">
+                          <span className="mono">{r.id}</span> · {r.state === "incomplete" ? "the last review did not complete; run a fresh review" : `${r.openDecisions} of ${r.findings} finding(s) without an officer decision`} · {fmtDate(r.lastReviewedAt)}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="panel" aria-labelledby="recent-h">
+              <h2 id="recent-h">Recently reviewed <Link href="/cases" className="btn btn-ghost btn-sm">All cases</Link></h2>
+              {recent.length === 0 ? (
+                <p className="empty-note">No saved reviews yet. Open a case and run a review, or <Link href="/cases/new">enter a new case</Link>.</p>
+              ) : (
+                <ul className="list-plain">
+                  {recent.map((r) => (
+                    <li key={r.id}>
+                      <Link className="row-link" href={`/review/${encodeURIComponent(r.id)}`}>
+                        <span className="t">{r.title}</span>
+                        <StatePill state={r.state} />
+                        <span className="s"><span className="mono">{r.id}</span> · <GroupTag group={r.group} /> · version {r.versions} · {r.findings} finding(s) · {fmtDate(r.lastReviewedAt)}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        </div>
+      </main>
+    </AppShell>
   );
 }

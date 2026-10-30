@@ -5,7 +5,7 @@ import type { CaseRecord, EvidenceRef, Finding, ReviewResult } from "@/lib/types
 import { CATEGORY, CHECK_STATUS, CITATION_STATUS, ELEMENT_STATUS } from "./categories";
 import Icon from "./Icon";
 
-export type Disposition = { state: "acknowledged" | "dismissed"; reason?: string };
+export type Decision = { state: "open" | "acknowledged" | "dismissed"; note?: string; decidedAt?: string };
 
 const ORDER: Finding["category"][] = ["human_review", "citation", "inconsistency", "missing_element", "unclear"];
 const COUNT_CATS: Finding["category"][] = ["inconsistency", "missing_element", "citation", "unclear"];
@@ -23,8 +23,11 @@ export default function FindingsPanel(props: {
   selected: string | null;
   onSelect: (id: string | null) => void;
   onRun: () => void;
-  dispositions: Record<string, Disposition>;
-  setDisposition: (id: string, d: Disposition) => void;
+  decisions: Record<string, Decision>;
+  onDecide: (findingId: string, d: { state: Decision["state"]; note?: string }) => Promise<void>;
+  readOnly: boolean;
+  pdfAvailable: boolean;
+  caseId: string;
 }) {
   const { review, outdated, running, elapsed, error, onRun } = props;
   const [tab, setTab] = useState<"findings" | "elements" | "checks">("findings");
@@ -105,7 +108,7 @@ export default function FindingsPanel(props: {
       {review.notes?.map((n, i) => <div key={i} className="note"><Icon name="info" size={14} /><span>{n}</span></div>)}
 
       <div className="tabs" role="tablist" aria-label="Review details">
-        {([["findings", "Findings", review.findings.length], ["elements", "Elements", review.elements.length], ["checks", "Checks", review.checks.length]] as const).map(([id, label, n]) => (
+        {([["findings", "Findings", review.findings.length], ["elements", "Elements", review.elements.filter((e) => e.status !== "not_applicable").length], ["checks", "Checks", review.checks.length]] as const).map(([id, label, n]) => (
           <button key={id} role="tab" className="tab" aria-selected={tab === id} onClick={() => setTab(id)}>{label}<span className="c">{n}</span></button>
         ))}
       </div>
@@ -125,7 +128,8 @@ export default function FindingsPanel(props: {
         ) : (
           <ol className="finding-list">
             {sorted.map((f) => (
-              <FindingCard key={f.id} f={f} kase={props.kase} review={review} selected={props.selected === f.id} onSelect={props.onSelect} disposition={props.dispositions[f.id]} setDisposition={(d) => props.setDisposition(f.id, d)} disabled={outdated} />
+              <FindingCard key={f.id} f={f} kase={props.kase} review={review} selected={props.selected === f.id} onSelect={props.onSelect} decision={props.decisions[f.id]} onDecide={(d) => props.onDecide(f.id, d)} readOnly={props.readOnly} pdfHref={props.pdfAvailable ? `/api/cases/${encodeURIComponent(props.caseId)}/pdf` : null}
+                onMove={(dir) => { const i = sorted.findIndex((x) => x.id === f.id); const n = sorted[i + dir]; if (n) props.onSelect(n.id); }} />
             ))}
           </ol>
         ))}
@@ -188,32 +192,73 @@ function LoadingState({ elapsed }: { elapsed: number }) {
   );
 }
 
-function evidenceLabel(e: EvidenceRef, kase: CaseRecord, review: ReviewResult) {
-  if (e.kind === "missing") return { k: "Not stated", q: `${review.elements.find((x) => x.elementId === e.elementId)?.label ?? "Required element"} is not stated in the narrative or the form.` };
+const WHO: Record<string, string> = { subject: "Subject (named as “Subject” in the text)", unclear: "Unattributed (names redacted)", other: "A different person" };
+
+/** One piece of evidence: the full source sentence with the quoted words marked, plus its context and match type. */
+function EvidenceItem({ e, kase, review, pdfHref }: { e: EvidenceRef; kase: CaseRecord; review: ReviewResult; pdfHref: string | null }) {
+  if (e.kind === "missing") {
+    const el = review.elements.find((x) => x.elementId === e.elementId);
+    return <div className="stmt"><div className="who"><span className="match match-none">Not stated</span>{el?.sponsorCategory && <span>Sponsor category {el.sponsorCategory}</span>}</div>{el?.label ?? "Required element"} is not stated in the narrative or the form fields reviewed. There is no source text to point to.</div>;
+  }
   if (e.kind === "field") {
     const f = kase.facts.find((x) => x.path === e.fieldPath);
-    return { k: `Form${e.page ? ` · p.${e.page}` : ""}`, q: `${f?.label ?? (e.fieldPath === "selectedCharges" ? "Selected charges" : e.fieldPath)}: ${e.quote ?? ""}` };
+    return (
+      <div className="stmt">
+        <div className="who"><span className="match match-exact">Form field</span><span>{f?.sourceField ?? f?.label ?? e.fieldPath}</span>{e.page && <span>PDF p.{e.page}</span>}</div>
+        <strong>{f?.label ?? (e.fieldPath === "selectedCharges" ? "Selected charges" : e.fieldPath)}:</strong> {e.quote}
+        {pdfHref && e.page && <div><a className="small" href={`${pdfHref}#page=${e.page}`} target="_blank" rel="noopener">Open source page {e.page} <Icon name="external" size={11} /></a></div>}
+      </div>
+    );
   }
-  return { k: `${e.sentenceId}${e.page ? ` · p.${e.page}` : ""}`, q: `“${e.quote}”` };
+  const s = review.sentences.find((x) => x.id === e.sentenceId);
+  const text = s?.text ?? e.quote ?? "";
+  const qs = e.start != null && s ? e.start - s.start : -1;
+  const qe = e.end != null && s ? e.end - s.start : -1;
+  return (
+    <div className="stmt">
+      <div className="who">
+        <span className={`match ${e.match === "partial" ? "match-partial" : "match-exact"}`}>{e.match === "partial" ? "Partial quote" : "Exact quote"}</span>
+        {e.context?.attribution && <span>{WHO[e.context.attribution]}</span>}
+        {e.context?.event && <span>{e.context.event}</span>}
+        <span>{e.sentenceId}{(e.page ?? s?.page) ? ` · PDF p.${e.page ?? s?.page}` : ""}</span>
+      </div>
+      <span className="ev-q">{qs >= 0 && qe > qs ? <>{text.slice(0, qs)}<mark>{text.slice(qs, qe)}</mark>{text.slice(qe)}</> : text}</span>
+      {e.match === "partial" && <div className="ev-partial">The extracted wording differed; the marked words are the matching source text and contain the fact being compared.</div>}
+      {pdfHref && (e.page ?? s?.page) && <div><a className="small" href={`${pdfHref}#page=${e.page ?? s?.page}`} target="_blank" rel="noopener">Open source page {e.page ?? s?.page} <Icon name="external" size={11} /></a> <span className="small muted">(page only; the exact position on the page is not mapped)</span></div>}
+    </div>
+  );
 }
 
-function FindingCard({ f, kase, review, selected, onSelect, disposition, setDisposition, disabled }: {
+function FindingCard({ f, kase, review, selected, onSelect, decision, onDecide, readOnly, pdfHref, onMove }: {
   f: Finding; kase: CaseRecord; review: ReviewResult; selected: boolean; onSelect: (id: string | null) => void;
-  disposition?: Disposition; setDisposition: (d: Disposition) => void; disabled: boolean;
+  decision?: Decision; onDecide: (d: { state: Decision["state"]; note?: string }) => Promise<void>; readOnly: boolean; pdfHref: string | null; onMove: (dir: 1 | -1) => void;
 }) {
   const ref = useRef<HTMLLIElement>(null);
-  const [dismissing, setDismissing] = useState(false);
-  const [reason, setReason] = useState("");
+  const [note, setNote] = useState(decision?.note ?? "");
+  const [pending, setPending] = useState<Decision["state"] | null>(null);
+  const [err, setErr] = useState<string | null>(null);
   useEffect(() => { if (selected) ref.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [selected]);
+  useEffect(() => { setNote(decision?.note ?? ""); }, [decision?.note]);
   const cat = CATEGORY[f.category];
   const sevLabel = f.severity === "high" ? "High" : f.severity === "medium" ? "Medium" : "Low";
+  const state = decision?.state ?? "open";
+  const sentenceEv = f.evidence.filter((e) => e.kind === "sentence" || e.kind === "field");
+  const sideBySide = f.category === "inconsistency" && sentenceEv.length >= 2;
+
+  async function choose(s: Decision["state"]) {
+    setErr(null);
+    if (s === "dismissed" && !note.trim()) { setErr("Add a note explaining why it is dismissed."); return; }
+    setPending(s);
+    try { await onDecide({ state: s, note: note.trim() || undefined }); } catch (e) { setErr((e as Error).message); } finally { setPending(null); }
+  }
 
   return (
-    <li ref={ref} className={`finding cat-${f.category} ${selected ? "is-selected" : ""} ${disposition ? `is-${disposition.state}` : ""}`}>
-      <button className="finding-head" onClick={() => onSelect(selected ? null : f.id)} aria-expanded={selected}>
+    <li ref={ref} className={`finding cat-${f.category} ${selected ? "is-selected" : ""} ${state === "dismissed" ? "is-dismissed" : ""}`}>
+      <button className="finding-head" onClick={() => onSelect(selected ? null : f.id)} aria-expanded={selected}
+        onKeyDown={(e) => { if (e.key === "ArrowDown") { e.preventDefault(); onMove(1); } if (e.key === "ArrowUp") { e.preventDefault(); onMove(-1); } }}>
         <span className="cat-icon" aria-hidden><Icon name={cat.icon} size={17} /></span>
         <span>
-          <span className="finding-kicker">{cat.label}<span className={`sev sev-${f.severity}`}>{sevLabel}</span>{f.needsHumanReview && <span className="sev" style={{ background: "var(--review-bg)", color: "var(--review)" }}>Review</span>}</span>
+          <span className="finding-kicker">{cat.label}<span className={`sev sev-${f.severity}`}>{sevLabel}</span>{f.needsHumanReview && <span className="sev" style={{ background: "var(--review-bg)", color: "var(--review)" }}>Review</span>}{state !== "open" && <span className="sev" style={{ background: "var(--navy-100)", color: "var(--navy-800)" }}>{state === "acknowledged" ? "Acknowledged" : "Dismissed"}</span>}</span>
           <span className="finding-title">{f.title}</span>
           {!selected && <span className="finding-preview">{f.explanation}</span>}
         </span>
@@ -221,40 +266,33 @@ function FindingCard({ f, kase, review, selected, onSelect, disposition, setDisp
       {selected && (
         <div className="finding-body">
           <p>{f.explanation}</p>
-          <div className="evidence" aria-label="Evidence">
-            {f.evidence.map((e, i) => {
-              const { k, q } = evidenceLabel(e, kase, review);
-              return (
-                <button key={i} className="ev" onClick={() => onSelect(f.id)} title={e.kind === "sentence" ? "Show in the narrative" : undefined}>
-                  <span className="ev-k">{k}</span>
-                  <span>
-                    <span className={e.kind === "sentence" ? "ev-q" : undefined}>{q}</span>
-                    {e.match === "partial" && <span className="ev-partial">Partial quote: the extracted wording differed; this is the matching source text.</span>}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-          {f.needsHumanReview && <div className="hr-note"><Icon name="review" size={14} /> <span>{f.humanReviewReason}</span></div>}
-          {disposition ? (
-            <div className="disposition">{disposition.state === "acknowledged" ? "Acknowledged by reviewer." : `Dismissed: ${disposition.reason}. Dismissing does not confirm the issue is fixed.`}</div>
-          ) : !disabled && (
-            <div className="finding-actions">
-              {dismissing ? (
-                <form onSubmit={(e) => { e.preventDefault(); if (reason.trim()) setDisposition({ state: "dismissed", reason: reason.trim() }); }}>
-                  <label className="sr-only" htmlFor={`reason-${f.id}`}>Reason for dismissing</label>
-                  <input id={`reason-${f.id}`} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (required)" autoFocus />
-                  <button className="btn btn-sm btn-secondary" type="submit" disabled={!reason.trim()}>Dismiss</button>
-                  <button className="btn btn-sm btn-ghost" type="button" onClick={() => setDismissing(false)}>Cancel</button>
-                </form>
-              ) : (
-                <>
-                  <button className="btn btn-sm btn-secondary" onClick={() => setDisposition({ state: "acknowledged" })}><Icon name="check" size={13} /> Acknowledge</button>
-                  <button className="btn btn-sm btn-ghost" onClick={() => setDismissing(true)}>Dismiss with reason</button>
-                </>
-              )}
+          {sideBySide ? (
+            <div className="side-by-side" aria-label="Conflicting sources">
+              {sentenceEv.slice(0, 2).map((e, i) => <div key={i}><div className="small muted" style={{ marginBottom: 4 }}>{i === 0 ? "Statement A" : "Statement B"}</div><EvidenceItem e={e} kase={kase} review={review} pdfHref={pdfHref} /></div>)}
+              {sentenceEv.length > 2 && <div style={{ gridColumn: "1 / -1" }}>{sentenceEv.slice(2).map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} />)}</div>}
             </div>
+          ) : (
+            <div className="evidence" aria-label="Evidence">{f.evidence.map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} />)}</div>
           )}
+          {f.needsHumanReview && <div className="hr-note"><Icon name="review" size={14} /> <span>{f.humanReviewReason}</span></div>}
+
+          <div className="decision" aria-label="Officer decision">
+            <div className="small" style={{ fontWeight: 600, marginBottom: 6 }}>Officer decision <span className="muted" style={{ fontWeight: 400 }}>(saved separately; the finding itself is never changed)</span></div>
+            <label className="sr-only" htmlFor={`note-${f.id}`}>Officer note</label>
+            <input id={`note-${f.id}`} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (required to dismiss)" disabled={readOnly} maxLength={1000} style={{ width: "100%", padding: "6px 9px", border: "1px solid var(--line-2)", borderRadius: 7, fontSize: 12.5, marginBottom: 6 }} />
+            <div className="decision-bar">
+              <div className="seg" role="group" aria-label="Decision">
+                {(["open", "acknowledged", "dismissed"] as const).map((s) => (
+                  <button key={s} aria-pressed={state === s} disabled={readOnly || pending !== null} onClick={() => choose(s)}>{s === "open" ? "Open" : s === "acknowledged" ? "Acknowledged" : "Dismissed"}</button>
+                ))}
+              </div>
+              {decision?.decidedAt && <span className="small muted">saved {new Date(decision.decidedAt).toLocaleString()}</span>}
+            </div>
+            {state === "dismissed" && <div className="small muted" style={{ marginTop: 4 }}>Dismissing records the officer's judgment. It does not confirm the issue is fixed, and the case is not marked clean.</div>}
+            {readOnly && <div className="small muted" style={{ marginTop: 4 }}>Decisions can be changed only on the latest, current review.</div>}
+            {err && <div className="small" role="alert" style={{ color: "var(--err)", marginTop: 4 }}>{err}</div>}
+          </div>
+
           <details className="tech">
             <summary>Technical details</summary>
             <div className="tech-body">
