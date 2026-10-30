@@ -288,7 +288,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   });
   const [settled, factsSettled] = await Promise.all([
     samplesWithGrace(SAMPLES, (signal, i) => logged(calls, `review-${i + 1}`, complete(SYSTEM_PROMPT, user, undefined, signal))),
-    factsCall.then((v) => ({ ok: true as const, v }), () => ({ ok: false as const })),
+    // The failure reason is kept for the review record (never the model's text: invalid output is described, not stored).
+    factsCall.then((v) => ({ ok: true as const, v }), (e) => ({ ok: false as const, reason: e instanceof ModelError ? e.message : invalidReason(e) })),
   ]);
   modelLatencyMs = Date.now() - m0;
   const outs: ModelOutput[] = [];
@@ -754,6 +755,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     checklistVersion: (REFERENCES as { checklistVersion?: string }).checklistVersion ?? "v1",
     discarded,
     calls: calls.sort((a, b) => a.role.localeCompare(b.role)),
+    // Review evidence: the extraction that passed validation (schema and the empty-extraction guard), exactly as the
+    // comparison used it, or why it did not. Recording only; no check reads it.
+    factsExtraction: factsSettled.ok ? { status: "valid", output: factsSettled.v } : { status: "failed", reason: factsSettled.reason },
     completion,
     sampleIssues: { perSample, merged: out?.issues.length ?? 0, inAllSamples: out ? out.issues.filter((i) => agreement(outs, i) === outs.length).length : 0 },
   };

@@ -134,6 +134,8 @@ export interface ReviewResult {
   model: string;
   promptVersion: string;
   modelConfig: { reasoningEffort: string; samples: number; validSamples: number; factsPromptVersion: string; factsStatus: "ok" | "failed" };
+  /** The fact extraction as validated and used by the comparison, or the reason it failed (never invalid model text). Absent in reviews made before it was recorded. */
+  factsExtraction?: { status: "valid"; output: unknown } | { status: "failed"; reason: string };
   referenceVersion: string;
   latencyMs: number;
   modelLatencyMs?: number;
