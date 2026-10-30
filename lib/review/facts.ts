@@ -411,7 +411,10 @@ export function linkedToSubject(
   const s = sentences.find((x) => x.id === sentenceId);
   if (!s) return [];
   const own = facts.entry_statements.find((e) => e.sentence_id === sentenceId && isUsEntry(e));
-  const matches = formMatches(c, s.text, own?.manner, conflict);
+  // Corroborating facts count only inside the statement's own entry clauses: a marriage or arrest date, or a relative's
+  // entry, elsewhere in the sentence says nothing about which person this entry account belongs to.
+  const entryText = sentenceEvents(s.text, ENTRY_EVENT_RE).filter((e) => speakersOwn(e) && !leavesUs(e.span)).map((e) => e.span).join(" ");
+  const matches = formMatches(c, entryText, own?.manner, conflict);
   if (matches.length < 2) return [];
   // The place and the manner describe a route, which people who crossed together share: on their own they do not
   // identify a person (G06). The link needs the form's entry month and day, a fact specific to one entry.

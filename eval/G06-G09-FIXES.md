@@ -75,3 +75,29 @@ Under v2.4, an ambiguity plant counts as detected when a human-review finding ci
 - **No credit for routing:** a correctly routed ambiguity (the expected behaviour for G06) earns no detection credit, because routing is not counted.
 
 This is documented here and in `ROUND3-EVIDENCE-G06-G09.md`; the scorer is not changed.
+
+## Follow-up after the review of `aa322b6` (uncommitted, offline)
+**1. Link facts bound to the entry event** (`linkedToSubject`).
+- **Gap:** `formMatches` read the whole sentence. In "[REDACTED] stated that he entered the United States illegally in 2014; he was married on June 9, 2011", the marriage's month and day counted as an entry match and produced `F-ENTRY-DATE`. "Was arrested" did the same, and so did a relative's entry date ("… and that his wife entered on June 9, 2011").
+- **Change:** corroborating facts are now read only from the statement's own entry clauses. Those are the entry events whose participant is the speaker, or is unknown outside a reported clause, and which are not trips away from the United States (the round-3 `eventSpan`/participant rules).
+- **The companion veto is unchanged and still reads whole sentences.** It only ever blocks a link, so a broad reading is the conservative one.
+
+**2. Failed extraction is not negative evidence** (E3 rule).
+- **Gap:** the condition `!(factsSettled.ok && hasMannerStatement(...))` was also true when extraction failed or was invalid. A narrative that plainly states "crossed the Rio Grande illegally" therefore got `U-E3`, which says the narrative does not state the manner.
+- **Change:** `U-E3` now requires a **successful** extraction with no verified manner statement. After a failed or invalid extraction, the form's documented-unknown result stands, with no item. The review is already reported as partial, with the fact extraction listed as not completed.
+
+**Fixture correction.**
+- **The problem:** the earlier G09 defect fixtures in `tests/g06-g09.test.ts` and `scripts/repro-g06-g09.ts` used an empty extraction. G09 describes an entry ("came to the United States several years ago"), so that extraction failed validation, and those fixtures were really exercising the failed-extraction path.
+- **The correction:** they now use a validated extraction (an entry statement for that sentence, manner unknown) and assert that extraction passed.
+
+**Validation:**
+| Check | Result |
+|---|---|
+| `scripts/repro-g06-g09-followup.ts` (13 checks) | On `aa322b6`, **6 not as expected**: 3 G06-path, 3 G09-path. After the change, **0** |
+| `tests/g06-g09-followup.test.ts` | On `aa322b6`, 2 defect tests fail and 2 control tests pass. After the change, 4/4 |
+| `tests/g06-g09.test.ts` and `scripts/repro-g06-g09.ts` (corrected fixtures) | 4/4; 0 |
+| Earlier reproductions, full suite | round-3, multi-person and variants 0 each; round-2 identical; 271/271 |
+| Type-check, production build | Pass. The `rc-round3` build on disk was restored with its BUILD_ID unchanged |
+| Deterministic 89-case replay, multi-person flags | Identical to `aa322b6` |
+| Saved outputs of all 11 runs | No change compared with `aa322b6`. C119-X1's matched month and day lie in its own entry clause. Both saved G09 results had a successful extraction. No saved E3 result had a failed extraction |
+| Historical rescoring | 22/22 identical |

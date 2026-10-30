@@ -54,7 +54,15 @@ const e3Of = async (c: CaseRecord, complete: Complete) => {
 };
 
 test("G09: a form manner recorded only as unknown, with a checked and silent narrative, is unclear (not present, not absent)", async () => {
-  for (const status of ["absent", "unclear"]) assert.deepEqual(await e3Of(G09, reviewWith([{ element_id: "E3", status, sentence_ids: [] }])), { e3: "unclear", findings: ["U-E3"] }, status);
+  // The extraction must pass validation: G09 describes an entry, so an empty extraction would be rejected as invalid
+  // (corrected after the review of aa322b6; the earlier fixture exercised the failed-extraction path).
+  const came = splitSentences(G09.narrative.text).find((x) => x.text.includes("came to the United States"))!.id;
+  const valid = JSON.stringify({ entry_statements: [ent(came, "he came to the United States several years ago", null, "unknown", "subject")], removal_statements: [] });
+  for (const status of ["absent", "unclear"]) {
+    const r = await reviewCase(G09, reviewWith([{ element_id: "E3", status, sentence_ids: [] }], valid));
+    assert.ok(!r.completion?.failed.some((f) => f.check === "Fact extraction"), "the fixture extraction passes validation");
+    assert.deepEqual(await e3Of(G09, reviewWith([{ element_id: "E3", status, sentence_ids: [] }], valid)), { e3: "unclear", findings: ["U-E3"] }, status);
+  }
 });
 test("G09 controls: a stated manner, a narrative that says it is unknown, a known form value, a blank field, other elements, an unchecked narrative", async () => {
   const told = withText(G09, G09.narrative.text.replace("The subject stated that he came to the United States several years ago", "The subject stated that he crossed the Rio Grande illegally several years ago"));

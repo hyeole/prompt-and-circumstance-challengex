@@ -59,8 +59,12 @@ const M = "[REDACTED (b)(6), (b)(7)(C)]";
     const e3 = r.elements.find((e) => e.elementId === "E3")!;
     return { e3: `${e3.status}${e3.qualifier ? "/" + e3.qualifier : ""}`, findings: r.findings.filter((f) => /^[MU]-E3$/.test(f.id)).map((f) => f.id) };
   };
-  show("G09 (form manner UNK; narrative silent; model reports E3 absent)", await run(g09, [{ element_id: "E3", status: "absent", sentence_ids: [] }]), { e3: "unclear", findings: ["U-E3"] });
-  show("G09 (same; model reports E3 unclear)", await run(g09, [{ element_id: "E3", status: "unclear", sentence_ids: [] }]), { e3: "unclear", findings: ["U-E3"] });
+  // A successful extraction that passes validation: G09 describes an entry ("came to the United States"), so an empty
+  // extraction would be rejected as invalid (corrected after the review of aa322b6).
+  const came = splitSentences(g09.narrative.text).find((x) => x.text.includes("came to the United States"))!.id;
+  const valid = JSON.stringify({ entry_statements: [ent(came, "he came to the United States several years ago", null, "unknown", "subject")], removal_statements: [] });
+  show("G09 (form manner UNK; narrative silent; model reports E3 absent; extraction succeeded)", await run(g09, [{ element_id: "E3", status: "absent", sentence_ids: [] }], valid), { e3: "unclear", findings: ["U-E3"] });
+  show("G09 (same; model reports E3 unclear)", await run(g09, [{ element_id: "E3", status: "unclear", sentence_ids: [] }], valid), { e3: "unclear", findings: ["U-E3"] });
   const g09text = g09.narrative.text;
   const told = withText(g09, g09text.replace("The subject stated that he came to the United States several years ago", "The subject stated that he crossed the Rio Grande illegally several years ago"));
   const s = splitSentences(told.narrative.text).find((x) => x.text.includes("crossed the Rio Grande"))!;
