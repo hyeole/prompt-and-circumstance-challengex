@@ -744,6 +744,38 @@
       "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
       "example": "F051 U-N1 Unclear: identifying documents",
       "date": "2026-10-30"
+    },
+    {
+      "base": "C012",
+      "key": "unclear|he stated that he did not cross through a designated port of",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C012-MC U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C045",
+      "key": "unclear|freely and readily admitted to being a citizen and national|is inadmissible under section 237(a)(1)(b) of the immigratio",
+      "verdict": "valid_observation",
+      "note": "No identity document of the subject is stated anywhere in the narrative; only status documents are mentioned. Same standard as the C013/C045 adjudications.",
+      "example": "C045 U-N1 Unclear: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "missing_element|N1",
+      "verdict": "valid_observation",
+      "note": "C037 names no identity document of the subject (the 'consular officer' sentence concerns the right to speak with one). Same N1 standard.",
+      "example": "C037-M3 M-N1 Missing: identifying documents",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C013",
+      "key": "citation|a 06/08/2005 was arrested by border patrol and received an e",
+      "verdict": "false_flag",
+      "note": "Same claim as the earlier C013 false flag: the narrative documents the prior removal the charge requires; entry-manner facts do not conflict with a reentry charge.",
+      "example": "C013 C-1 Possible citation mismatch: 8 U.S.C. 1326(a)",
+      "date": "2026-10-30"
     }
   ]
 }

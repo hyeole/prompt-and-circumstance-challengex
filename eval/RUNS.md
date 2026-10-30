@@ -179,3 +179,11 @@ Figures are as recorded when each run was scored. Earlier runs keep their origin
   - The fact-extraction prompt is unchanged between the two builds; only output parsing changed.
   - Review-call latency rose too (p50 11.4 s to 13.3 s; fact calls 16.9 s to 24.3 s). That points to load on the shared endpoint during the run, but this is not proven and the batch was not rerun.
   - In partial reviews, only rule findings earn credit, so 3 plants show as "not completed".
+
+### Diagnostic repeat of legacy on the same `d0ec8c3` build
+
+- **Runs:** `2026-10-30T05-26-47` (original) and `2026-10-30T05-52-49` (repeat). Same build and configuration; the repeat recorded HEAD `4c32391`, with no server-file changes since `d0ec8c3`. Both are kept.
+- **Repeat result:** completion 100% (37/37), strict recall 68% (21/31), incorrect 4/61 (4 false flags), unnecessary routing 7% (1/15).
+- **Original result:** completion 81% (30/37), strict recall 68% (21/31), incorrect 4/63 (4 false flags), unnecessary routing 7% (1/15).
+- **The 7 fact-call timeouts did not recur, and the same 21 plants were detected.** The variability is in endpoint latency. One repeat cannot prove load as the cause.
+- **Details:** per-call timings, the case-by-case missed-plant table, the inherited-adjudication recheck and the flags by category are in `eval/MISSED-PLANTS-d0ec8c3.md`.

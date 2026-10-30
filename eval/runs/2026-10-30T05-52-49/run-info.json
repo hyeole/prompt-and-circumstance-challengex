@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning, refinements, legacy rerun (build d0ec8c3; recorded HEAD has no server changes since)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T05:52:49.555Z",
+  "commit": "4c32391",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}
