@@ -416,6 +416,54 @@
       "note": "The 2020 answer is corrected and explained in the narrative (pre-run label: should not flag).",
       "example": "FS02 F-ENTRY-DATE-2 Narrative gives two different entry years",
       "date": "2026-10-30"
+    },
+    {
+      "base": "C001",
+      "key": "missing_element|N5",
+      "verdict": "valid_observation",
+      "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form.",
+      "example": "C001-X1 M-N5 Missing: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C135",
+      "key": "missing_element|N5",
+      "verdict": "valid_observation",
+      "note": "The narrative states no INA section or subsection; sponsor item S4 (specific ground) is not covered in the narrative. The selected charge exists only on the form.",
+      "example": "C135-MC M-N5 Missing: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C003",
+      "key": "unclear|will be held pending removal proceedings for violating secti",
+      "verdict": "false_flag",
+      "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
+      "example": "C003-M3 U-N5 Unclear: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C037",
+      "key": "unclear|a notice to appear is being executed on as per section 212(a",
+      "verdict": "false_flag",
+      "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
+      "example": "C037-X1 U-N5 Unclear: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C119",
+      "key": "unclear|237(a)(1)(b) nonimmigrant overstay",
+      "verdict": "false_flag",
+      "note": "The precise section is cited and the narrative states the facts that meet it elsewhere (illegal crossing / visa overstay); requiring the explanation in the same sentence is too strict.",
+      "example": "C119-X1 U-N5 Unclear: specific ground stated and explained",
+      "date": "2026-10-30"
+    },
+    {
+      "base": "C021",
+      "key": "inconsistency|history.immigration_record|subject arrived at miami on 12/23/2015 and was admitted as a",
+      "verdict": "false_flag",
+      "note": "A lawful B2 admission does not contradict a NEGATIVE immigration record (no prior violations/removals); same standard as the earlier C021 adjudication.",
+      "example": "C021-X1 I-2 Immigration record mismatch",
+      "date": "2026-10-30"
     }
   ]
 }

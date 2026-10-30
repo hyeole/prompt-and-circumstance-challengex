@@ -1,0 +1,11 @@
+{
+  "label": "post-tuning (eval, commit e5a47a7)",
+  "dataset": "eval",
+  "split": "all",
+  "only": null,
+  "concurrency": 1,
+  "startedAt": "2026-10-30T03:16:09.098Z",
+  "commit": "e5a47a7",
+  "uncommittedServerChanges": "none",
+  "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+}

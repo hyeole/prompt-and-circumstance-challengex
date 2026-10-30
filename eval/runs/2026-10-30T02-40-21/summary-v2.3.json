@@ -1,0 +1,342 @@
+{
+  "run": "eval/runs/2026-10-30T02-40-21",
+  "scoringPolicy": "v2.3",
+  "runInfo": {
+    "label": "dev-synthetic development run (commit a5ba61b)",
+    "dataset": "eval/dev-synthetic",
+    "split": "all",
+    "only": null,
+    "concurrency": 1,
+    "startedAt": "2026-10-30T02:40:21.817Z",
+    "commit": "a5ba61b",
+    "uncommittedServerChanges": "none",
+    "note": "Model settings (reasoning effort, samples, prompt versions) are recorded in every raw result."
+  },
+  "cases": 12,
+  "completion": "100% (12/12)",
+  "partialReviews": [],
+  "recallCompletedOnly": {
+    "value": "67% (4/6)",
+    "note": "Secondary figure: planted issues in reviews whose model check completed. The headline recall counts failed reviews as missed."
+  },
+  "recall": {
+    "all": "67% (4/6)",
+    "dev": "n/a",
+    "heldout": "n/a",
+    "missing_element": "50% (2/4)",
+    "inconsistency": "100% (1/1)",
+    "citation": "100% (1/1)",
+    "routing_multi_charge": "n/a",
+    "routing_ambiguity": "n/a",
+    "outcomes": "detected: 4, routed_only: 0, missed: 2, not_completed: 0"
+  },
+  "flags": {
+    "issued": 8,
+    "planted": 4,
+    "duplicates": 0,
+    "validObservations": 2,
+    "falseFlags": 2,
+    "unadjudicated": 0,
+    "incorrectProportion": "25% (2/8)",
+    "incorrectProportionNote": "False flags plus unadjudicated flags, over all issued flags except duplicates. Base cases included."
+  },
+  "unnecessaryRouting": "20% (2/10)",
+  "routingJustifiedByObservation": [],
+  "dataset": "eval/dev-synthetic",
+  "checklistExpectations": {
+    "accuracy": "100% (50/50)",
+    "mismatches": []
+  },
+  "shouldNotFlagViolations": [
+    {
+      "id": "DS06",
+      "anchor": "in 2016",
+      "finding": "F-ENTRY-DATE Entry date differs from the form"
+    }
+  ],
+  "evidenceValidity": "100% (8/8)",
+  "evidenceMatch": {
+    "exact": 4,
+    "partial": 0,
+    "unlabelled": 0,
+    "note": "unlabelled = runs before the exact-match fix (or rule-made evidence); those quotes are only known to equal the source text at their offsets"
+  },
+  "latency": {
+    "p50": "13.9s",
+    "p90": "17.7s",
+    "max": "17.9s",
+    "over60s": 0,
+    "httpFailures": 0
+  },
+  "rows": [
+    {
+      "id": "DS01",
+      "split": "dev-synthetic",
+      "base": "DS01",
+      "ms": 12764,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS02",
+      "split": "dev-synthetic",
+      "base": "DS02",
+      "ms": 8494,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N7",
+          "finding": "M-N7 missing_element: Missing: disposition and documenting form",
+          "key": "missing_element|N7",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS03",
+      "split": "dev-synthetic",
+      "base": "DS03",
+      "ms": 15183,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "planted"
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS04",
+      "split": "dev-synthetic",
+      "base": "DS04",
+      "ms": 17741,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS05",
+      "split": "dev-synthetic",
+      "base": "DS05",
+      "ms": 12366,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "inconsistency",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|entry.date|the subject stated that he entered the united states in augu",
+          "status": "planted"
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS06",
+      "split": "dev-synthetic",
+      "base": "DS06",
+      "ms": 17875,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [
+        {
+          "id": "F-ENTRY-DATE",
+          "finding": "F-ENTRY-DATE inconsistency: Entry date differs from the form",
+          "key": "inconsistency|entry.date|stated that he entered the united states in 2016 by crossing",
+          "status": "false_flag",
+          "note": "Pre-run label: the 2016 statement cannot be attributed to this record's subject (two redacted people); no entry-date conflict should be reported. Known limitation."
+        }
+      ],
+      "citation": "needs_human_review",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS07",
+      "split": "dev-synthetic",
+      "base": "DS07",
+      "ms": 13857,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS08",
+      "split": "dev-synthetic",
+      "base": "DS08",
+      "ms": 13436,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N2",
+          "finding": "M-N2 missing_element: Missing: status or classification claimed for admission",
+          "key": "missing_element|N2",
+          "status": "valid_observation",
+          "note": "DS08 removes the sentence with the visa and the stated purpose, so the claimed status/classification is indeed not recorded (sponsor S1)."
+        }
+      ],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS09",
+      "split": "dev-synthetic",
+      "base": "DS09",
+      "ms": 9707,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS10",
+      "split": "dev-synthetic",
+      "base": "DS10",
+      "ms": 16179,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "missing_element",
+          "outcome": "missed"
+        }
+      ],
+      "flags": [
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 212(a)(7)(A)(i)(I)",
+          "key": "citation|the subject is inadmissible under section 212(a)(7)(a)(i)(i)",
+          "status": "false_flag",
+          "note": "Using a B1/B2 visitor visa while intending to work is what 212(a)(7)(A)(i)(I) covers; the narrative supports the charge."
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": false,
+      "evidenceOk": 1,
+      "evidenceTotal": 1
+    },
+    {
+      "id": "DS11",
+      "split": "dev-synthetic",
+      "base": "DS11",
+      "ms": 8632,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [],
+      "flags": [],
+      "citation": "consistent",
+      "humanReview": false,
+      "routingExpected": false,
+      "evidenceOk": 0,
+      "evidenceTotal": 0
+    },
+    {
+      "id": "DS12",
+      "split": "dev-synthetic",
+      "base": "DS12",
+      "ms": 13880,
+      "completed": true,
+      "modelStatus": "ok",
+      "plants": [
+        {
+          "type": "citation",
+          "outcome": "detected"
+        }
+      ],
+      "flags": [
+        {
+          "id": "M-N5",
+          "finding": "M-N5 missing_element: Missing: specific ground stated and explained",
+          "key": "missing_element|N5",
+          "status": "valid_observation",
+          "note": "DS12 has no ground statement (the GROUND block was not included), so the specific ground is genuinely not stated (sponsor S4)."
+        },
+        {
+          "id": "C-1",
+          "finding": "C-1 citation: Possible citation mismatch: INA 237(a)(1)(B)",
+          "key": "citation|entry.manner|the subject stated that he entered the united states on or a",
+          "status": "planted"
+        }
+      ],
+      "citation": "likely_mismatch",
+      "humanReview": true,
+      "routingExpected": true,
+      "evidenceOk": 2,
+      "evidenceTotal": 2
+    }
+  ]
+}
