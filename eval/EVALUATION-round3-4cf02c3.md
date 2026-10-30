@@ -98,7 +98,7 @@ This pattern is consistent with slower endpoint responses during the run. It is 
   - **Conflict with the label:** the label's note expects routing with no contradiction asserted.
   - **Not caused by the round-3 code:** offline, `1b5f59b` and `4cf02c3` produce identical results for identical extractions. The finding appears whenever the extractor supplies S8's manner, so the change is extraction variance.
   - **Treatment:** the credit is reported as questionable, and the label is unchanged.
-- **G09:** complete this time, but the model judged the manner of entry present, so the plant is still missed. The deterministic charge-support check noticed the missing manner statement and routed the case.
+- **G09:** complete this time, but the plant is still missed. **Correction (after commit `e102fdc`):** an earlier version of this report said the model judged the manner present; that was wrong. E3 is marked `present`/`recorded_unknown` by the deterministic field-coverage rule, because the form records `entry.manner` as "UNK", and the result is the same in `1b5f59b`. The deterministic charge-support check noticed the missing manner statement and routed the case. See `ROUND3-EVIDENCE-G06-G09.md`.
 
 ## Assessment against the stopping criteria
 | Criterion | Result |
@@ -112,9 +112,9 @@ This pattern is consistent with slower endpoint responses during the run. It is 
 1. **Keep `7efb231` / `49a12be` as the deliverable.** `rc-round3` is not promoted, because its completion in this run is far below the baseline and the cause is not confirmed.
 2. **Do not run more full batches to chase detection.**
    - **Where the remaining misses are:** 8 of the 13 are genuine attribution limits or questionable labels (F010-X, F039-X, F075-X, C001-X1, C045-X1, both C119-AMB plants, C119-CIT).
-   - **Ceiling with no label change, no scoring change and routing not counted:** 43/54 (80%), even if both timed-out plants (C003-M3, F010-D) were detected.
+   - **Estimated ceiling for the current approach** (current attribution rules, labels and v2.4 scoring; routing not counted): 43/54 (80%), even if both timed-out plants (C003-M3, F010-D) were detected. This is an estimate, not a proven limit of the system.
    - **What 46/54 (85%) would need:** crediting C013-X1 and F055-H (a scoring change: their valid findings do not cite the planted anchors) and F051-C (counting routing). Neither will be done.
-   - 90% is not reachable.
+   - 90% is not reachable with the current approach.
 3. **The round-3 code is safer, not more sensitive.** It removes the false-positive and attribution defects found by the independent review, with no detection change offline or live. Promoting it should depend on reliability alone. That would need a completion-matched run of the same frozen build at another time, which is not authorized and is not started.
 4. **Reliability is the main remaining limit:**
    - fact-call timeouts (2–9 per 77, varying with the endpoint);
