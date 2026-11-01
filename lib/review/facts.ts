@@ -5,7 +5,7 @@ import { fieldQuality } from "@/lib/fieldQuality";
 import { z } from "zod";
 import type { CaseRecord, EvidenceRef, Finding, Sentence } from "@/lib/types";
 import { locatePartial, locateQuote } from "@/lib/text";
-import { analyze, mentions } from "./person-event";
+import { analyze, events, mentions, resolve } from "./person-event";
 
 export const FACTS_PROMPT_VERSION = "facts-v2.0"; // v2.1 (shorter quotes) was measured in a bounded diagnostic and not adopted: see eval/ROUND2-DIAGNOSIS.md
 
@@ -441,6 +441,68 @@ const linkNote = (links: string[]) => ` The statement does not name the subject 
 
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
+/**
+ * Why a statement that does not name the subject itself is treated as the subject's, and the source text that shows it,
+ * for the finding to cite. The explanation states the basis the decision used (attributeStatement), never the
+ * sentence-level "unclear" wording when the decision rests on a link:
+ * - "account": the statement's pronoun resolves to the subject's designation in an earlier sentence; that designation is
+ *   cited as evidence;
+ * - "single": only one person of interest is described;
+ * - "exact": the exact-entry link (stated in the rationale).
+ * A statement that names the subject needs no note.
+ */
+function subjectBasis(sentences: Sentence[], id: string, attr: Attr, b: AttributionOutcome): { note: string; evidence: EvidenceRef[] } {
+  if (attr === "subject" || b.outcome !== "supported") return { note: "", evidence: [] };
+  if (b.basis === "account" && b.link) {
+    const v = verify(sentences, b.link.sentenceId, b.link.text);
+    const shown = b.link.text.replace(/\[REDACTED[^\]]*\]/g, "[REDACTED]").replace(/,\s*$/, "");
+    if (v) return { evidence: [ctx(v.ev, "subject", "Names the subject")],
+      note: ` ${id} does not name the subject itself, but its "${b.link.pronoun}" can only refer to the person ${b.link.sentenceId} names as "${shown}", so the statement is treated as the subject's.` };
+  }
+  if (b.basis === "single") return { note: ` ${id} does not name the subject itself; the narrative describes only one person of interest, so the statement is treated as the subject's.`, evidence: [] };
+  if (b.basis === "exact") return { note: ` ${id} does not name the subject itself, but ${b.rationale.replace(new RegExp(`^${id}\\s+`), "it ")}, so the statement is treated as the subject's. A person should confirm.`, evidence: [] };
+  return { note: attributionNote(attr), evidence: [] };
+}
+
+// ---- Event scope of entry statements ----
+// The form records the LAST entry. A first or previous entry is a different event, so it is compared neither with the
+// form nor with a last-entry statement, unless the source says it is the same event ("his first and only entry").
+type EntryScope = "first" | "previous" | "last" | "unspecified";
+const ENTRY_TRIGGER_RE = /\b(?:re-?enter(?:ed|ing|s)?|enter(?:ed|ing|s)?|entry|cross(?:ed|ing|es)?|came|arriv(?:ed|ing|al)|swam|wad(?:ed|ing))\b/gi;
+// The scope word must govern the entry: at most three words between them, none a reporting verb ("when first asked, he
+// said he entered" is not a first entry).
+const SCOPE_WORD_RE = /\b(first|initially|originally|last|most recent(?:ly)?|latest|previous(?:ly)?|prior(?!\s+to\b)|earlier)((?:\s+[\w'’-]+){0,3})\s*$/i;
+const REPORTING_RE = /\b(?:asked|questioned|interviewed|said|stated|told|claimed|admitted|explained|reported)\b/i;
+/**
+ * Which entry a fact at offset `at` of `text` belongs to: the entry word nearest before it (or the first one after it),
+ * read with the scope word governing that entry word ("first entered", "his last entry", "had previously entered") or
+ * "for the first time" just after it. In "first entered in 2005 and last entered in 2016" each year takes its own entry
+ * word's scope. Without a scope word: unspecified (treated like the last entry, as before).
+ */
+export function entryScope(text: string, at: number): EntryScope {
+  const trig = [...text.matchAll(ENTRY_TRIGGER_RE)];
+  if (!trig.length) return "unspecified";
+  let k = trig.findLastIndex((m) => m.index! <= at);
+  if (k < 0) k = 0;
+  const start = trig[k].index!, end = start + trig[k][0].length;
+  const prevEnd = k > 0 ? trig[k - 1].index! + trig[k - 1][0].length : 0;
+  const after = text.slice(end, Math.min(k + 1 < trig.length ? trig[k + 1].index! : text.length, end + 30));
+  if (/^\W*(?:\w+\s+){0,4}?for the first time\b/i.test(after)) return "first";
+  const m = text.slice(Math.max(prevEnd, start - 40), start).match(SCOPE_WORD_RE);
+  if (!m || REPORTING_RE.test(m[2])) return "unspecified";
+  const w = m[1].toLowerCase();
+  return /^(first|initially|originally)$/.test(w) ? "first" : /^(last|most recent|most recently|latest)$/.test(w) ? "last" : "previous";
+}
+/** Offset of a statement's fact in its sentence: the year inside the verified quote, else the quote's first entry word. */
+function factOffset(v: Verified, year?: number | null): number {
+  const t = v.s.text, q = Math.max(0, t.indexOf(v.ev.quote ?? ""));
+  if (year) { const i = t.indexOf(String(year), q); return i >= 0 ? i : Math.max(0, t.indexOf(String(year))); }
+  const qt = (v.ev.quote ?? "").search(ENTRY_TRIGGER_RE);
+  return qt >= 0 ? q + qt : q;
+}
+// The source itself says a first entry is the only one, i.e. also the last.
+const ONLY_ENTRY_RE = /\bfirst and only\b|\bonly (?:time|entry)\b|\b(?:not|never)\s+(?:left|departed)\s+(?:the United States|the U\.S\.|the country)\b|\bremained in the United States (?:ever )?since\b|\bwithout (?:ever )?(?:leaving|departing)\b/i;
+
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
 
@@ -466,10 +528,18 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
       const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
       // attr labels the evidence (as before); supported is the decision, which also uses account continuity and the
       // exact-entry link (attributeStatement).
-      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person, e.quote) : "unclear" as const,
-        supported: !!v && attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person).outcome === "supported" };
+      const basis = v ? attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person) : null;
+      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person, e.quote) : "unclear" as const, basis: basis!,
+        supported: basis?.outcome === "supported", scope: v ? entryScope(v.s.text, factOffset(v, e.year)) : "unspecified" as EntryScope };
     })
-    .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: "subject" | "other" | "unclear"; supported: boolean }[];
+    .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: Attr; basis: AttributionOutcome; supported: boolean; scope: EntryScope }[];
+  // A first entry that the source says was the only one is also the last, unless another statement gives a last or
+  // previous entry.
+  if (!entries.some((x) => x.scope === "last" || x.scope === "previous"))
+    for (const x of entries) if (x.scope === "first" && ONLY_ENTRY_RE.test(x.v.s.text)) x.scope = "last";
+  // Comparable with the form's last entry, and with each other: last-entry statements (or unspecified ones, as before).
+  const lastEntry = (x: { scope: EntryScope }) => x.scope === "last" || x.scope === "unspecified";
+  const sameEvent = (a: { scope: EntryScope }, b: { scope: EntryScope }) => (lastEntry(a) && lastEntry(b)) || (a.scope === "first" && b.scope === "first");
 
   // A differing year that the narrative itself marks as a first answer, later corrected and explained with the other
   // year, is a resolved discrepancy (sponsor S5), not a conflict.
@@ -484,9 +554,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // names, the differing date most likely belongs to someone else and cannot be attributed: no flag.
   const fy = field("entry.date") ? formYear(field("entry.date")!.value) : undefined;
   if (fy) {
-    const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy);
+    const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy && lastEntry(x));
     const counts = (x: { attr: "subject" | "other" | "unclear"; supported: boolean }) => x.supported && (x.attr === "subject" || !subjectAgrees);
-    const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && !correctedLater(x, fy));
+    const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && lastEntry(x) && !correctedLater(x, fy));
     // In a multi-person narrative an unattributed statement still counts when the subject's own form links it.
     const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.date") : []);
     const off = differs.find(counts) ?? differs.find((x) => linksOf(x).length > 0);
@@ -494,26 +564,30 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson)
       .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.date", detail: `${x.v.s.id} gives ${x.e.year} for the entry; the form records the last entry in ${fy}.` })));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
+    const offBasis = off && !offLinks.length ? subjectBasis(sentences, off.v.s.id, off.attr, off.basis) : { note: "", evidence: [] };
     if (off)
       findings.push({
         id: "F-ENTRY-DATE", category: "inconsistency", title: "Entry date differs from the form",
-        explanation: `The narrative gives ${off.e.year} for the entry, but the form records the last entry in ${fy}.${offLinks.length ? linkNote(offLinks) : attributionNote(off.attr)}`,
-        evidence: [offEv!, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
+        explanation: `The narrative gives ${off.e.year} for the ${off.scope === "last" ? "last entry" : "entry"}, but the form records the last entry in ${fy}.${offLinks.length ? linkNote(offLinks) : offBasis.note}`,
+        evidence: [offEv!, ...offBasis.evidence, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
   // 2. Two narrative statements giving different entry years, both with the same attribution (only when the form
   //    check above did not already fire).
   if (!findings.length) {
-    const withYear = entries.filter((x) => x.e.year && x.v.s.text.includes(String(x.e.year)) && x.supported);
-    const a = withYear[0];
-    const b = withYear.find((x) => x.e.year !== a?.e.year && x.attr === a?.attr);
+    const withYear = entries.filter((x) => x.e.year && x.v.s.text.includes(String(x.e.year)) && x.supported && x.scope !== "previous");
+    // Two years conflict only when they are given for the same entry: the last entry (or unspecified) twice, or the
+    // first entry twice. A first entry in 2005 and a last entry in 2016 are two events.
+    const a = withYear.find((x) => withYear.some((y) => y.e.year !== x.e.year && y.attr === x.attr && sameEvent(x, y)));
+    const b = a && withYear.find((x) => x.e.year !== a.e.year && x.attr === a.attr && sameEvent(a, x));
     // A first answer that the narrative itself corrects and explains is a resolved discrepancy, not a conflict.
+    const pairBasis = a && b ? [a, b].map((x) => subjectBasis(sentences, x.v.s.id, x.attr, x.basis)) : [];
     if (a && b && !correctedLater(a, b.e.year!) && !correctedLater(b, a.e.year!))
       findings.push({
         id: "F-ENTRY-DATE-2", category: "inconsistency", title: "Narrative gives two different entry years",
-        explanation: `One statement gives ${a.e.year} and another gives ${b.e.year} for the entry.${attributionNote(b.attr)}`,
-        evidence: [ctx(showing(a.v, String(a.e.year)), a.attr, "us_entry"), ctx(showing(b.v, String(b.e.year)), b.attr, "us_entry")], referenceIds: ["E1"], needsHumanReview: true,
+        explanation: `One statement gives ${a.e.year} and another gives ${b.e.year} for the ${a.scope === "first" ? "first entry" : a.scope === "last" || b.scope === "last" ? "last entry" : "entry"}.${[...new Set(pairBasis.map((x) => x.note))].join("")}`,
+        evidence: [ctx(showing(a.v, String(a.e.year)), a.attr, "us_entry"), ctx(showing(b.v, String(b.e.year)), b.attr, "us_entry"), ...pairBasis.flatMap((x) => x.evidence).filter((e, i, all) => all.findIndex((y) => y.sentenceId === e.sentenceId && y.quote === e.quote) === i)], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
   }
@@ -521,22 +595,24 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
   // Manner wording must be verified exactly and must actually describe a manner of entry.
   const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.manner") : []);
-  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && (x.supported || mannerLinks(x).length > 0));
-  const conflict = fm ? known.find((x) => x.e.manner !== fm) : undefined;
-  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length)
+  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && x.scope !== "previous" && (x.supported || mannerLinks(x).length > 0));
+  // The form's manner is the last entry's: a first entry made differently is not a conflict with it.
+  const conflict = fm ? known.find((x) => x.e.manner !== fm && lastEntry(x)) : undefined;
+  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && lastEntry(x) && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length)
     .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.manner", detail: `${x.v.s.id} describes ${MANNER_LABEL(x.e.manner)}; the form code "${field("entry.manner")!.value}" indicates ${MANNER_LABEL(fm)}.` })));
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
-    const other = known.find((x) => x.e.manner === fm);
+    const other = known.find((x) => x.e.manner === fm && lastEntry(x));
+    const basis = conflict.supported ? subjectBasis(sentences, conflict.v.s.id, conflict.attr, conflict.basis) : { note: linkNote(mannerLinks(conflict)), evidence: [] };
     findings.push({
       id: "F-ENTRY-MANNER", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
-      explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}.${other ? " Another narrative statement agrees with the form." : ""}${!conflict.supported ? linkNote(mannerLinks(conflict)) : attributionNote(conflict.attr)}`,
-      evidence: [ctx(conflict.v.ev, conflict.attr, "us_entry"), ...(other ? [ctx(other.v.ev, other.attr, "us_entry")] : []), fieldEv("entry.manner")], referenceIds: ["E3"], needsHumanReview: true,
+      explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}${conflict.scope === "last" ? " for the last entry" : ""}.${other ? " Another narrative statement agrees with the form." : ""}${basis.note}`,
+      evidence: [ctx(conflict.v.ev, conflict.attr, "us_entry"), ...(other ? [ctx(other.v.ev, other.attr, "us_entry")] : []), ...basis.evidence, fieldEv("entry.manner")], referenceIds: ["E3"], needsHumanReview: true,
       humanReviewReason: "Two accounts of the manner of entry conflict; the facts could support different charges.", source: "model", severity: "high",
     });
   } else if (!fm) {
-    const a = known[0];
-    const b = known.find((x) => x.e.manner !== a?.e.manner);
+    const a = known.find((x) => known.some((y) => y.e.manner !== x.e.manner && sameEvent(x, y)));
+    const b = a && known.find((x) => x.e.manner !== a.e.manner && sameEvent(a, x));
     if (a && b)
       findings.push({
         id: "F-ENTRY-MANNER-2", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
@@ -1021,13 +1097,22 @@ export function fullDates(text: string): string[] {
   return [...new Set(out)];
 }
 
-export type AttributionOutcome = { outcome: "supported" | "ambiguous" | "other"; sentenceIds: string[]; rationale: string };
+export type AttributionOutcome = {
+  outcome: "supported" | "ambiguous" | "other"; sentenceIds: string[]; rationale: string;
+  /** What a "supported" outcome rests on (the numbered rules below): the clause names the subject, only one person is
+   *  described, an account continued by pronoun, or the exact-entry link. */
+  basis?: "named" | "single" | "account" | "exact";
+  /** For "account": the pronoun in this statement and the text it resolves to, which designates the subject. */
+  link?: { pronoun: string; sentenceId: string; text: string };
+};
 
 /**
  * Whether a statement is about this record's subject, with the sentences and the reason. In order:
  * 1. the clause carrying the fact names the subject ("Subject …", "both subjects …") → supported; another person → other;
  * 2. only one person is described → supported;
- * 3. it continues, by pronoun, the account of a sentence that names the subject → supported (that sentence is cited);
+ * 3. it continues, by pronoun, the account of a sentence that names the subject, and that pronoun resolves (person–event
+ *    analysis: its only compatible antecedent, through any further pronouns) to the subject's designation → supported
+ *    (the designation is cited). A continuation whose pronoun could also be someone else in that sentence is not;
  * 4. it is an entry statement giving the subject's recorded entry date in full (day, month and year) and the same
  *    manner, and no other sentence states that full date → supported. Shared citizenship, a place, a month and day or a
  *    heading alone never establish identity.
@@ -1039,14 +1124,22 @@ export function attributeStatement(sentences: Sentence[], id: string, multiPerso
   const a = attribution(s, person, focus);
   // A sentence that names the subject can still report someone else's event ("Subject stated that his brother was deported").
   if (a === "subject" && reportsOthersEvent(s.text, focus)) return { outcome: "other", sentenceIds: [id], rationale: `${id} names the subject but reports another person's event` };
-  if (a === "subject") return { outcome: "supported", sentenceIds: [id], rationale: `${id} names the subject` };
+  if (a === "subject") return { outcome: "supported", sentenceIds: [id], rationale: `${id} names the subject`, basis: "named" };
   if (a === "other") return { outcome: "other", sentenceIds: [id], rationale: `${id} is about another person` };
-  if (!multiPerson) return { outcome: "supported", sentenceIds: [id], rationale: "only one person is described" };
+  if (!multiPerson) return { outcome: "supported", sentenceIds: [id], rationale: "only one person is described", basis: "single" };
   const acct = accountOf(sentences, id);
   const i = acct.findIndex((x) => x.id === id);
   const named = acct.slice(0, i).find((x) => attribution(x, "unclear") === "subject");
-  if (named) return { outcome: "supported", sentenceIds: [named.id, id], rationale: `${id} continues ${named.id}'s account, which names the subject` };
-  if (c && exactEntryLink(c, sentences, id)) return { outcome: "supported", sentenceIds: [id], rationale: `${id} gives the subject's recorded entry date in full and the same manner, and no other sentence states that date` };
+  if (named) {
+    const pronoun = mentions(s).find((m) => m.kind === "pronoun");
+    const who = resolve(sentences, pronoun);
+    const at = who.support.at(-1)?.sentenceId;
+    if (pronoun && who.identity === "subject" && at) {
+      const text = who.support.filter((x) => x.sentenceId === at).map((x) => x.text).join("").trim();
+      return { outcome: "supported", sentenceIds: [at, id], rationale: `${id} continues ${named.id}'s account, and its "${pronoun.text}" refers to the subject named in ${at}`, basis: "account", link: { pronoun: pronoun.text, sentenceId: at, text } };
+    }
+  }
+  if (c && exactEntryLink(c, sentences, id)) return { outcome: "supported", sentenceIds: [id], rationale: `${id} gives the subject's recorded entry date in full and the same manner, and no other sentence states that date`, basis: "exact" };
   return { outcome: "ambiguous", sentenceIds: [id], rationale: `several people are described and nothing in the narrative ties ${id} to this subject` };
 }
 

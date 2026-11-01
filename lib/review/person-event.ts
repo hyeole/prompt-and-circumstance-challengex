@@ -30,7 +30,7 @@ export type PersonEvent = {
   /** A reinstatement presupposes an earlier removal order. */
   presupposesPriorOrder?: boolean;
 };
-export type Link = { from: string; to: string; kind: "pronoun"; support: { sentenceId: string; text: string }[]; rationale: string };
+export type Link = { from: string; to: string; kind: "pronoun"; support: { sentenceId: string; text: string }[]; rationale: string; /** Offset of the antecedent in its sentence. */ toAt: number };
 export type Resolved = { identity: Identity; chain: Link[]; support: { sentenceId: string; text: string }[]; rationale: string };
 
 // ---- Mentions ----
@@ -145,14 +145,16 @@ export function pronounLink(sentences: Sentence[], idx: number, p: Mention): Lin
     if (HEADING_ONLY.test(s.text)) return null;
     const ms = mentions(s);
     const singular = ms.filter((m) => PERSON_KINDS.includes(m.kind) || m.kind === "member" || (m.kind === "other" && !/other (?:individuals|subjects|people|persons|men|aliens)|companions|children|parents|family/i.test(m.text)));
-    const compatible = singular.filter((m) => !m.gender || m.gender === p.gender);
+    // "the subject, [REDACTED]" is one person mentioned twice: the designation and its appositive name count once.
+    const one = singular.filter((m) => !(m.kind === "designation" && singular.some((n) => appositiveSubject(s, n) && n.at > m.at && n.at - (m.at + m.text.length) <= 3)));
+    const compatible = one.filter((m) => !m.gender || m.gender === p.gender);
     // People of the other gender only: the pronoun cannot refer to them; keep looking.
     if (!compatible.length) continue;
     const anchors = compatible.filter((m) => m.kind !== "pronoun");
     const distinct = anchors.length ? anchors : compatible;
     if (distinct.filter((m) => m.kind !== "pronoun").length > 1 || distinct.some((m) => m.kind === "other" || m.kind === "member")) return null;
     const to = distinct[0];
-    return { from: sentences[idx].id, to: s.id, kind: "pronoun", rationale: `"${p.text}" in ${sentences[idx].id} has one compatible antecedent, "${to.text.replace(/\[REDACTED[^\]]*\]/g, "[REDACTED]")}" in ${s.id}${j < idx - 1 ? " (the sentences between mention no compatible person)" : ""}`,
+    return { from: sentences[idx].id, to: s.id, kind: "pronoun", toAt: to.at, rationale: `"${p.text}" in ${sentences[idx].id} has one compatible antecedent, "${to.text.replace(/\[REDACTED[^\]]*\]/g, "[REDACTED]")}" in ${s.id}${j < idx - 1 ? " (the sentences between mention no compatible person)" : ""}`,
       support: [{ sentenceId: sentences[idx].id, text: p.text }, { sentenceId: s.id, text: to.text }] };
   }
   return null;
@@ -178,7 +180,8 @@ export function resolve(sentences: Sentence[], m: Mention | undefined, depth = 0
       if (inSentence.length > 1) return { identity: "unresolved", chain: [], support: [own], rationale: `${m.sentenceId}: "${m.text}" has more than one possible antecedent in its sentence` };
       const link = depth < 8 ? pronounLink(sentences, idx, m) : null;
       if (!link) return { identity: "unresolved", chain: [], support: [own], rationale: `${m.sentenceId}: "${m.text}" has no single compatible antecedent` };
-      const target = mentions(sentences.find((x) => x.id === link.to)!).find((x) => x.text === link.support[1].text)!;
+      // By position, not by text: identical redaction markers in one sentence are different people.
+      const target = mentions(sentences.find((x) => x.id === link.to)!).find((x) => x.at === link.toAt)!;
       const r = resolve(sentences, target, depth + 1);
       return { ...r, chain: [link, ...r.chain], support: [own, ...r.support] };
     }
