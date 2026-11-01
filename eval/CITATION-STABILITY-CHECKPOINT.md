@@ -1,112 +1,124 @@
-# Citation and charge-verdict stability: offline checkpoint (`improve/citation-stability`, from `ed42763`)
+# Citation and charge-verdict stability: corrected offline checkpoint (`improve/citation-stability`, from `ed42763`)
 
 **Offline only:** no model calls and no evaluation. Post-tuning: every case discussed has been seen before.
-- **Unchanged:** labels, scoring (v2.4), references, adjudications, the verified engine `2f54880`, `ed42763`, and all saved evidence.
-- **Kept:** the timeout fallback and the visa clarification. The visa clarification is not counted as a recovery anywhere here.
+- **Unchanged:** labels, scoring (v2.4), references, adjudications, `2f54880`, `ed42763`, and all saved evidence.
+- **Kept:** the timeout fallback and the visa clarification. The visa clarification is not counted as a recovery.
 
-## 1. Why citation detections appeared and disappeared
-Sources: the citation verdicts of the 12 citation plants in every saved run (up to 28 runs per case, from the earliest runs to rc-int-1).
+**Correction:** this replaces the first checkpoint (`6699dbd`).
 
-| Plant | Verdict history | Decided by |
-|---|---|---|
-| C001-CIT, C003-CIT, C013-CIT, C021-CIT, C037-CIT, C045-CIT, F036-C, FS05, DS12, G11 | `likely_mismatch` in nearly every run since the requirement rule existed | the **rule** (form field or subject statements), stable |
-| **C119-CIT** | `likely_mismatch` in 2 of 18 runs (rc-full-1, one early run), otherwise `needs_human_review` | the **model** alone: the rule said "the narrative does not document a removal" (undetermined), and the model's verdict decided the outcome |
-| **F051-C** | `likely_mismatch` in 1 of 13 runs | the **model** alone, over a record the rule found unresolved (the removal belongs to an unidentified member of the group) |
+## 0. The review blocker and the correction
+**The blocker.** The first checkpoint's `referencedHistory` treated three things together as proof that the subject had no prior removal:
+- a form value that defers to the narrative ("POSITIVE - See Narrative");
+- a dated list under "IMMIGRATION HISTORY";
+- no removal wording anywhere.
 
-**Mechanism.** `checkChargeRequirement` returned either a mismatch, a routing note, or nothing, and review.ts let the more cautious verdict win. So:
-- where the rule found the record **unresolved** or **undetermined**, a model `likely_mismatch` outranked it and became a detection;
-- where the model said `consistent`, the result was routing.
+The review showed that this list also passed under "Partial record only; older records were not available" and under "The following events concern his wife". **The underlying inference was unsound:**
+- the pointer does not say whose the listed history is;
+- a list does not say it is complete;
+- the absence of removal wording is not an affirmative result.
 
-The same record therefore gave different verdicts from run to run. The model also produced `likely_mismatch` alone on 9 cases without a citation plant across the saved runs (C013 ×5, C013-X1 ×4, C119-AMB ×2, C003-AMB ×2, F051-E, F075-X, DS10, C021-X1, F055-H), which were false-flag exposure.
+**The correction** (`447ace2`): the inference is removed entirely (`referencedHistory` and its branch).
+- **A contradiction now needs explicit evidence about the subject.** One of:
+  - **its own record check reporting no immigration history.** All of these must hold:
+    - there is exactly one IMMIGRATION HISTORY section;
+    - its body is a bare negative result ("None", "NONE FOUND", "No immigration history", "Negative");
+    - the check is reported within the three sentences before it and is attributable to the subject (a designation, or a one-person narrative);
+    - no other person, group member or group is named from the check to the heading;
+    - no removal is stated anywhere;
+  - **a statement of no removal attributable to the subject** ("The subject stated that he has never been removed or deported"). It must name no other person, the form must not record a removal, and no removal may be stated anywhere.
+- **Otherwise the requirement is undetermined (or unresolved), and the case goes to a person.**
+- **Person mentions:** a relative noun anywhere ("[REDACTED] wife's fingerprints") now counts as another person.
 
-## 2. The change (`lib/review/facts.ts`, `lib/review/review.ts`; +90 −8 lines in `lib`)
-**The requirement check now reports what the record establishes** (`outcome`):
-- **contradicted:** subject-specific evidence states the opposite → `likely_mismatch` from the rule;
-- **unresolved:** the deciding statements cannot be attributed to the subject (several people with redacted names, or an unidentified group member) → a person decides;
-- **undetermined:** the record neither supports nor contradicts the requirement → a person confirms;
-- **supported:** subject-specific support exists (`supportsRequirement`).
+**Result:** C119-CIT's new credit is gone. Its record has no subject-specific negative result, so it is undetermined and routed under every model verdict.
 
-**Two new source-based contradictions, each narrow:**
-1. **The subject's record defers to the narrative** ("POSITIVE - See Narrative", naming no removal). All of the following must hold:
-   - the narrative's IMMIGRATION HISTORY lists dated events;
-   - **no removal, removal order, deportation or reinstatement of anyone** is stated anywhere in the narrative.
+## 1. Why citation detections appeared and disappeared (unchanged finding)
+In every saved run (up to 28 per case):
+- **Stable:** 10 citation plants are decided by the rule in nearly every run.
+- **Model-only:** C119-CIT (2 of 18 runs) and F051-C (1 of 13) were credited only when the model's `likely_mismatch` outranked a rule result of "undetermined" or "unresolved".
+- **False-flag exposure:** the model also produced lone mismatches on 9 cases without a citation plant (C013 ×5, C013-X1 ×4, C119-AMB ×2, C003-AMB ×2, F051-E, F075-X, DS10, C021-X1, F055-H).
 
-   Then the subject's referenced record documents no removal, so a prior-removal charge is contradicted. Any removal wording anywhere, even an unidentified person's, leaves the case unresolved.
-2. **"IMMIGRATION HISTORY: None"** (or "NONE FOUND", or "No immigration history") counts only when the record check it reports is attributable to the subject under the existing attribution rules (a designation, or a one-person narrative) and no removal is stated anywhere. In a multi-person narrative it stays unresolved.
-
-**Entry-manner charges now also read the source's own entry statements** (the timeout fallback's person–event reader) for sentences the extraction did not list, under the same attribution rules.
-
-**Precedence in review.ts:**
-- A rule contradiction stands against a model "consistent", and is reported with the rule's evidence even when the model also says mismatch.
-- A model "mismatch" is not adopted when the record is unresolved, when the source supports the requirement (now also without an extraction), or when no statement or form value attributable to the subject contradicts the requirement. These go to a person, with the model's explanation attached.
-- Charges whose references record no requirement are unchanged: the model's verdict still decides there, because the code can establish nothing.
+## 2. What the branch now does (`lib`: +82 −10 vs `ed42763`)
+- **Three outcomes.** `checkChargeRequirement` reports one of:
+  - *contradicted*: subject-specific evidence → rule `likely_mismatch`;
+  - *unresolved*: the deciding statements cannot be attributed to the subject → a person decides;
+  - *undetermined*: the record neither supports nor contradicts → a person confirms;
+  - *supported* comes from `supportsRequirement`.
+- **Precedence** (`review.ts`, kept from the first checkpoint, as accepted):
+  - a rule contradiction stands against a model "consistent", and is reported with the rule's evidence;
+  - a model "mismatch" is not adopted when the record is unresolved, when the source supports the requirement (now also without an extraction), or when nothing attributable to the subject contradicts the requirement. These go to a person, with the model's explanation attached.
+- **Subject-specific contradictions recognised** (prior-removal charges):
+  - the subject's NEGATIVE form record (existing);
+  - the subject's own negative record check (new, as in section 0);
+  - an attributable statement of no removal (new).
+- **Entry-manner charges** also read the source's own entry statements, under the existing attribution rules (kept).
 
 ## 3. Before/after evidence (saved extractions; review samples stubbed)
-Each of the 89 cases in rc-full-1 and in rc-int-1 was replayed under `ed42763` and this branch, in four scenarios:
-- the recorded extraction;
-- every fact call failed;
-- a model that always says `likely_mismatch`;
-- a model that always says `consistent`.
+Every case in rc-full-1 (89) and rc-int-1 (89) was replayed under `ed42763` and this branch, in four scenarios: recorded extraction; every fact call failed; a model that always says "mismatch"; one that always says "consistent". The 24 other saved runs with extractions (rc-verify-1, rc-hedge-1) were also replayed.
 
-The last two bracket what the model can do to the citation.
+**Every change, realistic scenarios** (recorded, failed, "consistent"): only C-1 evidence on citation plants changes. No verdict, other finding or routing changes.
+- **C037-CIT:** the same rule mismatch now also cites S21 ("crossed the US/MEXICO Border illegally"), its own crossing statement. This holds in the recorded scenario (rc-full-1 and the other runs) and when the extraction fails.
+- **C021-CIT and DS12, when the extraction fails:** the same rule mismatch now also cites S4 and S9 (their own entry statements).
+- **G11 (all realistic scenarios):** the same rule mismatch now also cites S9, "The subject stated that he has never been removed or deported" (an explicit subject-specific negative result), alongside the NEGATIVE record.
 
-| Scenario (rc-full-1 runs; rc-int-1 runs the same unless noted) | Changed cases (any citation, finding or routing difference) |
-|---|---|
-| Recorded extraction | **C119-CIT:** `needs_human_review` → `likely_mismatch` (rule; evidence `history.immigration_record`, S25, S26). **C037-CIT:** still a rule mismatch; evidence adds S21 (its own crossing statement). *(rc-int-1: C119-CIT only)* |
-| Every fact call failed | C119-CIT as above. C021-CIT, C037-CIT, DS12: same rule mismatch, now also citing the subject's statement (S4, S21, S9) |
-| Model always "consistent" | C119-CIT as above (C037-CIT evidence too) |
-| Model always "mismatch" | **Citation plants:** the rule decides, with rule evidence. **F051-C:** → `needs_human_review` (unresolved). **Non-plants downgraded to a person:** C013-X1 and C037-X1 (the source supports the charge), C001-M3, C003-M3, C037-M3, C135-M3, DS11, F051-E, G09 (nothing attributable contradicts it) |
-
-Two further checks:
-- **The 24 other saved runs with recorded extractions** (rc-verify-1, rc-hedge-1): recorded scenario, only C037-CIT gains S21 as evidence. Under an always-"mismatch" model, G09 and C003-M3 are downgraded and the citation plants keep the rule's mismatch.
-- **No finding other than C-1 and no routing changed** in any realistic scenario (recorded, failed, consistent).
+**Every change, always-"mismatch" model:**
+- **Citation plants decided by the rule** keep `likely_mismatch` with the rule's evidence: C001-CIT, C003-CIT, C013-CIT, C021-CIT, C037-CIT, DS12, F036-C, FS05, G11.
+- **To a person (`needs_human_review`):**
+  - C119-CIT (undetermined) and F051-C (unresolved), both citation plants, lose their model-only credit;
+  - non-plants: C013-X1 and C037-X1 (the source supports the charge); C001-M3, C003-M3, C037-M3, C135-M3, DS11, F051-E, G09 (nothing attributable contradicts it).
+- **The 24 other runs:** G09 and C003-M3 go to a person; the plants keep the rule's verdict.
 
 **Model dependence** (cases whose final citation differs between the always-"mismatch" and always-"consistent" models):
 
 | | rc-full-1 runs | rc-int-1 runs |
 |---|---|---|
-| `ed42763` | 51 cases, including citation plants C119-CIT and F051-C | 48, including the same two |
-| This branch | **40, with no citation plant** | **39, with no citation plant** |
+| `ed42763` | 51 (citation plants C119-CIT, F051-C) | 48 (same) |
+| This branch | **40, no citation plant** | **39, no citation plant** |
 
-The 40 remaining are cases where:
-- the model's concern turns a supported requirement into routing (21; cautious, not a flag);
-- the charge has no reference entry (19). The code can establish nothing there, so the model still decides.
+The rest are supported requirements a model concern routes (21) and charges with no reference entry (19).
 
 **Scorer reading (reporting only; v2.4 citation outcome):**
 
 | | Citation plants detected |
 |---|---|
-| `ed42763` | **10/12** (recorded, failed, consistent) or **12/12** (always "mismatch") |
-| This branch | **11/12 in every scenario** |
+| `ed42763` | 10/12, or 12/12 when the model always says mismatch |
+| This branch | **10/12 in every scenario** (C119-CIT and F051-C routed) |
 
-## 4. What is now supported consistently, what is new, and what was lost
-- **Now consistent:** all 10 previously stable citation plants keep a rule `likely_mismatch` under both model verdicts. Their evidence comes from the rule (form field, plus the subject's own statement where the source has one).
-- **New, source-supported: C119-CIT**, now detected by the rule in every scenario (before: model-only, 2 of 18 runs). The basis:
-  - the subject's record defers to the narrative;
-  - the narrative's immigration history (S25, S26) runs from a 2004 B1 arrival through status changes, an overstay and denied reinstatement and appeal, with no removal;
-  - no removal of anyone appears anywhere;
-  - the narrative's own stated ground (S28) is 237(a)(1)(B) overstay.
+## 4. Exact remaining gains, losses and unresolved cases
+**Gains:**
+1. **Stability.** No citation-plant verdict depends on the model's citation verdict. The 10 rule-decided plants give the same verdict and basis under both model extremes and with or without an extraction.
+2. **False-flag protection.** A model-only mismatch no longer becomes a verdict on a charge with a recorded requirement unless the rule establishes a contradiction. That affects 9 non-plant cases under an always-"mismatch" model, and matches the historical exposure in section 1.
+3. **Subject-specific evidence on existing detections:** C037-CIT S21, C021-CIT S4, DS12 S9 (when the extraction fails), G11 S9.
 
-  **Interpretation dependency:** "See Narrative" is read as the subject's record being the narrative's history. In this three-person narrative, the history section's own redacted name is not attributed, but no removal exists for anyone, so the subject's referenced record documents none.
-- **Lost credit (deliberate): F051-C.** It was credited once (an early run), by the model, over an unresolved record. It now stays routed under every model verdict, as required: an unidentified group member may be the subject.
-- **False flags:** none new. Model-only mismatches on non-plant cases (C013-X1, C037-X1, F051-E, G09, the M3 variants, DS11) are now routed instead of flagged.
-- **Unresolved (routed by design):** F051-C. Cases whose charge has no reference entry still depend on the model.
+**No new detection.** C119-CIT's gain from the first checkpoint was removed with the unsound inference.
+
+**Losses** (model-only credit, which the precedence rules now refuse):
+- **C119-CIT:** undetermined; a person confirms the immigration history.
+- **F051-C:** unresolved; an unidentified group member may be the subject.
+
+Against the realistic replays the count is unchanged (10/12). Against a run where the model happened to say mismatch (rc-full-1's C119-CIT), it is one lower.
+
+**Unresolved:**
+- F051-C;
+- C119-CIT, which needs a subject-specific negative result the record does not give;
+- charges with no reference entry, which still depend on the model.
 
 ## 5. Tests and checks
-- **New:** `tests/charge-requirement.test.ts`, 7 tests. All 7 fail on `ed42763` and pass here. They cover:
-  - C119-CIT under both model verdicts and both extraction states;
-  - the referenced-record controls: a removal anywhere, no "See Narrative", no dated history;
-  - C013 and C013-X1 (supported; a model mismatch is downgraded);
-  - F051-C (and a named variant): routed under every verdict;
-  - "IMMIGRATION HISTORY: None": one person contradicts; three people do not;
-  - C037-CIT's entry manner from the source when the extraction fails;
-  - a silent record: routed.
-- **Changed existing test** (`tests/review.test.ts`, "fix 4 positive"): its C037 fixture states an illegal crossing in a one-person account, which the rule now establishes as a contradiction of the admission charge. The test now expects the rule's verdict and keeps the original premise in a variant with no manner statement (still "Unresolved").
-- **Suite and type-check:** 307/307 tests pass; type-check passes.
-- **Production build:** passes, BUILD_ID `SkddoAYtPjuoURK-Tsft8`.
-- **Reproduction scripts** (`replay-round3`, eight `repro-*`/`rules-smoke`): identical to `ed42763`; 0 not as expected. Visa probe: 0 not as expected. Timeout-fallback tests pass.
+- **`tests/charge-requirement.test.ts`:** 8 tests, all failing on `ed42763` and passing here.
+  - **C119-CIT:** routed under every verdict and extraction state.
+  - **The review's controls:**
+    - **partial history:** "Partial record only; older records were not available";
+    - **another person's history:** "The following events concern his wife";
+    - **ambiguous section ownership:** "[REDACTED] wife's fingerprints …" before "None"; two immigration-history sections; "None available for review"; three people (F055).
+  - **A removal anywhere:** unresolved.
+  - **An explicit subject-specific negative result:** "Subject has never been removed or deported" → rule mismatch citing it. The same sentence about "His brother", or about a redacted name in a three-person narrative, is not a mismatch.
+  - **The one-person "IMMIGRATION HISTORY: None"** (C037 with a reentry charge) → contradicted.
+  - **Unchanged from the first checkpoint:** the C013 and C013-X1 controls; F051-C and a named variant; C037-CIT's manner from the source when extraction fails; a silent record.
+- **Existing tests changed (`tests/review.test.ts`):**
+  - **"fix 4 positive":** see the first checkpoint.
+  - **"fix 4: a 'mismatch' that says the narrative does NOT document the requirement stays a mismatch" (C119-CIT):** its title is kept for traceability. It now expects `needs_human_review`, "Unresolved: the model's verdict is 'likely mismatch'…", because the record gives no subject-specific contradiction and a model mismatch cannot replace that.
+- **Suite and type-check:** 308/308 tests; type-check passes.
+- **Production build:** passes, BUILD_ID `ttHx9UikPQwfAwdnmfxbO`.
+- **Reproduction scripts** (`replay-round3`, eight `repro-*`/`rules-smoke`): identical to `ed42763`; 0 not as expected. Visa probe: 0 not as expected. Timeout-fallback, person–event and visa tests: 27/27.
 
 ## 6. Is a live comparison justified?
-- **Not needed to establish the citation behaviour.** The verdicts of the 12 citation plants no longer depend on the model's citation verdict, which the always-"mismatch" and always-"consistent" replays show by bracketing. The remaining live inputs are the extraction (entry statements) and timeouts, which the replays with recorded and failed extractions already cover.
-- **What a live run would add:** whether the review samples return verdicts outside the two bracketed ones in ways that matter. `needs_human_review` and `insufficient_information` rank below a rule contradiction, so they cannot change these plants.
-- **If you want confirmation anyway:** a bounded run of the 12 citation-plant cases plus C013, C013-X1, F051-E, G09 and C119-AMB, once each. I would not run another full evaluation for this change alone.
+**No.** The branch's effect on citation verdicts is bracketed by the two model extremes and the extraction states replayed above, and it adds no detection. A live run could only show what the model's citation verdict happens to be, which no longer decides any citation plant. This branch improves stability and guards against false flags; it does not raise the detection count.
