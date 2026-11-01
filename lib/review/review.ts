@@ -5,11 +5,12 @@ import { splitSentences, locateQuote } from "@/lib/text";
 import { sha } from "@/lib/hash";
 import { fieldQuality } from "@/lib/fieldQuality";
 import { computeCompletion } from "@/lib/completion";
-import { encounterTimeMatch, isRequestTime, runRules } from "./rules";
+import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
 import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
+import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
 import { PROMPT_VERSION, SYSTEM_PROMPT, buildUserPrompt } from "./prompt";
@@ -67,14 +68,9 @@ function invalidReason(e: unknown): string {
   return "not valid JSON";
 }
 
-/** Rewrite 12-hour clock times ("12:06 PM", "1:30 p.m.") as 24-hour times with "hours" ("1206 hours", "1330 hours"). */
-export function to24h(t: string): string {
-  return t.replace(/\b(\d{1,2}):(\d{2})\s*([ap])\.?\s?m\b\.?/gi, (_m, h: string, mm: string, ap: string) => {
-    let hh = Number(h) % 12;
-    if (/p/i.test(ap)) hh += 12;
-    return `${String(hh).padStart(2, "0")}${mm} hours`;
-  });
-}
+export { to24h } from "./times";
+/** The form's encounter date and hour, when recorded. */
+const encounterFormValue = (c: CaseRecord) => c.facts.find((f) => f.path === "encounter.date_time" && f.status === "present")?.value;
 /** A sentence that says a fact is not known ("does not recall when", "date of entry unknown"). */
 const UNKNOWN_STATEMENT_RE = /\b(unknown|not known|does not (know|remember|recall)|did not (know|remember|recall)|(could|can) ?not (recall|remember|say)|cannot (recall|remember|say)|unsure|not sure|no recollection|unable to (recall|remember|say|provide))\b/i;
 // A sentence that also gives a date or year states something known, whatever else it calls unknown.
@@ -423,6 +419,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // Model claims withheld because they were shown invalid (not merely unverifiable or unattributable): their facts, so
   // that a model routing reason that only repeats one of them is not kept as a reason to route.
   const invalidClaims: string[] = [];
+  // Whether a model claim about a time conflict was withheld as unsupported (see timeRoutingReasons).
+  let withheldTime = false;
   const invalidate = (iss: { title: string; explanation: string }, ev: EvidenceRef[]) => invalidClaims.push(`${iss.title} ${iss.explanation} ${ev.map((v) => v.fieldPath ?? "").join(" ")}`);
   out?.issues.forEach((iss, i) => {
     const ev = iss.evidence.map((x) => verifyEvidence(x, sentences, c));
@@ -490,16 +488,21 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       accounts.push({ sentenceIds: citedSentences.map((x) => x.id), detail: `${citedSentences.map((x) => x.id).join(" and ")} give different accounts (the model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"), and they may be about different people.` });
       return;
     }
-    // (1e) An encounter-time conflict must compare the encounter time. A time the narrative gives for a call or request
-    // ("at 2000 hours, a Trooper requested assistance") is not the encounter time (C012-M2; same exclusion as the time rule).
-    if (iss.type === "inconsistency" && verified.some((v) => v.fieldPath === "encounter.date_time")) {
-      const formTimes = new Set(verified.filter((v) => v.fieldPath === "encounter.date_time").flatMap((v) => v.quote?.match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? []));
-      // 12-hour times ("12:06 PM") are read as the 24-hour times the form and the time rule use ("1206 hours").
-      const cited = verified.filter((v) => v.sentenceId).map((v) => to24h(sentences.find((x) => x.id === v.sentenceId)!.text));
-      const claimed = [...new Set(to24h(`${iss.title} ${iss.explanation}`).match(/\b([01]\d|2[0-3])[0-5]\d\b(?!\/)/g) ?? [])].filter((t) => !formTimes.has(t) && cited.some((x) => x.includes(t)));
-      if (claimed.length && claimed.every((t) => cited.every((x) => !x.includes(t) || (isRequestTime(x, t) && encounterTimeMatch(x)?.[1] !== t)))) {
-        discarded.push({ title: iss.title, reason: `The narrative gives ${claimed.join(", ")} hours as the time of a call or request, not the encounter, so it cannot conflict with the form's encounter time.` });
-        invalidate(iss, verified);
+    // (1e) A time conflict must compare the same event (lib/review/times.ts): the form's encounter hour only with a time
+    // the narrative states for the encounter or arrest, and two narrative times only when they are one event's. A call,
+    // request, arrival or processing time is not the encounter time unless its clause says so ("arrived at 0900 hours
+    // and encountered …"); a narrative that never states the encounter time leaves it unresolved, not in conflict.
+    // Applies to "unclear" items too when they assert a time conflict; a missing-time observation is left alone.
+    {
+      const citesForm = verified.some((v) => v.fieldPath === "encounter.date_time");
+      const cited = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
+      const why = (citesForm || cited.length >= 2) ? unsupportedTimeClaim(`${iss.title}. ${iss.explanation}`, cited, citesForm, encounterFormValue(c)) : null;
+      if (why) {
+        discarded.push({ title: iss.title, reason: why.reason });
+        // Shown wrong: withheld, and reasons resting on it are not kept. Unresolved (a differing time the narrative ties to
+        // no event): withheld as a finding, but the question goes to a person.
+        if (why.invalid) { invalidate(iss, verified); withheldTime = true; }
+        else if (why.routeReason) humanReasons.push(why.routeReason);
         return;
       }
     }
@@ -703,7 +706,12 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       ...routedAccounts.map((g) => `${g.fieldPath ?? "entry.date entry.place entry.manner"} ${g.details.join(" ")}`),
     ]);
     for (const r of kept.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" depends only on a claim that was withheld as invalid, so it is not a reason to route.` });
-    humanReasons.push(...kept.reasons);
+    // Encounter-time concerns the source does not support (event-scoped; lib/review/times.ts).
+    const timeSupported = !!encounterTimeConflict(sentences, encounterFormValue(c), true) ||
+      findings.some((f) => f.evidence.some((e) => e.fieldPath === "encounter.date_time") && (f.category === "inconsistency" || f.category === "unclear"));
+    const timed = timeRoutingReasons(kept.reasons, timeSupported, withheldTime, narrativeStatesFormDate(sentences, encounterFormValue(c)));
+    for (const r of timed.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" is about an encounter-time conflict the narrative does not support (it does not state an encounter or arrest time that differs from the form's), so it is not a reason to route.` });
+    humanReasons.push(...timed.reasons);
   }
   // Completion covers every required check, not only the main model call (audit item 1).
   const completion = computeCompletion({ modelStatus, modelError, calls, elements, citation }, { citationExpected: selected.length > 0 });

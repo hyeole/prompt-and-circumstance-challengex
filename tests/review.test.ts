@@ -870,7 +870,11 @@ test("routing echo, negative controls: independent reasons, reasons naming a per
   assert.ok(!r.humanReview.reasons.includes("Entry manner conflict between form and narrative"));
   assert.ok(r.humanReview.reasons.includes("Multiple charges could apply to these facts"));
   assert.ok(r.humanReview.reasons.includes("It is unclear which subject the manner statement belongs to; a conflict is possible"));
-  assert.ok(r.humanReview.reasons.includes("Conflicting encounter time"), "time was never withheld, so it is kept");
+  // Changed with event-scoped time validation (branch improve/encounter-time): C013 states no encounter or arrest time
+  // (2000 hours: the Troopers' request; 2030: an agent's arrival; 2145: transport), so a bare encounter-time conflict is
+  // not supported by the source. The kept control (a stated encounter time 30+ minutes from the form's) is in
+  // tests/encounter-time.test.ts.
+  assert.ok(!r.humanReview.reasons.includes("Conflicting encounter time"), "no encounter time is stated, so the asserted conflict is unsupported");
 });
 test("routing echo, negative control: a claim withheld only because its quote could not be verified is not shown invalid, so its reason stays", async () => {
   const c = load("C013");
