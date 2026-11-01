@@ -5,7 +5,7 @@ import { fieldQuality } from "@/lib/fieldQuality";
 import { z } from "zod";
 import type { CaseRecord, EvidenceRef, Finding, Sentence } from "@/lib/types";
 import { locatePartial, locateQuote } from "@/lib/text";
-import { analyze } from "./person-event";
+import { analyze, mentions } from "./person-event";
 
 export const FACTS_PROMPT_VERSION = "facts-v2.0"; // v2.1 (shorter quotes) was measured in a bounded diagnostic and not adopted: see eval/ROUND2-DIAGNOSIS.md
 
@@ -668,18 +668,22 @@ export function checkChargeRequirement(
     const imm = field("history.immigration_record");
     const unattributedRemovals = removals.length ? [] : priorRemovals(sentences, facts, false);
     if (unattributedRemovals.length) return unattributedNote(unattributedRemovals.map((v) => v.s.id));
-    // The subject's record defers to the narrative ("POSITIVE - See Narrative") and names no removal; the narrative's
-    // immigration history is an enumerated, dated record; and no removal, removal order or reinstatement of anyone is
-    // stated anywhere in the narrative. The subject's referenced record then documents no removal: contradicted. Any
-    // removal wording anywhere (even an unidentified person's) leaves it unresolved above.
+    // Contradiction needs an explicit negative result about this subject: its own record check reporting no immigration
+    // history, or a statement that the subject was never removed. A dated history list, a form value that defers to the
+    // narrative ("See Narrative"), or the absence of removal wording establishes neither whose the record is, nor that
+    // it is complete, nor that no removal happened: those stay undetermined below.
+    const sentenceEv = (x: Sentence): EvidenceRef => ({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" });
+    const formEv = imm ? [{ kind: "field" as const, fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] : [];
+    const formNamesRemoval = !!imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|exclu)/i.test(imm.value);
     const none = removals.length ? null : noHistorySection(sentences, multiPerson, c);
     if (none && (!imm || !/^\s*POSITIVE\b/i.test(imm.value)))
-      return { status: "likely_mismatch", outcome: "contradicted", evidence: [...(imm ? [{ kind: "field" as const, fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] : []), ...none.map((x): EvidenceRef => ({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }))],
+      return { status: "likely_mismatch", outcome: "contradicted", evidence: [...formEv, ...none.map(sentenceEv)],
         explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the record checks on this subject report no immigration history (${none.map((x) => x.id).join(", ")}) and no removal is stated anywhere in the narrative.` };
-    const history = removals.length || !imm ? [] : referencedHistory(sentences, imm.value);
-    if (history.length)
-      return { status: "likely_mismatch", outcome: "contradicted", evidence: [{ kind: "field", fieldPath: imm!.path, quote: imm!.value, page: imm!.sourcePage, verified: true }, ...history.slice(0, 2).map((x): EvidenceRef => ({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }))],
-        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission. The subject's record is "${imm!.value}", and the narrative's immigration history (${history.map((x) => x.id).join(", ")}) lists dated events, none of them a removal; no removal of anyone is stated anywhere in the narrative.` };
+    const denial = removals.length || sentences.some((s) => isPriorRemoval(s.text)) ? undefined
+      : sentences.find((x) => ownDenial(x.text) && attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported" && !mentions(x).some((m) => m.kind === "other" || m.kind === "member" || m.kind === "group"));
+    if (denial && !formNamesRemoval)
+      return { status: "likely_mismatch", outcome: "contradicted", evidence: [...formEv, sentenceEv(denial)],
+        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but ${denial.id} states of this subject that there was none, and no removal is stated anywhere in the narrative.` };
     if (!removals.length && imm && /^\s*NEGATIVE\b/i.test(imm.value))
       return { status: "likely_mismatch", outcome: "contradicted", explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the immigration record is "${imm.value}" and the narrative describes no prior removal.`, evidence: [{ kind: "field", fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] };
     if (!removals.length && facts !== EMPTY_FACTS)
@@ -689,44 +693,30 @@ export function checkChargeRequirement(
 }
 
 /**
- * The narrative's immigration history when the subject's record defers to it: the record is POSITIVE, says "See
- * Narrative" and names no removal; an "IMMIGRATION HISTORY" heading is followed (before the next heading) by sentences
- * with at least one full date; and no sentence anywhere states a removal, a removal order or a reinstatement (of anyone,
- * affirmed or presupposed). Otherwise empty.
- */
-function referencedHistory(sentences: Sentence[], recordValue: string): Sentence[] {
-  if (!/^\s*POSITIVE\b/i.test(recordValue) || !/\bsee narrative\b/i.test(recordValue) || /\b(remov|deport|reinstat|exclu)/i.test(recordValue)) return [];
-  if (sentences.some((s) => isPriorRemoval(s.text) || /\b(reinstat\w*|ordered removed|order of (removal|deportation|exclusion)|deported|expedited removal)\b/i.test(s.text.replace(CURRENT_REMOVAL_RE, " ")))) return [];
-  const start = sentences.findIndex((s) => /\bIMMIGRATION HISTORY\s*:/i.test(s.text));
-  if (start < 0) return [];
-  const out: Sentence[] = [];
-  for (let i = start; i < sentences.length; i++) {
-    const s = sentences[i];
-    const body = i === start ? s.text.replace(/^[\s\S]*?IMMIGRATION HISTORY\s*:/i, "") : s.text;
-    if (i > start && /^\s*[A-Z][A-Z /&-]{3,}:/.test(s.text)) break;
-    if (/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(body)) out.push(s);
-  }
-  return out;
-}
-
-/**
  * An "IMMIGRATION HISTORY" section that reports nothing ("None", "NONE FOUND", "No immigration history"), when the
  * record check it reports is attributable to this subject (the existing attribution rules: a designation, or a
  * narrative about one person) and no removal of anyone is stated anywhere. Returns the heading and its body, or null.
  */
 function noHistorySection(sentences: Sentence[], multiPerson: boolean, c: CaseRecord): Sentence[] | null {
   if (sentences.some((s) => isPriorRemoval(s.text) || /\b(reinstat\w*|ordered removed|deported|expedited removal)\b/i.test(s.text.replace(CURRENT_REMOVAL_RE, " ")))) return null;
-  const i = sentences.findIndex((s) => /\bIMMIGRATION HISTORY\s*:/i.test(s.text));
-  if (i < 0) return null;
+  const sections = sentences.map((s, k) => (/\bIMMIGRATION HISTORY\s*:/i.test(s.text) ? k : -1)).filter((k) => k >= 0);
+  if (sections.length !== 1) return null; // none, or several (whose is which cannot be told)
+  const i = sections[0];
   const NONE = /^\s*(?:none(?: found)?|negative|no (?:prior )?immigration history(?: found)?|nothing found)\s*\.?\s*$/i;
   const inline = sentences[i].text.replace(/^[\s\S]*?IMMIGRATION HISTORY\s*:/i, "");
   const body = inline.trim() ? [sentences[i]] : sentences[i + 1] ? [sentences[i], sentences[i + 1]] : [];
   const text = inline.trim() ? inline : sentences[i + 1]?.text ?? "";
   if (!body.length || !NONE.test(text)) return null;
-  // Whose record check: the nearest earlier sentence that reports the check (fingerprints, records, systems, databases).
-  const check = sentences.slice(0, i).reverse().find((s) => /\b(fingerprint\w*|record checks?|records? checks?|systems?|databases?)\b/i.test(s.text));
-  if (!check || attributeStatement(sentences, check.id, multiPerson, undefined, c).outcome !== "supported") return null;
-  return [check, ...body];
+  // Whose record check: it must be reported within the three sentences before the heading (or in the heading's own
+  // sentence), be attributable to this subject, and neither it nor anything up to the heading may name another person,
+  // a group member or a group ("Record checks on his wife revealed:"). Otherwise the section's owner is not established.
+  let j = i;
+  while (j >= Math.max(0, i - 3) && !/\b(fingerprint\w*|record checks?|records? checks?|systems?|databases?)\b/i.test(sentences[j].text)) j--;
+  if (j < Math.max(0, i - 3)) return null;
+  const check = sentences[j];
+  if (attributeStatement(sentences, check.id, multiPerson, undefined, c).outcome !== "supported") return null;
+  if (sentences.slice(j, i + 1).some((s) => mentions(s).some((m) => m.kind === "other" || m.kind === "member" || m.kind === "group"))) return null;
+  return j === i ? body : [check, ...body];
 }
 
 /** Used when the fact-extraction call did not complete: checks rely on form fields only. */

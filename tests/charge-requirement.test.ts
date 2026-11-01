@@ -39,29 +39,38 @@ const verdicts = async (c: CaseRecord) => {
   return [...new Set(out)];
 };
 
-// ---- Contradicted by the subject's referenced record (C119-CIT) ----
-test("C119-CIT: the record defers to the narrative, whose dated history has no removal and no removal is stated anywhere: likely mismatch from the rule, whatever the model says", async () => {
+// ---- C119-CIT: no subject-specific evidence of an absence of removal → undetermined, whatever the model says ----
+const R = "[REDACTED (b)(6), (b)(7)(C)]";
+const HISTORY = /IMMIGRATION HISTORY:[\s\S]*?(?=INADMISIBILITY)/;
+test("C119-CIT: a 'See Narrative' record and a dated history list do not establish ownership, completeness or an absence of removal: routed under every model verdict", async () => {
   const c = load("C119-CIT");
-  assert.deepEqual(await verdicts(c), ["likely_mismatch"]);
+  assert.deepEqual(await verdicts(c), ["needs_human_review"]);
   const r = await reviewCase(c, model(c, "consistent"));
-  const f = r.findings.find((x) => x.id === "C-1")!;
-  assert.equal(f.source, "rule");
-  const history = sents(c).filter((s) => /Arrived into the United States as a B1|Changed status to H4/.test(s.text)).map((s) => s.id);
-  assert.deepEqual(r.citation.evidence.map((e) => e.sentenceId ?? e.fieldPath), ["history.immigration_record", ...history]);
-  assert.ok(r.citation.evidence.every((e) => e.verified));
-  assert.match(r.citation.explanation, /no removal of anyone is stated anywhere in the narrative/);
+  assert.ok(!r.findings.some((x) => x.id === "C-1"));
 });
 
-test("controls for the referenced-record check: any removal wording, no pointer to the narrative, or no dated history → not contradicted", async () => {
+test("controls: partial history, another person's history and a removal anywhere stay undetermined or unresolved", async () => {
   const c = load("C119-CIT");
-  // A removal stated anywhere, even of an unidentified other person: whose it is cannot be resolved.
+  const partial = withText(c, HISTORY, "IMMIGRATION HISTORY: Partial record only; older records were not available.\n\n8/11/2004 Arrived into the United States as a B1 Visitor Visa 9/13/2013 Visa Overstay\n\n");
+  assert.deepEqual(await verdicts(partial), ["needs_human_review"], "partial history");
+  const wife = withText(c, HISTORY, "IMMIGRATION HISTORY: The following events concern his wife.\n\n8/11/2004 Arrived into the United States as a B1 Visitor Visa 9/13/2013 Visa Overstay\n\n");
+  assert.deepEqual(await verdicts(wife), ["needs_human_review"], "another person's history");
   const removal = withText(c, "Third subject was identified as", "One of the subjects had been deported in 2012. Third subject was identified as");
-  assert.deepEqual(await verdicts(removal), ["needs_human_review"]);
-  // The record does not defer to the narrative.
-  assert.ok(!(await verdicts(withField(c, "history.immigration_record", "POSITIVE"))).includes("likely_mismatch"));
-  // No dated immigration history in the narrative.
-  const undated = withText(c, /IMMIGRATION HISTORY:[\s\S]*?(?=INADMISIBILITY)/, "IMMIGRATION HISTORY:\n\nSee attached record.\n\n");
-  assert.ok(!(await verdicts(undated)).includes("likely_mismatch"));
+  assert.deepEqual(await verdicts(removal), ["needs_human_review"], "a removal anywhere");
+});
+
+test("an explicit subject-specific negative result contradicts the charge; the same statement about someone else does not", async () => {
+  const c = load("C119-CIT");
+  const subject = withText(c, "IMMIGRATION HISTORY:", "Subject has never been removed or deported from the United States.\n\nIMMIGRATION HISTORY:");
+  assert.deepEqual(await verdicts(subject), ["likely_mismatch"]);
+  const r = await reviewCase(subject, model(subject, "consistent"));
+  const s = sents(subject).find((x) => x.text.startsWith("Subject has never been removed"))!.id;
+  assert.deepEqual(r.citation.evidence.map((e) => e.sentenceId ?? e.fieldPath), ["history.immigration_record", s]);
+  assert.equal(r.findings.find((x) => x.id === "C-1")!.source, "rule");
+  const brother = withText(c, "IMMIGRATION HISTORY:", "His brother has never been removed or deported from the United States.\n\nIMMIGRATION HISTORY:");
+  assert.deepEqual(await verdicts(brother), ["needs_human_review"]);
+  const unnamed = withText(c, "IMMIGRATION HISTORY:", `${R} has never been removed or deported from the United States.\n\nIMMIGRATION HISTORY:`);
+  assert.deepEqual(await verdicts(unnamed), ["needs_human_review"], "a redacted name in a three-person narrative: not attributable");
 });
 
 // ---- Supported: a model mismatch does not override it ----
@@ -89,6 +98,13 @@ test("a one-person narrative whose record check reports no immigration history c
   assert.deepEqual(await verdicts(one), ["likely_mismatch"]);
   const r = await reviewCase(one, model(one, "consistent"));
   assert.match(r.citation.explanation, /record checks on this subject report no immigration history/);
+  // Ambiguous ownership in a one-person narrative: the check is on someone else, or there are two history sections.
+  const wife = withText(one, /fingerprints and photograph were entered into the/, "wife's fingerprints and photograph were entered into the");
+  assert.ok(!(await verdicts(wife)).includes("likely_mismatch"), "his wife's record check");
+  const two = withText(one, "CRIMINAL HISTORY:", "IMMIGRATION HISTORY:\n\n06/01/2010 Encountered by ICE\n\nCRIMINAL HISTORY:");
+  assert.ok(!(await verdicts(two)).includes("likely_mismatch"), "two immigration-history sections");
+  const partial = withText(one, /IMMIGRATION HISTORY:\s*None/, "IMMIGRATION HISTORY: None available for review");
+  assert.ok(!(await verdicts(partial)).includes("likely_mismatch"), "'None available for review' is not a negative result");
   // F055: three subjects; "Record checks were ran on [REDACTED] … IMMIGRATION HISTORY: NONE FOUND": not attributable.
   const many = withField(withCharge(load("F055"), "8 U.S.C. 1326", "USC-1326"), "history.immigration_record", null);
   assert.ok(!(await verdicts(many)).includes("likely_mismatch"));

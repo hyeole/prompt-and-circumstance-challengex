@@ -643,9 +643,13 @@ test("fix 4: a 'mismatch' whose explanation says the narrative documents the req
 });
 
 test("fix 4: a 'mismatch' that says the narrative does NOT document the requirement stays a mismatch", async () => {
+  // Round 7 (corrected): for a charge whose requirement the references record, a mismatch needs a contradiction from
+  // subject-specific evidence. C119-CIT has none (a "See Narrative" record and an undated-ownership history list do not
+  // establish an absence of removal), so the model's "mismatch" goes to a person instead of becoming the verdict.
   const c = load("C119-CIT");
   const r = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation: "The selected charge requires a prior removal, but the narrative does not document one.", evidence: [{ field_path: "history.immigration_record" }] } }) }));
-  assert.equal(r.citation.status, "likely_mismatch");
+  assert.equal(r.citation.status, "needs_human_review");
+  assert.match(r.citation.explanation, /^Unresolved: the model's verdict is "likely mismatch"/);
 });
 
 test("fix 6: prior Border Patrol arrests about the subject while the record is NEGATIVE are a clarity item, not a removal conflict (F039)", async () => {
