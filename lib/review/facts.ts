@@ -479,11 +479,17 @@ const REPORTING_RE = /\b(?:asked|questioned|interviewed|said|stated|told|claimed
  * "for the first time" just after it. In "first entered in 2005 and last entered in 2016" each year takes its own entry
  * word's scope. Without a scope word: unspecified (treated like the last entry, as before).
  */
-export function entryScope(text: string, at: number): EntryScope {
+/** The entry word a fact at offset `at` belongs to: the nearest one before it, else the first one after it. */
+function entryTrigger(text: string, at: number): { trig: RegExpExecArray[]; k: number } | null {
   const trig = [...text.matchAll(ENTRY_TRIGGER_RE)];
-  if (!trig.length) return "unspecified";
-  let k = trig.findLastIndex((m) => m.index! <= at);
-  if (k < 0) k = 0;
+  if (!trig.length) return null;
+  const k = trig.findLastIndex((m) => m.index! <= at);
+  return { trig, k: k < 0 ? 0 : k };
+}
+export function entryScope(text: string, at: number): EntryScope {
+  const found = entryTrigger(text, at);
+  if (!found) return "unspecified";
+  const { trig, k } = found;
   const start = trig[k].index!, end = start + trig[k][0].length;
   const prevEnd = k > 0 ? trig[k - 1].index! + trig[k - 1][0].length : 0;
   const after = text.slice(end, Math.min(k + 1 < trig.length ? trig[k + 1].index! : text.length, end + 30));
@@ -500,8 +506,48 @@ function factOffset(v: Verified, year?: number | null): number {
   const qt = (v.ev.quote ?? "").search(ENTRY_TRIGGER_RE);
   return qt >= 0 ? q + qt : q;
 }
-// The source itself says a first entry is the only one, i.e. also the last.
-const ONLY_ENTRY_RE = /\bfirst and only\b|\bonly (?:time|entry)\b|\b(?:not|never)\s+(?:left|departed)\s+(?:the United States|the U\.S\.|the country)\b|\bremained in the United States (?:ever )?since\b|\bwithout (?:ever )?(?:leaving|departing)\b/i;
+// "Only entry" wording, read inside the entry's own clause.
+const ONLY_ENTRY_RE = /\bfirst and only\b|\bonly (?:time|entry)\b/i;
+// A statement that someone did not leave the United States afterwards. Whose it is and which event "since" refers to
+// are decided separately (firstEntryIsOnly).
+const NO_DEPARTURE_RE = /\b(?:(?:has|had|have)\s+)?(?:(?:never|not)\s+(?:left|departed)\s+(?:the United States|the U\.S\.|the country)|(?:remained|stayed) in the United States)\b/gi;
+const DEPARTURE_WORD_RE = /\b(?:returned|left|departed|removed|deported|went back|voluntar(?:y|ily))\b/i;
+/**
+ * Whether the source says that THIS first entry was also the last one. Either:
+ * - "only" wording inside the entry's own clause ("his first and only entry was in 2005"); or
+ * - a later clause saying the same person did not leave afterwards, tied to the same event:
+ *   - the same person: the clause's own subject is the statement's person (eventParticipant "self": a pronoun or "the
+ *     subject"), or it has no subject of its own and is coordinated with the entry clause ("… in 2005 and has never left
+ *     …"); no other person, group or group member is mentioned between the entry and that clause; and no departure,
+ *     return or removal comes between them;
+ *   - the same event: "since" refers to that entry: a bare "since", "since then / that time / that date / that entry",
+ *     "since his entry / arrival", or a date in the entry's own year. Without "since", or with another date, the clause
+ *     says nothing about this entry.
+ * Anything less leaves the entry as a first entry.
+ */
+function firstEntryIsOnly(s: Sentence, at: number, year?: number | null): boolean {
+  const found = entryTrigger(s.text, at);
+  if (!found) return false;
+  const t = s.text, entryAt = found.trig[found.k].index!;
+  if (ONLY_ENTRY_RE.test(eventSpan(t, entryAt))) return true;
+  const others = mentions(s).filter((m) => m.kind === "other" || m.kind === "member" || m.kind === "group");
+  return [...t.matchAll(NO_DEPARTURE_RE)].some((m) => {
+    const from = m.index!, to = from + m[0].length;
+    if (from <= entryAt) return false;
+    const verbAt = from + m[0].search(/\b(?:left|departed|remained|stayed)\b/i);
+    const between = t.slice(entryAt, from);
+    const p = eventParticipant(t, verbAt);
+    const elided = p === "unknown" && /,?\s+and\s*$/i.test(between);
+    if (!(p === "self" || elided)) return false;
+    if (others.some((o) => o.at > entryAt && o.at < from) || DEPARTURE_WORD_RE.test(between.slice(found.trig[found.k][0].length))) return false;
+    const since = t.slice(to).split(/[;.]/)[0].match(/^\s*(?:ever\s+)?since\b(.*)$/i);
+    if (!since) return false;
+    const ref = since[1].trim().replace(/,$/, "");
+    if (!ref || /^(?:then|that (?:time|date|entry|day)|(?:his|her|their) (?:first )?(?:entry|arrival)|(?:arriving|entering))\b/i.test(ref)) return true;
+    const refYear = ref.match(/^(?:(?:on|in)\s+)?(?:(?:[A-Z][a-z]+\s+)?(?:\d{1,2},?\s+)?|\d{1,2}\/\d{1,2}\/)((?:19|20)\d\d)\b/);
+    return !!refYear && !!year && +refYear[1] === year;
+  });
+}
 
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
@@ -536,7 +582,7 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // A first entry that the source says was the only one is also the last, unless another statement gives a last or
   // previous entry.
   if (!entries.some((x) => x.scope === "last" || x.scope === "previous"))
-    for (const x of entries) if (x.scope === "first" && ONLY_ENTRY_RE.test(x.v.s.text)) x.scope = "last";
+    for (const x of entries) if (x.scope === "first" && firstEntryIsOnly(x.v.s, factOffset(x.v, x.e.year), x.e.year)) x.scope = "last";
   // Comparable with the form's last entry, and with each other: last-entry statements (or unspecified ones, as before).
   const lastEntry = (x: { scope: EntryScope }) => x.scope === "last" || x.scope === "unspecified";
   const sameEvent = (a: { scope: EntryScope }, b: { scope: EntryScope }) => (lastEntry(a) && lastEntry(b)) || (a.scope === "first" && b.scope === "first");

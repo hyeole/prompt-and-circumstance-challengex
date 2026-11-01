@@ -88,6 +88,31 @@ test("a first entry the source says was the only one is the last entry, and is c
   assert.deepEqual(entryFindings(compare(ONE, [[only, 2005, "unknown"], [LAST, 2016, "without_inspection"]], { "entry.date": "08/20/2016" })), []);
 });
 
+// Paired: "did not leave since" evidence counts only when it is the same person's and refers to the same entry.
+// "compared" = the first entry was promoted to the last (an F-ENTRY-DATE against the form's 2010); "first" = it was not.
+const promoted = (sentence: string) => entryFindings(compare(ONE, [[sentence, 2005, "unknown"]], { "entry.date": "08/20/2010" })).includes("F-ENTRY-DATE") ? "compared" : "first";
+test("paired: another person's no-departure statement does not make the subject's first entry the last", () => {
+  // The review's reproduction: the clause is the wife's, and its date is another event.
+  assert.equal(promoted("The subject first entered the United States in 2005; his wife has never left the United States since 2016."), "first");
+  // Another person, with "since" alone (no date mismatch to lean on).
+  assert.equal(promoted("The subject first entered the United States in 2005 and his wife has never left the United States since."), "first");
+  // Another person who is not a relative: a redacted name as the clause's own subject.
+  assert.equal(promoted(`The subject first entered the United States in 2005; ${R} has never left the United States since.`), "first");
+  // A pronoun, but another person is mentioned in between: whose "he" is not established.
+  assert.equal(promoted("The subject first entered the United States in 2005 with his brother; he has never left the United States since."), "first");
+});
+test("paired: the subject's own no-departure statement, tied to this entry, does", () => {
+  assert.equal(promoted("The subject first entered the United States in 2005 and has never left the United States since."), "compared", "elided subject, coordinated with the entry");
+  assert.equal(promoted("The subject first entered the United States in 2005; he has never left the United States since 2005."), "compared", "own pronoun, since the entry's year");
+  assert.equal(promoted("The subject first entered the United States in 2005 and has remained in the United States since then."), "compared");
+  assert.equal(promoted("The subject stated that his first and only entry into the United States was in 2005."), "compared", "\"only\" inside the entry's own clause");
+});
+test("paired date scope: the same person's statement about another time does not tie it to this entry", () => {
+  assert.equal(promoted("The subject first entered the United States in 2005 and has never left the United States since 2016."), "first", "since another year");
+  assert.equal(promoted("The subject first entered the United States in 2005 and has never left the United States."), "first", "no \"since\": no reference to this entry");
+  assert.equal(promoted("The subject first entered the United States in 2005, returned to Mexico in 2008, and has never left the United States since."), "first", "a departure in between");
+});
+
 test("two statements conflict only about the same entry: last vs last (CAP-B2P), first vs first; not first vs last", () => {
   const a = "The subject stated that he last entered the United States in March 2014 near Hidalgo, Texas, by crossing the river without inspection.";
   const b = "During processing, the subject stated that his last entry into the United States was in March 2017, near Hidalgo, Texas.";

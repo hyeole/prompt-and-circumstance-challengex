@@ -1,5 +1,9 @@
 # Event scope and finding attribution: implementation report (branch `improve/scope-attribution`, from `72ba296`)
 
+> **Corrected version.** This revision supersedes the report committed with `e61b9c4`.
+> - **Promotion gap fixed (§1.1a).** An independent review found that the first-to-last promotion tested the whole sentence. In "The subject first entered the United States in 2005; his wife has never left the United States since 2016." it promoted the subject's first entry because of the wife's clause. The promotion now requires the evidence to concern the same person and the same entry event.
+> - **Changed-case count corrected.** The recorded replay changes **8** distinct cases, not 7: C037-AMB, C037-X1, C119-AMB, CAP-A1P, CAP-A2P, CAP-B1N, CAP-B1P, CAP-B2P.
+
 **What this is:** one code/test change for the two defects that capability-1 found on **both** engines, validated **offline only**.
 - **CAP-B1N:** a *first* entry was compared with the form's *last* entry.
 - **CAP-A2P:** a finding contradicted its own attribution.
@@ -26,11 +30,23 @@ In "first entered … in 2005 and last entered … in 2016", each year takes its
 | "Does the subject agree with the form" (suppresses unattributed statements) | any subject statement | the subject's last-entry statements only |
 
 **Unchanged:**
-- **Same event in the source:** a first entry counts as the last entry only when the source says so ("first and only", "has never left the United States since", "remained in the United States since"), and no other statement gives a last or previous entry.
+- **Same event in the source:** a first entry counts as the last entry only when the source says so **about that person and that entry** (§1.1a), and no other statement gives a last or previous entry.
 - **Unspecified scope** is still compared, as before.
 - **Corrected first answers:** handling is unchanged.
 - **Timeout fallback:** the fallback (`sourceEntryStatements`) already used only last or unspecified entries.
 - **Charge-requirement checks:** not scope-restricted. They ask whether *anything attributed to the subject* supports the charge's factual element, which is not a same-event comparison.
+
+### 1.1a When a first entry is also the last (corrected)
+**The defect.** In `e61b9c4` the promotion tested the **whole sentence** for "never left … since" wording. In "The subject first entered the United States in 2005; his wife has never left the United States since 2016.", `entryScope` correctly returned "first", but the wife's clause promoted the subject's entry to "last".
+
+**Now (`firstEntryIsOnly`).** The evidence must concern the same person and the same entry event. Otherwise the entry stays a first entry. Either:
+- **"Only" wording inside the entry's own clause:** "his first and only entry was in 2005"; or
+- **A later no-departure clause** ("has never left / not departed the United States", "remained in the United States") that meets all of these:
+  - **Same person:** its own subject is the statement's person (a pronoun or "the subject"), or it has no subject of its own and is coordinated with the entry clause ("… in 2005 and has never left …").
+  - **No one else in between:** no other person, group or group member is mentioned between the entry and the clause, and no departure, return or removal comes between them.
+  - **Same event:** "since" refers to that entry. Accepted: a bare "since", "since then / that time / that date / that entry", "since his entry / arrival", or a date in the entry's own year. No "since", or a different date, ties nothing to this entry.
+
+**No keyword exclusion.** The wife's clause is rejected because its subject is a third party, by the existing participant reading used for every event. Its date (2016) would also reject it on its own. Clauses about a redacted person, and pronouns after another person is mentioned, are rejected the same way.
 
 ### 1.2 Findings' attribution, evidence and explanation agree
 **The A2P defect.** The decision used one attribution and the explanation another:
@@ -53,7 +69,7 @@ In "first entered … in 2005 and last entered … in 2016", each year takes its
 1. **Appositive.** "the subject, [REDACTED]" is one person, not two candidates. Before, a pronoun after it was always ambiguous.
 2. **Antecedent chosen by position, not by text.** With identical redaction markers in one sentence ("Agent [REDACTED] questioned the subject, [REDACTED]"), `resolve` took the **agent's** marker. CAP-A2P resolved to "officer".
 
-## 2. Development reproductions and controls (`tests/scope-attribution.test.ts`, 15 tests)
+## 2. Development reproductions and controls (`tests/scope-attribution.test.ts`, 18 tests)
 The two reproductions are labelled **post-observation** in the file.
 
 | Test | On `72ba296` | Branch |
@@ -64,6 +80,9 @@ The two reproductions are labelled **post-observation** in the file.
 | A first and a last entry in one sentence: each year has its own scope | fail | pass |
 | A previous entry (later removed) is not compared | fail | pass |
 | A first entry with "has never left … since" is compared (same event); not when a last entry is also given | fail | pass |
+| **Paired, added in the correction:** another person's no-departure clause does not promote the subject's first entry. Covers the review's wife sentence ("since 2016"), the wife with a bare "since", a redacted person as the clause's subject, and "he" after "with his brother" | fail ³ | pass |
+| **Paired:** the subject's own linked statement does promote it. Covers the coordinated "and has never left … since", "he has never left … since 2005", "has remained … since then", and "his first and only entry … in 2005" | pass ³ | pass |
+| **Paired date scope:** the same person, but not this entry. Covers "since 2016", no "since" at all, and a return to Mexico in between | fail ³ | pass |
 | Same-event pairs: last/last (B2P) and first/first conflict; first/last does not | fail ¹ | pass |
 | Manner: a first entry by visa vs the form's EWI last entry → no finding; the last entry vs AIR → finding | fail | pass |
 | The pronoun's person could be someone else (gender mismatch; two men) → no finding, routed | fail | pass |
@@ -74,16 +93,23 @@ The two reproductions are labelled **post-observation** in the file.
 | Control CAP-B2N: corrected first answer, no conflict | pass | pass |
 | Control CAP-A2N: two unnamed men → routed, never a finding | pass | pass |
 
+³ Against the first version of this branch (`e61b9c4`). The "another person" and "date scope" tests fail there; the linked-statement test passes on both.
+
 ¹ These fail on `72ba296` only on the new explanation wording ("for the last entry") or on the new `entryScope` export. The behaviour they protect is the same on both.
 
 ## 3. Validation
 | Check | Result |
 |---|---|
-| Full suite | **323/323** (308 existing, unchanged, plus 15 new) |
+| Full suite | **326/326** (308 existing, unchanged, plus 18 new) |
 | Type-check (`tsc --noEmit`) | clean |
-| Production build (`next build`) | ok, BUILD_ID `fXLEF1MatRZEdUFBHMOy_` (not deployed) |
+| Production build (`next build`) | ok, BUILD_ID `p5PTXK07ZEcp4Sp4W99dq` (not deployed) |
 | Existing offline repro scripts (10) | 9 identical. `replay-round3`: F010/F010-D/F010-X S46 (a consular-notification sentence) is no longer "supported" (§1.2's stricter account basis; S45 names "The subject" and a separate redacted person). No finding depends on it |
-| **Offline replay of every saved result**: 1,412 results in 142 runs (main checkout plus the integration, visa and capability-1 worktrees), each in three modes | **recorded extraction:** 32 results change, in 7 cases. **Model citation forced to mismatch:** the same 7 cases, 32 results. **Every fact call failed (fallback):** 24 results, in 4 cases. Nothing else changes |
+| **Offline replay of every saved result**: 1,412 results in 142 runs (main checkout plus the integration, visa and capability-1 worktrees), each in three modes | Against `72ba296`:
+- **recorded extraction:** 32 results change, in **8** distinct cases (C037-AMB, C037-X1, C119-AMB, CAP-A1P, CAP-A2P, CAP-B1N, CAP-B1P, CAP-B2P);
+- **model citation forced to mismatch:** the same 8 cases, 32 results;
+- **every fact call failed (fallback):** 24 results, in 4 cases (C037-X1, CAP-A1P, CAP-A2P, CAP-B1P).
+
+Nothing else changes. **The corrected promotion changes no saved result** in any mode: the outputs are identical to `e61b9c4`'s, so no saved output relied on the promotion. The repro scripts are also identical to `e61b9c4`'s |
 
 The replays use the saved extraction, or a timeout where it failed, and a stubbed review sample. Model-written issues are therefore not replayed (§5).
 
@@ -170,6 +196,7 @@ They pass their checks, but a person would have to clear them.
 ## 8. Files
 - **Code:** `lib/review/facts.ts`, `lib/review/person-event.ts`.
 - **Tests:** `tests/scope-attribution.test.ts`.
+- **First commit:** `e61b9c4`. **Correction:** the commit carrying this report.
 - **Tooling:** `scripts/replay-all-saved.ts` (offline replay of any set of saved runs, resolving each run's own cases).
 - **Evidence** (in the bundle, not committed):
   - before/after replay outputs for the three modes;
