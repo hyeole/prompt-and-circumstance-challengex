@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { encounterTimeMatch, isRequestTime, runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
 import { attribution } from "./facts";
@@ -538,7 +538,10 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // removals and encounters stated in the narrative) still apply. The review stays partial (completion below).
   {
     if (factsSettled.ok) factsStatus = "ok";
-    const cmp = compareFacts(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, multiPerson);
+    // Without an extraction, the entry statements are read from the source text (person–event analysis). Every
+    // finding is then rule-based: no model output is used.
+    const cmp = compareFacts(c, sentences, factsSettled.ok ? factsSettled.v : { ...EMPTY_FACTS, entry_statements: sourceEntryStatements(sentences) }, multiPerson);
+    if (!factsSettled.ok) for (const ff of cmp.findings) ff.source = "rule";
     for (const ff of cmp.findings) {
       const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
       for (let i = findings.length - 1; i >= 0; i--) {
@@ -556,7 +559,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
 
   // Conflicts within one person's continuous account (deterministic; no comparison with the form and no claim that the
   // account is this subject's). A model inconsistency citing the same sentences is superseded; rule findings are kept.
-  for (const af of accountConflicts(sentences, factsSettled.ok ? nonUsEntrySentences(factsSettled.v, sentences) : new Set<string>())) {
+  // A chronology concern (an entry dated after the stated expiry of the visa used for it) is handled the same way.
+  for (const af of [...accountConflicts(sentences, factsSettled.ok ? nonUsEntrySentences(factsSettled.v, sentences) : new Set<string>()), ...visaChronologyConflicts(sentences)]) {
     const ids = af.evidence.map((e) => e.sentenceId);
     // A rule or fact-comparison finding (F-…) about the same sentences already says more (it is tied to this subject or
     // the form): keep it and skip this one. Only free-text model issues citing the same sentences are superseded.
@@ -572,7 +576,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // Accounts that may conflict with this record but cannot be attributed to its subject: routing items for a person,
   // grouped by the fact they concern, each showing the conflicting account. Not findings (no contradiction is
   // claimed), and never listed for a statement an existing finding already cites.
-  const citedByFinding = new Set(findings.flatMap((f) => f.evidence.map((e) => e.sentenceId).filter(Boolean)));
+  // A visa-chronology concern (F-ACCOUNT-VISA, F-ACCOUNT-VISA-2, …) compares an entry with its visa's expiry, not with the form, so it does not
+  // replace the account item comparing that entry with the form (or the citation qualification that item carries).
+  const citedByFinding = new Set(findings.filter((f) => !f.id.startsWith("F-ACCOUNT-VISA")).flatMap((f) => f.evidence.map((e) => e.sentenceId).filter(Boolean)));
   const accountGroups = new Map<string, { fieldPath?: string; sentenceIds: string[]; details: string[] }>();
   for (const a of accounts) {
     const ids = a.sentenceIds.filter((id) => sentences.some((x) => x.id === id) && !citedByFinding.has(id));

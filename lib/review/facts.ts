@@ -5,6 +5,7 @@ import { fieldQuality } from "@/lib/fieldQuality";
 import { z } from "zod";
 import type { CaseRecord, EvidenceRef, Finding, Sentence } from "@/lib/types";
 import { locatePartial, locateQuote } from "@/lib/text";
+import { analyze } from "./person-event";
 
 export const FACTS_PROMPT_VERSION = "facts-v2.0"; // v2.1 (shorter quotes) was measured in a bounded diagnostic and not adopted: see eval/ROUND2-DIAGNOSIS.md
 
@@ -872,6 +873,78 @@ export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new
   return findings;
 }
 
+/**
+ * A chronology concern, not a proven contradiction: an admission with a visa that the very next sentence says had already
+ * expired ("… last entered the United States on February 21, 2015 … as a H2B visa holder." / "That visa expired on March
+ * 20, 2012."). The sentences are linked by the explicit reference opening the second ("That visa" / "This visa"), not by
+ * matching facts. An admission as a visa holder normally needs a valid visa, so the dates need clarification, but they can
+ * both be right (automatic revalidation after a short trip to a contiguous country, a renewed or replacement visa), so the
+ * finding is "unclear" and goes to a person. Not raised when:
+ * - either sentence affirmatively explains it: the visa or status was renewed, replaced, re-issued, extended or
+ *   revalidated, or a new or replacement visa was obtained. A denial ("was never renewed", "it was not replaced") or a
+ *   renewal of something else ("after renewing his passport") is not an explanation;
+ * - the entry sentence names more than one visa ("That visa" is then ambiguous);
+ * - the speaker's own U.S. entry clause does not show the visa was used for admission ("as a … visa holder", "on /
+ *   using / presenting / under a … visa", "admitted as / on / with / under … visa"), states an illegal or uninspected
+ *   entry, or negates the visa. Carrying or possessing a visa ("carrying", "with an old … visa in his bag") is not entry as
+ *   a visa holder, so "entered … with a … visa" alone does not count;
+ * - the expiry is not strictly earlier at the precision both state (full dates when both give one, otherwise years).
+ * Like accountConflicts, this says nothing about whose account it is and makes no comparison with the form.
+ */
+const THAT_VISA_EXPIRED_RE = /^\s*(?:that|this)\s+visa\s+(?:had\s+)?expired\b([^.;]{0,40})/i;
+// "with a … visa" alone is not use: it also describes possession ("with an old B2 visa in his bag"). Only an admission
+// verb ("admitted … with a … visa") or an unambiguous use phrase counts. Between the determiner and "visa" only words
+// describing the visa may stand (at most three, none a preposition), so "on 06/10/2016 with a B1/B2 visa" is not "on a visa".
+const VISA_WORDS = String.raw`(?:(?!(?:with|in|at|on|to|from|and|of|for|by|after|before)\b)[\w/.-]+\s+){0,3}`;
+const VISA_USED_RE = new RegExp(String.raw`\bas\s+an?\s+${VISA_WORDS}visa holder\b|\b(?:on|using|presenting|presented|under)\s+(?:an?|his|her|their|the)\s+${VISA_WORDS}visa\b|\badmitted\s+(?:as|on|with|under)\s+(?:an?|his|her|their|the)\s+${VISA_WORDS}visa\b`, "i");
+// Affirmative explanations about the visa or status. The "and was …" form is read only in the expiry sentence, whose
+// subject is "That visa". A negation in the same clause before or inside the match makes it a denial, not an explanation.
+const VISA_EXPLANATION_RES = [
+  /\b(?:visa|status|it)\s+(?:was|had been|has been|were)\s+(?:\w+\s+)?(?:renewed|replaced|re-?issued|extended|revalidated)\b/gi,
+  /\b(?:renew(?:ed|al of|ing)|replace(?:d|ment of)|re-?issu(?:ed|ance of)|extend(?:ed|ing)?|extension of)\s+(?:the|his|her|their|that|this)\s+(?:\w+\s+)?(?:visa|status|stay)\b/gi,
+  /\b(?:new|replacement|renewed|re-?issued|another)\s+(?:[\w/-]+\s+){0,2}visa\b/gi,
+  /\b(?:automatic\s+)?(?:visa\s+)?revalidation\b/gi,
+];
+const AND_WAS_RE = /\b(?:and|but)\s+(?:was|had been|has been)\s+(?:\w+\s+)?(?:renewed|replaced|re-?issued|extended|revalidated)\b/gi;
+const DENIAL_RE = /\b(?:never|not|no|without|didn't|wasn't|hasn't|hadn't|neither|nor)\b/i;
+const explainsVisa = (text: string, expirySentence: boolean) =>
+  [...VISA_EXPLANATION_RES, ...(expirySentence ? [AND_WAS_RE] : [])].some((re) => [...text.matchAll(re)].some((m) => {
+    const before = text.slice(0, m.index!).split(/[.;,]/).pop()!.slice(-25);
+    return !DENIAL_RE.test(before + m[0]);
+  }));
+const statedDate = (t: string): { iso?: string; year: number } | undefined => {
+  const full = fullDates(t);
+  if (full.length === 1) return { iso: full[0], year: +full[0].slice(0, 4) };
+  const years = [...new Set(t.match(/\b(19|20)\d\d\b/g) ?? [])];
+  return !full.length && years.length === 1 ? { year: +years[0] } : undefined;
+};
+export function visaChronologyConflicts(sentences: Sentence[]): Finding[] {
+  const findings: Finding[] = [];
+  const ev = (x: Sentence, event: string): EvidenceRef => ctx({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" }, "unclear", event);
+  for (let i = 0; i + 1 < sentences.length; i++) {
+    const A = sentences[i], B = sentences[i + 1];
+    const m = B.text.match(THAT_VISA_EXPIRED_RE);
+    if (!m || explainsVisa(A.text, false) || explainsVisa(B.text, true) || (A.text.match(/\bvisas?\b/gi) ?? []).length !== 1) continue;
+    const clause = sentenceEvents(A.text, ENTRY_EVENT_RE).find((e) => speakersOwn(e) && !leavesUs(e.span) && usEntryText(e.span) &&
+      VISA_USED_RE.test(e.span) && statedManner(e.span) !== "without_inspection" && !/\b(not|never|without)\b[^.;]{0,30}\bvisa\b/i.test(e.span))?.span;
+    if (!clause) continue;
+    const entered = statedDate(clause), expired = statedDate(m[1]);
+    if (!entered || !expired) continue;
+    const earlier = entered.iso && expired.iso ? expired.iso < entered.iso : expired.year < entered.year;
+    if (!earlier) continue;
+    const when = (d: { iso?: string; year: number }) => d.iso ?? String(d.year);
+    findings.push({
+      // One finding per entry/expiry pair; each needs its own id (the first keeps the plain id).
+      id: findings.length ? `F-ACCOUNT-VISA-${findings.length + 1}` : "F-ACCOUNT-VISA", category: "unclear", title: "Entry dated after the stated expiry of the visa used: clarification needed",
+      explanation: `${A.id} states an entry into the United States on ${when(entered)} as a visa holder, but ${B.id} says that visa expired on ${when(expired)}, before that entry. This is a chronology concern, not a proven contradiction: an admission as a visa holder normally requires a valid visa, so one of the dates may be wrong, but the narrative may be incomplete (for example, re-entry on an expired visa after a short trip to Canada or Mexico, or a renewed visa it does not mention). The narrative does not establish whose account this is, so it is not compared with the form. A person must clarify the dates and decide whose account it is.`,
+      evidence: [ev(A, "us_entry"), ev(B, "Visa expiry")], referenceIds: ["E1"], needsHumanReview: true,
+      humanReviewReason: "The entry date and the stated expiry of the visa used for it need clarification; a person must decide which is correct and whose account it is.",
+      source: "rule", severity: "medium",
+    });
+  }
+  return findings;
+}
+
 // ---- Structured attribution (round 2) ----
 /** Full dates (year-month-day) a sentence states: "06/09/2011", "May 5, 2014"; "the day after 06/08/2011" gives 06/09/2011. */
 // Only real calendar dates count: 02/30/2011, 13/01/2011 and June 31, 2011 are not dates (and are not silently moved to
@@ -945,3 +1018,26 @@ export function exactEntryLink(c: CaseRecord, sentences: Sentence[], id: string)
  */
 export const describesUsEntry = (sentences: Sentence[]) =>
   sentences.some((x) => usEntryText(x.text) &&!/\b(never|not|did not|didn't)\b[^.;]{0,25}\b(enter\w*|cross\w*|arriv\w*)\b/i.test(x.text));
+
+/**
+ * U.S. entry statements read from the source text by the person–event analysis, for when the fact extraction did not
+ * complete: affirmed entries whose scope is the last (or unspecified) entry, in a clause that names the United States or
+ * its border. The year is given only when the clause states exactly one; the manner only from the clause's own wording.
+ * The person is "subject" only for a designated subject (or a pronoun chain to one), "other" for a companion, third
+ * party or official, and "unclear" otherwise: the comparison's own attribution rules then decide, as for extracted
+ * statements. Nothing here comes from a model.
+ */
+// The U.S. side of the southern border named as the place crossed ("the US/MEXICO Border", "the International
+// Boundary", "the Rio Grande", "into Naco, Arizona"), besides the wording usEntryText accepts.
+const US_BORDER_CROSSING_RE = /\b(?:U\.?S\.?|United States)\s*\/\s*Mexic\w*\s+(?:border|boundary)\b|\bInternational Boundary\b|\bRio Grande\b|\binto\s+(?:[A-Z][a-z]+\s+){1,3}?(?:\w+,\s+)?(?:Arizona|Texas|California|New Mexico|AZ|TX|CA|NM)\b/i;
+export function sourceEntryStatements(sentences: Sentence[]): FactsOutput["entry_statements"] {
+  return analyze(sentences)
+    .filter((e) => e.type === "entry" && e.polarity === "affirmed" && (e.scope === "last" || e.scope === "unspecified") && (usEntryText(e.span) || US_BORDER_CROSSING_RE.test(e.span)) && !leavesUs(e.span))
+    .map((e) => ({
+      sentence_id: e.sentenceId, quote: e.span, event: "us_entry" as const, country: "United States",
+      year: e.years.length === 1 ? e.years[0] : null, manner: (statedManner(e.span) ?? "unknown") as "without_inspection" | "admitted" | "unknown",
+      person: e.who.identity === "subject" ? "subject" as const : ["other", "officer"].includes(e.who.identity) ? "other" as const : "unclear" as const,
+      uncertainty: "stated" as const,
+    }))
+    .filter((e, i, all) => all.findIndex((x) => x.sentence_id === e.sentence_id && x.quote === e.quote) === i);
+}

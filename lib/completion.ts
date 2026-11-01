@@ -21,7 +21,7 @@ export function computeCompletion(r: Pick<ReviewResult, "modelStatus" | "modelEr
   // The fact call may be retried once ("facts-retry"); it is complete if either attempt succeeded.
   const factCalls = (r.calls ?? []).filter((c) => c.role === "facts" || c.role === "facts-retry");
   const lastFacts = factCalls.at(-1);
-  if (lastFacts && !factCalls.some((c) => c.status === "ok")) failed.push({ check: "Fact extraction", reason: `did not complete (${lastFacts.error ?? lastFacts.status}); entry and history comparisons did not run` });
+  if (lastFacts && !factCalls.some((c) => c.status === "ok")) failed.push({ check: "Fact extraction", reason: `did not complete (${lastFacts.error ?? lastFacts.status}); entry and history comparisons used only statements read from the source text by rules` });
   const omitted = (r.elements ?? []).filter((e) => e.status === "not_checked");
   if (omitted.length && r.modelStatus === "ok") failed.push({ check: "Required elements", reason: `no output for ${omitted.map((e) => e.elementId).join(", ")}` });
   if (opts.citationExpected && r.citation?.status === "not_checked") failed.push({ check: "Citation check", reason: "did not run" });
