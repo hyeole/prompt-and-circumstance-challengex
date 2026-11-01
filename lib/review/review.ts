@@ -613,7 +613,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         status = "needs_human_review";
         explanation = `The record does not establish a key fact required by the selected charge. ${explanation}`;
       }
-      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && factsSettled.ok && supportsRequirement(c, sentences, factsSettled.v, reqs, multiPerson)) {
+      // Source-supported support settles it even without an extraction (the form record, or a removal the source attributes).
+      if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && supportsRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson)) {
         // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch.
         status = "needs_human_review";
         explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
@@ -623,6 +624,19 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         // record establishes the requirement only through verified evidence (checked just above). Without it, unresolved.
         status = "needs_human_review";
         explanation = `Unresolved: the model's verdict is "likely mismatch", but its own explanation says the record supports or documents what the charge requires, and no verified statement in the record establishes that requirement. A person must decide. Model explanation: ${explanation}`;
+      }
+      if (req?.outcome === "unresolved" && status === "likely_mismatch") {
+        // The record cannot say whose the deciding statements are (several people with redacted names, or an
+        // unidentified member of a group). A model "mismatch" cannot settle that: the case stays with a person.
+        status = "needs_human_review";
+        explanation = `${req.explanation} The model's "likely mismatch" verdict is not adopted, because the record does not resolve this. Model explanation: ${explanation}`;
+      }
+      if (reqs && status === "likely_mismatch" && req?.status !== "likely_mismatch") {
+        // For a charge whose requirement the references record, a mismatch needs a contradiction established from
+        // subject-specific evidence (the rule above). Without one, the record neither establishes nor contradicts the
+        // requirement as far as the code can attribute it: the model's concern goes to a person, not into a verdict.
+        status = "needs_human_review";
+        explanation = `Unresolved: the model's verdict is "likely mismatch", but no statement or form value attributable to this subject contradicts what the charge requires. A person should decide. Model explanation: ${explanation}`;
       }
       if (status === "consistent") {
         // A "consistent" verdict needs verified support (audit item 6): a verified statement of the fact the charge
@@ -641,7 +655,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const rank = { not_checked: -1, consistent: 0, insufficient_information: 1, needs_human_review: 2, likely_mismatch: 3 } as const;
     // On an equal verdict, the rule's verified evidence replaces model evidence that could not be verified (C037-CIT:
     // the model said "mismatch" without verifiable evidence while the rule established it from the form).
-    if (req && (rank[req.status] > rank[status] || (req.status === status && evidence.length === 0 && req.evidence.length > 0))) {
+    // A contradiction the rule established from subject-specific evidence is reported with that evidence, whatever the
+    // model's own verdict and evidence were, so the same record always yields the same verdict and basis.
+    if (req && (rank[req.status] > rank[status] || (req.status === status && evidence.length === 0 && req.evidence.length > 0) || (req.outcome === "contradicted" && status === "likely_mismatch"))) {
       status = req.status;
       explanation = req.explanation + (out ? "" : " (Checked from form fields and rules; the model check was unavailable.)");
       evidence = req.evidence;

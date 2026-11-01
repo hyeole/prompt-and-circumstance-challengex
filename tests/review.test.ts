@@ -721,9 +721,19 @@ test("fix 4 negative control: 'the narrative describes no prior removal' is not 
   assert.equal(r.citation.status, "likely_mismatch");
 });
 test("fix 4 positive: 'requires admission, which the narrative documents' without verified support is unresolved", async () => {
+  // Round 7: C037's own one-person account states an illegal crossing, which the rule now reads from the source and which
+  // contradicts an admission charge. The model's self-contradicting wording no longer decides: the rule's verdict does.
   const r = await mismatch(admissionCase(), "The charge requires lawful admission, which the narrative documents, but the dates are unclear.");
-  assert.equal(r.citation.status, "needs_human_review");
-  assert.match(r.citation.explanation, /^Unresolved/);
+  assert.equal(r.citation.status, "likely_mismatch");
+  assert.ok(r.findings.some((f) => f.id === "C-1" && f.source === "rule"));
+  // The original premise (nothing in the record establishes or contradicts the requirement) still gives "unresolved".
+  const silent = admissionCase();
+  const text = silent.narrative.text.replace(/stated that he and five others crossed the US\/MEXICO Border illegally, into Naco, Arizona, on the afternoon of 06\/15\/2009\./, "stated that he and five others reached Naco, Arizona, on the afternoon of 06/15/2009.");
+  assert.notEqual(text, silent.narrative.text);
+  const c = { ...silent, narrative: { text } } as CaseRecord;
+  const r2 = await reviewCase(c, fake({ review: review({ citation: { status: "likely_mismatch", explanation: "The charge requires lawful admission, which the narrative documents, but the dates are unclear.", evidence: [{ sentence_id: sid(c, "reached Naco, Arizona"), quote: "reached Naco, Arizona" }] } }) }));
+  assert.equal(r2.citation.status, "needs_human_review");
+  assert.match(r2.citation.explanation, /^Unresolved/);
 });
 
 test("C037-CIT: a model 'mismatch' without verifiable evidence adopts the rule's verified evidence when the rule finds the same mismatch", async () => {
