@@ -372,17 +372,26 @@ export function formEntryMode(value: string): "foot" | "vehicle" | "boat" | "air
  * (the border, a river, a bridge, a fence, a port of entry, the United States or a U.S. border state), and is not an entry
  * into another country or a departure from the United States.
  */
-const CLAUSE_SPLIT_RE = /;\s+|:\s+|\s+and that\s+|,\s*(?:after which|whereupon|where)\s+|,?\s+(?:and\s+|but\s+)?then\s+|,\s*(?:and|but)\s+(?=(?:a|an|the|he|she|they|later|after|was|were|had|walked|drove|took|travel\w*|spent|stayed|worked|lived|went|moved|got)\b)/i;
+const CLAUSE_SPLIT_RE = /;\s+|:\s+|\s+and that\s+|\s+but\s+(?=(?:he|she|they|walked|waded|swam|crossed|entered|climbed|instead|rather)\b)|,\s*(?:after which|whereupon|where)\s+|,?\s+(?:and\s+|but\s+)?then\s+|,\s*(?:and|but)\s+(?=(?:a|an|the|he|she|they|later|after|was|were|had|walked|drove|took|travel\w*|spent|stayed|worked|lived|went|moved|got)\b)/i;
 const CROSS_WORD_RE = /\b(?:cross\w*|across|enter\w*|re-?enter\w*|waded|swam|climbed)\b/i;
 const BORDER_OBJECT_RE = /\b(?:border|boundary|river|Rio Grande|bridge|fence|wall|port of entry|United States|U\.S\.|Arizona|New Mexico|Texas|California)\b/i;
+// Only an affirmed, actual crossing is a crossing. Removed before testing for a crossing word:
+// - infinitives ("allowing him to enter", "planned to cross", "tried to cross");
+// - what followed a crossing ("after crossing, he was taken by car …", "once across", "having crossed");
+// - negated or denied crossings ("never crossed", "did not cross", "denied crossing", "has not entered");
+// - hypothetical crossings ("if he had crossed", "would have crossed", "could cross").
+const NOT_AFFIRMED_CROSSING_RE = /\b(?:never|not|n't|no longer|denied|denies|deny|denying|refused|would|could|might|may|will|should|if\s+(?:he|she|they|the subject|anyone)|unless\s+(?:he|she|they))\s+(?:(?:have|has|had|ever|been|be|he|she|they|the subject|that he|that she)\s+){0,3}(?:(?:re-?)?(?:cross\w*|enter\w*)|across|waded|swam|climbed)\b/gi;
+const affirmedCrossingText = (cl: string) => cl.replace(/\bto (?:re-?)?(?:enter|cross)\b/gi, " ")
+  .replace(/\b(?:after|once|upon|having|since|before)\s+(?:(?:re-?)?(?:cross\w*|enter\w*)|across)\b/gi, " ")
+  .replace(NOT_AFFIRMED_CROSSING_RE, " ");
 export function crossingClauses(text: string): string[] {
   // "allowing him to enter", "permission to cross": an infinitive is not a crossing.
   // "after crossing, he was taken by car …", "once across", "having crossed": the clause is about what followed (C001).
-  return text.split(CLAUSE_SPLIT_RE).filter((cl) => CROSS_WORD_RE.test(cl.replace(/\bto (?:re-?)?(?:enter|cross)\b/gi, " ").replace(/\b(?:after|once|upon|having|since|before)\s+(?:(?:re-?)?(?:cross\w*|enter\w*)|across)\b/gi, " ")) && BORDER_OBJECT_RE.test(cl) && !OTHER_COUNTRY_RE.test(cl) && !leavesUs(cl));
+  return text.split(CLAUSE_SPLIT_RE).filter((cl) => CROSS_WORD_RE.test(affirmedCrossingText(cl)) && BORDER_OBJECT_RE.test(cl) && !OTHER_COUNTRY_RE.test(cl) && !leavesUs(cl));
 }
 const MODE_WORDS = [
   ["foot", /\b(?:on foot|afoot|walk(?:ed|ing)?|wad(?:ed|ing)|swam|swimming|hiked|climbed)\b/i],
-  ["vehicle", /\b(?:drove|driving|driven|by (?:car|vehicle|truck|bus)|(?:in|inside) (?:a|his|her|the) (?:car|truck|vehicle|van|bus|trunk|trailer)|tractor-trailer|trunk of)\b/i],
+  ["vehicle", /\b(?:drove|driving|driven|by (?:car|vehicle|truck|bus)|(?:in|inside|in the back of|in the bed of|under the seat of) (?:a|his|her|the) (?:car|truck|pickup(?: truck)?|vehicle|van|bus|trunk|trailer)|tractor-trailer|trunk of)\b/i],
   ["boat", /\b(?:boat|raft|vessel|panga)\b/i],
   ["air", /\b(?:flew|by air|on a (?:flight|plane))\b/i],
 ] as const;

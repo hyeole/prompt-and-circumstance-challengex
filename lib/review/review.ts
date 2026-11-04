@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, statesRemovalOrderOnly, isPriorRemoval, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, statesRemovalOrderOnly, isPriorRemoval, orderExplicitlyUnexecuted, NEGATED_REMOVAL_RE, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -510,13 +510,17 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // (1g) Narrative statements compared with each other about removal (diag-2 EG08: "a removal order was issued, yet no
     // removal occurred"; "states he has never been deported, yet an immigration judge ordered removal"). An order is not
-    // a removal or deportation, so an order is compatible with "never deported", "no removal" or "the order was never
-    // executed". Such a claim needs a cited statement of a COMPLETED removal; one that rests on an order alone is withheld.
-    // Claims citing a completed removal (a genuine "removed in 2015" vs "never deported") are untouched.
+    // a removal or deportation, so an order is compatible with "never deported", "no removal", or "the order was never
+    // executed". Only that inference is withheld: every cited statement is either a removal order or such a negative
+    // statement, at least one of each, and none describes a completed removal (an executed order counts as one).
+    // Genuine contradictions about an order (two dates for the same order, its execution state, or an explicitly named
+    // different owner) cite two order statements, or an executed order, and are kept (review of 06278ed).
     if (iss.type === "inconsistency" && !verified.some((v) => v.fieldPath) && /\b(?:remov\w*|deport\w*)\b/i.test(`${iss.title} ${iss.explanation}`)) {
       const citedS = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
-      const orderOnly = citedS.some((s) => statesRemovalOrderOnly(s.text) || /\border(?:ed)?\b[^.;]{0,60}\bremov/i.test(s.text));
-      if (orderOnly && !citedS.some((s) => isPriorRemoval(s.text))) {
+      const negative = (t: string) => NEGATED_REMOVAL_RE.test(t) || orderExplicitlyUnexecuted(t) || /\b(?:never|not)\s+(?:\w+\s+){0,2}?(?:departed|left)\b/i.test(t);
+      const order = (t: string) => !negative(t) && (statesRemovalOrderOnly(t) || /\border(?:ed)?\b[^.;]{0,60}\bremov/i.test(t));
+      if (citedS.length >= 2 && !citedS.some((s) => isPriorRemoval(s.text)) && citedS.some((s) => order(s.text)) && citedS.some((s) => negative(s.text)) &&
+          citedS.every((s) => order(s.text) || negative(s.text)) && citedS.filter((s) => order(s.text)).length === 1) {
         discarded.push({ title: iss.title, reason: "The cited statements describe a removal order, not a completed removal; an order is compatible with a statement that the person was never removed or deported, or that the order was not executed." });
         invalidate(iss, verified);
         return;

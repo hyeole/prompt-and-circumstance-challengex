@@ -33,3 +33,13 @@ test("agency titles are not removal events; real removals near them still are", 
   assert.equal(isPriorRemoval("Deportation Officer [X] confirmed that the subject was removed to Mexico on 05/02/2016."), true);
   assert.equal(statesRemovalOrderOnly("An immigration judge ordered the subject removed in 2015."), true);
 });
+test("crossing polarity (helper): only affirmed, actual crossings are crossing clauses", () => {
+  for (const t of ["The subject never crossed the border in a truck.", "The subject denied crossing the border in a truck.", "He has not entered the United States since 2019 by any means.",
+    "If he had crossed the border in a truck, he would have paid more.", "He planned to cross the border in a truck.", "He tried to cross the border in a truck but was turned back.",
+    "The subject denied crossing the border near Columbus, New Mexico."])
+    assert.deepEqual(crossingClauses(t), [], t);
+  assert.equal(crossingMode("The subject did not cross the border in a truck but walked across near Sasabe, Arizona."), "foot");
+  assert.deepEqual([...namedStates(crossingClauses("The subject did not cross near Columbus, New Mexico, but crossed near Sasabe, Arizona.").join(" "))], ["Arizona"]);
+  assert.equal(crossingMode("He admitted that he crossed the border in the back of a truck."), "vehicle");
+  assert.equal(crossingMode("He has never been inspected and crossed the river on foot near Hidalgo, Texas."), "foot", "negation of something else does not cancel the crossing");
+});
