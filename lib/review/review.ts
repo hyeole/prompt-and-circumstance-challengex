@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -227,6 +227,17 @@ function logged<T extends { attempts: number }>(log: CallLog[], role: string, p:
       throw e;
     },
   );
+}
+
+/**
+ * Whether a model's charge concern names only facts the charge's requirement does not depend on: for a manner-based charge,
+ * the entry place, date or time, with no wording about the manner, inspection, admission or documents of entry.
+ */
+function concernsOnlyOtherFacts(explanation: string, reqs?: Requires): boolean {
+  if (!reqs?.entryManner) return false;
+  const other = /\b(?:place|location|located|city|state|date|year|month|time|hour|when)\b/i.test(explanation);
+  const manner = /\b(?:manner|inspect\w*|admi\w*|parole\w*|visa|illegal\w*|without|EWI|port of entry|crossed|crossing|walk\w*|wad\w*|swim|swam|document\w*|status|overstay\w*)\b/i.test(explanation);
+  return other && !manner;
 }
 
 export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJSON, cancel?: AbortSignal): Promise<ReviewResult> {
@@ -548,7 +559,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     if (factsSettled.ok) factsStatus = "ok";
     // Without an extraction, the entry statements are read from the source text (person–event analysis). Every
     // finding is then rule-based: no model output is used.
-    const cmp = compareFacts(c, sentences, factsSettled.ok ? factsSettled.v : { ...EMPTY_FACTS, entry_statements: sourceEntryStatements(sentences) }, multiPerson);
+    const cmp = compareFacts(c, sentences, factsSettled.ok ? withSourceEntries(sentences, factsSettled.v) : { ...EMPTY_FACTS, entry_statements: sourceEntryStatements(sentences) }, multiPerson);
     if (!factsSettled.ok) for (const ff of cmp.findings) ff.source = "rule";
     for (const ff of cmp.findings) {
       const srcs = new Set(ff.evidence.map((e) => e.sentenceId ?? e.fieldPath));
@@ -623,9 +634,16 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       }
       // Source-supported support settles it even without an extraction (the form record, or a removal the source attributes).
       if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && supportsRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson)) {
-        // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch.
-        status = "needs_human_review";
-        explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
+        // The record states the fact the charge depends on; a model "mismatch" here is uncertainty, not a mismatch. When
+        // the model's only stated concern is a fact this charge does not depend on (an entry place or date for a
+        // manner-based charge: diag-1 DG10), the check stays consistent; that conflict is reported as its own finding.
+        if (concernsOnlyOtherFacts(out.citation.explanation, reqs)) {
+          status = "consistent";
+          explanation = `The record states the fact this charge depends on. The model's concern is about a fact this charge does not depend on, and is reported as its own finding if supported. Model explanation: ${explanation}`;
+        } else {
+          status = "needs_human_review";
+          explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
+        }
       }
       if (req?.status !== "likely_mismatch" && status === "likely_mismatch" && claimsRequirementSupport(out.citation.explanation, reqs)) {
         // The verdict and the model's own explanation disagree (F075-X, C013-X1). The wording is not support: the
@@ -689,11 +707,13 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   // unresolved conflict about the entry, the citation check is not a pass: a person must first decide which account is right.
   // Only facts the selected charge depends on qualify the verdict: the entry for entry-manner charges, the entry and
   // history for reentry after removal, nothing about a past entry for an applicant for admission.
-  const relevant = !charge ? ["entry."] : reqs?.priorRemoval ? ["entry.", "history."] : reqs?.applicationForAdmission ? [] : ["entry."];
-  const touches = (f: Finding) => f.evidence.some((e) => relevant.some((p) => e.fieldPath?.startsWith(p))) ||
-    (relevant.includes("entry.") && f.referenceIds.some((r) => ["E1", "E2", "E3"].includes(r)));
+  // For a charge whose requirement is the manner of entry, only the manner qualifies it: a conflicting entry date or place
+  // is its own finding with its own routing (diag-1 DG01, DG09, DG10).
+  const relevant = !charge ? ["entry."] : reqs?.priorRemoval ? ["entry.", "history."] : reqs?.applicationForAdmission ? [] : reqs?.entryManner ? ["entry.manner"] : ["entry."];
+  const refsFor = relevant.includes("entry.") ? ["E1", "E2", "E3"] : relevant.includes("entry.manner") ? ["E3"] : [];
+  const touches = (f: Finding) => f.evidence.some((e) => relevant.some((p) => e.fieldPath?.startsWith(p))) || f.referenceIds.some((r) => refsFor.includes(r));
   const entryConflict = findings.find((f) => f.category === "inconsistency" && touches(f));
-  const openAccount = routedAccounts.find((g) => relevant.some((p) => (g.fieldPath ?? "entry.").startsWith(p)));
+  const openAccount = routedAccounts.find((g) => relevant.some((p) => (g.fieldPath ?? (relevant.includes("entry.manner") ? "entry.manner" : "entry.")).startsWith(p)));
   if ((entryConflict || openAccount) && citation.status === "consistent") {
     const what = relevant.includes("history.") ? "the entry or immigration history" : "the entry";
     citation = {

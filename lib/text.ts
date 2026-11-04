@@ -4,7 +4,9 @@ import type { Sentence, PageSpan } from "./types";
 /** Matches normalized redaction tokens such as "[REDACTED (b)(6), (b)(7)(C)]". */
 export const REDACTION_RE = /\[REDACTED[^\]]*\]/g;
 
-const ABBREV = /\b(?:U\.S|Mr|Mrs|Ms|Dr|St|No|Jr|Sr|Inc|approx|vs|e\.g|i\.e|a\.m|p\.m|Ave|Rd|Hwy|Mt|Ft|Co)\.$/i;
+// Legal citations are never sentence ends: "8 U.S.C. 1326", "8 C.F.R. 235.3", "Sec. 212" (diag-1 DG07/DU03: "8 U.S.C."
+// split the charge sentence in two).
+const ABBREV = /\b(?:U\.S\.C|C\.F\.R|U\.S|Mr|Mrs|Ms|Dr|St|No|Jr|Sr|Inc|approx|vs|e\.g|i\.e|a\.m|p\.m|Ave|Rd|Hwy|Mt|Ft|Co|Sec|Stat|Pub)\.$/i;
 const SINGLE_INITIAL = /(?:^|\s)[A-Z]\.$/;
 
 /**

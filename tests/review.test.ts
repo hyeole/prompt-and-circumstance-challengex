@@ -60,7 +60,9 @@ test("bug: model 'mismatch' contradicting a supporting statement became a false 
     review: review({ citation: { status: "likely_mismatch", explanation: "Entry date conflict raises uncertainty.", evidence: [{ sentence_id: s, quote: "was admitted as a B2 Visitor" }] } }),
     facts: facts({ entry_statements: [{ sentence_id: s, quote: "was admitted as a B2 Visitor", year: 2015, manner: "admitted", person: "subject" }] }),
   }));
-  assert.equal(r.citation.status, "needs_human_review");
+  // Changed in the diag-1 fixes (improve/diag-fixes-1) (was "needs_human_review"): the model's only concern is the entry DATE, which this
+  // admission-based charge does not depend on; the date conflict is its own finding. Still no citation flag.
+  assert.equal(r.citation.status, "consistent");
   assert.ok(!r.findings.some((f) => f.category === "citation"));
 });
 
@@ -143,11 +145,15 @@ test("the selected charge itself is kept in any equivalent form", async () => {
   assert.equal(r.citation.explanation, text);
 });
 
+// Changed in the diag-1 fixes (improve/diag-fixes-1) (was: any entry conflict qualified the citation): the selected charge (INA 212(a)(6)(A)(i))
+// depends on the manner of entry, not its date, so an entry-date conflict is its own finding (still routed) and does not
+// qualify a 'consistent' charge check. A manner conflict still does (see diag-fixes.test.ts).
 test("an unresolved entry conflict prevents a plain 'consistent' citation (design review item 4)", async () => {
   const r = await reviewCase(c37, fake({ facts: conflict37 }));
   assert.ok(r.findings.some((f) => f.id === "F-ENTRY-DATE"));
-  assert.equal(r.citation.status, "needs_human_review");
-  assert.match(r.citation.explanation, /unresolved conflict/);
+  assert.ok(r.humanReview.required, "the date conflict is still routed");
+  assert.notEqual(r.citation.status, "likely_mismatch");
+  assert.doesNotMatch(r.citation.explanation, /unresolved conflict about the entry/);
 });
 
 // ---- Regression tests for the final run's confirmed errors (eval/runs/2026-10-29T23-32-42) ----
@@ -412,10 +418,16 @@ test("audit item 5: a narrative that only says the entry date is unknown documen
   assert.equal(e1.qualifier, "recorded_unknown");
 });
 
+// Changed in the diag-1 fixes (improve/diag-fixes-1): the narrative's own S21 ("crossed the US/MEXICO Border illegally", one person of interest) is
+// verified support read from the source, so with the form field removed the 'consistent' verdict now stands. Without any
+// manner statement in the narrative, it is still routed (the audit item's point).
 test("audit item 6: a 'consistent' verdict without verified support is routed to a person", async () => {
   const c = load("C037");
-  const r = await reviewCase({ ...c, facts: c.facts.filter((f) => f.path !== "entry.manner") }, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) }));
-  assert.equal(r.citation.status, "needs_human_review");
+  const noField = { ...c, facts: c.facts.filter((f) => f.path !== "entry.manner") };
+  const consistent = fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }) });
+  assert.equal((await reviewCase(noField, consistent)).citation.status, "consistent");
+  const silent = { ...noField, narrative: { ...c.narrative, text: c.narrative.text.replace("crossed the US/MEXICO Border illegally, into Naco, Arizona", "came to the United States near Naco, Arizona") } };
+  assert.equal((await reviewCase(silent, consistent)).citation.status, "needs_human_review");
 });
 
 test("audit item 6: a selected citation that disagrees with its reference ID is routed, never checked against either", async () => {
@@ -620,11 +632,15 @@ const withoutS38 = (c: CaseRecord) => ({ ...c, narrative: { text: c.narrative.te
 // ---- Fixes 1, 2, 4, 6 (post-tuning) ----
 
 
+// Changed in the diag-1 fixes (improve/diag-fixes-1) (was "needs_human_review"): F010-X's routed account is about the entry DATE (S34 "gives 2014";
+// form 2011), which a manner-based charge does not depend on; the form's EWI supports the charge. The account is still
+// routed. An unattributed account about the MANNER still qualifies the check (diag-fixes.test.ts).
 test("fix 1: a routed account about the entry qualifies 'consistent' for an entry-manner charge (F010-X)", async () => {
   const c = loadF("F010-X");
   const r = await reviewCase(c, fake({ review: review({ citation: { status: "consistent", explanation: "Supported.", evidence: [] } }), facts: entryFacts(c, "May 5, 2014", 2014) }));
-  assert.equal(r.citation.status, "needs_human_review");
-  assert.match(r.citation.explanation, /cannot be attributed/);
+  assert.equal(r.citation.status, "consistent");
+  assert.ok((r.humanReview.accounts ?? []).some((g) => g.fieldPath === "entry.date"), "the date account is still routed");
+  assert.ok(r.humanReview.required);
 });
 
 test("fix 1: an account about a past entry does not qualify a port-of-entry application charge (not relevant to it)", async () => {

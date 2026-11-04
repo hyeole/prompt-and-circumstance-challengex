@@ -10,7 +10,8 @@
 // Claims the code discarded in the saved run are not rebuilt (their evidence is not saved): this replay shows what the
 // code does with claims that passed before. Run before and after a change and diff.
 // Usage: npx tsx --conditions=react-server scripts/replay-reconstructed.ts <run-dir>... > out.jsonl
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
+import { remapSaved } from "./remap-saved";
 import { FACTS_SYSTEM_PROMPT } from "../lib/review/facts";
 import { ModelError } from "../lib/llm";
 import { reviewCase, type Complete } from "../lib/review/review";
@@ -53,7 +54,10 @@ if (process.argv[1]?.endsWith("replay-reconstructed.ts"))
       const casePath = `${casesDir}/${saved.caseId}.json`;
       if (!existsSync(casePath) || !saved.findings || !saved.elements) { console.log(JSON.stringify({ run: runId, case: saved.caseId, skipped: "case file or saved review fields not found" })); continue; }
       const c = JSON.parse(readFileSync(casePath, "utf8")) as CaseRecord;
-      const r = await reviewCase(c, fake(saved));
+      // Sentence IDs mapped to the current splitter's sentences first (scripts/remap-saved.ts); REMAP_LOG lists changes.
+      const { saved: mapped, report } = remapSaved(saved, c);
+      if (process.env.REMAP_LOG && (report.changed || report.dropped.length)) appendFileSync(process.env.REMAP_LOG, JSON.stringify({ run: runId, case: saved.caseId, changed: report.changed, dropped: report.dropped, mapping: Object.fromEntries(Object.entries(report.mapping).filter(([a, b]) => a !== b)) }) + "\n");
+      const r = await reviewCase(c, fake(mapped));
       console.log(JSON.stringify({ run: runId, case: r.caseId, findings: r.findings.map((x) => ({ id: x.id, category: x.category, source: x.source, title: x.title, explanation: x.explanation, evidence: x.evidence.map((e) => e.sentenceId ?? e.fieldPath) })),
         citation: r.citation.status, citationEvidence: r.citation.evidence.map((e) => e.sentenceId ?? e.fieldPath), humanReview: r.humanReview.required, reasons: r.humanReview.reasons, accounts: r.humanReview.accounts, discarded: r.discarded.map((d) => d.title + ": " + d.reason), completion: r.completion?.status }));
     }

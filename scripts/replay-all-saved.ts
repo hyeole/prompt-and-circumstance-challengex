@@ -12,6 +12,8 @@ import { ModelError } from "../lib/llm";
 import { reviewCase, type Complete } from "../lib/review/review";
 import { splitSentences } from "../lib/text";
 import type { CaseRecord, ReviewResult } from "../lib/types";
+import { appendFileSync } from "node:fs";
+import { remapSaved } from "./remap-saved";
 
 const MODEL_CITATION = process.env.MODEL_CITATION;
 const FAIL_ALL = process.env.FAIL_ALL === "1";
@@ -43,7 +45,11 @@ for (const run of process.argv.slice(2)) {
     const casePath = `${casesDir}/${saved.caseId}.json`;
     if (!existsSync(casePath)) { console.log(JSON.stringify({ run: runId, case: saved.caseId, skipped: "case file not found" })); continue; }
     const c = JSON.parse(readFileSync(casePath, "utf8")) as CaseRecord;
-    const r = await reviewCase(c, fake(c, saved.factsExtraction));
+    // Sentence IDs are mapped to the current splitter's sentences before replay (scripts/remap-saved.ts); REMAP_LOG
+    // receives every changed or dropped mapping.
+    const { saved: mapped, report } = remapSaved(saved, c);
+    if (process.env.REMAP_LOG && (report.changed || report.dropped.length)) appendFileSync(process.env.REMAP_LOG, JSON.stringify({ run: runId, case: saved.caseId, changed: report.changed, dropped: report.dropped, mapping: Object.fromEntries(Object.entries(report.mapping).filter(([a, b]) => a !== b)) }) + "\n");
+    const r = await reviewCase(c, fake(c, mapped.factsExtraction));
     console.log(JSON.stringify({ run: runId, case: r.caseId, findings: r.findings.map((x) => ({ id: x.id, category: x.category, source: x.source, title: x.title, explanation: x.explanation, evidence: x.evidence.map((e) => e.sentenceId ?? e.fieldPath), context: x.evidence.map((e) => e.context?.attribution ?? null) })),
       citation: r.citation.status, citationEvidence: r.citation.evidence.map((e) => e.sentenceId ?? e.fieldPath), humanReview: r.humanReview.required, reasons: r.humanReview.reasons, accounts: r.humanReview.accounts, discarded: r.discarded.map((d) => d.title + ": " + d.reason), completion: r.completion?.status }));
   }

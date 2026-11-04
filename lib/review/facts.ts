@@ -244,9 +244,24 @@ export const NEGATED_REMOVAL_RE = new RegExp(`(?:\\b(?:never|not|no|without|nor)
 // A coordinated verb phrase with its own auxiliary ("… was not removed to Mexico and was removed to Honduras") is a
 // separate clause: its polarity is its own.
 const HISTORY_CLAUSE_SPLIT = /\s*;\s*|,?\s+\b(?:but|however|although|though|whereas|while|yet)\b\s*,?\s*|,?\s+and\s+(?=(?:was|were|is|are|had|has|have|he|she|later|then|subsequently)\b)/i;
+// A charge, allegation or statutory requirement is not evidence that an event happened: "charged under 8 U.S.C. 1326 as
+// an alien found in the United States after removal", "inadmissible under Section 212(a)(9)", "the charge requires a prior
+// removal". Decided per clause, so a factual clause in the same sentence keeps its meaning ("He was removed in 2014; he is
+// now charged under 8 U.S.C. 1326").
+export const CHARGE_LANGUAGE_RE = /\b(?:charg\w*|alleg\w*|inadmissible|removable|deportable|amenable|in violation of)\b[^;]{0,60}\b(?:under|pursuant to|with|of)\b|\b(?:INA|Section|Sec\.|§)\s*\d{3}\b|\b\d+\s+U\.S\.C\.?\s*(?:§\s*)?\d{3,4}|\b(?:as|being) an alien\b[^;]{0,80}\bafter (?:having been )?(?:removal|removed|deportation|deported|exclusion)\b|\b(?:requires?|required|requirement)\b[^;]{0,40}\b(?:removal|removed|deport\w*)\b/i;
+// A removal ORDER is not a completed removal: "ordered removed in absentia", "a final order of removal". It counts as one
+// only with wording that the removal was carried out ("was executed", "physically removed", "deported to", "departed").
+const REMOVAL_ORDER_RE = /\b(?:ordered\s+(?:\w+\s+){0,3}?(?:removed|deported|excluded)|orders?\s+of\s+(?:removal|deportation|exclusion)|(?:removal|deportation|exclusion)\s+orders?|final\s+order)\b/i;
+const EXECUTED_RE = /\b(?:executed|carried out|physically removed|was removed|were removed|has been removed|had been removed|removed to|deported to|was deported|were deported|departed|self-deported|returned to (?:Mexico|Guatemala|Honduras|El Salvador|his|her|their) (?:country|home))\b/i;
+export const removalOrderOnly = (cl: string) => REMOVAL_ORDER_RE.test(cl) && !EXECUTED_RE.test(cl);
 const priorRemovalClause = (cl: string) =>
-  !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
+  !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && !removalOrderOnly(cl) &&
+  REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
+
 export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause);
+/** A clause stating a removal order for which no execution or departure is stated (diag-1 DU03). */
+export const statesRemovalOrderOnly = (text: string) => !isPriorRemoval(text) &&
+  text.split(HISTORY_CLAUSE_SPLIT).some((cl) => !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && removalOrderOnly(cl));
 /**
  * A prior removal whose participant is not a third party: the removal clause's event is not a relative's, companion's or
  * group's ("Subject stated that his brother was deported in 2012" is the brother's).
@@ -289,7 +304,29 @@ export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boo
  * being a reinstate case"). The extractor's "other" label is checked against the source like any attribution: it
  * stands unless the sentence itself names the subject as the one removed. A third party's removal never counts.
  */
+// A third party's reported statement ("The subject's cousin … told Agent [X] that he was deported") whose removal clause
+// has only a pronoun for the person removed: "he" may be the speaker or the subject, so the statement does not establish
+// the subject's history (diag-1 DU02). An explicit subject ("… told agents that the subject was deported") still does.
+const THIRD_PARTY_SPEAKER_RE = /\b(?:subject's|his|her|their|the|a)\s+(?:\w+\s+){0,2}?(?:cousin|brother|sister|wife|husband|spouse|partner|mother|father|son|daughter|uncle|aunt|nephew|niece|friend|companion|employer|neighbou?r|roommate|relative|co-?worker|associate|girlfriend|boyfriend|driver|passenger)\b/i;
+const REPORTING_VERB_RE = /\b(?:told|stated|said|claimed|reported|explained|advised|informed)\b/i;
+function thirdPartyPronounReport(text: string): boolean {
+  const v = text.match(REPORTING_VERB_RE);
+  if (!v) return false;
+  const before = text.slice(0, v.index!), after = text.slice(v.index! + v[0].length);
+  if (!THIRD_PARTY_SPEAKER_RE.test(before)) return false;
+  const rem = after.match(REMOVAL_WORD_RE);
+  if (!rem) return false;
+  const lead = after.slice(0, rem.index!);
+  return /\b(?:he|she|they)\b/i.test(lead) && !/\bthe subject\b(?!'s)/i.test(lead);
+}
 function priorRemovals(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean, c?: CaseRecord): Verified[] {
+  return priorRemovalsAll(sentences, facts, multiPerson, c).filter((v) => !thirdPartyPronounReport(v.s.text));
+}
+/** Removal statements in a third party's words with only a pronoun for the person removed: unattributed, routed. */
+function thirdPartyRemovalReports(sentences: Sentence[], facts: FactsOutput): Verified[] {
+  return priorRemovalsAll(sentences, facts, false).filter((v) => thirdPartyPronounReport(v.s.text));
+}
+function priorRemovalsAll(sentences: Sentence[], facts: FactsOutput, multiPerson: boolean, c?: CaseRecord): Verified[] {
   const listed = new Map(facts.removal_statements.map((r) => [r.sentence_id, r.person]));
   const extracted = facts.removal_statements.map((r) => verify(sentences, r.sentence_id, r.quote))
     .filter((v): v is Verified => !!v && ownPriorRemoval(v.s.text))
@@ -594,6 +631,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const remSource = rem && priorRemovals(sentences, EMPTY_FACTS, multiPerson, c).some((v) => v.s.id === rem.s.id) ? "rule" : "model";
     if (!rem && multiPerson) unattributed.push(...priorRemovals(sentences, facts, false)
       .map((v) => ({ sentenceId: v.s.id, fieldPath: "history.immigration_record", detail: `${v.s.id} describes a prior removal; the form records the immigration record as "${imm.value}".` })));
+    // A third party's reported removal of "he" (diag-1 DU02): whose removal it was is unresolved, in any narrative.
+    if (!rem) unattributed.push(...thirdPartyRemovalReports(sentences, facts).filter((v) => !unattributed.some((u) => u.sentenceId === v.s.id))
+      .map((v) => ({ sentenceId: v.s.id, fieldPath: "history.immigration_record", detail: `${v.s.id} reports a prior removal in a third party's words ("he"), so it may be the speaker's or the subject's; the form records the immigration record as "${imm.value}".` })));
     if (rem)
       findings.push({
         id: "F-HISTORY", category: "inconsistency", title: "Immigration record conflicts with the narrative",
@@ -670,6 +710,16 @@ const APPLICATION_RE = /\b(applied|applying|application|applicant) for admission
  * - "undetermined": the record neither supports nor contradicts it (e.g. the narrative is silent) → a person confirms.
  * A requirement supported by subject-specific evidence returns null (see supportsRequirement).
  */
+/**
+ * The extraction's entry statements plus the source's own reading (sourceEntryStatements) for every sentence the
+ * extraction did not list, or listed only with quotes that do not match the text (a paraphrased quote cannot be
+ * verified, so it would otherwise silently drop the sentence: diag-1 DG02, "… near Sasabe, Arizona, and that he did not
+ * present himself" quoted without "with a guide"). The same attribution and scope rules then apply to both.
+ */
+export function withSourceEntries(sentences: Sentence[], facts: FactsOutput): FactsOutput {
+  const verifiedIds = new Set(facts.entry_statements.filter((e) => verify(sentences, e.sentence_id, e.quote)).map((e) => e.sentence_id));
+  return { ...facts, entry_statements: [...facts.entry_statements, ...sourceEntryStatements(sentences).filter((s) => !verifiedIds.has(s.sentence_id))] };
+}
 export type RequirementOutcome = "contradicted" | "unresolved" | "undetermined";
 export function checkChargeRequirement(
   c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires: Requires | undefined, multiPerson = false,
@@ -678,9 +728,12 @@ export function checkChargeRequirement(
   const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
   // The source's own entry statements count too, for sentences the extraction did not list (or when it failed): the
   // same attribution rules decide whose they are, so a sentence the extractor missed cannot flip the verdict.
-  facts = { ...facts, entry_statements: [...facts.entry_statements, ...sourceEntryStatements(sentences).filter((s) => !facts.entry_statements.some((e) => e.sentence_id === s.sentence_id))] };
+  facts = withSourceEntries(sentences, facts);
+  // Only the last (or unscoped) entry bears on a charge's entry requirement: an explicitly first or earlier entry made
+  // differently neither supports nor contradicts it (diag-1 DG02: a 2009 visa entry before a 2017 entry on foot).
   const allEntries = facts.entry_statements.filter((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote))
-    .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) })).filter((x) => x.v) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
+    .map((e) => ({ e, v: verify(sentences, e.sentence_id, e.quote) })).filter((x) => x.v)
+    .filter((x) => { const s = x.v!.s, at = s.text.indexOf(x.e.quote); const sc = entryScope(s.text, at >= 0 ? at : 0); return sc === "last" || sc === "unspecified"; }) as { e: FactsOutput["entry_statements"][number]; v: Verified }[];
   const subjectEntries = allEntries.filter((x) => attributeStatement(sentences, x.v.s.id, multiPerson, x.e.quote, c, x.e.person).outcome === "supported");
   // Statements that cannot be attributed to the subject neither support nor contradict the charge: a person decides.
   const unattributedNote = (ids: string[]) => ({ status: "needs_human_review" as const, outcome: "unresolved" as const, evidence: [] as EvidenceRef[],
@@ -705,7 +758,7 @@ export function checkChargeRequirement(
   if (requires.priorRemoval) {
     const removals = priorRemovals(sentences, facts, multiPerson, c);
     const imm = field("history.immigration_record");
-    const unattributedRemovals = removals.length ? [] : priorRemovals(sentences, facts, false);
+    const unattributedRemovals = removals.length ? [] : [...priorRemovals(sentences, facts, false), ...thirdPartyRemovalReports(sentences, facts)];
     if (unattributedRemovals.length) return unattributedNote(unattributedRemovals.map((v) => v.s.id));
     // Contradiction needs an explicit negative result about this subject: its own record check reporting no immigration
     // history, or a statement that the subject was never removed. A dated history list, a form value that defers to the
@@ -714,6 +767,15 @@ export function checkChargeRequirement(
     const sentenceEv = (x: Sentence): EvidenceRef => ({ kind: "sentence", sentenceId: x.id, quote: x.text, start: x.start, end: x.end, page: x.page, verified: true, match: "exact" });
     const formEv = imm ? [{ kind: "field" as const, fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] : [];
     const formNamesRemoval = !!imm && /^\s*POSITIVE\b/i.test(imm.value) && /\b(remov|deport|reinstat|exclu)/i.test(imm.value);
+    // A removal order with no stated execution or departure (diag-1 DU03; F051-C "one had been ordered removed"): the
+    // requirement is neither shown nor contradicted, whoever the order concerns, so neither a negative record nor a
+    // denial settles it. Whether a removal occurred (and, if unattributed, whose order it is) is for a person.
+    const order = removals.length ? undefined : sentences.find((x) => statesRemovalOrderOnly(x.text));
+    if (order) {
+      const own = attributeStatement(sentences, order.id, multiPerson, undefined, c).outcome === "supported";
+      return { status: "needs_human_review", outcome: own ? "undetermined" : "unresolved", evidence: [sentenceEv(order)],
+        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission. ${order.id} records a removal order${own ? "" : " that cannot be attributed to this record's subject (several people are described)"}, but the record does not state that the order was executed or that anyone departed under it. A person should confirm whether this subject was removed.` };
+    }
     const none = removals.length ? null : noHistorySection(sentences, multiPerson, c);
     if (none && (!imm || !/^\s*POSITIVE\b/i.test(imm.value)))
       return { status: "likely_mismatch", outcome: "contradicted", evidence: [...formEv, ...none.map(sentenceEv)],
@@ -809,10 +871,13 @@ export function supportsRequirement(c: CaseRecord, sentences: Sentence[], facts:
   }
   const fm = field("entry.manner");
   if (requires?.entryManner && fm && formMannerCategory(fm.value) === requires.entryManner) return true;
-  return !!requires?.entryManner && facts.entry_statements.some((e) => {
+  // Last (or unscoped) entries only, with the source's own reading where an extracted quote does not verify.
+  return !!requires?.entryManner && withSourceEntries(sentences, facts).entry_statements.some((e) => {
     if (!isUsEntry(e) || checkedPerson(sentences, e.sentence_id, e.person, e.quote) === "other" || e.manner !== requires.entryManner || !MANNER_RE.test(e.quote)) return false;
     const v = verify(sentences, e.sentence_id, e.quote);
-    return !!v && attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person).outcome === "supported";
+    if (!v) return false;
+    const sc = entryScope(v.s.text, Math.max(0, v.s.text.indexOf(e.quote)));
+    return (sc === "last" || sc === "unspecified") && attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person).outcome === "supported";
   });
 }
 

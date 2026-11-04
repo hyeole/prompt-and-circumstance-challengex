@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { reviewCase, type Complete } from "../lib/review/review";
-import { FACTS_SYSTEM_PROMPT, attributeStatement, isPriorRemoval, isPriorImmigrationEncounter, nonUsEntrySentences, accountConflicts, fullDates } from "../lib/review/facts";
+import { FACTS_SYSTEM_PROMPT, attributeStatement, isPriorRemoval, statesRemovalOrderOnly, isPriorImmigrationEncounter, nonUsEntrySentences, accountConflicts, fullDates } from "../lib/review/facts";
 import { ModelError } from "../lib/llm";
 import { splitSentences } from "../lib/text";
 import type { CaseRecord, Sentence } from "../lib/types";
@@ -67,8 +67,12 @@ test("fix 2: the source-text history check runs when extraction times out, and t
 test("fix 2: negated, offered, declined and current-processing removals are not prior removals", () => {
   for (const t of ["He has never been deported.", "He has not been previously deported.", "There are no prior removals.", "He was offered a stipulated removal, which he declined.", "Supervisory CBP Officer [REDACTED] reviewed and approved the expedited removal.", "The subject was processed for expedited removal."])
     assert.equal(isPriorRemoval(t), false, t);
-  for (const t of ["He was removed to Mexico on 03/02/2018.", "He had been ordered removed in 2012.", "Subject did not receive a bond and being a reinstate case."])
+  // Changed in the diag-1 fixes (improve/diag-fixes-1): "He had been ordered removed in 2012" is a removal ORDER, not a completed removal (it was
+  // asserted as one here). It is now reported by statesRemovalOrderOnly and leaves a removal requirement unresolved.
+  for (const t of ["He was removed to Mexico on 03/02/2018.", "He had been ordered removed in 2012 and was removed to Mexico in 2013.", "Subject did not receive a bond and being a reinstate case."])
     assert.equal(isPriorRemoval(t), true, t);
+  assert.equal(isPriorRemoval("He had been ordered removed in 2012."), false);
+  assert.equal(statesRemovalOrderOnly("He had been ordered removed in 2012."), true);
 });
 test("fix 2 controls: should-not-flag and clean records gain no history finding (DS09 approval, DS10 processing, FS10 group member)", async () => {
   for (const p of ["eval/dev-synthetic/cases/DS09.json", "eval/dev-synthetic/cases/DS10.json", "eval/fresh/cases/FS10.json"]) {
