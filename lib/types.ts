@@ -120,6 +120,9 @@ export interface ElementResult {
   sponsorCategory?: string;
   /** Set when the element is covered only by form fields whose values are not fully known. */
   qualifier?: "recorded_unknown" | "partly_unknown" | "see_narrative";
+  /** Set when the model's checklist answer for this element did not arrive and another completed check decided it
+   *  (facts.mannerAbsentFromCompletedExtraction). The review still reports the missing model answer as partial. */
+  decidedWithoutModel?: "fact_extraction";
 }
 
 export type CitationStatus = "consistent" | "likely_mismatch" | "insufficient_information" | "needs_human_review" | "not_checked";

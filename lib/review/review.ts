@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -345,6 +345,14 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
           note: "The form records the manner of entry as unknown, and the narrative does not state how the subject entered. The charge depends on this fact, so a person should confirm it." };
       return fromField;
     }
+    // The manner of entry (E3) is also covered by the fact extraction, which classifies the manner of every entry
+    // statement. When the model's checklist answer did not arrive (failed, invalid or omitted), the form's manner field
+    // is blank, and that extraction completed and shows no manner stated for anyone (cross-checked against the source),
+    // the element is absent. The review still reports the missing model answer (completion). Anything less (an
+    // extraction that did not complete, a manner stated for a companion or for a first entry) stays not checked.
+    if (!m && el.id === "E3" && !fromField && factsSettled.ok && mannerAbsentFromCompletedExtraction(sentences, factsSettled.v))
+      return { elementId: el.id, label: el.label, status: "absent", sentenceIds: [], fieldPaths: [], decidedWithoutModel: "fact_extraction",
+        note: "The model's checklist answer for this element did not arrive. The completed fact extraction, checked against the source text, finds no statement of how anyone entered, and the form's manner field is blank." };
     if (!m) return { elementId: el.id, label: el.label, status: "not_checked", sentenceIds: [], fieldPaths: [], note: out ? "The model did not report on this element." : "Model check unavailable." };
     if (m.status === "present" && validIds.length) {
       // A narrative that only says the fact is unknown documents it without establishing it (audit item 5).

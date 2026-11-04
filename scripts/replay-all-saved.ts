@@ -3,7 +3,8 @@
 // result (a timeout where it failed); the review samples return a fixed stub. Each run's cases are read from the
 // checkout that holds the run (<checkout>/eval/runs/<run>), so runs from other worktrees replay against their own cases.
 // Run before and after a change and diff; every changed line is a behaviour change. Nothing in the runs is written.
-// MODEL_CITATION=mismatch|consistent and FAIL_ALL=1 as in replay-saved-extraction.ts.
+// MODEL_CITATION=mismatch|consistent and FAIL_ALL=1 as in replay-saved-extraction.ts. REVIEW_FAIL=1: every review sample
+// times out (the fact call still returns the saved extraction, unless FAIL_ALL is also set).
 // Usage: npx tsx --conditions=react-server scripts/replay-all-saved.ts <run-dir>... > out.jsonl
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { FACTS_SYSTEM_PROMPT } from "../lib/review/facts";
@@ -14,6 +15,7 @@ import type { CaseRecord, ReviewResult } from "../lib/types";
 
 const MODEL_CITATION = process.env.MODEL_CITATION;
 const FAIL_ALL = process.env.FAIL_ALL === "1";
+const REVIEW_FAIL = process.env.REVIEW_FAIL === "1";
 const review = (c: CaseRecord) => {
   const s = splitSentences(c.narrative.text, c.narrative.pageSpans).find((x) => x.text.split(/\s+/).length >= 6)!;
   const citation = MODEL_CITATION === "mismatch"
@@ -22,7 +24,10 @@ const review = (c: CaseRecord) => {
   return JSON.stringify({ elements: [], issues: [], citation, human_review: { required: false, reasons: [] } });
 };
 const fake = (c: CaseRecord, fx: ReviewResult["factsExtraction"]): Complete => async (system) => {
-  if (system !== FACTS_SYSTEM_PROMPT) return { text: review(c), attempts: 1 };
+  if (system !== FACTS_SYSTEM_PROMPT) {
+    if (REVIEW_FAIL) throw new ModelError("The model endpoint did not answer within the time limit.", "timeout", 1);
+    return { text: review(c), attempts: 1 };
+  }
   if (fx?.status === "valid" && !FAIL_ALL) return { text: JSON.stringify(fx.output), attempts: 1 };
   throw new ModelError("The model endpoint did not answer within the time limit.", "timeout", 1);
 };

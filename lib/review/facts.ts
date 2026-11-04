@@ -776,6 +776,28 @@ export function hasMannerStatement(sentences: Sentence[], facts: FactsOutput): b
   return facts.entry_statements.some((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other" && e.manner !== "unknown" && MANNER_RE.test(e.quote) && verify(sentences, e.sentence_id, e.quote));
 }
 
+/**
+ * Whether a completed fact extraction, cross-checked against the source text, shows that the narrative states no manner
+ * of entry into the United States for anyone: no extracted U.S. entry statement (of any person) gives a manner, and the
+ * person-event reading of the source finds no entry event, in any scope or polarity, whose own wording gives one
+ * ("crossed illegally", "was not inspected", "flew in on a visa", "did not cross through a port of entry"), and none
+ * names a crossing or a means of entry at all ("crossed on a raft", "came in a truck"). Used only
+ * when the form's manner field is blank and the model's checklist answer for the manner did not arrive: an extraction
+ * that did not complete, or any manner statement about anyone (a companion's, a first entry's), leaves it unresolved.
+ */
+// Wording that says how or by what means an entry happened, even when no manner category can be read from it ("crossed
+// on a raft", "came in a truck", "on foot", "at the port"). It can only block the fallback below, never prove absence.
+const ENTRY_MEANS_RE = /\b(?:cross\w*|swam|swim\w*|wad\w*|walk\w*|jump\w*|climb\w*|smuggl\w*|hid\w*|flew|fly\w*|flight|drove|driv\w*|rode|rid\w*|boat|raft|vessel|ship|vehicle|truck|car|bus|train|plane|airport|foot|afoot|port|bridge|fence|river|desert|border|visa|passport|card|permit|documents?|inspect\w*|admit\w*|parol\w*|guide|coyote)\b/i;
+// A sentence about entering or crossing, read without the agency's name ("Border Patrol" is not a border crossing).
+const ENTERING_RE = /\b(?:re-?enter\w*|enter\w*|entry|cross\w*|came (?:in)?to|came across|got (?:in)?to|arriv\w*|smuggl\w*|swam|wad\w*|flew)\b/i;
+export function mannerAbsentFromCompletedExtraction(sentences: Sentence[], facts: FactsOutput): boolean {
+  if (facts.entry_statements.some((e) => isUsEntry(e) && e.manner !== "unknown")) return false;
+  if (analyze(sentences).some((e) => e.type === "entry" && (statedManner(e.span) !== undefined || ENTRY_MEANS_RE.test(e.span)))) return false;
+  // Also any sentence that describes entering or crossing and names a means, which the event reading may not parse
+  // ("was smuggled across the border in the trunk of a car").
+  return !sentences.some((x) => { const t = x.text.replace(/\bBorder Patrol\b/gi, ""); return ENTERING_RE.test(t) && ENTRY_MEANS_RE.test(t); });
+}
+
 /** True when a verified statement supports the charge's core requirement (entry manner, or a prior removal). */
 export function supportsRequirement(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, requires?: Requires, multiPerson = false): boolean {
   // Known form fields are about this record's subject, so a form value that meets the requirement is verified support.
