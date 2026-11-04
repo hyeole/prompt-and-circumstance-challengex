@@ -797,15 +797,21 @@ test("request vs encounter time: a Trooper's request time is not the encounter t
   assert.ok(!r.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
   assert.ok(r.discarded.some((d) => /call or request, not the encounter/.test(d.reason)));
 });
-test("request vs encounter time, negative controls: an encounter time, or a different arrest time beside a request time, is still compared", async () => {
+// Changed in improve/accuracy-iter-1 (was an arrest at 2130, after the form's 2040): an arrest after the recorded
+// encounter is the normal sequence, so the control now uses an arrest before it, and the later arrest is a negative case.
+test("request vs encounter time, negative controls: an encounter time, or an arrest before the recorded encounter beside a request time, is still compared", async () => {
   const c0 = load("C012-M2");
   const swap = (from: string, to: string) => ({ ...c0, narrative: { text: c0.narrative.text.replace(from, to) } }) as CaseRecord;
   const enc = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "Border Patrol Agents encountered three individuals near the highway");
   const r1 = await timeClaim(enc, "encountered three individuals", "at approximately 2000 hours", "2000");
   assert.ok(r1.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
-  const both = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 2130 hours");
-  const r2 = await timeClaim(both, "arrested three individuals at 2130", "at 2130 hours", "2130");
+  const both = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 1930 hours");
+  const r2 = await timeClaim(both, "arrested three individuals at 1930", "at 1930 hours", "1930");
   assert.ok(r2.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  const later = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 2130 hours");
+  const r3 = await timeClaim(later, "arrested three individuals at 2130", "at 2130 hours", "2130");
+  assert.ok(!r3.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")), "an arrest after the recorded encounter is not a conflict");
+  assert.ok(r3.discarded.some((d) => /arrest after the recorded encounter is the normal sequence/.test(d.reason)));
 });
 
 const gapClaim = (c: CaseRecord, fields: string[]) => reviewCase(c, fake({

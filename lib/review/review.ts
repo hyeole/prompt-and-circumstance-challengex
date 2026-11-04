@@ -489,14 +489,15 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       return;
     }
     // (1e) A time conflict must compare the same event (lib/review/times.ts): the form's encounter hour only with a time
-    // the narrative states for the encounter or arrest, and two narrative times only when they are one event's. A call,
-    // request, arrival or processing time is not the encounter time unless its clause says so ("arrived at 0900 hours
-    // and encountered …"); a narrative that never states the encounter time leaves it unresolved, not in conflict.
+    // the narrative states for the encounter itself, and two narrative times only when they are one event's. A call,
+    // request, arrival, arrest or processing time is not the encounter time unless the source ties them ("Upon arrival at
+    // 0900 hours, agents encountered …", "encountered and arrested … at 0900 hours"); sharing a sentence does not. A
+    // narrative that never states the encounter time leaves it unresolved, not in conflict.
     // Applies to "unclear" items too when they assert a time conflict; a missing-time observation is left alone.
     {
       const citesForm = verified.some((v) => v.fieldPath === "encounter.date_time");
       const cited = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
-      const why = (citesForm || cited.length >= 2) ? unsupportedTimeClaim(`${iss.title}. ${iss.explanation}`, cited, citesForm, encounterFormValue(c)) : null;
+      const why = (citesForm || cited.length >= 2) ? unsupportedTimeClaim(`${iss.title}. ${iss.explanation}`, cited, citesForm, encounterFormValue(c), sentences) : null;
       if (why) {
         discarded.push({ title: iss.title, reason: why.reason });
         // Shown wrong: withheld, and reasons resting on it are not kept. Unresolved (a differing time the narrative ties to
@@ -710,7 +711,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const timeSupported = !!encounterTimeConflict(sentences, encounterFormValue(c), true) ||
       findings.some((f) => f.evidence.some((e) => e.fieldPath === "encounter.date_time") && (f.category === "inconsistency" || f.category === "unclear"));
     const timed = timeRoutingReasons(kept.reasons, timeSupported, withheldTime, narrativeStatesFormDate(sentences, encounterFormValue(c)));
-    for (const r of timed.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" is about an encounter-time conflict the narrative does not support (it does not state an encounter or arrest time that differs from the form's), so it is not a reason to route.` });
+    for (const r of timed.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" is about an encounter-time conflict the narrative does not support (it does not state an encounter time that differs from the form's, or an arrest before it), so it is not a reason to route.` });
     humanReasons.push(...timed.reasons);
   }
   // Completion covers every required check, not only the main model call (audit item 1).

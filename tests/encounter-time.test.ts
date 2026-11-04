@@ -43,7 +43,10 @@ test("each stated time is read with its own event", () => {
   assert.deepEqual(ev(`Agent ${R} placed the subject under arrest at 1330 hours.`), ["1330:arrest"]);
   assert.deepEqual(ev("At approximately 0910 hours, agents encountered two men near the highway."), ["0910:encounter"]);
   assert.deepEqual(ev("The subjects were arrested and transported to the station at 2145 hours."), ["2145:processing"], "the transport's time, not the arrest's");
-  assert.deepEqual(ev(`Agent ${R} arrived at approximately 0900 hours and encountered the subject.`), ["0900:encounter"], "the clause links the arrival to the encounter");
+  // Changed in improve/accuracy-iter-1 (was "0900:encounter"): arriving and then encountering is a sequence; sharing a
+  // clause does not make the two simultaneous. Only explicit wording does ("Upon arrival", "immediately").
+  assert.deepEqual(ev(`Agent ${R} arrived at approximately 0900 hours and encountered the subject.`), ["0900:arrival"], "a sequence, not a stated encounter time");
+  assert.deepEqual(ev(`Upon arrival at approximately 0900 hours, agents encountered the subject.`), ["0900:encounter"], "explicit simultaneity links them");
   assert.deepEqual(ev(`Agent ${R} arrived at approximately 0900 hours and found two occupants.`), ["0900:arrival"], "\"found\" alone is not a stated encounter");
   assert.deepEqual(ev("Facts of Arrest: On April 8, 2017, at approximately 2000 hours, a Trooper requested assistance."), ["2000:request"], "a heading's word is not the clause's event");
   assert.deepEqual(ev("At 0412 am, Sector Dispatch requested assistance."), ["0412:request"]);
@@ -97,14 +100,17 @@ test("control: a stated encounter time 30+ minutes from the form's is a conflict
   assert.ok(r.humanReview.reasons.includes("Conflicting encounter time"));
 });
 
-test("control: an arrival the source links to the encounter, or an arrest time, is compared", async () => {
-  const linked = withText(`ENCOUNTER:\n${REQUEST} Border Patrol Agent ${R} arrived at approximately 0815 hours and encountered the subject. ${REST}`);
-  const r1 = await run(linked, [claim("Encounter time discrepancy", "Narrative gives 0815 hours; form lists 0910.", [{ sentence_id: sid(linked, "arrived"), quote: "arrived at approximately 0815 hours and encountered the subject" }])]);
+// Changed in improve/accuracy-iter-1: the linked arrival now needs explicit simultaneity, and an arrest time is compared
+// only as an arrest: it conflicts with the form's encounter hour when it is before it (an arrest after the encounter
+// is the normal sequence; see the "event occurrences" tests in event-binding.test.ts).
+test("control: an arrival the source states is the encounter, or an arrest before the recorded encounter, is compared", async () => {
+  const linked = withText(`ENCOUNTER:\n${REQUEST} Upon arrival at approximately 0815 hours, Border Patrol Agent ${R} encountered the subject. ${REST}`);
+  const r1 = await run(linked, [claim("Encounter time discrepancy", "Narrative gives 0815 hours; form lists 0910.", [{ sentence_id: sid(linked, "Upon arrival"), quote: "Upon arrival at approximately 0815 hours" }])]);
   assert.equal(timeFindings(r1).filter((f) => f.source === "model").length, 1);
-  const arrest = withText(`ENCOUNTER:\n${REQUEST} ${ARRIVAL} Agent ${R} placed the subject under arrest at 1030 hours.`);
-  const r2 = await run(arrest, [claim("Encounter time discrepancy", "Narrative gives 1030 hours for the arrest; form lists 0910.", [{ sentence_id: sid(arrest, "under arrest at 1030"), quote: "placed the subject under arrest at 1030 hours" }])]);
+  const arrest = withText(`ENCOUNTER:\n${REQUEST} ${ARRIVAL} Agent ${R} placed the subject under arrest at 1030 hours.`, "03/12/2024 1100");
+  const r2 = await run(arrest, [claim("Encounter time discrepancy", "Narrative gives 1030 hours for the arrest; form lists 1100.", [{ sentence_id: sid(arrest, "under arrest at 1030"), quote: "placed the subject under arrest at 1030 hours" }])]);
   assert.ok(timeFindings(r2).some((f) => f.source === "model"));
-  assert.ok(r2.findings.some((f) => f.id === "R-TIME-MISMATCH"), "the time rule's own finding is unchanged");
+  assert.ok(r2.findings.some((f) => f.id === "R-TIME-MISMATCH"), "an arrest 30 minutes before the recorded encounter is a conflict");
 });
 
 test("control: an encounter time within 30 minutes of the form's is not a conflict (the time rule's threshold)", async () => {

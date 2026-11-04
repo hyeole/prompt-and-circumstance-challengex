@@ -3,6 +3,7 @@ import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "
 import { REFERENCES, chargeIdConflict, findCharge } from "@/lib/references";
 import { fieldQuality } from "@/lib/fieldQuality";
 import { statesSeveralPeople } from "./facts";
+import { conflictsWithForm, isEncounterTime, statedTimes } from "./times";
 
 export interface RuleOutput {
   elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
@@ -86,35 +87,30 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
   if (multi.length >= 2 || stated)
     notes.push(`The narrative describes more than one person (for example ${(multi.length >= 2 ? multi[0] : stated!).id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
 
-  // 4. Encounter time in the form vs times stated in the narrative.
+  // 4. Encounter time in the form vs times stated in the narrative, event by event (lib/review/times.ts). The form's
+  // encounter hour conflicts with a time the narrative states for the encounter itself, or with an arrest stated before
+  // it (the subject cannot be arrested before being encountered). An arrest after it is the normal sequence.
   const dt = field(c, "encounter.date_time");
   const formTime = dt?.status === "present" ? dt.value.match(/\b([01]\d|2[0-3])([0-5]\d)\b(?!\/)/g)?.pop() : undefined;
   if (formTime) {
-    for (const s of sentences) {
-      // The time must belong to the arrest/encounter itself, e.g. "placed ... under arrest at 1330 hours",
-      // not to a later step such as "arrested and transported to the station at 2145 hours".
-      // Both word orders: "placed under arrest at 1330 hours" and "At approximately 1030 hours, X was placed under arrest".
-      const m = encounterTimeMatch(s.text);
-      if (m && m[1] !== formTime && Math.abs(toMin(m[1]) - toMin(formTime)) >= 30) {
-        findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
-          `The form records the encounter at ${formTime} hours, but the narrative gives ${m[1]} hours for the arrest. The difference may be legitimate (for example, encounter versus arrest time), but it should be confirmed.`,
-          [quoteEvidence(s, m[0]), { kind: "field", fieldPath: "encounter.date_time", quote: dt!.value, page: dt!.sourcePage, verified: true }],
-          ["E4"], "Times disagree by 30 minutes or more", "medium"));
-        break;
-      }
+    const times = statedTimes(sentences);
+    const t = times.find((x) => isEncounterTime(x) && conflictsWithForm(x, formTime)) ?? times.find((x) => conflictsWithForm(x, formTime));
+    if (t) {
+      const s = sentences.find((x) => x.id === t.sentenceId)!;
+      findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
+        t.event === "arrest"
+          ? `The form records the encounter at ${formTime} hours, but the narrative gives ${t.hhmm} hours for the arrest, before that. The subject cannot be arrested before being encountered, so one of the times may be wrong; it should be confirmed.`
+          : `The form records the encounter at ${formTime} hours, but the narrative states ${t.hhmm} hours for the encounter itself. It should be confirmed which is correct.`,
+        [quoteEvidence(s, timeQuote(s.text, t.hhmm)), { kind: "field", fieldPath: "encounter.date_time", quote: dt!.value, page: dt!.sourcePage, verified: true }],
+        ["E4"], "Times disagree by 30 minutes or more", "medium"));
     }
   }
   return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck, notes };
 }
 
-/**
- * A clock time the sentence ties to the arrest or encounter itself, e.g. "placed ... under arrest at 1330 hours" or
- * "At approximately 1030 hours, X was placed under arrest". Not a later step ("transported ... at 2145 hours") and not
- * the time a call or request was made or received.
- */
-export function encounterTimeMatch(text: string): RegExpMatchArray | null {
-  return text.match(/\b(?:arrest|apprehend|encounter|detain|stopp?ed)\w*(?!\s*:)(?:(?!transport|process|book|arriv)[^.;]){0,40}?\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?![^.;]{0,40}\b(?:request|call|receiv|dispatch))/i) ??
-    text.match(/\bat\s+(?:approximately\s+)?(([01]\d|2[0-3])[0-5]\d)\s*hours\b(?:(?!transport|process|book|arriv|request|call|receiv|dispatch)[^.;]){0,80}?\b(?:placed under arrest|arrested|apprehended|detained|encountered)\b/i);
+/** The shortest quotable span of the sentence that states this clock time ("at approximately 1330 hours"). */
+function timeQuote(text: string, hhmm: string): string {
+  return text.match(new RegExp(`\\b(?:at\\s+)?(?:approximately\\s+)?${hhmm}\\s*(?:hours|hrs|hr)?\\b`, "i"))?.[0] ?? text;
 }
 
 /** Whether the sentence gives this clock time for a call, request or dispatch ("at 2000 hours, a Trooper requested assistance"). */

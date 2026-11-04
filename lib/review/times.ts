@@ -34,7 +34,9 @@ const CLAUSE_RE = /;|:\s|,?\s+and\s+(?=(?:then|later|subsequently|was|were|he|sh
 const CUES: [TimeEvent, RegExp][] = [
   ["request", /\b(?:request\w*|call(?:ed|s)?\b|received\b|dispatch\w*|radio\w*|notif(?!\w* of (?:his|her|their) right)\w*|contacted|ask(?:ed)? for (?:assistance|help))/gi],
   ["arrest", /\b(?:arrest\w*|apprehend\w*|taken into custody|took (?:him|her|them|the subjects?) into custody)\b/gi],
-  ["encounter", /\b(?:encounter\w*|detain\w*|observed|stopped|located|spotted|sighted|made contact|came into contact|intercepted)\b/gi],
+  // "observed" an officer, trooper or deputy doing something is watching another agency's action, not the agents'
+  // encounter with the subject ("observed an Escanaba Police officer conduct a traffic stop").
+  ["encounter", /\b(?:encounter\w*|detain\w*|observed(?!\s+(?:(?:an?|the|one|two)\s+)?(?:[A-Z]\w*\s+){0,3}(?:police|officer|trooper|deputy|sheriff|patrolman)\b)|stopped|located|spotted|sighted|made contact|came into contact|intercepted)\b/gi],
   ["processing", /\b(?:process\w*|transport\w*|book\w*|fingerprint\w*|Miranda|served|interview\w*|released|notified of (?:his|her|their) right)/gi],
   ["arrival", /\b(?:arriv\w*|responded|reached|on scene)\b/gi],
 ];
@@ -43,32 +45,62 @@ function clauseAt(text: string, at: number): string {
   for (const m of text.matchAll(CLAUSE_RE)) { const a = m.index!, b = a + m[0].length; if (b <= at) start = Math.max(start, b); else if (a > at) end = Math.min(end, a); }
   return text.slice(start, end);
 }
+// Wording that states two events happened at the same moment. Sharing a sentence or clause does not.
+const SIMULTANEOUS_RE = /\b(?:upon|on)\s+(?:(?:his|her|their|the|agents?'?|officers?'?)\s+)?arriv\w*|\bimmediately\b|\bat (?:that|the same) (?:time|moment)\b|\bsimultaneously\b|\bat which (?:time|point)\b|\bwhereupon\b/i;
+// Wording that puts one event after another ("then arrested him at 1100 hours").
+const SEQUENCE_RE = /\b(?:then|later|subsequently|thereafter|afterwards?|eventually|after|before|until|prior to)\b/i;
+type Cue = { k: TimeEvent; at: number };
+const cuesIn = (clause: string): Cue[] => CUES.flatMap(([k, re]) => [...clause.matchAll(re)].map((m) => ({ k, at: m.index! })));
+// The event word a time at offset `at` belongs to: the nearest before it in the clause, or, with none before, the
+// nearest after it ("At 0815 hours, a Trooper requested …"). "arrested and transported … at 2145 hours" is the
+// transport's time.
+function boundCue(cues: Cue[], at: number): Cue | undefined {
+  return cues.filter((x) => x.at < at).sort((a, b) => b.at - a.at)[0] ?? cues.filter((x) => x.at > at).sort((a, b) => a.at - b.at)[0];
+}
 /**
- * The event a time at offset `at` of its clause belongs to: the event word nearest before it in the clause, or, with
- * none before, the nearest after it ("At 0815 hours, a Trooper requested …"). "arrested and transported … at 2145
- * hours" is the transport's time. An arrival counts as the encounter only when the same clause also states the
- * encounter or arrest ("arrived at 0900 hours and encountered the subject"): the source links them. Nothing else does.
+ * The event a time at offset `at` of its clause belongs to. Each time is bound to its own event occurrence; sharing a
+ * sentence or clause does not make two events simultaneous. An arrival or arrest time is the encounter time only when
+ * the source ties them: the clause states an encounter that has no time of its own, nothing in between puts one after
+ * the other, and
+ * - for an arrest, the two are stated together ("encountered and arrested the subject at 0900 hours");
+ * - for an arrival, the clause says the encounter happened on arrival ("Upon arrival at 0900 hours, agents encountered
+ *   the subject"). "Arrived at 0900 hours and encountered the subject" is a sequence: the encounter time is not stated.
+ * `others` are the offsets of the clause's other times, so an encounter with its own time is never borrowed.
  */
-export function timeEvent(clause: string, at: number): TimeEvent {
-  const cues = CUES.flatMap(([k, re]) => [...clause.matchAll(re)].map((m) => ({ k, at: m.index! })));
-  const before = cues.filter((x) => x.at < at).sort((a, b) => b.at - a.at)[0];
-  const after = cues.filter((x) => x.at > at).sort((a, b) => a.at - b.at)[0];
-  const k = (before ?? after)?.k ?? "unknown";
-  if (k === "arrival") { const link = cues.find((x) => x.k === "encounter" || x.k === "arrest"); if (link) return link.k; }
-  return k;
+export function timeEvent(clause: string, at: number, others: number[] = []): TimeEvent {
+  const cues = cuesIn(clause);
+  const own = boundCue(cues, at);
+  const k = own?.k ?? "unknown";
+  if (k !== "arrival" && k !== "arrest") return k;
+  const timed = new Set(others.map((o) => boundCue(cues, o)).filter(Boolean));
+  const enc = cues.find((x) => x.k === "encounter" && !timed.has(x) && !SEQUENCE_RE.test(clause.slice(Math.min(x.at, own!.at), Math.max(x.at, own!.at, at))));
+  if (!enc) return k;
+  if (k === "arrival") return SIMULTANEOUS_RE.test(clause) ? "encounter" : k;
+  // Arrest: the two verbs coordinated directly ("encountered and arrested", "detained, then" is a sequence), not two
+  // occurrences ("encountered the subject and placed him under arrest at 1100 hours").
+  if (enc.at > own!.at) return k;
+  const between = (clause.slice(enc.at, own!.at).replace(/^\w+/, "").match(/[A-Za-z]+/g) ?? []).filter((w) => !/^(?:placed|under|was|were)$/i.test(w));
+  return between.length <= 2 && between.includes("and") ? "encounter" : k;
 }
 /** Every clock time the narrative states, with the event it belongs to. */
 export function statedTimes(sentences: Sentence[]): StatedTime[] {
   return sentences.flatMap((s) => {
     const t = colon24(to24h(s.text));
-    return [...t.matchAll(TIME_RE)].filter((m) => m[1] || !/^\s+[A-Z][a-z]/.test(t.slice(m.index! + m[0].length))).map((m) => {
+    const ms = [...t.matchAll(TIME_RE)].filter((m) => m[1] || !/^\s+[A-Z][a-z]/.test(t.slice(m.index! + m[0].length)));
+    return ms.map((m) => {
       const clause = clauseAt(t, m.index!);
       const start = t.indexOf(clause);
-      return { sentenceId: s.id, hhmm: m[1] ?? m[3], event: timeEvent(clause, m.index! - start), at: m.index!, clause: clause.trim() };
+      const others = ms.filter((o) => o !== m && o.index! >= start && o.index! < start + clause.length).map((o) => o.index! - start);
+      return { sentenceId: s.id, hhmm: m[1] ?? m[3], event: timeEvent(clause, m.index! - start, others), at: m.index!, clause: clause.trim() };
     });
   });
 }
-export const isEncounterTime = (t: StatedTime) => t.event === "encounter" || t.event === "arrest";
+/**
+ * A time stated for the encounter itself (or for an arrest or arrival the source ties to it; see timeEvent). The form
+ * field is the encounter's date and hour: an arrest is not automatically the encounter, so a separate arrest time is
+ * never compared with it as if it were.
+ */
+export const isEncounterTime = (t: StatedTime) => t.event === "encounter";
 export const toMinutes = (hhmm: string) => parseInt(hhmm.slice(0, 2)) * 60 + parseInt(hhmm.slice(2));
 /** The difference the time rule treats as a discrepancy (R-TIME-MISMATCH): 30 minutes or more. */
 export const TIME_TOLERANCE_MIN = 30;
@@ -79,16 +111,36 @@ const LABEL: Record<TimeEvent, string> = {
 };
 export const describeTime = (t: StatedTime) => `${t.hhmm} hours (${LABEL[t.event]})`;
 
+const differs = (t: StatedTime, ft: string) => Math.abs(toMinutes(t.hhmm) - toMinutes(ft)) >= TIME_TOLERANCE_MIN;
 /**
- * Whether the narrative supports an encounter-time conflict with the form: a stated encounter or arrest time that
- * differs from the form's encounter hour by the tolerance or more. With `orUnresolved`, a differing time the narrative
- * ties to no event counts too: it does not establish a conflict, but it leaves one possible (used for routing, never
- * for a finding).
+ * An arrest stated before the form's encounter hour by the tolerance or more: the subject cannot be arrested before
+ * being encountered, so the two cannot both be right. An arrest after the recorded encounter is the normal sequence and
+ * conflicts with nothing. Times on either side of midnight are compared as the nearer of the two (within 12 hours).
+ */
+export function arrestBeforeEncounter(t: StatedTime, ft: string): boolean {
+  if (t.event !== "arrest") return false;
+  const d = ((toMinutes(t.hhmm) - toMinutes(ft) + 1440 + 720) % 1440) - 720;
+  return d <= -TIME_TOLERANCE_MIN;
+}
+/** A stated time the form's encounter hour conflicts with: the encounter's own time, or an arrest before it. */
+export const conflictsWithForm = (t: StatedTime, ft: string) => (isEncounterTime(t) && differs(t, ft)) || arrestBeforeEncounter(t, ft);
+/**
+ * Differing times that leave the encounter time unresolved rather than in conflict: a time the narrative ties to no
+ * event. Never a finding; used for routing.
+ */
+export function unresolvedEncounterTimes(times: StatedTime[], ft: string): StatedTime[] {
+  return times.filter((t) => t.event === "unknown" && differs(t, ft));
+}
+/**
+ * Whether the narrative supports an encounter-time conflict with the form (conflictsWithForm). With `orUnresolved`, an
+ * unresolved differing time (unresolvedEncounterTimes) counts too: it does not establish a conflict, but it leaves one
+ * possible (used for routing, never for a finding).
  */
 export function encounterTimeConflict(sentences: Sentence[], formValue: string | undefined, orUnresolved = false): StatedTime | null {
   const ft = formTimeOf(formValue);
   if (!ft) return null;
-  return statedTimes(sentences).find((t) => (isEncounterTime(t) || (orUnresolved && t.event === "unknown")) && Math.abs(toMinutes(t.hhmm) - toMinutes(ft)) >= TIME_TOLERANCE_MIN) ?? null;
+  const times = statedTimes(sentences);
+  return times.find((t) => conflictsWithForm(t, ft)) ?? (orUnresolved ? unresolvedEncounterTimes(times, ft)[0] ?? null : null);
 }
 
 // A routing reason (or part of one) about the encounter time, and its kind.
@@ -149,13 +201,13 @@ const PHRASE: Record<TimeEvent, string> = {
  *   tolerance or more ("the trooper's request at 0815 and the agent's arrival at 0900" are two events).
  */
 export type TimeClaimCheck = { reason: string; /** false: unresolved rather than shown wrong (a differing time tied to no stated event) */ invalid: boolean; routeReason?: string };
-export function unsupportedTimeClaim(claim: string, cited: Sentence[], citesForm: boolean, formValue: string | undefined): TimeClaimCheck | null {
-  const r = timeClaimReason(claim, cited, citesForm, formValue);
+export function unsupportedTimeClaim(claim: string, cited: Sentence[], citesForm: boolean, formValue: string | undefined, all: Sentence[] = cited): TimeClaimCheck | null {
+  const r = timeClaimReason(claim, cited, citesForm, formValue, all);
   if (!r) return null;
   if (typeof r !== "string") return r;
   return { reason: r, invalid: true };
 }
-function timeClaimReason(claim: string, cited: Sentence[], citesForm: boolean, formValue: string | undefined): string | TimeClaimCheck | null {
+function timeClaimReason(claim: string, cited: Sentence[], citesForm: boolean, formValue: string | undefined, all: Sentence[]): string | TimeClaimCheck | null {
   const text = to24h(claim);
   // An observation that the narrative does not state a time is not a conflict claim (kept as the model gave it).
   if (GAP_RE.test(text)) return null;
@@ -170,18 +222,30 @@ function timeClaimReason(claim: string, cited: Sentence[], citesForm: boolean, f
     if ((claim.match(DATE_RE) ?? []).some((d) => !formDates.has(isoOf(d)))) return null;
     if (!ft) return "The form does not record an encounter hour, so there is no encounter time for the narrative to conflict with.";
     const enc = times.filter(isEncounterTime);
-    if (enc.some((t) => Math.abs(toMinutes(t.hhmm) - toMinutes(ft)) >= TIME_TOLERANCE_MIN)) return null;
-    const unresolved = times.filter((t) => t.event === "unknown" && Math.abs(toMinutes(t.hhmm) - toMinutes(ft)) >= TIME_TOLERANCE_MIN);
+    if (times.some((t) => conflictsWithForm(t, ft))) return null;
+    // A conflict the narrative states elsewhere still stands; the claim is not withheld for citing the wrong sentence.
+    const encAll = statedTimes(all).filter(isEncounterTime);
+    if (statedTimes(all).some((t) => conflictsWithForm(t, ft))) return null;
+    const unresolved = unresolvedEncounterTimes(times, ft);
     if (unresolved.length) {
       const shown = unresolved.map((t) => `${t.hhmm} hours`).join(" and ");
       return { invalid: false, reason: `The narrative gives ${shown} without saying which event it is, so it does not establish a conflict with the form's encounter time (${ft} hours); whether it is the encounter time is unresolved.`,
         routeReason: `The narrative gives ${shown} without saying which event it is; the form records the encounter at ${ft} hours. A person should confirm the encounter time.` };
     }
+    // The claimed time is another event's (an arrival or a later arrest beside the encounter): say what it is.
+    const claimedOther = times.filter((t) => claimed.includes(t.hhmm) && !isEncounterTime(t));
+    if (claimedOther.length && !times.some((t) => claimed.includes(t.hhmm) && isEncounterTime(t))) {
+      const after = claimedOther.some((t) => t.event === "arrest") ? " An arrest after the recorded encounter is the normal sequence, not a conflict." : "";
+      const stated = encAll.length ? ` The narrative states the encounter at ${[...new Set(encAll.map((t) => t.hhmm))].join(" and ")} hours, within ${TIME_TOLERANCE_MIN} minutes of the form's (${ft} hours).` : claimedOther.some((t) => t.event !== "request") ? " The narrative does not state the encounter time itself." : "";
+      return `The narrative gives ${claimedOther.filter((t, i, all) => all.findIndex((x) => x.hhmm === t.hhmm) === i).map((t) => `${t.hhmm} hours as ${PHRASE[t.event]}`).join(" and ")}, not the encounter, so it cannot conflict with the form's encounter time.${after}${stated}`;
+    }
     if (enc.length) return `The narrative's ${enc.map((t) => `${t.event} time (${t.hhmm} hours)`).join(" and ")} is within ${TIME_TOLERANCE_MIN} minutes of the form's encounter time (${ft} hours), the threshold the time rule uses, so it is not a conflict.`;
     const named = times.filter((t) => claimed.includes(t.hhmm));
     const shown = (named.length ? named : times).filter((t, i, all) => all.findIndex((x) => x.hhmm === t.hhmm) === i);
     if (!shown.length) return `The cited narrative text does not state the encounter time. A time the narrative does not give is unresolved, not a conflict with the form's encounter time (${ft} hours).`;
-    return `The narrative gives ${shown.map((t) => `${t.hhmm} hours as ${PHRASE[t.event]}`).join(" and ")}, not the encounter, so it cannot conflict with the form's encounter time.${shown.some((t) => t.event !== "request") ? " The narrative does not state the encounter time itself." : ""}`;
+    const after = shown.some((t) => t.event === "arrest") ? " An arrest after the recorded encounter is the normal sequence, not a conflict." : "";
+    const stated = after + (encAll.length ? ` The narrative states the encounter at ${[...new Set(encAll.map((t) => t.hhmm))].join(" and ")} hours.` : shown.some((t) => t.event !== "request") ? " The narrative does not state the encounter time itself." : "");
+    return `The narrative gives ${shown.map((t) => `${t.hhmm} hours as ${PHRASE[t.event]}`).join(" and ")}, not the encounter, so it cannot conflict with the form's encounter time.${stated}`;
   }
   const named = times.filter((t) => claimed.includes(t.hhmm));
   if (new Set(named.map((t) => t.hhmm)).size < 2) return null;

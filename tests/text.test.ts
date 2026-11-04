@@ -98,11 +98,17 @@ test("partial matches are accepted only when the source fragment contains the ma
   assert.equal(locatePartial(s, q, []), null, "no material fact, no partial match");
 });
 
+// Changed in improve/accuracy-iter-1: C003's arrest (1030) is after the form's encounter hour (0950), the normal
+// sequence, so it is no longer flagged (it was adjudicated a valid observation under the earlier rule; that record is
+// kept unchanged). The word order this test guards ("At approximately 1030 hours, X was placed under arrest") is still
+// read, and flagged when the arrest is before the recorded encounter.
 test("bug: time rule missed 'At approximately 1030 hours, X was placed under arrest' (C003)", () => {
   const c003 = JSON.parse(readFileSync("eval/cases/C003.json", "utf8")) as CaseRecord;
-  const r = runRules(c003, splitSentences(c003.narrative.text, c003.narrative.pageSpans));
-  const f = r.findings.find((x) => x.id === "R-TIME-MISMATCH");
-  assert.ok(f, "form 0950 vs narrative 1030 should be flagged");
+  const ss3 = splitSentences(c003.narrative.text, c003.narrative.pageSpans);
+  assert.ok(!runRules(c003, ss3).findings.some((x) => x.id === "R-TIME-MISMATCH"), "an arrest 40 minutes after the recorded encounter is not a conflict");
+  const before = { ...c003, facts: c003.facts.map((x) => (x.path === "encounter.date_time" ? { ...x, value: "03/27/2017 1130" } : x)) };
+  const f = runRules(before, ss3).findings.find((x) => x.id === "R-TIME-MISMATCH");
+  assert.ok(f, "form 1130 vs an arrest at 1030 should be flagged");
   assert.match(f!.evidence[0].quote!, /1030 hours/);
   const ss = splitSentences("At approximately 2145 hours the subjects were transported to the station and arrested later.");
   assert.ok(!runRules({ ...c003, narrative: { text: ss[0].text } }, ss).findings.some((x) => x.id === "R-TIME-MISMATCH"), "transport times stay excluded");
