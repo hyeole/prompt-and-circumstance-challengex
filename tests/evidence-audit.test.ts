@@ -11,6 +11,7 @@ import { readFileSync } from "node:fs";
 import { reviewCase, type Complete } from "../lib/review/review";
 import { FACTS_SYSTEM_PROMPT, attributeStatement } from "../lib/review/facts";
 import { splitSentences } from "../lib/text";
+import { eventContext, statedTimes, timeContext } from "../lib/review/times";
 import type { CaseRecord } from "../lib/types";
 
 const R = "[REDACTED (b)(6), (b)(7)(C)]";
@@ -99,4 +100,28 @@ test("times: a later, fully established arrest with no stated encounter time is 
   assert.equal(later.finding, false);
   assert.match(later.questions[0] ?? "", /If that field records the first contact, the arrest followed it; if it records the apprehension, the two differ/);
   assert.deepEqual(await ruleTime(timeCase(ONE("Agents encountered the subject at 0900 hours and placed him under arrest at 1100 hours."), "0900")), { finding: false, questions: [] });
+});
+
+// ---- 3. Dates bound to their own event occurrence (POST-OBSERVATION: the first test restates the review example) ----
+const dateCheck = (text: string, form = "06/04/2023 0900") => {
+  const sents = splitSentences(text);
+  const t = statedTimes(sents).find((x) => x.hhmm === "0800")!;
+  return eventContext(t, timeContext(sents, form)).filter((m) => /date/.test(m));
+};
+test("dates (review example): an interview's date in another clause does not date the encounter; paired without it", () => {
+  assert.deepEqual(dateCheck("On June 3, 2023 agents encountered the subject at 0800 hours; his interview was scheduled for June 4, 2023."), ["the narrative dates it 2023-06-03, not the form's date (2023-06-04)"]);
+  assert.deepEqual(dateCheck("On June 3, 2023 agents encountered the subject at 0800 hours."), ["the narrative dates it 2023-06-03, not the form's date (2023-06-04)"]);
+});
+test("dates: an unrelated event's date in an earlier sentence (hearing, earlier arrest, entry) does not become the encounter's date", () => {
+  for (const before of ["The subject's immigration hearing was held on June 4, 2023.", "The subject was previously arrested on June 4, 2023.", "The subject entered the United States on June 4, 2023."])
+    assert.deepEqual(dateCheck(`${before} Agents encountered the subject at 0800 hours.`), ["the narrative does not state the date of the encounter"], before);
+});
+test("dates, paired positive controls: explicitly established chronology still dates the encounter", () => {
+  assert.deepEqual(dateCheck("On June 4, 2023, agents were on patrol near Monroe. Agents encountered the subject at 0800 hours."), [], "the scene date");
+  assert.deepEqual(dateCheck("On June 4, 2023, at approximately 0800 hours, agents encountered the subject."), [], "its own date, leading");
+  assert.deepEqual(dateCheck("Agents encountered the subject at 0800 hours on June 4, 2023."), [], "its own date, after");
+  assert.deepEqual(dateCheck("On June 4, 2023, at approximately 0700 hours, a Trooper requested assistance; agents encountered the subject at 0800 hours."), [], "the same incident's request");
+  assert.deepEqual(dateCheck("On June 3, 2023, agents were on patrol near Monroe. The next day, agents encountered the subject at 0800 hours."), [], "the next day");
+  assert.deepEqual(dateCheck("On June 3, 2023, agents were on patrol; the next day they encountered the subject at 0800 hours."), [], "the next day, same sentence");
+  assert.deepEqual(dateCheck("On June 3, 2023, agents were on patrol near Monroe. Agents encountered the subject at 0800 hours."), ["the narrative dates it 2023-06-03, not the form's date (2023-06-04)"], "a scene on another day, with no next-day wording");
 });

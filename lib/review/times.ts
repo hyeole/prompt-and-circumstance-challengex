@@ -148,6 +148,80 @@ export const timeContext = (sentences: Sentence[], formValue: string | undefined
 const signedFromForm = (t: StatedTime, ft: string) => ((toMinutes(t.hhmm) - toMinutes(ft) + 1440 + 720) % 1440) - 720;
 const PRIOR_ARREST_RE = /\b(?:previous(?:ly)?|prior(?!\s+to\b)|earlier|formerly|on (?:\w+ )?(?:previous|prior|separate|other) occasions?)\b/i;
 const ALL_ARRESTED_RE = /\b(?:all (?:of )?(?:the )?(?:subjects|individuals|occupants|men|aliens|three|four|five|six)|both(?: of)?(?: the)? subjects|the subjects|all three|all four|them all)\b/i;
+// ---- Dates bound to their own event occurrence ----
+// Other events whose dates say nothing about the encounter's: an entry, a birth, a removal, an interview or hearing, a
+// document's issue or expiry, and so on.
+const OTHER_EVENT_RE = /\b(?:enter\w*|entry|cross\w*|born|birth|married|remov\w*|deport\w*|interview\w*|schedul\w*|hearings?|court|appointment|expir\w*|issued|assigned|released|convict\w*|sentenc\w*|appl(?:ied|ication)|granted|denied|returned|return|admitted)\b/gi;
+// Duty wording that sets the scene of the encounter narrative ("On June 4, 2023, agents were on patrol …").
+const SCENE_RE = /\b(?:patrol\w*|on duty|conducting|performing|assigned duties)\b/gi;
+// Explicit chronology that moves the narrative to the next day.
+const NEXT_DAY_RE = /\b(?:the )?(?:next|following) (?:day|morning|evening|night)\b/i;
+type DateSpan = { iso: string; at: number; end: number };
+/** Full dates in a text with their positions ("June 3, 2023", "06/03/2023"; "the day after 06/08/2011" gives the next day). */
+function datesIn(text: string): DateSpan[] {
+  const out: DateSpan[] = [];
+  const re = /\bday after\b[^.]{0,80}?\b\d{1,2}\/\d{1,2}\/\d{2,4}\b|\b\d{1,2}\/\d{1,2}\/\d{4}\b|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+(?:19|20)\d\d\b/gi;
+  for (const m of text.matchAll(re)) {
+    const iso = fullDates(m[0].replace(/(\d)(?:st|nd|rd|th)\b/i, "$1"))[0];
+    if (iso && !out.some((d) => m.index! >= d.at && m.index! < d.end)) out.push({ iso, at: m.index!, end: m.index! + m[0].length });
+  }
+  return out;
+}
+const plusDays = (iso: string, n: number) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+type DateCue = { kind: "own" | "narrative" | "other" | "none"; at: number };
+/**
+ * The event a date belongs to: the event word nearest to it within its own clause. "own" when that word is the cue at
+ * `ownCue` (the event being dated); "narrative" for another encounter, arrest, request, arrival or processing step, or
+ * duty wording that sets the scene; "other" for an unrelated event (an entry, a hearing, an interview, a removal…);
+ * "none" when the clause has no event word.
+ */
+function dateCue(text: string, d: DateSpan, ownCue?: number): DateCue {
+  const clause = clauseAt(text, d.at);
+  const start = text.indexOf(clause);
+  const local = (re: RegExp, kind: "narrative" | "other") => [...clause.matchAll(re)].map((m) => ({ kind, at: start + m.index!, end: start + m.index! + m[0].length }));
+  const cues = [...cuesIn(clause).map((c) => ({ kind: "narrative" as const, at: start + c.at, end: start + c.at + 1 })), ...local(SCENE_RE, "narrative"), ...local(OTHER_EVENT_RE, "other")];
+  if (!cues.length) return { kind: "none", at: -1 };
+  const dist = (c: { at: number; end: number }) => (c.at >= d.end ? c.at - d.end : d.at >= c.end ? d.at - c.end : 0);
+  const near = cues.sort((a, b) => dist(a) - dist(b))[0];
+  return { kind: ownCue !== undefined && near.at === ownCue ? "own" : near.kind, at: near.at };
+}
+/**
+ * The date(s) of the event a time belongs to, read from the source, never from an unrelated event's date:
+ * 1. a date in the event's own clause whose nearest event word is the event itself ("On June 3, 2023 agents encountered
+ *    the subject at 0800 hours");
+ * 2. else a date in the same sentence that belongs to the same incident's narrative (another encounter, arrest, request,
+ *    arrival or processing step, or the duty wording that sets the scene), or that opens the sentence ("On June 4,
+ *    2023, …") with no event word of its own;
+ * 3. else the latest such date in the sentences before, moved forward one day for each explicit "the next day"
+ *    (or following morning, evening, night) between it and the event.
+ * Dates of other events (an interview, a hearing, an entry, a removal, a document) are skipped wherever they are. An
+ * earlier arrest ("previously arrested") does not date this incident either.
+ */
+export function eventDate(t: StatedTime, sentences: Sentence[], idx: number): string[] {
+  const T = colon24(to24h(sentences[idx].text));
+  const cStart = T.indexOf(t.clause);
+  const own = cStart >= 0 ? boundCue(cuesIn(t.clause), t.at - cStart) : undefined;
+  const ownAt = own && cStart >= 0 ? cStart + own.at : undefined;
+  const ds = datesIn(T);
+  const mine = ds.filter((d) => cStart >= 0 && d.at >= cStart && d.end <= cStart + t.clause.length && dateCue(T, d, ownAt).kind === "own");
+  if (mine.length) return mine.map((d) => d.iso);
+  const context = (text: string) => datesIn(text).filter((d) => {
+    if (PRIOR_ARREST_RE.test(clauseAt(text, d.at))) return false;
+    const k = dateCue(text, d).kind;
+    return k === "narrative" || (k === "none" && /^\W*(?:[A-Z][A-Z /&]+:\s*)?(?:on\s+)?$/i.test(text.slice(0, d.at)));
+  });
+  const same = context(T).filter((d) => d.end <= t.at || !mine.includes(d));
+  if (same.length) { const d = same.at(-1)!; return [plusDays(d.iso, d.end <= t.at && NEXT_DAY_RE.test(T.slice(d.end, t.at)) ? 1 : 0)]; }
+  let shift = NEXT_DAY_RE.test(T.slice(0, t.at)) ? 1 : 0;
+  for (let j = idx - 1; j >= 0; j--) {
+    const Tj = colon24(to24h(sentences[j].text));
+    const found = context(Tj);
+    if (found.length) return [plusDays(found.at(-1)!.iso, shift)];
+    if (NEXT_DAY_RE.test(Tj)) shift++;
+  }
+  return [];
+}
+
 /**
  * What the source leaves unestablished about a stated encounter or arrest, for its time to be compared with the form's
  * At/Near date and hour ([] = all established):
@@ -166,11 +240,10 @@ export function eventContext(t: StatedTime, ctx: TimeContext): string[] {
   if (PRIOR_ARREST_RE.test(t.clause)) missing.push(`it is described as an earlier ${what}`);
   const formDate = ctx.formValue ? fullDates(ctx.formValue)[0] : undefined;
   const idx = ctx.sentences.findIndex((x) => x.id === t.sentenceId);
-  const own = idx >= 0 ? fullDates(ctx.sentences[idx].text) : [];
-  const earlier = own.length ? own : (ctx.sentences.slice(0, Math.max(0, idx)).reverse().map((x) => fullDates(x.text)).find((d) => d.length) ?? []);
+  const dated = idx >= 0 ? eventDate(t, ctx.sentences, idx) : [];
   if (!formDate) missing.push("the form does not record a date");
-  else if (!earlier.length) missing.push(`the narrative does not state the date of the ${what}`);
-  else if (!earlier.includes(formDate)) missing.push(`the narrative dates it ${earlier[0]}, not the form's date (${formDate})`);
+  else if (!dated.length) missing.push(`the narrative does not state the date of the ${what}`);
+  else if (!dated.includes(formDate)) missing.push(`the narrative dates it ${dated[0]}, not the form's date (${formDate})`);
   const s = idx >= 0 ? ctx.sentences[idx] : undefined;
   if (ctx.severalPeople && !(s && attribution(s, "unclear") === "subject") && !ALL_ARRESTED_RE.test(t.clause))
     missing.push(`several people are described and it does not say this subject was among those ${t.event === "arrest" ? "arrested" : "encountered"}`);
