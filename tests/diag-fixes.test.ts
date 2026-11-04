@@ -161,3 +161,17 @@ test("qualification control: a model concern about the MANNER is still qualified
     { status: "likely_mismatch", explanation: "The narrative suggests he may have been inspected at a port of entry." });
   assert.equal(r.citation.status, "needs_human_review");
 });
+
+// ---- Removal orders against a NEGATIVE record (found in the replay of this change: F051 lost its routing) ----
+test("a removal order while the record is NEGATIVE: the subject's own is a history item; an unattributable one is routed; never a removal", async () => {
+  const base = load("DU04"); // a one-subject narrative with a NEGATIVE record
+  const own = withText(base, "He travelled to Michigan by car with relatives.", "Records show that an immigration judge ordered the subject removed in absentia in 2021. He travelled to Michigan by car with relatives.");
+  const r1 = await run(own, NONE);
+  assert.ok(ids(r1).includes("F-HISTORY-ORDER"));
+  assert.ok(!ids(r1).includes("F-HISTORY"), "an order is not a removal");
+  const f051 = JSON.parse(readFileSync("eval/fresh/cases/F051.json", "utf8")) as CaseRecord;
+  const r2 = await run(f051, NONE);
+  const s8 = sid(f051, "one had been ordered removed");
+  assert.ok(!ids(r2).some((x) => x.startsWith("F-HISTORY")));
+  assert.ok((r2.humanReview.accounts ?? []).some((g) => g.sentenceIds.includes(s8)), "the group member's order is routed");
+});

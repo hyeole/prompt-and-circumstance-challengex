@@ -660,6 +660,22 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     else if (multiPerson)
       unattributed.push(...prior.map((x) => ({ sentenceId: x.id, fieldPath: "history.immigration_record", detail: `${x.id} describes prior immigration arrests, apprehensions or voluntary returns; the form records the immigration record as "${imm.value}".` })));
   }
+  // 4e. A removal ORDER (no execution or departure stated) described while the record is NEGATIVE: not a removal, but
+  //     immigration history a NEGATIVE record would not show. The subject's own: a clarity item for a person; an order
+  //     whose subject cannot be attributed (F051 "one had been ordered removed"): routed as an unattributed account.
+  if (imm && /^\s*NEGATIVE\b/i.test(imm.value) && !findings.some((f) => f.id === "F-HISTORY")) {
+    const orders = sentences.filter((x) => statesRemovalOrderOnly(x.text));
+    const own = orders.filter((x) => attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported" && !thirdPartyPronounReport(x.text));
+    if (own.length)
+      findings.push({
+        id: "F-HISTORY-ORDER", category: "unclear", title: "Removal order described while the record is NEGATIVE",
+        explanation: `${own[0].id} describes a removal order, but the form records the immigration record as "${imm.value}". The narrative does not say whether the order was carried out. A person should confirm the immigration history.`,
+        evidence: [ctx({ kind: "sentence", sentenceId: own[0].id, quote: own[0].text, start: own[0].start, end: own[0].end, page: own[0].page, verified: true, match: "exact" }, attribution(own[0], "unclear"), "removal"), fieldEv("history.immigration_record")],
+        referenceIds: [], needsHumanReview: true, humanReviewReason: "The narrative's immigration history and the form's record differ: a person should confirm.", source: "rule", severity: "medium",
+      });
+    else unattributed.push(...orders.filter((x) => !unattributed.some((u) => u.sentenceId === x.id))
+      .map((x) => ({ sentenceId: x.id, fieldPath: "history.immigration_record", detail: `${x.id} describes a removal order that cannot be attributed to this record's subject; the form records the immigration record as "${imm.value}".` })));
+  }
   // 4b. The form records a prior removal, but the narrative describes none at all. One source only, so this is a
   //     clarity gap for a person to resolve, not a contradiction (the narrative may simply omit the history).
   // The narrative's own wording is checked as well as the extracted statements (FS09: the extractor missed
