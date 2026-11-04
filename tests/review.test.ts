@@ -72,7 +72,10 @@ test("bug: charge-fit statements were also issued as separate inconsistencies (C
     review: review({ issues: [{ type: "inconsistency", title: "Subject not admitted but charge requires admission", explanation: "The charge requires admission.", evidence: [{ field_path: "entry.manner" }, { sentence_id: sid(c, "crossed the US/MEXICO Border illegally"), quote: "crossed the US/MEXICO Border illegally" }], needs_human_review: true, reason: "" }] }),
   }));
   assert.ok(!r.findings.some((f) => f.title.startsWith("Subject not admitted")));
-  assert.ok(r.discarded.some((d) => /citation check/.test(d.reason)));
+  // Changed (contradiction-compat-1): the manner check now also runs without a fact extraction (the source text's own
+  // manner), so this claim is withheld one step earlier, because "crossed … illegally" and EWI are the same manner. Either
+  // reason withholds it; the finding is still not issued.
+  assert.ok(r.discarded.some((d) => /citation check|same manner of entry/.test(d.reason)));
 });
 
 test("unverifiable model evidence is withheld, never highlighted", async () => {

@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -458,24 +458,52 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // (1b) A claimed conflict between the form's manner-of-entry code and a narrative sentence the extractor classified in
     // the SAME manner category (e.g. EWI/PWA vs "crossed illegally") is not a conflict.
+    // Generalised (live verification of 286d42d, C037-X1: "smuggler-assisted crossing, whereas form lists EWI AFOOT"):
+    // the form's manner code carries separate attributes, compared independently: the inspection category (without
+    // inspection vs admitted) and, when the code states one, the mode of travel (AFOOT, vehicle, boat, air). Help from a
+    // smuggler or guide is neither; it is compatible with every code. A manner conflict needs a cited statement that
+    // asserts an incompatible category or an incompatible mode; a statement whose category matches the form, or states
+    // none, does not contradict it.
     const mannerField = verified.find((v) => v.fieldPath === "entry.manner");
-    if (iss.type === "inconsistency" && mannerField && factsSettled.ok) {
-      const formCat = formMannerCategory(c.facts.find((f) => f.path === "entry.manner")?.value ?? "");
-      const byS = usEntryMannerBySentence(sentences, factsSettled.v);
-      const cited = verified.filter((v) => v.sentenceId).map((v) => byS.get(v.sentenceId!));
+    if (iss.type === "inconsistency" && mannerField) {
+      const formValue = c.facts.find((f) => f.path === "entry.manner")?.value ?? "";
+      const formCat = formMannerCategory(formValue);
+      const byS = factsSettled.ok ? usEntryMannerBySentence(sentences, factsSettled.v) : new Map<string, string>();
+      const citedS = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
+      const cited = citedS.map((s) => conflictManner(s.text, byS.get(s.id) as "without_inspection" | "admitted" | undefined));
+      const fMode = formEntryMode(formValue);
+      const incompatible = cited.some((m) => !!m && m !== formCat) || (!!fMode && citedS.some((s) => { const m = crossingMode(s.text); return !!m && m !== fMode; }));
       const otherFields = verified.filter((v) => v.fieldPath && v.fieldPath !== "entry.manner");
       // Also when combined with date/place points: a claim whose manner part is wrong is not a valid conflict.
-      if (formCat && cited.length > 0 && cited.every((m) => m === formCat) && (otherFields.length === 0 || /\b(manner|PWA|EWI|AFOOT|on foot|walk|swim|swam|river|cross)/i.test(iss.explanation))) {
+      if (formCat && cited.length > 0 && !incompatible && (otherFields.length === 0 || /\b(manner|PWA|EWI|AFOOT|on foot|walk|swim|swam|river|cross|smuggl|guide)/i.test(iss.explanation))) {
         // The manner part is wrong. Keep any date or place part that the cited text itself supports (audit: separate
         // mixed claims rather than discarding a real conflict); drop the claim only if nothing supported remains.
         const citedText = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)?.text ?? "").join(" ");
         const parts = otherFields.map((v) => ({ path: v.fieldPath!, text: supportedEntryPart(c, v.fieldPath!, citedText) })).filter((x) => x.text);
         const kept = parts.map((x) => x.text!);
-        const note = `The model's manner-of-entry point was withheld: the form code "${mannerField.quote}" and the cited statement describe the same manner of entry.`;
+        const note = cited.every((m) => m === formCat)
+          ? `The model's manner-of-entry point was withheld: the form code "${mannerField.quote}" and the cited statement describe the same manner of entry.`
+          : `The model's manner-of-entry point was withheld: the cited statement does not state a manner of entry or mode of travel incompatible with the form code "${mannerField.quote}" (help from a smuggler or guide is compatible with any manner).`;
         discarded.push({ title: iss.title, reason: kept.length ? `Manner part only. ${note}` : note });
         if (!kept.length) { invalidate(iss, verified); return; }
         verified = verified.filter((v) => !v.fieldPath || parts.some((x) => x.path === v.fieldPath));
         iss = { ...iss, title: kept.length > 1 ? "Entry date and place differ from the form" : /year/.test(kept[0]) ? "Entry date differs from the form" : "Place of entry differs from the form", explanation: `${kept.join(" ")} ${note}` };
+      }
+    }
+    // (1f) A conflict with a NEGATIVE immigration record must rest on immigration history that the record covers (live
+    // verification of 286d42d, C021-X1: "NEGATIVE but narrative documents prior admission and overstay"). The field's
+    // scope, as the review instructions (prompt B) and the deterministic history rules use it: prior removals or
+    // deportations, removal orders, and prior immigration arrests, apprehensions or returns. A lawful admission, a visa,
+    // or an overstay is not such history (an overstay is the status the current charge rests on). Claims citing
+    // in-scope history are kept and go on to the attribution checks below; only claims with none are withheld.
+    const immField = verified.find((v) => v.fieldPath === "history.immigration_record");
+    if (iss.type === "inconsistency" && immField && /^\s*NEGATIVE\b/i.test(immField.quote ?? "")) {
+      const encYear = Number(c.facts.find((f) => f.path === "encounter.date_time")?.value.match(/\b(19|20)\d\d\b/)?.[0] ?? 0);
+      const citedS = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
+      if (citedS.length && !citedS.some((s) => describesRecordHistory(s.text, encYear))) {
+        discarded.push({ title: iss.title, reason: `The cited statement describes no prior removal, removal order, or prior immigration arrest, apprehension or return; an admission, a visa or an overstay is not history that the immigration record "${immField.quote}" denies.` });
+        invalidate(iss, verified);
+        return;
       }
     }
     // (1c) In a narrative about several people, a statement whose subject cannot be attributed (redacted names) is not
@@ -621,6 +649,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     citation = { status: rules.citationPrecheck.status, citation: citeText, explanation: rules.citationPrecheck.explanation, evidence: [] };
   } else {
     let status: ReviewResult["citation"]["status"] = "not_checked";
+    let unsupportedConsistent = false;
     let explanation = "The citation check could not run because the model check was unavailable.";
     let evidence: EvidenceRef[] = [];
     if (out) {
@@ -674,6 +703,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
           explanation = reqs && !factsSettled.ok
             ? "The model reported the charge as consistent, but the fact extraction did not complete, so the fact this charge depends on could not be verified."
             : "The model reported the charge as consistent, but no verified statement of the fact this charge depends on was found. A person should confirm.";
+          unsupportedConsistent = factsSettled.ok || !reqs;
         }
       }
     }
@@ -683,6 +713,13 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     // the model said "mismatch" without verifiable evidence while the rule established it from the form).
     // A contradiction the rule established from subject-specific evidence is reported with that evidence, whatever the
     // model's own verdict and evidence were, so the same record always yields the same verdict and basis.
+    // A model "consistent" verdict downgraded for lack of verified support says only that; when the requirement check
+    // reached the same verdict with its own reason (diag-1 DU03: a removal order whose execution is not documented), that
+    // reason and its evidence are the more specific explanation. The extraction-failure disclosure is never replaced.
+    if (req && unsupportedConsistent && req.status === status && req.explanation) {
+      explanation = `${req.explanation} (The model reported the charge as consistent; that is not adopted without verified support.)`;
+      if (req.evidence.length) evidence = req.evidence;
+    }
     if (req && (rank[req.status] > rank[status] || (req.status === status && evidence.length === 0 && req.evidence.length > 0) || (req.outcome === "contradicted" && status === "likely_mismatch"))) {
       status = req.status;
       explanation = req.explanation + (out ? "" : " (Checked from form fields and rules; the model check was unavailable.)");

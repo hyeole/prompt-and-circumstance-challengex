@@ -317,6 +317,51 @@ export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boo
 }
 
 /**
+ * Whether a statement describes immigration history within the scope of the form's immigration-record field, as the
+ * review instructions (prompt B) and the history rules here use it: a prior removal or deportation, a removal order, a
+ * prior immigration arrest, apprehension or return, or other removal wording or an explicitly prior immigration history.
+ * Deliberately inclusive (it only decides whether a model's NEGATIVE-record conflict has anything to rest on): a lawful
+ * admission, a visa, or an overstay alone is not such history.
+ */
+const PRIOR_HISTORY_RE = /\b(?:prior|previous(?:ly)?|earlier)\b[^.;]{0,40}\b(?:immigration|violations?|apprehen\w*|arrest\w*|encounter\w*|records?|history|remov\w*|deport\w*|returns?|returned)\b|\bimmigration (?:history|violations?)\b/i;
+export function describesRecordHistory(text: string, encounterYear = 0): boolean {
+  return isPriorRemoval(text) || statesRemovalOrderOnly(text) || isPriorImmigrationEncounter(text, encounterYear) ||
+    REMOVAL_WORD_RE.test(text) || PRIOR_HISTORY_RE.test(text);
+}
+
+/**
+ * The manner category a sentence states for a conflict check, with help from a smuggler or guide set aside: assistance
+ * is compatible with any manner, so a sentence whose only manner wording is assistance states no category. Otherwise
+ * the extractor's category for the sentence, or the source's own wording.
+ */
+const ASSISTANCE_RE = /\b(?:smuggl\w*|guide[ds]?|guiding|coyotes?|polleros?|with the help of|helped|help(?:ing)? (?:him|her|them)|services of)\b/gi;
+export function conflictManner(text: string, extracted?: "without_inspection" | "admitted"): "without_inspection" | "admitted" | undefined {
+  const own = statedManner(text.replace(ASSISTANCE_RE, " "));
+  if (own === undefined && new RegExp(ASSISTANCE_RE.source, "i").test(text)) return undefined;
+  return extracted ?? own;
+}
+
+/** The mode of travel a form manner code states, if any ("EWI AFOOT" -> foot). Codes without one return undefined. */
+export function formEntryMode(value: string): "foot" | "vehicle" | "boat" | "air" | undefined {
+  const v = value.toUpperCase();
+  if (/\b(?:AFOOT|ON FOOT|WALK\w*)\b/.test(v)) return "foot";
+  if (/\b(?:VEH\w*|AUTO|CAR|TRUCK|POV)\b/.test(v)) return "vehicle";
+  if (/\b(?:BOAT|VESSEL|SEA|MARINE|RAFT)\b/.test(v)) return "boat";
+  return undefined; // "AIR" codes are compared by inspection category (admitted), not as a mode
+}
+/** The mode of travel a sentence states for a crossing or entry, when exactly one is stated; otherwise undefined. */
+export function crossingMode(text: string): "foot" | "vehicle" | "boat" | "air" | undefined {
+  if (!/\b(?:cross\w*|enter\w*|entry|arriv\w*|came into|came across)\b/i.test(text)) return undefined;
+  const modes = ([
+    ["foot", /\b(?:on foot|afoot|walk(?:ed|ing)?|wad(?:ed|ing)|swam|swimming|hiked|climbed)\b/i],
+    ["vehicle", /\b(?:drove|driving|by (?:car|vehicle|truck|bus)|in (?:a|his|her|the) (?:car|truck|vehicle|van|bus))\b/i],
+    ["boat", /\b(?:boat|raft|vessel|panga)\b/i],
+    ["air", /\b(?:flew|by air|on a (?:flight|plane))\b/i],
+  ] as const).filter(([, re]) => re.test(text)).map(([m]) => m);
+  return modes.length === 1 ? modes[0] : undefined;
+}
+
+/**
  * Verified prior-removal statements that count for this subject. The extractor's list is one source; the narrative's
  * own sentences are the other (a successful extraction must not hide a removal the source states, e.g. "Subject …
  * being a reinstate case"). The extractor's "other" label is checked against the source like any attribution: it
