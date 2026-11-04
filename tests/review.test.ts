@@ -27,8 +27,11 @@ function fake(opts: { review?: string | Error; facts?: string | Error }): Comple
   };
 }
 
+// Changed in the accuracy iteration 1 audit: C001's own narrative does not state the arrest's date ("[UNREADABLE]7"), so its 1330 arrest is
+// now a question rather than a finding; the banner behaviour is tested with the date stated.
 test("bug: human-review banner had no reasons when only a finding required review", async () => {
-  const r = await reviewCase(load("C001"), fake({}));
+  const c0 = load("C001");
+  const r = await reviewCase({ ...c0, narrative: { ...c0.narrative, text: c0.narrative.text.replace("[UNREADABLE]7,", "On March 22, 2017,") } }, fake({}));
   assert.ok(r.findings.some((f) => f.id === "R-TIME-MISMATCH" && f.needsHumanReview));
   assert.equal(r.humanReview.required, true);
   assert.ok(r.humanReview.reasons.some((x) => /time/i.test(x)), "the finding's reason must appear in the banner");
@@ -538,12 +541,13 @@ const entryFacts = (c: CaseRecord, needle: string, year: number) => {
   return facts({ entry_statements: [{ sentence_id: s, quote: sentenceText(c, s), event: "us_entry", year, manner: "without_inspection", person: "unclear" }] });
 };
 
-test("unique support: one entry account matching the form on day, place and manner keeps the year conflict, with the reason", async () => {
+// Changed in the accuracy iteration 1 audit (was: kept as a finding through the form link): matching the form on day, place and manner is
+// value matching, which never establishes identity. The statement goes to a person instead.
+test("value matching: an entry account matching the form on day, place and manner is routed, not attributed", async () => {
   const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
   const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
-  const f = r.findings.find((x) => x.id === "F-ENTRY-DATE");
-  assert.ok(f);
-  assert.match(f!.explanation, /nothing in the narrative suggests another person shares those facts/);
+  assert.ok(!r.findings.some((x) => x.id === "F-ENTRY-DATE"));
+  assert.ok((r.humanReview.accounts ?? []).some((g) => g.fieldPath === "entry.date" && g.sentenceIds.includes(sid(c, "May 5, 2014"))));
 });
 
 test("one matching fact is not enough: only the month and day match (no place, no manner)", async () => {
@@ -687,8 +691,9 @@ test("fix 2: several unattributed history sentences become one routing item for 
   assert.ok(!r.findings.some((x) => x.id === "F-HISTORY-3"));
 });
 
+// Changed in the accuracy iteration 1 audit: the statement names the subject (it was attributed by the removed form link).
 test("fix 2: no routing item for a statement an existing finding already cites", async () => {
-  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const c = synth("The subject stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
   const r = await reviewCase(c, fake({ facts: entryFacts(c, "May 5, 2014", 2014) }));
   assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
   assert.ok(!(r.humanReview.accounts ?? []).length);
@@ -802,12 +807,24 @@ test("request vs encounter time: a Trooper's request time is not the encounter t
 test("request vs encounter time, negative controls: an encounter time, or an arrest before the recorded encounter beside a request time, is still compared", async () => {
   const c0 = load("C012-M2");
   const swap = (from: string, to: string) => ({ ...c0, narrative: { text: c0.narrative.text.replace(from, to) } }) as CaseRecord;
-  const enc = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "Border Patrol Agents encountered three individuals near the highway");
-  const r1 = await timeClaim(enc, "encountered three individuals", "at approximately 2000 hours", "2000");
+  // Changed in the accuracy iteration 1 audit: among several people the encounter must include the subject ("all three");
+  // "three individuals" alone is a question for a person.
+  const enc = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "Border Patrol Agents encountered all three individuals near the highway");
+  const r1 = await timeClaim(enc, "encountered all three individuals", "at approximately 2000 hours", "2000");
   assert.ok(r1.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
-  const both = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 1930 hours");
-  const r2 = await timeClaim(both, "arrested three individuals at 1930", "at 1930 hours", "1930");
+  const encSome = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "Border Patrol Agents encountered three individuals near the highway");
+  const r0 = await timeClaim(encSome, "encountered three individuals", "at approximately 2000 hours", "2000");
+  assert.ok(!r0.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  assert.ok(r0.humanReview.reasons.some((x) => /2000 hours for an encounter.*does not say this subject was among those encountered/.test(x)));
+  // Changed in the accuracy iteration 1 audit: an arrest before the recorded hour conflicts only when the source establishes the person
+  // ("all three"), agency (the agents), occurrence and date; "three individuals" among several people is a question.
+  const both = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested all three individuals at 1930 hours");
+  const r2 = await timeClaim(both, "arrested all three individuals at 1930", "at 1930 hours", "1930");
   assert.ok(r2.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  const some = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 1930 hours");
+  const r4 = await timeClaim(some, "arrested three individuals at 1930", "at 1930 hours", "1930");
+  assert.ok(!r4.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")));
+  assert.ok(r4.humanReview.reasons.some((x) => /1930 hours for an arrest.*does not say this subject was among those arrested/.test(x)));
   const later = swap("a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals", "a Trooper requested assistance; agents arrested three individuals at 2130 hours");
   const r3 = await timeClaim(later, "arrested three individuals at 2130", "at 2130 hours", "2130");
   assert.ok(!r3.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.fieldPath === "encounter.date_time")), "an arrest after the recorded encounter is not a conflict");
@@ -888,8 +905,9 @@ test("routing echo, negative control: a claim withheld only because its quote co
     ["Entry manner conflict between form and narrative"]) }));
   assert.ok(r.humanReview.reasons.includes("Entry manner conflict between form and narrative"));
 });
+// Changed in the accuracy iteration 1 audit: the statement names the subject (it was attributed by the removed form link).
 test("routing echo, negative control: the generic follow-on stays while a real conflict finding remains", async () => {
-  const c = synth("[REDACTED] stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
+  const c = synth("The subject stated that he crossed the border illegally near Nogales, Arizona on May 5, 2014.", form);
   const r = await reviewCase(c, fake({ review: withReasons({}, ["Need to resolve which source is accurate for charge determination"]), facts: entryFacts(c, "May 5, 2014", 2014) }));
   assert.ok(r.findings.some((x) => x.id === "F-ENTRY-DATE"));
   assert.ok(r.humanReview.reasons.includes("Need to resolve which source is accurate for charge determination"));

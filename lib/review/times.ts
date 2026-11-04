@@ -8,10 +8,11 @@
  * leaves it unresolved, which is not a contradiction.
  */
 import type { Sentence } from "@/lib/types";
-import { fullDates } from "./facts";
+import { attribution, fullDates, severalPeopleExample } from "./facts";
 
-export type TimeEvent = "encounter" | "arrest" | "request" | "arrival" | "processing" | "unknown";
-export type StatedTime = { sentenceId: string; hhmm: string; event: TimeEvent; at: number; clause: string };
+export type TimeEvent = "encounter" | "arrest" | "request" | "arrival" | "processing" | "other_agency" | "unknown";
+export type Agency = "ours" | "other" | "unknown";
+export type StatedTime = { sentenceId: string; hhmm: string; event: TimeEvent; at: number; clause: string; agency: Agency };
 
 /** Rewrite 12-hour clock times ("12:06 PM", "1:30 p.m.") as 24-hour times with "hours" ("1206 hours", "1330 hours"). */
 export function to24h(t: string): string {
@@ -57,6 +58,27 @@ const cuesIn = (clause: string): Cue[] => CUES.flatMap(([k, re]) => [...clause.m
 function boundCue(cues: Cue[], at: number): Cue | undefined {
   return cues.filter((x) => x.at < at).sort((a, b) => b.at - a.at)[0] ?? cues.filter((x) => x.at > at).sort((a, b) => a.at - b.at)[0];
 }
+// Who acted. The form is completed by the agents (Border Patrol); another agency's stop or arrest is a different event.
+const OUR_AGENCY_RE = /\b(?:agents?|BPAs?|Border Patrol|USBP|LBPA)\b/gi;
+const OTHER_AGENCY_RE = /\b(?:police|officers?|troopers?|deput(?:y|ies)|sheriffs?|patrolm[ae]n|highway patrol|state patrol|marshals?|ICE|HSI|Homeland Security Investigations)\b/gi;
+/**
+ * The agency that performed the event at `cueAt`: for a passive verb ("was placed under arrest", "were stopped"), the
+ * "by …" phrase after it, or unknown without one; otherwise the agency named nearest before it in the clause, or unknown.
+ */
+export function agencyOf(clause: string, cueAt: number): Agency {
+  const before = clause.slice(0, cueAt);
+  const kind = (t: string): Agency => {
+    const ours = [...t.matchAll(OUR_AGENCY_RE)].map((m) => m.index!), other = [...t.matchAll(OTHER_AGENCY_RE)].map((m) => m.index!);
+    if (!ours.length && !other.length) return "unknown";
+    return Math.max(-1, ...ours) > Math.max(-1, ...other) ? "ours" : "other";
+  };
+  if (/\b(?:was|were|been|being|be)\s+(?:(?:subsequently|then|later|also|immediately)\s+)?(?:placed\s+)?(?:under\s+)?$/i.test(before)) {
+    const by = clause.slice(cueAt).match(/^\w+(?:\s+\w+){0,3}?\s+by\s+([^,;]{0,60})/i);
+    return by ? kind(by[1]) : "unknown";
+  }
+  return kind(before);
+}
+
 /**
  * The event a time at offset `at` of its clause belongs to. Each time is bound to its own event occurrence; sharing a
  * sentence or clause does not make two events simultaneous. An arrival or arrest time is the encounter time only when
@@ -71,6 +93,8 @@ export function timeEvent(clause: string, at: number, others: number[] = []): Ti
   const cues = cuesIn(clause);
   const own = boundCue(cues, at);
   const k = own?.k ?? "unknown";
+  // An encounter or arrest another agency made (a trooper's stop, a police arrest) is not the agents' event.
+  if ((k === "encounter" || k === "arrest") && agencyOf(clause, own!.at) === "other") return "other_agency";
   if (k !== "arrival" && k !== "arrest") return k;
   const timed = new Set(others.map((o) => boundCue(cues, o)).filter(Boolean));
   const enc = cues.find((x) => x.k === "encounter" && !timed.has(x) && !SEQUENCE_RE.test(clause.slice(Math.min(x.at, own!.at), Math.max(x.at, own!.at, at))));
@@ -91,7 +115,8 @@ export function statedTimes(sentences: Sentence[]): StatedTime[] {
       const clause = clauseAt(t, m.index!);
       const start = t.indexOf(clause);
       const others = ms.filter((o) => o !== m && o.index! >= start && o.index! < start + clause.length).map((o) => o.index! - start);
-      return { sentenceId: s.id, hhmm: m[1] ?? m[3], event: timeEvent(clause, m.index! - start, others), at: m.index!, clause: clause.trim() };
+      const cue = boundCue(cuesIn(clause), m.index! - start);
+      return { sentenceId: s.id, hhmm: m[1] ?? m[3], event: timeEvent(clause, m.index! - start, others), at: m.index!, clause: clause.trim(), agency: cue ? agencyOf(clause, cue.at) : "unknown" as Agency };
     });
   });
 }
@@ -107,23 +132,60 @@ export const TIME_TOLERANCE_MIN = 30;
 /** The form's encounter hour ("03/12/2024 0910" → "0910"), if it states one. */
 export const formTimeOf = (value: string | undefined) => (value ? to24h(value).match(/\b([01]\d|2[0-3])([0-5]\d)\b(?!\/)/g)?.pop() : undefined);
 const LABEL: Record<TimeEvent, string> = {
-  encounter: "the encounter", arrest: "the arrest", request: "a call or request", arrival: "an agent's or officer's arrival", processing: "a later step (transport or processing)", unknown: "no stated event",
+  encounter: "the encounter", arrest: "the arrest", request: "a call or request", arrival: "an agent's or officer's arrival", processing: "a later step (transport or processing)", other_agency: "another agency's stop or arrest", unknown: "no stated event",
 };
 export const describeTime = (t: StatedTime) => `${t.hhmm} hours (${LABEL[t.event]})`;
 
 const differs = (t: StatedTime, ft: string) => Math.abs(toMinutes(t.hhmm) - toMinutes(ft)) >= TIME_TOLERANCE_MIN;
 /**
- * An arrest stated before the form's encounter hour by the tolerance or more: the subject cannot be arrested before
- * being encountered, so the two cannot both be right. An arrest after the recorded encounter is the normal sequence and
- * conflicts with nothing. Times on either side of midnight are compared as the nearer of the two (within 12 hours).
+ * The form field compared here is the I-213's "At/Near Date/Hour" (shown as "Encounter date and hour"). The materials do
+ * not say whether it records the first contact or the apprehension, so an arrest time is never read as either. What an
+ * arrest time can show depends on what the source establishes about that arrest (eventContext).
  */
-export function arrestBeforeEncounter(t: StatedTime, ft: string): boolean {
-  if (t.event !== "arrest") return false;
-  const d = ((toMinutes(t.hhmm) - toMinutes(ft) + 1440 + 720) % 1440) - 720;
-  return d <= -TIME_TOLERANCE_MIN;
+export type TimeContext = { sentences: Sentence[]; formValue: string | undefined; severalPeople: boolean };
+export const timeContext = (sentences: Sentence[], formValue: string | undefined): TimeContext => ({ sentences, formValue, severalPeople: !!severalPeopleExample(sentences) });
+// Signed minutes from the form's hour (negative = before), the nearer way round midnight.
+const signedFromForm = (t: StatedTime, ft: string) => ((toMinutes(t.hhmm) - toMinutes(ft) + 1440 + 720) % 1440) - 720;
+const PRIOR_ARREST_RE = /\b(?:previous(?:ly)?|prior(?!\s+to\b)|earlier|formerly|on (?:\w+ )?(?:previous|prior|separate|other) occasions?)\b/i;
+const ALL_ARRESTED_RE = /\b(?:all (?:of )?(?:the )?(?:subjects|individuals|occupants|men|aliens|three|four|five|six)|both(?: of)?(?: the)? subjects|the subjects|all three|all four|them all)\b/i;
+/**
+ * What the source leaves unestablished about a stated encounter or arrest, for its time to be compared with the form's
+ * At/Near date and hour ([] = all established):
+ * - agency: an arrest must be the agents' ("Agent … placed all subjects under arrest"), not another agency's and not
+ *   unstated (other agencies often arrest first); an encounter must not be another agency's (timeEvent already reads a
+ *   trooper's or police stop as "other_agency");
+ * - occurrence: this apprehension, not an earlier one ("previously arrested", "on a prior occasion");
+ * - date: the event's own date, or else the date the narrative last states before it, is the form's date;
+ * - person: the event includes the subject (the subject named, "all subjects", or a narrative about one person).
+ */
+export function eventContext(t: StatedTime, ctx: TimeContext): string[] {
+  const missing: string[] = [];
+  const what = t.event === "arrest" ? "arrest" : "encounter";
+  if (t.event === "arrest" && t.agency === "unknown") missing.push("the narrative does not say which agency made the arrest");
+  if (t.agency === "other") missing.push(`another agency made the ${what}`);
+  if (PRIOR_ARREST_RE.test(t.clause)) missing.push(`it is described as an earlier ${what}`);
+  const formDate = ctx.formValue ? fullDates(ctx.formValue)[0] : undefined;
+  const idx = ctx.sentences.findIndex((x) => x.id === t.sentenceId);
+  const own = idx >= 0 ? fullDates(ctx.sentences[idx].text) : [];
+  const earlier = own.length ? own : (ctx.sentences.slice(0, Math.max(0, idx)).reverse().map((x) => fullDates(x.text)).find((d) => d.length) ?? []);
+  if (!formDate) missing.push("the form does not record a date");
+  else if (!earlier.length) missing.push(`the narrative does not state the date of the ${what}`);
+  else if (!earlier.includes(formDate)) missing.push(`the narrative dates it ${earlier[0]}, not the form's date (${formDate})`);
+  const s = idx >= 0 ? ctx.sentences[idx] : undefined;
+  if (ctx.severalPeople && !(s && attribution(s, "unclear") === "subject") && !ALL_ARRESTED_RE.test(t.clause))
+    missing.push(`several people are described and it does not say this subject was among those ${t.event === "arrest" ? "arrested" : "encountered"}`);
+  return missing;
 }
-/** A stated time the form's encounter hour conflicts with: the encounter's own time, or an arrest before it. */
-export const conflictsWithForm = (t: StatedTime, ft: string) => (isEncounterTime(t) && differs(t, ft)) || arrestBeforeEncounter(t, ft);
+/**
+ * A stated time the form's At/Near date and hour conflicts with: the encounter's own time differing by the tolerance or
+ * more (the encounter established as this subject's, on that date: eventContext), or an arrest of this subject, in this apprehension, by the agents, on the form's date (eventContext), stated
+ * before it by the tolerance or more. Whether the field records the first contact or the apprehension, that arrest
+ * cannot come before it.
+ */
+export function conflictsWithForm(t: StatedTime, ft: string, ctx: TimeContext): boolean {
+  if (isEncounterTime(t)) return differs(t, ft) && eventContext(t, ctx).length === 0;
+  return t.event === "arrest" && signedFromForm(t, ft) <= -TIME_TOLERANCE_MIN && eventContext(t, ctx).length === 0;
+}
 /**
  * Differing times that leave the encounter time unresolved rather than in conflict: a time the narrative ties to no
  * event. Never a finding; used for routing.
@@ -132,15 +194,39 @@ export function unresolvedEncounterTimes(times: StatedTime[], ft: string): State
   return times.filter((t) => t.event === "unknown" && differs(t, ft));
 }
 /**
+ * Encounter and arrest times that are a question for a person, not a finding (each with its route reason):
+ * - an encounter time differing from the form's hour, or an arrest time before it, when the source does not establish
+ *   it is this subject's event in this apprehension on that date (eventContext); another agency's event is left out (a
+ *   different event);
+ * - an arrest after the form's hour, fully established, when the narrative states no encounter time agreeing with the
+ *   form: if the field records the first contact the arrest followed it; if it records the apprehension, they differ.
+ */
+export function timeQuestions(all: StatedTime[], ft: string, ctx: TimeContext): { t: StatedTime; reason: string }[] {
+  const agreeing = all.some((x) => isEncounterTime(x) && !differs(x, ft));
+  return all.filter((t) => (t.event === "arrest" || t.event === "encounter") && differs(t, ft) && t.agency !== "other").flatMap((t) => {
+    const missing = eventContext(t, ctx);
+    if (t.event === "encounter")
+      return missing.length ? [{ t, reason: `The narrative gives ${t.hhmm} hours for an encounter (${t.sentenceId}), which differs from the form's At/Near date and hour (${ft} hours), but ${missing.join("; ")}. A person should confirm whether it is this subject's encounter.` }] : [];
+    const before = signedFromForm(t, ft) < 0;
+    if (before && missing.length)
+      return [{ t, reason: `The narrative gives ${t.hhmm} hours for an arrest (${t.sentenceId}), before the form's At/Near date and hour (${ft} hours), but ${missing.join("; ")}. A person should confirm whether it is this subject's arrest in this apprehension.` }];
+    if (!before && !missing.length && !agreeing)
+      return [{ t, reason: `The narrative gives ${t.hhmm} hours for the subject's arrest by the agents (${t.sentenceId}) and does not state the encounter time; the form's At/Near date and hour is ${ft} hours. If that field records the first contact, the arrest followed it; if it records the apprehension, the two differ. A person should confirm.` }];
+    return [];
+  });
+}
+/**
  * Whether the narrative supports an encounter-time conflict with the form (conflictsWithForm). With `orUnresolved`, an
- * unresolved differing time (unresolvedEncounterTimes) counts too: it does not establish a conflict, but it leaves one
- * possible (used for routing, never for a finding).
+ * unresolved differing time (unresolvedEncounterTimes) or an arrest question (timeQuestions) counts too: it does not
+ * establish a conflict, but it leaves one possible (used for routing, never for a finding).
  */
 export function encounterTimeConflict(sentences: Sentence[], formValue: string | undefined, orUnresolved = false): StatedTime | null {
   const ft = formTimeOf(formValue);
   if (!ft) return null;
+  const ctx = timeContext(sentences, formValue);
   const times = statedTimes(sentences);
-  return times.find((t) => conflictsWithForm(t, ft)) ?? (orUnresolved ? unresolvedEncounterTimes(times, ft)[0] ?? null : null);
+  return times.find((t) => conflictsWithForm(t, ft, ctx)) ??
+    (orUnresolved ? unresolvedEncounterTimes(times, ft)[0] ?? timeQuestions(times, ft, ctx)[0]?.t ?? null : null);
 }
 
 // A routing reason (or part of one) about the encounter time, and its kind.
@@ -187,7 +273,7 @@ const isoOf = (d: string) => {
   const n = new Date(d.replace(",", "")); return isNaN(+n) ? d : `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
 };
 const PHRASE: Record<TimeEvent, string> = {
-  encounter: "the encounter", arrest: "the arrest", request: "the time of a call or request", arrival: "the time of an agent's or officer's arrival", processing: "the time of a later step (transport or processing)", unknown: "a time the narrative does not tie to any event",
+  encounter: "the encounter", arrest: "the arrest", request: "the time of a call or request", arrival: "the time of an agent's or officer's arrival", processing: "the time of a later step (transport or processing)", other_agency: "the time of another agency's stop or arrest", unknown: "a time the narrative does not tie to any event",
 };
 
 /**
@@ -222,16 +308,22 @@ function timeClaimReason(claim: string, cited: Sentence[], citesForm: boolean, f
     if ((claim.match(DATE_RE) ?? []).some((d) => !formDates.has(isoOf(d)))) return null;
     if (!ft) return "The form does not record an encounter hour, so there is no encounter time for the narrative to conflict with.";
     const enc = times.filter(isEncounterTime);
-    if (times.some((t) => conflictsWithForm(t, ft))) return null;
+    const ctx = timeContext(all, formValue);
+    const allTimes = statedTimes(all);
+    if (allTimes.some((t) => times.some((c) => c.sentenceId === t.sentenceId && c.hhmm === t.hhmm) && conflictsWithForm(t, ft, ctx))) return null;
     // A conflict the narrative states elsewhere still stands; the claim is not withheld for citing the wrong sentence.
-    const encAll = statedTimes(all).filter(isEncounterTime);
-    if (statedTimes(all).some((t) => conflictsWithForm(t, ft))) return null;
+    const encAll = allTimes.filter(isEncounterTime);
+    if (allTimes.some((t) => conflictsWithForm(t, ft, ctx))) return null;
     const unresolved = unresolvedEncounterTimes(times, ft);
     if (unresolved.length) {
       const shown = unresolved.map((t) => `${t.hhmm} hours`).join(" and ");
       return { invalid: false, reason: `The narrative gives ${shown} without saying which event it is, so it does not establish a conflict with the form's encounter time (${ft} hours); whether it is the encounter time is unresolved.`,
         routeReason: `The narrative gives ${shown} without saying which event it is; the form records the encounter at ${ft} hours. A person should confirm the encounter time.` };
     }
+    // An arrest the source does not establish enough about (timeQuestions): a question for a person, not a finding.
+    const questions = timeQuestions(allTimes, ft, ctx).filter((q) => times.some((c) => c.sentenceId === q.t.sentenceId && c.hhmm === q.t.hhmm));
+    if (questions.length)
+      return { invalid: false, reason: `This does not establish a conflict with the form's At/Near date and hour (${ft} hours). ${questions.map((q) => q.reason).join(" ")}`, routeReason: questions.map((q) => q.reason).join(" ") };
     // The claimed time is another event's (an arrival or a later arrest beside the encounter): say what it is.
     const claimedOther = times.filter((t) => claimed.includes(t.hhmm) && !isEncounterTime(t));
     if (claimedOther.length && !times.some((t) => claimed.includes(t.hhmm) && isEncounterTime(t))) {

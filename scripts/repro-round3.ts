@@ -2,7 +2,7 @@
 // checked out. The model is replaced by a fake (no network). Each line prints the observed value and the expected one.
 import { readFileSync } from "node:fs";
 import { reviewCase, type Complete } from "../lib/review/review";
-import { FACTS_SYSTEM_PROMPT, attributeStatement, compareFacts, accountConflicts, fullDates, isPriorRemoval, describesUsEntry, nonUsEntrySentences, exactEntryLink, EMPTY_FACTS, type FactsOutput } from "../lib/review/facts";
+import { FACTS_SYSTEM_PROMPT, attributeStatement, compareFacts, accountConflicts, fullDates, isPriorRemoval, describesUsEntry, nonUsEntrySentences, EMPTY_FACTS, type FactsOutput } from "../lib/review/facts";
 import { ModelError } from "../lib/llm";
 import type { CaseRecord, Sentence } from "../lib/types";
 
@@ -34,11 +34,11 @@ const facts = (f: Partial<FactsOutput>): FactsOutput => ({ ...EMPTY_FACTS, ...f 
   const c = record("x", { "entry.date": "06/09/2011", "entry.manner": "EWI", "history.immigration_record": "NEGATIVE" });
   const s = seq("Agents encountered [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] near the river.",
     "[REDACTED (b)(6), (b)(7)(C)] entered illegally in 2014; he was married on June 9, 2011 and was removed in 2010.");
-  show("D1a exactEntryLink when the full date belongs to a marriage, not the entry", exactEntryLink(c, s, "S2"), false);
+  // show("D1a exactEntryLink when the full date belongs to a marriage, not the entry", exactEntryLink(c, s, "S2"), false);  // removed in the accuracy iteration 1 audit (identity from matching values)
   show("D1a attributeStatement outcome for that sentence (multi-person)", attributeStatement(s, "S2", true, undefined, c).outcome, "ambiguous");
   const s2 = seq("Agents encountered [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] near the river.",
     "[REDACTED (b)(6), (b)(7)(C)] entered the United States illegally on June 9, 2011 by wading the river.");
-  show("D1b control: entry clause carrying the full date and manner still links", exactEntryLink(c, s2, "S2"), true);
+  // show("D1b control: entry clause carrying the full date and manner still links", exactEntryLink(c, s2, "S2"), true);  // removed in the accuracy iteration 1 audit (identity from matching values)
   show("D1c fullDates of an impossible date 02/30/2011", fullDates("He entered on 02/30/2011."), []);
   show("D1c fullDates of 13/01/2011", fullDates("He entered on 13/01/2011."), []);
   show("D1c fullDates of 'June 31, 2011'", fullDates("He entered on June 31, 2011."), []);

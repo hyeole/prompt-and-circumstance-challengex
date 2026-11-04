@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, linkedToSubject, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formYear, normalizeFacts, sourceEntryStatements, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -461,12 +461,8 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     }
     // (1c) In a narrative about several people, a statement whose subject cannot be attributed (redacted names) is not
     // evidence against THIS subject's entry or history fields (same rule as the fact comparison: facts.aboutSubject).
-    // A statement the subject's own form links to this subject (same entry month and day, or place) still counts.
-    const entryPath = verified.find((v) => v.fieldPath === "entry.date" || v.fieldPath === "entry.manner" || v.fieldPath === "entry.place")?.fieldPath as "entry.date" | "entry.manner" | "entry.place" | undefined;
-    const unlinked = (v: EvidenceRef) => {
-      const s = sentences.find((x) => x.id === v.sentenceId)!;
-      return attribution(s, "unclear", v.quote) !== "subject" && !(entryPath && factsSettled.ok && linkedToSubject(c, sentences, factsSettled.v, s.id, entryPath).length);
-    };
+    // Values matching the subject's form (entry month and day, place, manner) do not attribute a statement.
+    const unlinked = (v: EvidenceRef) => attribution(sentences.find((x) => x.id === v.sentenceId)!, "unclear", v.quote) !== "subject";
     if (iss.type === "inconsistency" && multiPerson && verified.some((v) => v.fieldPath?.startsWith("history.") || v.fieldPath?.startsWith("entry.")) &&
         verified.every((v) => !v.sentenceId || unlinked(v)) && verified.some((v) => v.sentenceId && unlinked(v))) {
       discarded.push({ title: iss.title, reason: "Several people are described and the cited statement cannot be attributed to this record's subject, so it cannot contradict this subject's record." });

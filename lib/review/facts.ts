@@ -352,44 +352,6 @@ const ctx = (ev: EvidenceRef, attribution: "subject" | "unclear" | "other", even
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 /** Month/day pairs a sentence states: "May 5", "05/05/2011", "8/11/2009"; "the day after 06/08/2011" also gives 06/09. */
-function monthDays(text: string): string[] {
-  const out: string[] = [];
-  const t = text.toLowerCase();
-  // Impossible month/day pairs are not dates (2000 is a leap year, so 2/29 stays valid when no year is given).
-  for (const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) if (realDate(m[3].length === 4 ? +m[3] : 2000, +m[1], +m[2])) out.push(`${+m[1]}/${+m[2]}`);
-  for (const m of t.matchAll(new RegExp(`\\b(${MONTHS.join("|")})\\s+(\\d{1,2})\\b`, "g"))) if (realDate(2000, MONTHS.indexOf(m[1]) + 1, +m[2])) out.push(`${MONTHS.indexOf(m[1]) + 1}/${+m[2]}`);
-  for (const m of t.matchAll(/\bday after\b[^.]{0,80}?\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g)) {
-    const d = new Date(Date.UTC(2000, +m[1] - 1, +m[2] + 1));
-    out.push(`${d.getUTCMonth() + 1}/${d.getUTCDate()}`);
-  }
-  return out;
-}
-
-const PORT_CODES: Record<string, string> = { ELP: "El Paso", LAR: "Laredo", NAC: "Naco", NOG: "Nogales", HID: "Hidalgo", BRO: "Brownsville", DRT: "Del Rio", EGP: "Eagle Pass", SAS: "Sasabe", DET: "Detroit", MIA: "Miami", LOS: "Los Angeles", SYS: "San Ysidro", CAL: "Calexico", DOU: "Douglas" };
-/** People described as entering together share the entry facts, so those facts cannot tell them apart. */
-const SHARED_ENTRY_RE = /\b(with|along with) (\w+ ){0,2}(other|others|individuals|people|persons|subjects|companions|aliens|family|friends?|brothers?|sisters?|cousins?|wife|husband|children)\b|\b(he|she) and (\w+ ){0,2}(others?|\w+ (others|individuals|people|subjects))\b|\b(together|as a group|in a group)\b|\b(both|all|they|the (two|three|four|five|group))\b[^.]{0,40}\b(crossed|entered|walked|swam|waded|arrived|came)\b/i;
-const ENTRY_VERB_RE = /\b(cross|crossed|crossing|enter|entered|entry|walked|swam|waded|arrived|came)\b/i;
-
-/**
- * Facts on the subject's own form that an unattributed statement matches, other than the disputed one: the entry
- * month and day, the entry place, and the manner category.
- */
-function formMatches(c: CaseRecord, text: string, manner: string | undefined, conflict: "entry.date" | "entry.manner" | "entry.place"): string[] {
-  const field = (p: string) => c.facts.find((f) => f.path === p && f.status === "present" && f.value.trim());
-  const out: string[] = [];
-  const fd = field("entry.date")?.value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
-  if (fd && monthDays(text).includes(`${+fd[1]}/${+fd[2]}`)) out.push(`the entry month and day (${fd[1]}/${fd[2]})`);
-  const fp = field("entry.place")?.value;
-  if (fp && conflict !== "entry.place") {
-    const names = (fp.match(/[A-Za-z]{3,}/g) ?? []).filter((t) => !/^(miles?|of|unk|unknown|near|the)$/i.test(t)).map((t) => PORT_CODES[t.toUpperCase()] ?? t);
-    const hit = names.find((n) => new RegExp(`\\b${n.replace(/\s+/g, "\\s+")}\\b`, "i").test(text));
-    if (hit) out.push(`the entry place (${hit})`);
-  }
-  const fm = field("entry.manner");
-  const cat = fm ? formMannerCategory(fm.value) : undefined;
-  if (cat && conflict !== "entry.manner" && manner === cat) out.push(`the manner of entry (${fm!.value})`);
-  return out;
-}
 
 /** Manner category stated in a sentence's own wording, when the extractor gave none. */
 function textManner(t: string): "without_inspection" | "admitted" | undefined {
@@ -397,47 +359,6 @@ function textManner(t: string): "without_inspection" | "admitted" | undefined {
   if (/\b(visa|admitted|paroled|inspected|port of entry|flew|airport)\b/i.test(t)) return "admitted";
   return undefined;
 }
-
-/**
- * Whether an unattributed statement in a multi-person narrative is uniquely tied to THIS record's subject. One
- * matching fact is never enough. Identity counts as uniquely supported only when (a) at least two facts other than
- * the disputed one match the subject's form, one of them being the entry month and day (a place and a manner alone
- * describe a shared route, not a person), (b) no narrative sentence describes people entering together, (c) no
- * other entry account in the narrative shares any of the matched facts (companions would), and (d) no other
- * unattributed statement fully agrees with the form, which would suggest the form describes that other person. Returns the matched facts, or [] if not unique.
- */
-export function linkedToSubject(
-  c: CaseRecord, sentences: Sentence[], facts: FactsOutput, sentenceId: string, conflict: "entry.date" | "entry.manner" | "entry.place",
-): string[] {
-  const s = sentences.find((x) => x.id === sentenceId);
-  if (!s) return [];
-  const own = facts.entry_statements.find((e) => e.sentence_id === sentenceId && isUsEntry(e));
-  // Corroborating facts count only inside the statement's own entry clauses: a marriage or arrest date, or a relative's
-  // entry, elsewhere in the sentence says nothing about which person this entry account belongs to.
-  const entryText = sentenceEvents(s.text, ENTRY_EVENT_RE).filter((e) => speakersOwn(e) && !leavesUs(e.span)).map((e) => e.span).join(" ");
-  const matches = formMatches(c, entryText, own?.manner, conflict);
-  if (matches.length < 2) return [];
-  // The place and the manner describe a route, which people who crossed together share: on their own they do not
-  // identify a person (G06). The link needs the form's entry month and day, a fact specific to one entry.
-  if (!matches.some((m) => m.startsWith("the entry month and day"))) return [];
-  // A group entry vetoes the link only when it is part of THIS statement's own account (the statement itself, or the
-  // sentences continuing it): a group entry described elsewhere in the narrative may be other people's.
-  if (accountOf(sentences, s.id).some((x) => SHARED_ENTRY_RE.test(x.text) && ENTRY_VERB_RE.test(x.text))) return [];
-  // Any other entry account in the narrative that shares one of the matched facts (same place, same manner, same
-  // month and day) could be a companion's, so the match does not single out this subject (DS06: two companions,
-  // both "near Nogales", both illegally).
-  const mannerOf = (x: Sentence) => facts.entry_statements.find((e) => e.sentence_id === x.id && isUsEntry(e))?.manner ?? textManner(x.text);
-  const shared = sentences.some((x) => x.id !== s.id && ENTRY_VERB_RE.test(x.text) &&
-    formMatches(c, x.text, mannerOf(x), conflict).some((m) => matches.includes(m)));
-  if (shared) return [];
-  const fy = formYear(c.facts.find((f) => f.path === "entry.date")?.value ?? "");
-  const fm = c.facts.find((f) => f.path === "entry.manner");
-  const fcat = fm ? formMannerCategory(fm.value) : undefined;
-  const agreesFully = facts.entry_statements.some((e) => e.sentence_id !== sentenceId && isUsEntry(e) && e.person !== "subject" &&
-    (conflict === "entry.date" ? !!fy && e.year === fy : !!fcat && e.manner === fcat));
-  return agreesFully ? [] : matches;
-}
-const linkNote = (links: string[]) => ` The statement does not name the subject (several people are described), but it matches this subject's form on ${links.join(" and ")}, and nothing in the narrative suggests another person shares those facts, so it is treated as about this subject. A person should confirm.`;
 
 const attributionNote = (p: string) => (p === "unclear" ? " The narrative does not say whether this statement is about this record's subject (names are redacted)." : "");
 
@@ -448,7 +369,6 @@ const attributionNote = (p: string) => (p === "unclear" ? " The narrative does n
  * - "account": the statement's pronoun resolves to the subject's designation in an earlier sentence; that designation is
  *   cited as evidence;
  * - "single": only one person of interest is described;
- * - "exact": the exact-entry link (stated in the rationale).
  * A statement that names the subject needs no note.
  */
 function subjectBasis(sentences: Sentence[], id: string, attr: Attr, b: AttributionOutcome): { note: string; evidence: EvidenceRef[] } {
@@ -460,7 +380,6 @@ function subjectBasis(sentences: Sentence[], id: string, attr: Attr, b: Attribut
       note: ` ${id} does not name the subject itself, but its "${b.link.pronoun}" can only refer to the person ${b.link.sentenceId} names as "${shown}", so the statement is treated as the subject's.` };
   }
   if (b.basis === "single") return { note: ` ${id} does not name the subject itself; the narrative describes only one person of interest, so the statement is treated as the subject's.`, evidence: [] };
-  if (b.basis === "exact") return { note: ` ${id} does not name the subject itself, but ${b.rationale.replace(new RegExp(`^${id}\\s+`), "it ")}, so the statement is treated as the subject's. A person should confirm.`, evidence: [] };
   return { note: attributionNote(attr), evidence: [] };
 }
 
@@ -603,18 +522,17 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const subjectAgrees = entries.some((x) => x.attr === "subject" && x.e.year === fy && lastEntry(x));
     const counts = (x: { attr: "subject" | "other" | "unclear"; supported: boolean }) => x.supported && (x.attr === "subject" || !subjectAgrees);
     const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && lastEntry(x) && !correctedLater(x, fy));
-    // In a multi-person narrative an unattributed statement still counts when the subject's own form links it.
-    const linksOf = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson && !subjectAgrees ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.date") : []);
-    const off = differs.find(counts) ?? differs.find((x) => linksOf(x).length > 0);
-    const offLinks = off && !counts(off) ? linksOf(off) : [];
+    // Identity is never inferred from values matching the form (month and day, place, manner): an unattributed statement
+    // in a multi-person narrative stays unattributed and goes to a person (accuracy iteration 1 audit).
+    const off = differs.find(counts);
     if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson)
       .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.date", detail: `${x.v.s.id} gives ${x.e.year} for the entry; the form records the last entry in ${fy}.` })));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
-    const offBasis = off && !offLinks.length ? subjectBasis(sentences, off.v.s.id, off.attr, off.basis) : { note: "", evidence: [] };
+    const offBasis = off ? subjectBasis(sentences, off.v.s.id, off.attr, off.basis) : { note: "", evidence: [] };
     if (off)
       findings.push({
         id: "F-ENTRY-DATE", category: "inconsistency", title: "Entry date differs from the form",
-        explanation: `The narrative gives ${off.e.year} for the ${off.scope === "last" ? "last entry" : "entry"}, but the form records the last entry in ${fy}.${offLinks.length ? linkNote(offLinks) : offBasis.note}`,
+        explanation: `The narrative gives ${off.e.year} for the ${off.scope === "last" ? "last entry" : "entry"}, but the form records the last entry in ${fy}.${offBasis.note}`,
         evidence: [offEv!, ...offBasis.evidence, fieldEv("entry.date")], referenceIds: ["E1"], needsHumanReview: true,
         humanReviewReason: "Conflicting entry dates: a person should decide which is correct.", source: "model", severity: "high",
       });
@@ -640,16 +558,15 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // 3. Manner of entry: narrative statements vs each other and vs the form code.
   const fm = field("entry.manner") ? formMannerCategory(field("entry.manner")!.value) : undefined;
   // Manner wording must be verified exactly and must actually describe a manner of entry.
-  const mannerLinks = (x: { attr: string; v: Verified }) => (x.attr === "unclear" && multiPerson ? linkedToSubject(c, sentences, facts, x.v.s.id, "entry.manner") : []);
-  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && x.scope !== "previous" && (x.supported || mannerLinks(x).length > 0));
+  const known = entries.filter((x) => x.exact && x.e.manner !== "unknown" && MANNER_RE.test(x.v.ev.quote ?? "") && x.scope !== "previous" && x.supported);
   // The form's manner is the last entry's: a first entry made differently is not a conflict with it.
   const conflict = fm ? known.find((x) => x.e.manner !== fm && lastEntry(x)) : undefined;
-  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && lastEntry(x) && MANNER_RE.test(x.v.ev.quote ?? "") && !mannerLinks(x).length)
+  if (fm && !conflict) unattributed.push(...entries.filter((x) => x.exact && x.attr === "unclear" && multiPerson && x.e.manner !== "unknown" && x.e.manner !== fm && lastEntry(x) && MANNER_RE.test(x.v.ev.quote ?? ""))
     .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.manner", detail: `${x.v.s.id} describes ${MANNER_LABEL(x.e.manner)}; the form code "${field("entry.manner")!.value}" indicates ${MANNER_LABEL(fm)}.` })));
   if (conflict) {
     const label = (m: string) => (m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection");
     const other = known.find((x) => x.e.manner === fm && lastEntry(x));
-    const basis = conflict.supported ? subjectBasis(sentences, conflict.v.s.id, conflict.attr, conflict.basis) : { note: linkNote(mannerLinks(conflict)), evidence: [] };
+    const basis = subjectBasis(sentences, conflict.v.s.id, conflict.attr, conflict.basis);
     findings.push({
       id: "F-ENTRY-MANNER", category: "inconsistency", title: "Conflicting accounts of how the subject entered",
       explanation: `The form code "${field("entry.manner")!.value}" indicates ${label(fm!)}, but a narrative statement describes ${label(conflict.e.manner)}${conflict.scope === "last" ? " for the last entry" : ""}.${other ? " Another narrative statement agrees with the form." : ""}${basis.note}`,
@@ -946,6 +863,17 @@ const SEVERAL_PEOPLE_RE = new RegExp(`\\b(?:two|three|four|five|six|seven|eight|
 // The subject, or a redacted person, together with a possessed companion or relative ("encountered the subject and his
 // companion"). A relative merely mentioned ("his wife lives in Houston") or an officer ("the subject and Agent …") is not.
 const WITH_COMPANION_RE = /(?:\bsubject|@P@)\s+and\s+(?:his|her|their)\s+(?:[\w-]+\s+)?(?:wife|husband|spouse|partner|sons?|daughters?|child|children|brothers?|sisters?|mother|father|cousins?|friends?|girlfriend|boyfriend|companions?|co-?travel+ers?|relatives?)\b|\bsubject\s+and\s+(?:a|an|another)\s+(?:man|woman|male|female|juvenile|minor|child|companion)\b/i;
+/**
+ * The sentence that shows the narrative describes more than one person, or undefined. Bare group wording ("subjects",
+ * "passengers") must recur, since it can be boilerplate; a sentence that itself states several people (a count, "the
+ * other subject", two coordinated non-official redacted names) is enough on its own. Repeated identical redaction
+ * markers and officials' names never establish a second person. (Moved from rules.ts unchanged, so the time rule and the
+ * review use one definition.)
+ */
+export function severalPeopleExample(sentences: Sentence[]): Sentence | undefined {
+  const multi = sentences.filter((s) => /\b(subjects|individuals|passengers|occupants|(two|three|four|five|six|both) (subjects|individuals|people|persons|men|women|passengers|occupants|aliens)|all (subjects|three|four|five)|both of them)\b/i.test(s.text));
+  return multi.length >= 2 ? multi[0] : sentences.find((s) => statesSeveralPeople(s.text));
+}
 export function statesSeveralPeople(text: string): boolean {
   if (SEVERAL_PEOPLE_RE.test(text)) return true;
   const t = people(text);
@@ -1146,8 +1074,8 @@ export function fullDates(text: string): string[] {
 export type AttributionOutcome = {
   outcome: "supported" | "ambiguous" | "other"; sentenceIds: string[]; rationale: string;
   /** What a "supported" outcome rests on (the numbered rules below): the clause names the subject, only one person is
-   *  described, an account continued by pronoun, or the exact-entry link. */
-  basis?: "named" | "single" | "account" | "exact";
+   *  described, or an account continued by pronoun. */
+  basis?: "named" | "single" | "account";
   /** For "account": the pronoun in this statement and the text it resolves to, which designates the subject. */
   link?: { pronoun: string; sentenceId: string; text: string };
 };
@@ -1159,10 +1087,9 @@ export type AttributionOutcome = {
  * 3. it continues, by pronoun, the account of a sentence that names the subject, and that pronoun resolves (person–event
  *    analysis: its only compatible antecedent, through any further pronouns) to the subject's designation → supported
  *    (the designation is cited). A continuation whose pronoun could also be someone else in that sentence is not;
- * 4. it is an entry statement giving the subject's recorded entry date in full (day, month and year) and the same
- *    manner, and no other sentence states that full date → supported. Shared citizenship, a place, a month and day or a
- *    heading alone never establish identity.
- * Otherwise → ambiguous.
+ * Otherwise → ambiguous. Values matching the subject's form (a full or partial entry date, a place, a manner), shared
+ * citizenship, a heading or a repeated redaction marker never establish identity: the statement goes to a person. (Rule
+ * 4, "the subject's recorded entry date in full and the same manner", was removed in the accuracy iteration 1 audit.)
  */
 export function attributeStatement(sentences: Sentence[], id: string, multiPerson: boolean, focus?: string, c?: CaseRecord, person: Attr = "unclear"): AttributionOutcome {
   const s = sentences.find((x) => x.id === id);
@@ -1185,26 +1112,7 @@ export function attributeStatement(sentences: Sentence[], id: string, multiPerso
       return { outcome: "supported", sentenceIds: [at, id], rationale: `${id} continues ${named.id}'s account, and its "${pronoun.text}" refers to the subject named in ${at}`, basis: "account", link: { pronoun: pronoun.text, sentenceId: at, text } };
     }
   }
-  if (c && exactEntryLink(c, sentences, id)) return { outcome: "supported", sentenceIds: [id], rationale: `${id} gives the subject's recorded entry date in full and the same manner, and no other sentence states that date`, basis: "exact" };
   return { outcome: "ambiguous", sentenceIds: [id], rationale: `several people are described and nothing in the narrative ties ${id} to this subject` };
-}
-
-/** An entry statement giving the subject's full recorded entry date and manner, with no other sentence stating that date. */
-export function exactEntryLink(c: CaseRecord, sentences: Sentence[], id: string): boolean {
-  const s = sentences.find((x) => x.id === id);
-  const fd = c.facts.find((f) => f.path === "entry.date" && f.status === "present");
-  const fm = c.facts.find((f) => f.path === "entry.manner" && f.status === "present");
-  if (!s || !fd || !fm) return false;
-  const formDate = fullDates(fd.value)[0];
-  const cat = formMannerCategory(fm.value);
-  if (!formDate || !cat) return false;
-  // The date and the manner must belong to the same entry event, and that entry must not be a third party's or a trip
-  // away from the United States: a marriage or removal date elsewhere in the sentence does not count.
-  const linked = sentenceEvents(s.text, ENTRY_EVENT_RE).some((e) => speakersOwn(e) && !leavesUs(e.span) &&
-    fullDates(e.span).includes(formDate) && statedManner(e.span) === cat);
-  if (!linked) return false;
-  if (accountOf(sentences, id).some((x) => SHARED_ENTRY_RE.test(x.text))) return false;
-  return !sentences.some((x) => x.id !== id && fullDates(x.text).includes(formDate));
 }
 
 /**

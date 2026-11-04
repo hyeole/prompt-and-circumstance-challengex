@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { modelRoutingReasons, reviewCase, type Complete } from "../lib/review/review";
 import { findingClaimV2 } from "../scripts/finding-key";
 import { matches, type Plant } from "../scripts/score-match";
-import { accountConflicts, attribution, continuousAccounts, linkedToSubject, FACTS_SYSTEM_PROMPT } from "../lib/review/facts";
+import { accountConflicts, attribution, attributeStatement, continuousAccounts, FACTS_SYSTEM_PROMPT } from "../lib/review/facts";
 import { locatesEntry } from "../lib/review/checklist";
 import { splitSentences } from "../lib/text";
 import type { CaseRecord, Finding, ReviewResult, Sentence } from "../lib/types";
@@ -110,12 +110,13 @@ test("D negative controls: no account after an official, a group, a heading, or 
 
 // Group-entry veto is scoped to the statement's own account (closeout D): fixture with a group entry elsewhere.
 const loadF = (id: string) => JSON.parse(readFileSync(`eval/fresh/cases/${id}.json`, "utf8")) as CaseRecord;
-test("D: a group entry in the statement's own sentence still vetoes the form link (F010-X S34)", () => {
+// Changed in the accuracy iteration 1 audit: the form link (linkedToSubject) it guarded is removed; the statement stays
+// unattributed whatever it matches.
+test("D: an unattributed entry statement in a multi-person narrative is not the subject's (F010-X S34)", () => {
   const c = loadF("F010-X");
   const ss = splitSentences(c.narrative.text, c.narrative.pageSpans);
   const s = ss.find((x) => x.text.includes("May 5, 2014"))!;
-  const facts = { entry_statements: [{ sentence_id: s.id, quote: s.text, event: "us_entry", year: 2014, manner: "without_inspection", person: "unclear" }], removal_statements: [] };
-  assert.deepEqual(linkedToSubject(c, ss, facts as never, s.id, "entry.date"), []);
+  assert.equal(attributeStatement(ss, s.id, true, undefined, c).outcome, "ambiguous");
 });
 
 // ---- E. Entry location ----

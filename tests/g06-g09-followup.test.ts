@@ -31,14 +31,16 @@ test("G06 path: a month and day from another event or another person's entry doe
     assert.deepEqual(link(`${M} stated that he entered the United States illegally in 2014; ${other}.`, [ent("S3", "entered the United States illegally in 2014", 2014, "without_inspection")]), { findings: [], routed: ["S3"] }, other);
   assert.deepEqual(link(`${M} stated that he entered the United States illegally in 2014 and that his wife entered on June 9, 2011.`, [ent("S3", "entered the United States illegally in 2014", 2014, "without_inspection")]), { findings: [], routed: ["S3"] });
 });
-test("G06 path controls: the entry clause's own month and day still link; a companion sharing it blocks; C119-X1 kept", () => {
-  assert.deepEqual(link(`${M} stated that he entered the United States illegally on June 9, 2014 by crossing the river.`, [ent("S3", "entered the United States illegally on June 9, 2014 by crossing the river", 2014, "without_inspection")]).findings, ["F-ENTRY-DATE"]);
-  assert.deepEqual(link(`${M} stated that he entered the United States on June 9, 2014 near Hidalgo, Texas.`, [ent("S3", "entered the United States on June 9, 2014 near Hidalgo, Texas", 2014, "unknown")]).findings, ["F-ENTRY-DATE"]);
+// Changed in the accuracy iteration 1 audit: the first two assertions and C119-X1 were linked by value matching (month and day, manner),
+// which was removed; they now stay unattributed. The companion control is unchanged.
+test("G06 path controls: an entry clause's month and day does not link; a companion sharing it does not; C119-X1 not linked", () => {
+  assert.deepEqual(link(`${M} stated that he entered the United States illegally on June 9, 2014 by crossing the river.`, [ent("S3", "entered the United States illegally on June 9, 2014 by crossing the river", 2014, "without_inspection")]).findings, []);
+  assert.deepEqual(link(`${M} stated that he entered the United States on June 9, 2014 near Hidalgo, Texas.`, [ent("S3", "entered the United States on June 9, 2014 near Hidalgo, Texas", 2014, "unknown")]).findings, []);
   assert.deepEqual(link(`${M} stated that he entered the United States illegally on June 9, 2014 by crossing the river. ${M} stated that he also crossed on June 9 with him.`, [ent("S3", "entered the United States illegally on June 9, 2014 by crossing the river", 2014, "without_inspection")]).findings, []);
   const c119 = load("eval/cases/C119-X1.json");
   const s = splitSentences(c119.narrative.text, c119.narrative.pageSpans);
   const r = compareFacts(c119, s, { entry_statements: [ent("S25", s.find((x) => x.id === "S25")!.text, 2009, "admitted")], removal_statements: [], status_statements: [] } as FactsOutput, runRules(c119, s).notes.length > 0);
-  assert.deepEqual(r.findings.map((x) => x.id), ["F-ENTRY-DATE"]);
+  assert.deepEqual(r.findings.map((x) => x.id), []);
 });
 
 const G09 = load("eval/gen-v1/cases/G09.json");

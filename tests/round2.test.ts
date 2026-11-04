@@ -80,14 +80,15 @@ test("fix 2 controls: should-not-flag and clean records gain no history finding 
 });
 
 // ---- Fix 3: structured attribution, continuity and the exact-entry link ----
-test("fix 3: a statement giving the subject's exact recorded entry date and manner is the subject's; its voluntary return is a prior encounter (F075-H S22)", async () => {
+// Changed in the accuracy iteration 1 audit (was "supported" through the exact-entry link): F075-H S22 matches the
+// subject's recorded entry date and manner, but nothing in the text says it is the subject's (two subjects, S7-S10), so
+// it is no longer attributed. Its prior-encounter finding (F-HISTORY-3) is lost; S22 is not treated as the subject's.
+test("fix 3: a statement matching the subject's exact recorded entry date and manner is not thereby the subject's (F075-H S22)", async () => {
   const c = load("eval/fresh/cases/F075-H.json");
   const s22 = sid(c, "day after returning to Mexico");
-  const out = attributeStatement(ss(c), s22, true, undefined, c);
-  assert.equal(out.outcome, "supported");
-  assert.match(out.rationale, /recorded entry date in full/);
+  assert.equal(attributeStatement(ss(c), s22, true, undefined, c).outcome, "ambiguous");
   const r = await reviewCase(c, fake(EMPTY));
-  assert.ok(r.findings.some((f) => f.id === "F-HISTORY-3" && f.evidence.some((e) => e.sentenceId === s22)));
+  assert.ok(!r.findings.some((f) => f.id === "F-HISTORY-3" && f.evidence.some((e) => e.sentenceId === s22)));
 });
 test("fix 3 control: the same statement when its year differs from the form stays ambiguous and routed (F075-X)", async () => {
   const c = load("eval/fresh/cases/F075-X.json");
@@ -96,14 +97,16 @@ test("fix 3 control: the same statement when its year differs from the form stay
   const r = await reviewCase(c, fake(EMPTY));
   assert.ok(!r.findings.some((f) => f.category === "inconsistency" && f.evidence.some((e) => e.sentenceId === s22)));
 });
-test("fix 3 controls: a companion stating the same full date, or a group entry in the account, blocks the exact-entry link", () => {
+// Changed in the accuracy iteration 1 audit: the last assertion was the exact-entry link's positive control ("ok"); the
+// link is removed, so a lone matching full date no longer attributes the statement either.
+test("fix 3 controls: a companion stating the same full date, a group entry, or a lone matching date does not attribute", () => {
   const c = { facts: [{ path: "entry.date", status: "present", value: "05/05/2011, 1400" }, { path: "entry.manner", status: "present", value: "EWI AFOOT" }] } as CaseRecord;
   const a = seq("Two subjects were encountered.", "[REDACTED (b)(6), (b)(7)(C)] crossed the river illegally on May 5, 2011.", "[REDACTED (b)(6), (b)(7)(C)] also crossed illegally on 05/05/2011.");
   assert.equal(attributeStatement(a, "S2", true, undefined, c).outcome, "ambiguous");
   const b = seq("Two subjects were encountered.", "[REDACTED (b)(6), (b)(7)(C)] crossed the river illegally with three other individuals on May 5, 2011.");
   assert.equal(attributeStatement(b, "S2", true, undefined, c).outcome, "ambiguous");
-  const ok = seq("Two subjects were encountered.", "[REDACTED (b)(6), (b)(7)(C)] crossed the river illegally on May 5, 2011.");
-  assert.equal(attributeStatement(ok, "S2", true, undefined, c).outcome, "supported");
+  const lone = seq("Two subjects were encountered.", "[REDACTED (b)(6), (b)(7)(C)] crossed the river illegally on May 5, 2011.");
+  assert.equal(attributeStatement(lone, "S2", true, undefined, c).outcome, "ambiguous");
 });
 test("fix 3: attribution outcomes for pronoun continuity, transitions, mixed clauses, scope words and sections", () => {
   const cont = seq("Two subjects were encountered.", "The subject stated he crossed in 2014.", "He later said he used a visa.");

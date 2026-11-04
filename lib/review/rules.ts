@@ -2,8 +2,8 @@
 import type { CaseRecord, ElementResult, Finding, Sentence, EvidenceRef } from "@/lib/types";
 import { REFERENCES, chargeIdConflict, findCharge } from "@/lib/references";
 import { fieldQuality } from "@/lib/fieldQuality";
-import { statesSeveralPeople } from "./facts";
-import { conflictsWithForm, isEncounterTime, statedTimes } from "./times";
+import { severalPeopleExample } from "./facts";
+import { timeQuestions, conflictsWithForm, isEncounterTime, statedTimes, timeContext } from "./times";
 
 export interface RuleOutput {
   elementsFromFields: Map<string, ElementResult>; // elements already satisfied or blocked by structured fields
@@ -79,31 +79,31 @@ export function runRules(c: CaseRecord, sentences: Sentence[]): RuleOutput {
   // 3. Multiple people in one narrative. Informational only: in the public source the names are redacted,
   // so statements cannot always be attributed. This is a property of the data, not an officer omission.
   const notes: string[] = [];
-  // Bare group wording ("subjects", "passengers") must recur, since it can be boilerplate; a sentence that itself states
-  // several people (a count, "the other subject", two coordinated non-official redacted names) is enough on its own.
-  // Repeated identical redaction markers and officials' names never establish a second person.
-  const multi = sentences.filter((s) => /\b(subjects|individuals|passengers|occupants|(two|three|four|five|six|both) (subjects|individuals|people|persons|men|women|passengers|occupants|aliens)|all (subjects|three|four|five)|both of them)\b/i.test(s.text));
-  const stated = sentences.find((s) => statesSeveralPeople(s.text));
-  if (multi.length >= 2 || stated)
-    notes.push(`The narrative describes more than one person (for example ${(multi.length >= 2 ? multi[0] : stated!).id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
+  // (facts.severalPeopleExample: the definition shared with the time rule.)
+  const several = severalPeopleExample(sentences);
+  if (several)
+    notes.push(`The narrative describes more than one person (for example ${several.id}). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution.`);
 
   // 4. Encounter time in the form vs times stated in the narrative, event by event (lib/review/times.ts). The form's
-  // encounter hour conflicts with a time the narrative states for the encounter itself, or with an arrest stated before
-  // it (the subject cannot be arrested before being encountered). An arrest after it is the normal sequence.
+  // At/Near date and hour conflicts with a time the narrative states for the encounter itself, or with an arrest the
+  // source establishes as this subject's, in this apprehension, by the agents, on that date, stated before it. An arrest
+  // the source does not establish enough about, or a later established arrest with no stated encounter time, is a
+  // question for a person (times.timeQuestions), not a finding.
   const dt = field(c, "encounter.date_time");
   const formTime = dt?.status === "present" ? dt.value.match(/\b([01]\d|2[0-3])([0-5]\d)\b(?!\/)/g)?.pop() : undefined;
   if (formTime) {
     const times = statedTimes(sentences);
-    const t = times.find((x) => isEncounterTime(x) && conflictsWithForm(x, formTime)) ?? times.find((x) => conflictsWithForm(x, formTime));
+    const ctx = timeContext(sentences, dt!.value);
+    const t = times.find((x) => isEncounterTime(x) && conflictsWithForm(x, formTime, ctx)) ?? times.find((x) => conflictsWithForm(x, formTime, ctx));
     if (t) {
       const s = sentences.find((x) => x.id === t.sentenceId)!;
       findings.push(mk("R-TIME-MISMATCH", "inconsistency", "Encounter time differs between form and narrative",
         t.event === "arrest"
-          ? `The form records the encounter at ${formTime} hours, but the narrative gives ${t.hhmm} hours for the arrest, before that. The subject cannot be arrested before being encountered, so one of the times may be wrong; it should be confirmed.`
+          ? `The form's At/Near date and hour is ${formTime} hours, but the narrative says the agents arrested the subject at ${t.hhmm} hours that day, before it. Whether that field records the first contact or the apprehension, the arrest cannot come before it, so one of the times may be wrong; it should be confirmed.`
           : `The form records the encounter at ${formTime} hours, but the narrative states ${t.hhmm} hours for the encounter itself. It should be confirmed which is correct.`,
         [quoteEvidence(s, timeQuote(s.text, t.hhmm)), { kind: "field", fieldPath: "encounter.date_time", quote: dt!.value, page: dt!.sourcePage, verified: true }],
         ["E4"], "Times disagree by 30 minutes or more", "medium"));
-    }
+    } else reasons.push(...timeQuestions(times, formTime, ctx).slice(0, 1).map((q) => q.reason));
   }
   return { elementsFromFields, findings, humanReviewReasons: reasons, citationPrecheck, notes };
 }

@@ -47,9 +47,13 @@ test("C001 rules: fields cover entry elements; time difference flagged; multiple
   const ids = r.findings.map((f) => f.id);
   assert.ok(!ids.includes("R-MULTI-SUBJECT"));
   assert.equal(r.notes.length, 1);
-  assert.equal(r.humanReviewReasons.length, 0);
-  assert.ok(ids.includes("R-TIME-MISMATCH"));
-  const t = r.findings.find((f) => f.id === "R-TIME-MISMATCH")!;
+  // Changed in the accuracy iteration 1 audit: C001 does not state the arrest's date ("[UNREADABLE]7"), so the 1330 arrest before the
+  // form's 1435 is a question for a person (one reason), not a finding. With the date stated it is a finding again.
+  assert.ok(!ids.includes("R-TIME-MISMATCH"));
+  assert.equal(r.humanReviewReasons.length, 1);
+  assert.match(r.humanReviewReasons[0], /1330 hours for an arrest.*does not state the date of the arrest/);
+  const dated = { ...c001, narrative: { ...c001.narrative, text: c001.narrative.text.replace("[UNREADABLE]7,", "On March 22, 2017,") } };
+  const t = runRules(dated, splitSentences(dated.narrative.text)).findings.find((f) => f.id === "R-TIME-MISMATCH")!;
   assert.equal(t.evidence.length, 2);
   assert.match(t.evidence[0].quote!, /1330 hours/);
 });
@@ -106,10 +110,12 @@ test("bug: time rule missed 'At approximately 1030 hours, X was placed under arr
   const c003 = JSON.parse(readFileSync("eval/cases/C003.json", "utf8")) as CaseRecord;
   const ss3 = splitSentences(c003.narrative.text, c003.narrative.pageSpans);
   assert.ok(!runRules(c003, ss3).findings.some((x) => x.id === "R-TIME-MISMATCH"), "an arrest 40 minutes after the recorded encounter is not a conflict");
+  // Changed in the accuracy iteration 1 audit: C003's arrest is passive with no stated agency, among several people, and the narrative's
+  // last stated date (03/26) is not the form's (03/27), so even before the form's hour it is only a question.
   const before = { ...c003, facts: c003.facts.map((x) => (x.path === "encounter.date_time" ? { ...x, value: "03/27/2017 1130" } : x)) };
-  const f = runRules(before, ss3).findings.find((x) => x.id === "R-TIME-MISMATCH");
-  assert.ok(f, "form 1130 vs an arrest at 1030 should be flagged");
-  assert.match(f!.evidence[0].quote!, /1030 hours/);
+  const rb = runRules(before, ss3);
+  assert.ok(!rb.findings.some((x) => x.id === "R-TIME-MISMATCH"));
+  assert.ok(rb.humanReviewReasons.some((x) => /1030 hours for an arrest.*does not say which agency made the arrest/.test(x)), "the word order is still read");
   const ss = splitSentences("At approximately 2145 hours the subjects were transported to the station and arrested later.");
   assert.ok(!runRules({ ...c003, narrative: { text: ss[0].text } }, ss).findings.some((x) => x.id === "R-TIME-MISMATCH"), "transport times stay excluded");
 });

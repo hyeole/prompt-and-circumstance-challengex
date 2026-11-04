@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { reviewCase, type Complete } from "../lib/review/review";
-import { FACTS_SYSTEM_PROMPT, attributeStatement, compareFacts, accountConflicts, fullDates, isPriorRemoval, describesUsEntry, nonUsEntrySentences, exactEntryLink, eventParticipant, EMPTY_FACTS, type FactsOutput } from "../lib/review/facts";
+import { FACTS_SYSTEM_PROMPT, attributeStatement, compareFacts, accountConflicts, fullDates, isPriorRemoval, describesUsEntry, nonUsEntrySentences, eventParticipant, EMPTY_FACTS, type FactsOutput } from "../lib/review/facts";
 import { ModelError } from "../lib/llm";
 import type { CaseRecord, Sentence } from "../lib/types";
 
@@ -30,17 +30,23 @@ const EWI_FORM = record("x", { "entry.date": "06/09/2011", "entry.manner": "EWI"
 // ---- 1. Event-scoped attribution; real calendar dates ----
 test("1: a full date that belongs to another event in the sentence does not link an unattributed entry to the subject", () => {
   const s = seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] entered illegally in 2014; he was married on June 9, 2011 and was removed in 2010.");
-  assert.equal(exactEntryLink(EWI_FORM, s, "S2"), false);
   assert.equal(attributeStatement(s, "S2", true, undefined, EWI_FORM).outcome, "ambiguous");
   const andMarried = seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] crossed the river illegally in 2014 and was married on June 9, 2011.");
-  assert.equal(exactEntryLink(EWI_FORM, andMarried, "S2"), false, "a date after 'and was married' is the marriage's");
-  assert.equal(exactEntryLink(EWI_FORM, seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] stated that his wife crossed the river illegally on June 9, 2011."), "S2"), false, "a relative's entry");
+  assert.equal(attributeStatement(andMarried, "S2", true, undefined, EWI_FORM).outcome, "ambiguous", "a date after 'and was married' is the marriage's");
+  assert.equal(attributeStatement(seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] stated that his wife crossed the river illegally on June 9, 2011."), "S2", true, undefined, EWI_FORM).outcome, "ambiguous", "a relative's entry");
 });
-test("1 controls: the entry's own clause with the full date and manner still links; admission continues the entry event", () => {
-  assert.equal(exactEntryLink(EWI_FORM, seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] entered the United States illegally on June 9, 2011 by wading the river."), "S2"), true);
-  assert.equal(exactEntryLink(EWI_FORM, seq(TWO, "On June 9, 2011, [REDACTED (b)(6), (b)(7)(C)] crossed the river illegally."), "S2"), true, "a date before the verb in the same clause");
+// Changed in the accuracy iteration 1 audit: these were positive controls for the exact-entry link (the subject's full
+// recorded entry date and manner). That link inferred identity from matching values and was removed; the same
+// statements are now ambiguous (routed), and identity needs the text itself (a named subject, one person, or a pronoun
+// chain to the subject's designation).
+test("1 controls: a statement matching the form's full entry date and manner is not thereby the subject's", () => {
+  assert.equal(attributeStatement(seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] entered the United States illegally on June 9, 2011 by wading the river."), "S2", true, undefined, EWI_FORM).outcome, "ambiguous");
+  assert.equal(attributeStatement(seq(TWO, "On June 9, 2011, [REDACTED (b)(6), (b)(7)(C)] crossed the river illegally."), "S2", true, undefined, EWI_FORM).outcome, "ambiguous");
   const nim = record("x", { "entry.date": "12/23/2015", "entry.manner": "NIM" });
-  assert.equal(exactEntryLink(nim, seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] arrived at Miami on 12/23/2015 and was admitted as a B2 Visitor."), "S2"), true);
+  assert.equal(attributeStatement(seq(TWO, "[REDACTED (b)(6), (b)(7)(C)] arrived at Miami on 12/23/2015 and was admitted as a B2 Visitor."), "S2", true, undefined, nim).outcome, "ambiguous");
+  // Positive controls: the text itself ties the statement to the subject.
+  assert.equal(attributeStatement(seq(TWO, "The subject entered the United States illegally on June 9, 2011 by wading the river."), "S2", true, undefined, EWI_FORM).outcome, "supported");
+  assert.equal(attributeStatement(seq("[REDACTED (b)(6), (b)(7)(C)] entered the United States illegally on June 9, 2011 by wading the river."), "S1", false, undefined, EWI_FORM).outcome, "supported", "only one person is described");
 });
 test("1: impossible calendar dates are rejected, not moved to another day", () => {
   assert.deepEqual(fullDates("He entered on 02/30/2011."), []);

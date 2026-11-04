@@ -31,16 +31,18 @@ test("G06: an unattributed account matching the form only on place and manner is
   const only = withText(G06, `${THREE} ${M} stated that he entered the United States in 2011 by crossing the river near Hidalgo, Texas.`);
   assert.deepEqual(cmp(only, facts([ent("S3", "entered the United States in 2011 by crossing the river near Hidalgo, Texas", 2011, "without_inspection")])), { findings: [], routed: ["S3"] });
 });
-test("G06 controls: shared facts stay routed; the subject named, a month-and-day match, and C119-X1 still link", () => {
+// Changed in the accuracy iteration 1 audit: a month-and-day match and C119-X1's S25 (matching 08/11 and AIR) were linked by value matching,
+// which was removed; both now stay unattributed (no finding). The subject named still links.
+test("G06 controls: shared facts stay routed; the subject named links; a month-and-day match and C119-X1 do not", () => {
   const shared = withText(G06, `${THREE} ${M} stated that he entered the United States on April 2, 2011 by crossing the river near Hidalgo, Texas. ${M} stated that he also crossed on April 2 near Hidalgo, Texas.`);
   assert.deepEqual(cmp(shared, facts([ent("S3", "entered the United States on April 2, 2011 by crossing the river near Hidalgo, Texas", 2011, "without_inspection")])).findings, []);
   const explicit = withText(G06, `${THREE} The subject stated that he entered the United States in 2011 by crossing the river near Hidalgo, Texas.`);
   assert.deepEqual(cmp(explicit, facts([ent("S3", "The subject stated that he entered the United States in 2011 by crossing the river near Hidalgo, Texas", 2011, "without_inspection")])).findings, ["F-ENTRY-DATE"]);
   const monthDay = withText(G06, `${THREE} ${M} stated that he entered the United States on April 2, 2011 by crossing the river near Hidalgo, Texas.`);
-  assert.deepEqual(cmp(monthDay, facts([ent("S3", "entered the United States on April 2, 2011 by crossing the river near Hidalgo, Texas", 2011, "without_inspection")])).findings, ["F-ENTRY-DATE"]);
+  assert.deepEqual(cmp(monthDay, facts([ent("S3", "entered the United States on April 2, 2011 by crossing the river near Hidalgo, Texas", 2011, "without_inspection")])).findings, []);
   const c119 = load("eval/cases/C119-X1.json");
   const s25 = splitSentences(c119.narrative.text, c119.narrative.pageSpans).find((s) => s.id === "S25")!;
-  assert.deepEqual(cmp(c119, facts([ent("S25", s25.text, 2009, "admitted")])).findings, ["F-ENTRY-DATE"]);
+  assert.deepEqual(cmp(c119, facts([ent("S25", s25.text, 2009, "admitted")])).findings, []);
 });
 
 const G09 = load("eval/gen-v1/cases/G09.json");

@@ -90,7 +90,7 @@ test("control: explicit simultaneity links an arrival or arrest time to the enco
 test("control: an arrest stated before the recorded encounter conflicts with it; a later arrest or a midnight wrap does not", async () => {
   const before = await review(caseWith("Agents placed the subject under arrest at 0800 hours.", "0900"), "0800");
   assert.ok(before.timeFindings.includes("R-TIME-MISMATCH"));
-  assert.match(before.r.findings.find((f) => f.id === "R-TIME-MISMATCH")!.explanation, /cannot be arrested before being encountered/);
+  assert.match(before.r.findings.find((f) => f.id === "R-TIME-MISMATCH")!.explanation, /the arrest cannot come before it/);
   assert.deepEqual((await review(caseWith("Agents placed the subject under arrest at 1000 hours.", "0900"), "1000")).timeFindings, []);
   assert.deepEqual((await review(caseWith("Agents placed the subject under arrest at 0010 hours.", "2350"), "0010")).timeFindings, [], "20 minutes after, across midnight");
 });
