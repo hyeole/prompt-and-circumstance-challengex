@@ -273,7 +273,20 @@ const priorRemovalClause = (cl: string) =>
   !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && !removalOrderOnly(cl) &&
   REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
 
-export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause) || departedUnderOrder(text);
+// Agency titles and units are not events (diag-2 EG08: "Deportation Officer [X] … encountered the subject").
+const AGENCY_TITLE_RE = /\b(?:Supervisory\s+)?Deportation\s+Officers?\b|\bEnforcement\s+and\s+Removal\s+Operations\b|\bRemoval\s+Operations\b/gi;
+// Length-preserving, so clause offsets into the original text stay valid.
+const withoutTitles = (text: string) => text.replace(AGENCY_TITLE_RE, (m) => "officer".padEnd(m.length, " "));
+export const isPriorRemoval = (raw: string) => { const text = withoutTitles(raw); return text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause) || departedUnderOrder(text); };
+/**
+ * The record states explicitly that a removal order was NOT carried out ("The order was never executed", "the removal
+ * order has not been executed", "was never carried out"). An unknown or undocumented execution ("unknown whether",
+ * "records do not show whether", "no record of the order's execution") is not this.
+ */
+export function orderExplicitlyUnexecuted(text: string): boolean {
+  if (/\b(?:whether|unknown|unclear|if)\b/i.test(text)) return false;
+  return /\b(?:order|it)\b[^.;:]{0,30}?\b(?:was|were|has|had|is)\s+(?:never|not)\s+(?:been\s+)?(?:executed|carried out|enforced)\b|\b(?:order|it)\b[^.;:]{0,30}?\bnever (?:been )?(?:executed|carried out|enforced)\b/i.test(text);
+}
 /** A clause stating a removal order for which no execution or departure is stated (diag-1 DU03). */
 // An order that was itself only possible, offered or refused ("may be ordered removed", "if he is ordered removed",
 // "offered a stipulated order of removal, which he declined"): the hypothetical governs the order, not its execution.
@@ -284,7 +297,8 @@ export const statesRemovalOrderOnly = (text: string) => !isPriorRemoval(text) &&
  * A prior removal whose participant is not a third party: the removal clause's event is not a relative's, companion's or
  * group's ("Subject stated that his brother was deported in 2012" is the brother's).
  */
-function ownPriorRemoval(text: string): boolean {
+function ownPriorRemoval(raw: string): boolean {
+  const text = withoutTitles(raw);
   return clausesWithOffsets(text).some(({ cl, base }) => {
     if (!priorRemovalClause(cl)) return false;
     const m = cl.replace(CURRENT_REMOVAL_RE, (x) => " ".repeat(x.length)).match(REMOVAL_WORD_RE);
@@ -326,7 +340,7 @@ export function isPriorImmigrationEncounter(raw: string, encounterYear = 0): boo
 const PRIOR_HISTORY_RE = /\b(?:prior|previous(?:ly)?|earlier)\b[^.;]{0,40}\b(?:immigration|violations?|apprehen\w*|arrest\w*|encounter\w*|records?|history|remov\w*|deport\w*|returns?|returned)\b|\bimmigration (?:history|violations?)\b/i;
 export function describesRecordHistory(text: string, encounterYear = 0): boolean {
   return isPriorRemoval(text) || statesRemovalOrderOnly(text) || isPriorImmigrationEncounter(text, encounterYear) ||
-    REMOVAL_WORD_RE.test(text) || PRIOR_HISTORY_RE.test(text);
+    REMOVAL_WORD_RE.test(withoutTitles(text)) || PRIOR_HISTORY_RE.test(withoutTitles(text));
 }
 
 /**
@@ -349,16 +363,49 @@ export function formEntryMode(value: string): "foot" | "vehicle" | "boat" | "air
   if (/\b(?:BOAT|VESSEL|SEA|MARINE|RAFT)\b/.test(v)) return "boat";
   return undefined; // "AIR" codes are compared by inspection category (admitted), not as a mode
 }
-/** The mode of travel a sentence states for a crossing or entry, when exactly one is stated; otherwise undefined. */
-export function crossingMode(text: string): "foot" | "vehicle" | "boat" | "air" | undefined {
-  if (!/\b(?:cross\w*|enter\w*|entry|arriv\w*|came into|came across)\b/i.test(text)) return undefined;
-  const modes = ([
-    ["foot", /\b(?:on foot|afoot|walk(?:ed|ing)?|wad(?:ed|ing)|swam|swimming|hiked|climbed)\b/i],
-    ["vehicle", /\b(?:drove|driving|by (?:car|vehicle|truck|bus)|in (?:a|his|her|the) (?:car|truck|vehicle|van|bus))\b/i],
-    ["boat", /\b(?:boat|raft|vessel|panga)\b/i],
-    ["air", /\b(?:flew|by air|on a (?:flight|plane))\b/i],
-  ] as const).filter(([, re]) => re.test(text)).map(([m]) => m);
-  return modes.length === 1 ? modes[0] : undefined;
+/**
+ * The U.S. crossing clauses of a sentence, read from the source text (so a crossing the fact extraction did not quote is
+ * still covered, diag-2 EG02). A sentence is split into clauses at "; ", ": ", " and that ", ", and/then/but <new verb
+ * phrase>" and ", after which / where": approach travel ("made the journey north through Mexico by bus"), help from a
+ * smuggler, and transport after the crossing ("…, and a second smuggler drove the group to a stash house"; "…, and was
+ * driven to Phoenix") fall into their own clauses. A crossing clause has a crossing or entry word and a border object
+ * (the border, a river, a bridge, a fence, a port of entry, the United States or a U.S. border state), and is not an entry
+ * into another country or a departure from the United States.
+ */
+const CLAUSE_SPLIT_RE = /;\s+|:\s+|\s+and that\s+|,\s*(?:after which|whereupon|where)\s+|,?\s+(?:and\s+|but\s+)?then\s+|,\s*(?:and|but)\s+(?=(?:a|an|the|he|she|they|later|after|was|were|had|walked|drove|took|travel\w*|spent|stayed|worked|lived|went|moved|got)\b)/i;
+const CROSS_WORD_RE = /\b(?:cross\w*|across|enter\w*|re-?enter\w*|waded|swam|climbed)\b/i;
+const BORDER_OBJECT_RE = /\b(?:border|boundary|river|Rio Grande|bridge|fence|wall|port of entry|United States|U\.S\.|Arizona|New Mexico|Texas|California)\b/i;
+export function crossingClauses(text: string): string[] {
+  // "allowing him to enter", "permission to cross": an infinitive is not a crossing.
+  // "after crossing, he was taken by car …", "once across", "having crossed": the clause is about what followed (C001).
+  return text.split(CLAUSE_SPLIT_RE).filter((cl) => CROSS_WORD_RE.test(cl.replace(/\bto (?:re-?)?(?:enter|cross)\b/gi, " ").replace(/\b(?:after|once|upon|having|since|before)\s+(?:(?:re-?)?(?:cross\w*|enter\w*)|across)\b/gi, " ")) && BORDER_OBJECT_RE.test(cl) && !OTHER_COUNTRY_RE.test(cl) && !leavesUs(cl));
+}
+const MODE_WORDS = [
+  ["foot", /\b(?:on foot|afoot|walk(?:ed|ing)?|wad(?:ed|ing)|swam|swimming|hiked|climbed)\b/i],
+  ["vehicle", /\b(?:drove|driving|driven|by (?:car|vehicle|truck|bus)|(?:in|inside) (?:a|his|her|the) (?:car|truck|vehicle|van|bus|trunk|trailer)|tractor-trailer|trunk of)\b/i],
+  ["boat", /\b(?:boat|raft|vessel|panga)\b/i],
+  ["air", /\b(?:flew|by air|on a (?:flight|plane))\b/i],
+] as const;
+type Mode = "foot" | "vehicle" | "boat" | "air";
+/** The mode of travel a sentence states for its U.S. crossing: the crossing clause's mode, when exactly one is stated. */
+export function crossingMode(text: string): Mode | undefined {
+  const modes = new Set(crossingClauses(text).flatMap((cl) => MODE_WORDS.filter(([, re]) => re.test(cl)).map(([m]) => m)));
+  return modes.size === 1 ? [...modes][0] : undefined;
+}
+/** Modes that cannot describe the same crossing. A river crossing by raft and one on foot are not distinguished (codes vary). */
+const modesConflict = (a: Mode, b: Mode) => a !== b && !(new Set([a, b]).has("foot") && new Set([a, b]).has("boat"));
+
+const STATES: Record<string, string> = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming" };
+const STATE_NAMES_RE = new RegExp(`\\b(${Object.values(STATES).sort((a, b) => b.length - a.length).join("|")})\\b`, "g");
+/**
+ * U.S. states a text names explicitly: full names ("west of Columbus, New Mexico") or a postal abbreviation after a comma
+ * ("near Nogales, AZ"; upper case only, so words like "in" or "or" are never read as states). "Mexico" alone is not a state.
+ */
+export function namedStates(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const m of text.matchAll(STATE_NAMES_RE)) out.add(m[1]);
+  for (const m of text.matchAll(/,\s*([A-Z]{2})\b(?![a-z])/g)) if (STATES[m[1]]) out.add(STATES[m[1]]);
+  return out;
 }
 
 /**
@@ -421,9 +468,18 @@ export function formMannerCategory(value: string): "without_inspection" | "admit
   return undefined;
 }
 
+/**
+ * The year of the form's entry date, at whatever precision the form states it: a full date (MM/DD/YYYY, optionally with a
+ * time), a month and year (MM/YYYY), or a year alone (YYYY). Only the year is returned and compared, so no month or day is
+ * ever invented. A value with no recognisable year ("Unknown Date, Unknown Time") returns undefined.
+ */
 export function formYear(value: string): number | undefined {
-  const m = value.match(/\b\d{1,2}\/\d{1,2}\/((?:19|20)\d{2})\b/);
-  return m ? Number(m[1]) : undefined;
+  const full = value.match(/\b\d{1,2}\/\d{1,2}\/((?:19|20)\d{2})\b/);
+  if (full) return Number(full[1]);
+  const monthYear = value.match(/(?<![\d/])(?:0?[1-9]|1[0-2])\/((?:19|20)\d{2})\b/);
+  if (monthYear) return Number(monthYear[1]);
+  const yearOnly = value.match(/^\s*((?:19|20)\d{2})\s*$/);
+  return yearOnly ? Number(yearOnly[1]) : undefined;
 }
 
 type Verified = { s: Sentence; ev: EvidenceRef };
@@ -684,6 +740,59 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         humanReviewReason: "Two accounts of the manner of entry conflict; the facts could support different charges.", source: "model", severity: "high",
       });
   }
+  // 3b. Mode of crossing and place of entry, read from the source's own crossing clauses (diag-2 EG02, EG07). Only the
+  //     subject's last (or unscoped) U.S. crossing counts: an attributed sentence (attributeStatement, the same rules as
+  //     every comparison here), not a first or previous entry, not a corrected answer. Approach travel, smuggler help and
+  //     transport after the crossing are separate clauses and are ignored. A difference is a conflict only when it is
+  //     explicit and incompatible:
+  //     - mode: the form code states a mode (AFOOT, vehicle, boat) and the crossing states exactly one other, incompatible
+  //       mode (raft and foot are not distinguished);
+  //     - place: the form and the crossing each name exactly one U.S. state, and they differ. Nearby places, different
+  //       wording, sectors, a city without a state, or different precision are not compared.
+  //     In a multi-person narrative an unattributable crossing that would conflict is routed as an account, never flagged.
+  {
+    const crossings = sentences.map((x) => ({ s: x, cls: crossingClauses(x.text) })).filter((x) => x.cls.length &&
+      !CORRECTION_RE.test(x.s.text) && !NOT_LAST_ENTRY_RE.test(x.cls.join(" ")) &&
+      !["first", "previous"].includes(entryScope(x.s.text, Math.max(0, x.s.text.search(CROSS_WORD_RE)))) && !thirdPartyPronounReport(x.s.text))
+      .map((x) => ({ ...x, outcome: attributeStatement(sentences, x.s.id, multiPerson, undefined, c).outcome }));
+    const sentEv = (x: Sentence, quote: string): EvidenceRef => { const at = x.text.indexOf(quote); return { kind: "sentence", sentenceId: x.id, quote, start: x.start + Math.max(0, at), end: x.start + Math.max(0, at) + quote.length, page: x.page, verified: true, match: "exact" }; };
+    const fmv = field("entry.manner")?.value ?? "";
+    const fMode = formEntryMode(fmv);
+    if (fMode && !findings.some((f) => f.id === "F-ENTRY-MANNER")) {
+      const withMode = crossings.map((x) => ({ ...x, mode: crossingMode(x.s.text) })).filter((x) => x.mode);
+      const own = withMode.filter((x) => x.outcome === "supported");
+      const modes = new Set(own.map((x) => x.mode));
+      const off = modes.size === 1 ? own.find((x) => modesConflict(x.mode!, fMode)) : undefined;
+      if (off)
+        findings.push({
+          id: "F-ENTRY-MODE", category: "inconsistency", title: "Mode of crossing differs from the form",
+          explanation: `The form code "${fmv}" records the crossing as ${fMode === "foot" ? "on foot" : `by ${fMode}`}, but ${off.s.id} describes the subject's crossing ${off.mode === "foot" ? "on foot" : off.mode === "vehicle" ? "in a vehicle" : off.mode === "boat" ? "by boat" : "by air"}. Whether the subject was inspected is not in question; only the mode recorded on the form.`,
+          evidence: [ctx(sentEv(off.s, off.cls.find((cl) => MODE_WORDS.some(([m, re]) => m === off.mode && re.test(cl))) ?? off.s.text), attribution(off.s, "unclear"), "us_entry"), fieldEv("entry.manner")],
+          referenceIds: ["E3"], needsHumanReview: true, humanReviewReason: "The recorded mode of crossing differs from the narrative: a person should correct the record.", source: "rule", severity: "medium",
+        });
+      else if (multiPerson && !own.length) unattributed.push(...withMode.filter((x) => x.outcome !== "supported" && modesConflict(x.mode!, fMode))
+        .map((x) => ({ sentenceId: x.s.id, fieldPath: "entry.manner", detail: `${x.s.id} describes a crossing ${x.mode === "vehicle" ? "in a vehicle" : `by ${x.mode}`}; the form code "${fmv}" records ${fMode === "foot" ? "on foot" : fMode}.` })));
+    }
+    const fpv = field("entry.place")?.value ?? "";
+    const fStates = namedStates(fpv);
+    if (fStates.size === 1 && fieldQuality(fpv) !== "unknown") {
+      const fState = [...fStates][0];
+      const withState = crossings.map((x) => ({ ...x, states: new Set(x.cls.flatMap((cl) => [...namedStates(cl)])) })).filter((x) => x.states.size === 1);
+      const own = withState.filter((x) => x.outcome === "supported");
+      const states = new Set(own.map((x) => [...x.states][0]));
+      const off = states.size === 1 && !states.has(fState) && !crossings.some((x) => x.outcome === "supported" && x.cls.some((cl) => namedStates(cl).has(fState))) ? own[0] : undefined;
+      if (off) {
+        const st = [...off.states][0];
+        findings.push({
+          id: "F-ENTRY-PLACE", category: "inconsistency", title: "Place of entry differs from the form",
+          explanation: `The form records the place of entry as "${fpv}" (${fState}), but ${off.s.id} places the subject's crossing in ${st}.`,
+          evidence: [ctx(sentEv(off.s, off.cls.find((cl) => namedStates(cl).has(st))!), attribution(off.s, "unclear"), "us_entry"), fieldEv("entry.place")],
+          referenceIds: ["E2"], needsHumanReview: true, humanReviewReason: "The place of entry differs between the form and the narrative: a person should decide which is correct.", source: "rule", severity: "medium",
+        });
+      } else if (multiPerson && !own.length) unattributed.push(...withState.filter((x) => x.outcome !== "supported" && !x.states.has(fState))
+        .map((x) => ({ sentenceId: x.s.id, fieldPath: "entry.place", detail: `${x.s.id} places a crossing in ${[...x.states][0]}; the form records the place of entry as "${fpv}".` })));
+    }
+  }
   // 4. Prior removal described for the subject while the form's immigration record is NEGATIVE.
   const imm = field("history.immigration_record");
   if (imm && /^\s*NEGATIVE\b/i.test(imm.value)) {
@@ -850,7 +959,13 @@ export function checkChargeRequirement(
     // requirement is neither shown nor contradicted, whoever the order concerns, so neither a negative record nor a
     // denial settles it. Whether a removal occurred (and, if unattributed, whose order it is) is for a person.
     const order = removals.length ? undefined : sentences.find((x) => statesRemovalOrderOnly(x.text));
-    if (order) {
+    // An order whose non-execution the record states explicitly (diag-2 EG08: "The order was never executed") is not
+    // unknown: it does not show a removal, and whether the subject was removed some other way is decided by the
+    // subject-specific checks below (an explicit no-history record check, the subject's own denial, a NEGATIVE record).
+    // Non-execution alone proves nothing: with none of those, the requirement stays unresolved (after the checks).
+    const unexecuted = !!order && sentences.some((x) => orderExplicitlyUnexecuted(x.text) && attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported");
+    const unexecutedNote = order && unexecuted ? ` ${order.id} records a removal order, and the record states that it was not executed.` : "";
+    if (order && !unexecuted) {
       const own = attributeStatement(sentences, order.id, multiPerson, undefined, c).outcome === "supported";
       return { status: "needs_human_review", outcome: own ? "undetermined" : "unresolved", evidence: [sentenceEv(order)],
         explanation: `The selected charge depends on a prior removal, deportation, or denial of admission. ${order.id} records a removal order${own ? "" : " that cannot be attributed to this record's subject (several people are described)"}, but the record does not state that the order was executed or that anyone departed under it. A person should confirm whether this subject was removed.` };
@@ -858,14 +973,17 @@ export function checkChargeRequirement(
     const none = removals.length ? null : noHistorySection(sentences, multiPerson, c);
     if (none && (!imm || !/^\s*POSITIVE\b/i.test(imm.value)))
       return { status: "likely_mismatch", outcome: "contradicted", evidence: [...formEv, ...none.map(sentenceEv)],
-        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the record checks on this subject report no immigration history (${none.map((x) => x.id).join(", ")}) and no removal is stated anywhere in the narrative.` };
+        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the record checks on this subject report no immigration history (${none.map((x) => x.id).join(", ")}) and no removal is stated anywhere in the narrative.${unexecutedNote}` };
     const denial = removals.length || sentences.some((s) => isPriorRemoval(s.text)) ? undefined
       : sentences.find((x) => ownDenial(x.text) && attributeStatement(sentences, x.id, multiPerson, undefined, c).outcome === "supported" && !mentions(x).some((m) => m.kind === "other" || m.kind === "member" || m.kind === "group"));
     if (denial && !formNamesRemoval)
       return { status: "likely_mismatch", outcome: "contradicted", evidence: [...formEv, sentenceEv(denial)],
-        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but ${denial.id} states of this subject that there was none, and no removal is stated anywhere in the narrative.` };
+        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but ${denial.id} states of this subject that there was none, and no removal is stated anywhere in the narrative.${unexecutedNote}` };
     if (!removals.length && imm && /^\s*NEGATIVE\b/i.test(imm.value))
-      return { status: "likely_mismatch", outcome: "contradicted", explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the immigration record is "${imm.value}" and the narrative describes no prior removal.`, evidence: [{ kind: "field", fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] };
+      return { status: "likely_mismatch", outcome: "contradicted", explanation: `The selected charge depends on a prior removal, deportation, or denial of admission, but the immigration record is "${imm.value}" and the narrative describes no prior removal.${unexecutedNote}`, evidence: [{ kind: "field", fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] };
+    if (order && unexecuted)
+      return { status: "needs_human_review", outcome: "undetermined", evidence: [sentenceEv(order)],
+        explanation: `The selected charge depends on a prior removal, deportation, or denial of admission. ${order.id} records a removal order, and the record states that the order was not executed; no record check or statement about this subject establishes whether he was otherwise removed. A person should confirm the immigration history.` };
     if (!removals.length && facts !== EMPTY_FACTS)
       return { status: "needs_human_review", outcome: "undetermined", explanation: "The selected charge depends on a prior removal, deportation, or denial of admission, but the narrative does not document one. A person should confirm the immigration history.", evidence: imm ? [{ kind: "field", fieldPath: imm.path, quote: imm.value, page: imm.sourcePage, verified: true }] : [] };
   }
@@ -1118,6 +1236,12 @@ export function accountConflicts(sentences: Sentence[], nonUs: Set<string> = new
       const manner = ma && mb && ma !== mb;
       const year = ya.length === 1 && yb.length === 1 && ya[0] !== yb[0];
       if (!manner && !year) continue;
+      // Two entries, not two accounts of one (diag-2 EG04): the earlier entry ended (a return, departure, removal or
+      // voluntary return stated after it, in its own sentence or before the later one), or the later statement marks
+      // itself as a further entry ("again", "re-entered", "came back", "returned to the United States").
+      const ia = chain.indexOf(A), ib = chain.indexOf(B);
+      const at = A.text.indexOf(ta), afterA = (at >= 0 ? A.text.slice(at + ta.length) : A.text) + " " + chain.slice(ia + 1, ib).map((x) => x.text).join(" ");
+      if (DEPARTURE_WORD_RE.test(afterA) || /\b(?:again|re-?enter\w*|came back|returned to (?:the United States|the U\.S\.))\b/i.test(B.text)) continue;
       found = true;
       const what = manner ? `how this person entered: ${A.id} describes ${MANNER_LABEL(ma!)}, ${B.id} describes ${MANNER_LABEL(mb!)}` : `when this person last entered: ${A.id} gives ${ya[0]}, ${B.id} gives ${yb[0]}`;
       findings.push({

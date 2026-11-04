@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, statesRemovalOrderOnly, isPriorRemoval, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -353,7 +353,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       // manner: the field result stands, and the review is already reported as partial.
       if (el.id === "E3" && fromField.qualifier === "recorded_unknown" && m && factsSettled.ok && !hasMannerStatement(sentences, factsSettled.v))
         return { elementId: el.id, label: el.label, status: "unclear", sentenceIds: [], fieldPaths: fromField.fieldPaths,
-          note: "The form records the manner of entry as unknown, and the narrative does not state how the subject entered. The charge depends on this fact, so a person should confirm it." };
+          // Whether the selected charge depends on the manner is the charge's own recorded requirement (diag-2 UN01/UN02:
+          // 8 U.S.C. 1326 depends on a prior removal, not on the manner).
+          note: `The form records the manner of entry as unknown, and the narrative does not state how the subject entered.${(charge?.requires as Requires | undefined)?.entryManner ? " The selected charge depends on this fact, so a person should confirm it." : " A person should confirm it."}` };
       return fromField;
     }
     // The manner of entry (E3) is also covered by the fact extraction, which classifies the manner of every entry
@@ -502,6 +504,20 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       const citedS = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
       if (citedS.length && !citedS.some((s) => describesRecordHistory(s.text, encYear))) {
         discarded.push({ title: iss.title, reason: `The cited statement describes no prior removal, removal order, or prior immigration arrest, apprehension or return; an admission, a visa or an overstay is not history that the immigration record "${immField.quote}" denies.` });
+        invalidate(iss, verified);
+        return;
+      }
+    }
+    // (1g) Narrative statements compared with each other about removal (diag-2 EG08: "a removal order was issued, yet no
+    // removal occurred"; "states he has never been deported, yet an immigration judge ordered removal"). An order is not
+    // a removal or deportation, so an order is compatible with "never deported", "no removal" or "the order was never
+    // executed". Such a claim needs a cited statement of a COMPLETED removal; one that rests on an order alone is withheld.
+    // Claims citing a completed removal (a genuine "removed in 2015" vs "never deported") are untouched.
+    if (iss.type === "inconsistency" && !verified.some((v) => v.fieldPath) && /\b(?:remov\w*|deport\w*)\b/i.test(`${iss.title} ${iss.explanation}`)) {
+      const citedS = verified.filter((v) => v.sentenceId).map((v) => sentences.find((x) => x.id === v.sentenceId)!);
+      const orderOnly = citedS.some((s) => statesRemovalOrderOnly(s.text) || /\border(?:ed)?\b[^.;]{0,60}\bremov/i.test(s.text));
+      if (orderOnly && !citedS.some((s) => isPriorRemoval(s.text))) {
+        discarded.push({ title: iss.title, reason: "The cited statements describe a removal order, not a completed removal; an order is compatible with a statement that the person was never removed or deported, or that the order was not executed." });
         invalidate(iss, verified);
         return;
       }
@@ -749,8 +765,11 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   const relevant = !charge ? ["entry."] : reqs?.priorRemoval ? ["entry.", "history."] : reqs?.applicationForAdmission ? [] : reqs?.entryManner ? ["entry.manner"] : ["entry."];
   const refsFor = relevant.includes("entry.") ? ["E1", "E2", "E3"] : relevant.includes("entry.manner") ? ["E3"] : [];
   const touches = (f: Finding) => f.evidence.some((e) => relevant.some((p) => e.fieldPath?.startsWith(p))) || f.referenceIds.some((r) => refsFor.includes(r));
-  const entryConflict = findings.find((f) => f.category === "inconsistency" && touches(f));
-  const openAccount = routedAccounts.find((g) => relevant.some((p) => (g.fieldPath ?? (relevant.includes("entry.manner") ? "entry.manner" : "entry.")).startsWith(p)));
+  // The mode of crossing (on foot, in a vehicle) is not the inspection category a manner-based charge depends on: a mode
+  // conflict is reported and routed on its own, but does not qualify that charge (diag-2 EG02).
+  const modeOnly = (t: string) => !!reqs?.entryManner && /\bdescribes a crossing (?:in a vehicle|by )|\bMode of crossing differs\b/.test(t);
+  const entryConflict = findings.find((f) => f.category === "inconsistency" && touches(f) && !(f.id === "F-ENTRY-MODE" && reqs?.entryManner));
+  const openAccount = routedAccounts.find((g) => relevant.some((p) => (g.fieldPath ?? (relevant.includes("entry.manner") ? "entry.manner" : "entry.")).startsWith(p)) && !(g.details.length > 0 && g.details.every(modeOnly)));
   if ((entryConflict || openAccount) && citation.status === "consistent") {
     const what = relevant.includes("history.") ? "the entry or immigration history" : "the entry";
     citation = {

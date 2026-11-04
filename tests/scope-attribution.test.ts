@@ -178,7 +178,9 @@ test("control: the pronoun's person is another candidate in the named sentence â
   // A gender mismatch: the person named as the subject is "her"; "He" cannot be that person.
   const r = compare(`${TWO} Agent ${R} questioned the subject, ${R}, about her citizenship. `, [[A2P_LAST, 2017, "without_inspection"]], { "entry.date": "06/02/2013", "entry.manner": "EWI" });
   assert.deepEqual(entryFindings(r), []);
-  assert.deepEqual(r.unattributed.map((u) => u.fieldPath), ["entry.date"]);
+  // Changed (diag2-fixes-1): the place is now compared too. The base form (G06) records "near Hidalgo, TX" and the
+  // unattributable statement names Arizona, so it is routed for the place as well as the date; still no finding.
+  assert.deepEqual(r.unattributed.map((u) => u.fieldPath).sort(), ["entry.date", "entry.place"]);
   // Two men in the named sentence ("the subject and his brother"): "He" is ambiguous.
   const r2 = compare(`${TWO} Agent ${R} questioned the subject and ${R} about their citizenship. `, [[A2P_LAST, 2017, "without_inspection"]], { "entry.date": "06/02/2013", "entry.manner": "EWI" });
   assert.deepEqual(entryFindings(r2), []);

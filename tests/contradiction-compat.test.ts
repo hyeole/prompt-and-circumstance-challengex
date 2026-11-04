@@ -91,7 +91,9 @@ test("mode helpers: form codes and stated crossing modes", () => {
   assert.equal(formEntryMode("EWI"), undefined);
   assert.equal(formEntryMode("AIR"), undefined);
   assert.equal(crossingMode("He crossed the river on foot."), "foot");
-  assert.equal(crossingMode("He crossed the border hidden in a truck driven by a smuggler, then walked to the road."), undefined, "two modes: undetermined");
+  // Changed (diag2-fixes-1): the walk after the crossing is its own clause, so the crossing's mode is the vehicle.
+  assert.equal(crossingMode("He crossed the border hidden in a truck driven by a smuggler, then walked to the road."), "vehicle");
+  assert.equal(crossingMode("He crossed the river partly on foot and partly hidden in a truck."), undefined, "two modes in the crossing itself: undetermined");
   assert.equal(crossingMode("He was picked up by a driver and taken to Houston."), undefined, "no crossing or entry");
   assert.equal(crossingMode("He used a smuggler to cross the border."), undefined, "assistance is not a mode");
 });
