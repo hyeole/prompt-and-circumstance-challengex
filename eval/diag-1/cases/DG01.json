@@ -1,0 +1,97 @@
+{
+  "id": "DG01",
+  "title": "Pronoun-linked entry date differs from the form",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Narrative last-entry date (March 3, 2016) differs from the form (03/03/2019); the date is stated in a sentence linked to the subject by pronoun."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn September 14, 2023, at approximately 0640 hours, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were conducting traffic observation duties on Interstate 94 near Kalamazoo, Michigan. The agents conducted a vehicle stop on a white sedan after a records check showed the registered owner had an outstanding immigration matter. The driver, later identified as [REDACTED (b)(6), (b)(7)(C)], presented a valid Michigan driver's license and was determined to be a United States citizen; he was released at the scene. Agent [REDACTED (b)(6), (b)(7)(C)] then questioned the passenger, who is the subject of this report, as to his citizenship.\nThe subject stated that he is a citizen and national of Honduras and that he does not possess any documents allowing him to be in or remain in the United States legally. He further stated that he last entered the United States on or about March 3, 2016, by crossing the Rio Grande on foot near Roma, Texas, and that he was not inspected by an immigration officer. He presented a Honduran national identity card bearing his name.\nTRAVEL:\nAfter crossing, the subject travelled by car to Houston, Texas, and later by bus to Kalamazoo, where he has worked in construction.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was transported to the [REDACTED (b)(7)(E)] Border Patrol Station, processed, and served a Notice to Appear (Form I-862). He will be held pending removal proceedings.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/03/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Roma, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "09/14/2023 0640",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "KALAMAZOO, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

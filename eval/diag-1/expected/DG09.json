@@ -1,0 +1,20 @@
+{
+  "id": "DG09",
+  "base": "DG09",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Designated subject among three people; entry date differs from the form",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "August 20, 2015"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Three people are described, but the entry statement is in a clause that designates 'The subject' (the front-seat passenger); the other two made no statements. 2015 vs the form's 2017."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "DG06",
+  "base": "DG06",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "No disposition or documenting form recorded",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N7"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The narrative ends at processing (fingerprints, records checks); no action taken (NTA, voluntary return, etc.) or documenting form is stated, and the form's disposition field is blank."
+}

@@ -1,0 +1,174 @@
+{
+ "server": {
+  "worktree": "<server-worktree>",
+  "head": "a5f30f4",
+  "engine": "df11086",
+  "buildId": "QI0oq2VYogLpfsW7Nu78k",
+  "port": 3318
+ },
+ "label": "diag-1: fresh team-authored development diagnostic of df11086 (not an evaluation)",
+ "runs": [
+  {
+   "case": "DG01",
+   "run": "eval/runs/2026-11-04T19-24-35",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 24511
+  },
+  {
+   "case": "DG02",
+   "run": "eval/runs/2026-11-04T19-25-00",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12050
+  },
+  {
+   "case": "DG03",
+   "run": "eval/runs/2026-11-04T19-25-13",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11464
+  },
+  {
+   "case": "DG04",
+   "run": "eval/runs/2026-11-04T19-25-25",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 30122
+  },
+  {
+   "case": "DG05",
+   "run": "eval/runs/2026-11-04T19-25-56",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13708
+  },
+  {
+   "case": "DG06",
+   "run": "eval/runs/2026-11-04T19-26-10",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13626
+  },
+  {
+   "case": "DG07",
+   "run": "eval/runs/2026-11-04T19-26-25",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 14456
+  },
+  {
+   "case": "DG08",
+   "run": "eval/runs/2026-11-04T19-26-40",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11950
+  },
+  {
+   "case": "DG09",
+   "run": "eval/runs/2026-11-04T19-26-52",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 9426
+  },
+  {
+   "case": "DG10",
+   "run": "eval/runs/2026-11-04T19-27-02",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12974
+  },
+  {
+   "case": "DN01",
+   "run": "eval/runs/2026-11-04T19-27-16",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 20130
+  },
+  {
+   "case": "DN02",
+   "run": "eval/runs/2026-11-04T19-27-37",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 14662
+  },
+  {
+   "case": "DN03",
+   "run": "eval/runs/2026-11-04T19-27-52",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13587
+  },
+  {
+   "case": "DN04",
+   "run": "eval/runs/2026-11-04T19-28-06",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11521
+  },
+  {
+   "case": "DN05",
+   "run": "eval/runs/2026-11-04T19-28-18",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 16470
+  },
+  {
+   "case": "DN06",
+   "run": "eval/runs/2026-11-04T19-28-35",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 14722
+  },
+  {
+   "case": "DU01",
+   "run": "eval/runs/2026-11-04T19-28-50",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19416
+  },
+  {
+   "case": "DU02",
+   "run": "eval/runs/2026-11-04T19-29-10",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13357
+  },
+  {
+   "case": "DU03",
+   "run": "eval/runs/2026-11-04T19-29-24",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 38916
+  },
+  {
+   "case": "DU04",
+   "run": "eval/runs/2026-11-04T19-30-04",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 21950
+  }
+ ],
+ "stopped": null,
+ "requests": 60
+}

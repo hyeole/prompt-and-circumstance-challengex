@@ -1,0 +1,30 @@
+{
+ "note": "Every finding and citation verdict in the diag-1 run, adjudicated by the team against the source text after the run (team judgement, not independent adjudication). Labels and checks were locked before the run and are unchanged.",
+ "findings": [
+  {"case": "DG01", "finding": "F-ENTRY-DATE [S7 + entry.date]", "verdict": "correct", "note": "2016 vs form 2019; S7 'He further stated' follows 'The subject stated' (the driver was released). The explanation's basis ('only one person of interest') is acceptable."},
+  {"case": "DG02", "finding": "C-1 citation mismatch [entry.manner + S5]", "verdict": "incorrect", "note": "Rests on the form's B2 and S5, the 2009 FIRST entry. The last entry (S7, 2017) was without inspection and supports the selected charge; the real issue is the form's manner field, which was not flagged."},
+  {"case": "DG03", "finding": "C-1 citation mismatch [entry.manner + S6]", "verdict": "correct", "note": "Never admitted (explicit) vs a charge requiring admission."},
+  {"case": "DG04", "finding": "F-HISTORY [S6 + history.immigration_record]", "verdict": "correct", "note": "Completed removal in the subject's own records vs NEGATIVE."},
+  {"case": "DG05", "finding": "M-E3", "verdict": "correct", "note": "No manner stated; form blank. Citation 'needs_human_review' (requirement unestablished) is appropriate."},
+  {"case": "DG06", "finding": "M-N7", "verdict": "correct", "note": "No disposition; form blank."},
+  {"case": "DG07", "finding": "M-N5", "verdict": "incorrect", "note": "The ground is stated ('charged under 8 U.S.C. 1326 as an alien found … after removal'); the sentence splitter cut it after 'U.S.' and the detector saw no section."},
+  {"case": "DG07", "finding": "F-HISTORY [S15 + history.immigration_record]", "verdict": "incorrect", "note": "S15 is the split-off charge clause '1326 as an alien found in the United States after removal' (legal charge wording), read as a prior removal of the subject. The subject's checks and statement explicitly show no removal."},
+  {"case": "DG08", "finding": "C-1 citation mismatch [entry.manner + S6]", "verdict": "correct", "note": "B2 admission vs a charge for entry without admission."},
+  {"case": "DG09", "finding": "F-ENTRY-DATE [S5 + entry.date]", "verdict": "correct", "note": "'The subject' designated among three people; 2015 vs 2017."},
+  {"case": "DG10", "finding": "I-1 entry place mismatch [S6 + entry.place]", "verdict": "correct", "note": "Del Rio, Texas vs Calexico, CA."},
+  {"case": "DN06", "finding": "U-N1 [S4]", "verdict": "incorrect", "note": "'carried no papers of any kind' is a statement that there were no documents (satisfies N1)."},
+  {"case": "DU01", "finding": "U-N1 [S4 + S5]", "verdict": "incorrect", "note": "'Neither man carried identification' is a statement that there were none."},
+  {"case": "DU02", "finding": "U-N1 [S4]", "verdict": "incorrect", "note": "'He presented a Honduran identity card' states the document presented; the document pattern lacks 'identity card'."},
+  {"case": "DU02", "finding": "F-HISTORY [S5 + history.immigration_record]", "verdict": "incorrect", "note": "The cousin's relayed 'he was deported' has two possible referents; the extraction itself marked it person 'other'. Asserting a conflict with the subject's record is unsupported (routing it is right)."},
+  {"case": "DU03", "finding": "M-N5", "verdict": "incorrect", "note": "Same 'U.S.C.' splitting defect as DG07."},
+  {"case": "DU04", "finding": "F-ENTRY-MANNER-2 [S5 + S6]", "verdict": "correct", "note": "Two unexplained accounts of the same entry; review-marked."},
+  {"case": "DU04", "finding": "M-N1", "verdict": "valid observation (debatable)", "note": "The narrative mentions that his border crossing card had expired but does not say which identity documents he had or presented at the encounter."}
+ ],
+ "citationVerdicts": [
+  {"case": "DG07", "status": "needs_human_review", "verdict": "incorrect (under-stated)", "note": "The model reported the mismatch; the rule treated the misread charge clause (S15) as a verified prior removal and qualified it. Expected likely_mismatch."},
+  {"case": "DU03", "status": "consistent", "verdict": "incorrect", "note": "An in-absentia removal ORDER is not a completed removal; the records say execution is not shown. Expected needs_human_review or insufficient_information, and routing."},
+  {"case": "DG01", "status": "needs_human_review", "verdict": "unnecessary qualification", "note": "The charge depends on manner, which is stated and uncontested; the qualification rests on the date conflict."},
+  {"case": "DG09", "status": "needs_human_review", "verdict": "unnecessary qualification", "note": "As DG01."},
+  {"case": "DG10", "status": "needs_human_review", "verdict": "unnecessary qualification", "note": "Rests on the model's claim that the charge 'relies on entry place'."}
+ ]
+}

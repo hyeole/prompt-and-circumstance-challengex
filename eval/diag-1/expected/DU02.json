@@ -1,0 +1,18 @@
+{
+  "id": "DU02",
+  "base": "DU02",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Relayed statement: 'he was deported' may be about the cousin or the subject",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he was deported to Honduras in 2014"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "'he was deported' in the cousin's statement has two possible referents (the cousin himself, or the subject). The cousin is a permanent resident, which makes a deportation of the cousin less likely but does not settle it; the subject's own check is negative. Whose removal it was is unresolved: route, do not assert a history conflict."
+}

@@ -1,0 +1,18 @@
+{
+  "id": "DU04",
+  "base": "DU04",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "The subject gives two accounts of how he entered; the form records the manner as unknown",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "through the Hidalgo port of entry with his border crossing card"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The same subject gives two incompatible accounts of the same entry (July 2019: admitted with a card vs crossed the river illegally), without explanation; the form records the manner as UNKNOWN. Which account is true, and therefore whether the charge's requirement is met, is for a person. A finding that the accounts conflict is correct; asserting either manner, or a citation mismatch, is not."
+}

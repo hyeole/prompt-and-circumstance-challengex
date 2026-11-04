@@ -1,0 +1,12 @@
+{
+  "id": "DN04",
+  "base": "DN04",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control for DG04: current removal processing is not a prior removal",
+  "plants": [],
+  "shouldNotFlag": [
+    "placed in removal proceedings"
+  ],
+  "labelNotes": "'Removal proceedings', 'held pending removal' and 'may be removed' describe the current process, not a past removal; the record check and the form agree (no history)."
+}

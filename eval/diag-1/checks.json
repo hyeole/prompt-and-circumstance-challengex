@@ -1,0 +1,269 @@
+{
+  "DG01": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "March 3, 2016",
+        "field": "entry.date"
+      }
+    ]
+  },
+  "DG02": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "walking through the desert near Sasabe",
+        "field": "entry.manner"
+      }
+    ]
+  },
+  "DG03": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DG04": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "anchor": "physically removed to Mexico",
+        "field": "history.immigration_record"
+      }
+    ]
+  },
+  "DG05": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "missing",
+        "element": "E3"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DG06": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "missing",
+        "element": "N7"
+      }
+    ]
+  },
+  "DG07": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DG08": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DG09": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "August 20, 2015",
+        "field": "entry.date"
+      }
+    ]
+  },
+  "DG10": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "near Del Rio, Texas",
+        "field": "entry.place"
+      }
+    ]
+  },
+  "DN01": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "noMissing"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DN02": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DN03": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      },
+      {
+        "kind": "noMissing"
+      }
+    ]
+  },
+  "DN04": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "field": "history.immigration_record"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DN05": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.date"
+      }
+    ]
+  },
+  "DN06": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noMissing",
+        "elements": [
+          "E1",
+          "E2",
+          "E3",
+          "N1",
+          "N5",
+          "N7"
+        ]
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "DU01": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "in 2010 by crossing"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "in 2010 by crossing"
+      }
+    ]
+  },
+  "DU02": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he was deported to Honduras in 2014"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he was deported to Honduras in 2014"
+      }
+    ]
+  },
+  "DU03": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "citationIn",
+        "status": [
+          "needs_human_review",
+          "insufficient_information"
+        ]
+      },
+      {
+        "kind": "routed"
+      }
+    ]
+  },
+  "DU04": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "through the Hidalgo port of entry"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "id": "DG07",
+  "title": "Reentry-after-removal charge; the subject's record and statement both show no removal",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Selected charge requires a prior removal; the subject's record check and statement explicitly show none."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn February 27, 2024, at approximately 0815 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] encountered the subject during a vehicle stop near Gaylord, Michigan, conducted with the Michigan State Police. The subject was the only occupant. He stated that he is a citizen of Mexico and has no documents allowing him to be in the United States.\nThe subject's fingerprints were checked through the mobile biometric device. The checks returned no prior immigration encounters, no removals and no deportations for the subject. The subject stated that he has never been arrested by immigration authorities and has never been removed or deported from the United States.\nENTRY:\nHe stated that he entered without inspection by crossing the river near Eagle Pass, Texas, in August 2019. He presented a Mexican driver's license.\nTRAVEL:\nHe travelled to Michigan by car with a cousin in 2020.\nCHARGE:\nThe subject is charged under 8 U.S.C. 1326 as an alien found in the United States after removal.\nDISPOSITION:\nThe subject was transported to the [REDACTED (b)(7)(E)] Station and processed for prosecution.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "08/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Eagle Pass, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "02/27/2024 0815",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "GAYLORD, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "8 U.S.C. 1326",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

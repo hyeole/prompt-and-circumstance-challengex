@@ -1,0 +1,97 @@
+{
+  "id": "DN06",
+  "title": "Control for DG05/DG06: every element stated in paraphrased wording",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Paraphrase control (complete case)."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn January 9, 2024, at approximately 0450 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were watching the shoreline of the St. Clair River near Marine City, Michigan, when they saw a man come ashore from a small inflatable boat. The agents identified themselves and asked him where he was a citizen.\nThe man, the subject of this report, stated that he is a national of Mexico and carried no papers of any kind. He stated that he had been living in Canada and that, minutes earlier, he had paddled across the river from Ontario to avoid the port of entry at the Blue Water Bridge.\nTRAVEL:\nHe stated that he intended to take a bus to Chicago.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nHe was issued a Notice to Appear (Form I-862) and released on his own recognizance (Form I-220A).\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "01/09/2024 0440",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Marine City, MI",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI BOAT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "01/09/2024 0450",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MARINE CITY, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "LP",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "NTA/OREC",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

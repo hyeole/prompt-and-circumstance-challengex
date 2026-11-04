@@ -1,0 +1,20 @@
+{
+  "id": "DG10",
+  "base": "DG10",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Place of last entry differs from the form",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "near Del Rio, Texas"
+      ],
+      "fieldPaths": [
+        "entry.place"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The subject (named) states the last entry was near Del Rio, Texas; the form records near Calexico, CA. Different states, same last entry (May 2019)."
+}

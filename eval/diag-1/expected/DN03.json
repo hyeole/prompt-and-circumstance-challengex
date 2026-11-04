@@ -1,0 +1,12 @@
+{
+  "id": "DN03",
+  "base": "DN03",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control for DG03/DG07: explicit negations consistent with the charge and record",
+  "plants": [],
+  "shouldNotFlag": [
+    "never been removed"
+  ],
+  "labelNotes": "Negations ('not inspected or admitted', 'never been removed') support the selected charge and agree with the NEGATIVE record."
+}

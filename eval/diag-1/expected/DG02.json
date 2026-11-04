@@ -1,0 +1,20 @@
+{
+  "id": "DG02",
+  "base": "DG02",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Last entry without inspection; form manner records the earlier visa entry",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "walking through the desert near Sasabe"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The form records the LAST entry (04/15/2017, near Sasabe) with manner B2, but the narrative states that last entry was without inspection; B2 belongs to the 2009 first entry. Event scope is explicit ('first came', 'most recently re-entered')."
+}

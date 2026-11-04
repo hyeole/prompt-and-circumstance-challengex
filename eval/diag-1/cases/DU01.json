@@ -1,0 +1,97 @@
+{
+  "id": "DU01",
+  "title": "Two redacted people give different entry years; nothing ties either to the subject",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Unattributable entry years in a two-person narrative."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn May 2, 2024, at approximately 1910 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] encountered two men walking along the railroad tracks near Jackson, Michigan. The agents identified themselves and questioned both men in Spanish. Both men stated that they are citizens of Mexico and that they have no immigration documents. Neither man carried identification.\nENTRY:\n[REDACTED (b)(6), (b)(7)(C)] stated that he entered the United States in 2010 by crossing the river near Laredo, Texas. [REDACTED (b)(6), (b)(7)(C)] stated that he entered in 2018, also near Laredo.\nTRAVEL:\nBoth men stated that they had travelled from Texas to Michigan for farm work.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nBoth men were processed for Notices to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "2018",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Laredo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "05/02/2024 1910",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "JACKSON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

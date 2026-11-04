@@ -1,0 +1,97 @@
+{
+  "id": "DU04",
+  "title": "The subject gives two accounts of how he entered; the form records the manner as unknown",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Two unexplained accounts of the manner of the same entry; form manner UNKNOWN."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn August 30, 2024, at approximately 2040 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered the subject at a roadside fruit stand near Benton Harbor, Michigan, during a worksite follow-up. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself and questioned the subject.\nThe subject stated that he is a citizen of Mexico and that his border crossing card expired in 2018. He stated that he entered the United States through the Hidalgo port of entry with his border crossing card in July 2019 and was allowed in.\nAt the station, during processing, the subject stated that he crossed the river illegally near Hidalgo in July 2019 because his card had already expired. He did not explain why his two accounts differ.\nTRAVEL:\nHe travelled to Michigan by car with relatives.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was processed for a Notice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "07/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Hidalgo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "UNKNOWN",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "08/30/2024 2040",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "BENTON HARBOR, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

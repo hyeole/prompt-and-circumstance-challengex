@@ -1,0 +1,12 @@
+{
+  "id": "DN02",
+  "base": "DN02",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control for DG02: earlier visa entry, last entry without inspection, form agrees",
+  "plants": [],
+  "shouldNotFlag": [
+    "admitted as a B2 visitor"
+  ],
+  "labelNotes": "Matched to DG02 with the form manner EWI AFOOT. The 2009 B2 admission is the FIRST entry; it does not conflict with the last-entry manner or with the charge."
+}

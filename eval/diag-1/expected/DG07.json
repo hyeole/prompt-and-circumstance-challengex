@@ -1,0 +1,14 @@
+{
+  "id": "DG07",
+  "base": "DG07",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Reentry-after-removal charge; the subject's record and statement both show no removal",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "8 U.S.C. 1326 requires a prior removal (team reference). The subject's own fingerprint check explicitly returned no removals, the subject explicitly denies any removal, and the form record is NEGATIVE: an explicit, subject-specific negative result, not an absence."
+}

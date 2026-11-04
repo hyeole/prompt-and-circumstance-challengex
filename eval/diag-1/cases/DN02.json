@@ -1,0 +1,97 @@
+{
+  "id": "DN02",
+  "title": "Control for DG02: earlier visa entry, last entry without inspection, form agrees",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "DG02 with the form manner matching the last entry."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn April 2, 2024, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] responded to a request from the Toledo Police Department for identification assistance with a person detained after a minor traffic collision near Toledo, Ohio. Agent [REDACTED (b)(6), (b)(7)(C)] arrived at approximately 1515 hours, identified himself as a Border Patrol Agent, and interviewed the subject in Spanish.\nThe subject stated that he is a citizen of Guatemala and presented a Guatemalan passport that expired in 2015. He stated that he first came to the United States in July 2009, when he flew into Los Angeles International Airport and was admitted as a B2 visitor. He returned to Guatemala in 2013. The subject stated that he most recently re-entered the United States on or about April 15, 2017, by walking through the desert near Sasabe, Arizona, with a guide, and that he did not present himself for inspection.\nHe stated that he has no visa or other document allowing him to remain in the United States.\nTRAVEL:\nFrom Arizona he was driven to Phoenix and then took a bus to Toledo.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was arrested, transported to the [REDACTED (b)(7)(E)] Station, and processed for a Notice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "GUATEMALA",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "04/15/2017",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Sasabe, AZ",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/02/2024 1515",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "TOLEDO, OH",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

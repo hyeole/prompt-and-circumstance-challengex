@@ -1,0 +1,12 @@
+{
+  "id": "DN05",
+  "base": "DN05",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control: an explained correction of the entry year",
+  "plants": [],
+  "shouldNotFlag": [
+    "crossed the border in 2015"
+  ],
+  "labelNotes": "The first answer (2015) is corrected in the narrative and explained (his brother's year); the corrected date agrees with the form. A resolved discrepancy, not a conflict."
+}

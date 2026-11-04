@@ -1,0 +1,18 @@
+{
+  "id": "DU01",
+  "base": "DU01",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Two redacted people give different entry years; nothing ties either to the subject",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "in 2010 by crossing"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Two men, both names redacted, both 'stated that he entered'. Nothing ties the 2010 statement or the 2018 statement to this record's subject (matching the form's year is value matching, excluded). A person must decide; no contradiction should be asserted."
+}

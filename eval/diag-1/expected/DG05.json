@@ -1,0 +1,15 @@
+{
+  "id": "DG05",
+  "base": "DG05",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Manner of last entry not stated anywhere",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E3"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "No sentence states how the subject entered (date and place only; the legal ground's 'without being admitted or paroled' is a conclusion, not a factual account) and the form's manner field is blank: E3 is missing. The charge's requirement (entry without inspection) is then unestablished, not contradicted: absence is not a mismatch."
+}

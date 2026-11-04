@@ -1,0 +1,10 @@
+{
+  "id": "DN06",
+  "base": "DN06",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control for DG05/DG06: every element stated in paraphrased wording",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "Paraphrases: manner ('paddled across the river \u2026 to avoid the port of entry'), place (St. Clair River near Marine City), date (minutes before the 0450 encounter on January 9, 2024), documents ('no papers of any kind'), disposition (NTA, I-220A). Nothing is missing."
+}

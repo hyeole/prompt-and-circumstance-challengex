@@ -1,0 +1,97 @@
+{
+  "id": "DN04",
+  "title": "Control for DG04: current removal processing is not a prior removal",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Processing control."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn June 19, 2024, at approximately 1020 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] assisted the Wood County Sheriff's Office near Perrysburg, Ohio, with a man detained after a traffic violation. Agent [REDACTED (b)(6), (b)(7)(C)] interviewed the subject, who stated that he is a citizen of Mexico and has no documents allowing him to remain in the United States. He presented a Mexican voter identification card.\nIMMIGRATION HISTORY:\nFingerprint checks of the subject returned no prior immigration history.\nENTRY:\nThe subject stated that he entered the United States without inspection near Douglas, Arizona, in March 2020, walking through the desert.\nTRAVEL:\nHe was driven from Arizona to Ohio in 2020.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was placed in removal proceedings and served a Notice to Appear. He will be held pending removal proceedings and may be removed if ordered by an immigration judge.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/2020",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Douglas, AZ",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "06/19/2024 1020",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PERRYSBURG, OH",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

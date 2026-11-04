@@ -1,0 +1,14 @@
+{
+  "id": "DG08",
+  "base": "DG08",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Charge for entry without admission; the subject was admitted as a visitor",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "INA 212(a)(6)(A)(i) requires presence without admission (team reference: entryManner 'without_inspection'). The subject was admitted as a B2 visitor (statement, passport, form manner B2): the facts describe an overstay after admission."
+}

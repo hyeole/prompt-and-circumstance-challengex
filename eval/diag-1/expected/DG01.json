@@ -1,0 +1,20 @@
+{
+  "id": "DG01",
+  "base": "DG01",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Pronoun-linked entry date differs from the form",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "March 3, 2016"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Attribution is established across sentences: 'The subject stated\u2026' then 'He further stated\u2026', the only other person (the driver) having been released; 'He' has one antecedent. The narrative gives 2016, the form 2019, for the last entry."
+}

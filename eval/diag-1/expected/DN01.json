@@ -1,0 +1,12 @@
+{
+  "id": "DN01",
+  "base": "DN01",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Control for DG01: pronoun-linked entry date agrees with the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "March 3, 2019"
+  ],
+  "labelNotes": "Matched to DG01; the date agrees (03/03/2019). The released U.S.-citizen driver must not cause an attribution flag."
+}

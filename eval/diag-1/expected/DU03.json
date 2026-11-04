@@ -1,0 +1,10 @@
+{
+  "id": "DU03",
+  "base": "DU03",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Reentry charge; removal order issued but execution not documented",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "8 U.S.C. 1326 requires a prior removal. An in-absentia removal ORDER is documented, but the records do not show that it was executed or that the subject departed; the subject says he has stayed since 2016 (which suggests, but does not establish, that he was not removed). Neither supported nor contradicted: a person must review; no mismatch should be asserted, and no 'consistent'."
+}

@@ -1,0 +1,97 @@
+{
+  "id": "DU03",
+  "title": "Reentry charge; removal order issued but execution not documented",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Removal order without documented execution, under a reentry charge."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn April 25, 2024, at approximately 0610 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] encountered the subject at a residence in Holland, Michigan, while serving an administrative warrant for another person. The subject stated that he is a citizen of Guatemala and that he has no immigration documents. He presented a Guatemalan passport.\nIMMIGRATION HISTORY:\nRecords show that the subject was apprehended near McAllen, Texas, on 03/02/2016 and released on a Notice to Appear. Records show that an immigration judge in Chicago, Illinois, ordered the subject removed in absentia on 09/12/2016. The records reviewed do not show whether the order was executed or whether the subject departed the United States.\nENTRY:\nThe subject stated that he has lived in the United States continuously since he crossed near McAllen in 2016.\nREMOVABILITY:\nThe subject is charged under 8 U.S.C. 1326 as an alien found in the United States after removal.\nDISPOSITION:\nThe subject was transported to the [REDACTED (b)(7)(E)] Station; the case was referred to a supervisor for review of the prior order.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "GUATEMALA",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/2016",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near McAllen, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "04/25/2024 0610",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "HOLLAND, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - See Narrative",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Referred for review",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "8 U.S.C. 1326",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

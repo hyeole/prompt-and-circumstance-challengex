@@ -1,0 +1,97 @@
+{
+  "id": "DG06",
+  "title": "No disposition or documenting form recorded",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Disposition removed from the narrative and the form."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn July 22, 2024, at approximately 1340 hours, Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] was conducting an inspection at a bus terminal in Port Huron, Michigan. Agent [REDACTED (b)(6), (b)(7)(C)] approached a man seated in the waiting area, identified himself, and asked about his citizenship.\nThe subject stated that he is a citizen of Mexico and that he has no immigration documents. He presented a Mexican consular identification card. He stated that he entered the United States without inspection by walking across the border near Nogales, Arizona, on or about October 1, 2021.\nTRAVEL:\nFrom Nogales he was driven to Tucson and later flew from Phoenix to Detroit.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nPROCESSING:\nThe subject was transported to the [REDACTED (b)(7)(E)] Station, where his fingerprints and photograph were taken and entered into the databases. Records checks returned no criminal or immigration history.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "10/01/2021",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Nogales, AZ",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "07/22/2024 1340",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PORT HURON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "",
+      "status": "absent"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

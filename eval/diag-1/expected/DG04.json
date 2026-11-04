@@ -1,0 +1,20 @@
+{
+  "id": "DG04",
+  "base": "DG04",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Documented prior removal; form immigration record is NEGATIVE",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "physically removed to Mexico"
+      ],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "A completed removal of the subject (records check of the subject's own fingerprints; 'physically removed' on 05/20/2014) conflicts with the form's NEGATIVE immigration record. 'Notice to Appear' and 'referred for review' are current processing, not a prior removal."
+}

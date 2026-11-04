@@ -1,0 +1,14 @@
+{
+  "id": "DG03",
+  "base": "DG03",
+  "split": "diag-1",
+  "datasetVersion": "diag-1",
+  "description": "Admission-based charge, but the subject explicitly was never admitted",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "INA 237(a)(1)(B) requires a prior admission (team reference: requires entryManner 'admitted'). The subject states he was never inspected or admitted (explicit negation, the subject named) and the form records EWI."
+}

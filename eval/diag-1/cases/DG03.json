@@ -1,0 +1,97 @@
+{
+  "id": "DG03",
+  "title": "Admission-based charge, but the subject explicitly was never admitted",
+  "kind": "synthetic",
+  "split": "diag-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored development case (diag-1), 2026-11-04. Not independent validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers checked by the team against config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Selected charge requires admission; the subject explicitly states he was never admitted and entered by wading the river."
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn January 18, 2024, at about 2210 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were patrolling near the Ambassador Bridge in Detroit, Michigan, when they observed a man walking along the railroad right-of-way away from the river. The agents approached, identified themselves as Border Patrol Agents, and questioned him regarding his citizenship.\nThe subject stated that he is a citizen of Mexico. He stated that he has never been inspected or admitted by an immigration officer and that he has never held a visa, border crossing card or any other entry document. He stated that he entered the United States in 2012 by wading across the Rio Grande near Hidalgo, Texas. He had a Mexican voter identification card in his wallet.\nTRAVEL:\nHe travelled by bus from McAllen to Chicago in 2012 and moved to Detroit in 2020.\nREMOVABILITY:\nThe subject is removable under Section 237(a)(1)(B) of the Immigration and Nationality Act, in that he is in the United States in violation of law.\nDISPOSITION:\nThe subject was processed for a Notice to Appear and detained pending a hearing.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "2012",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Hidalgo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "01/18/2024 2210",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "DETROIT, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 237(a)(1)(B)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}
