@@ -175,3 +175,50 @@ test("a removal order while the record is NEGATIVE: the subject's own is a histo
   assert.ok(!ids(r2).some((x) => x.startsWith("F-HISTORY")));
   assert.ok((r2.humanReview.accounts ?? []).some((g) => g.sentenceIds.includes(s8)), "the group member's order is routed");
 });
+
+// ---- Execution bound to the removal order (review of d924152: "executed" anywhere in the clause counted) ----
+// POST-OBSERVATION: the "unrelated warrant executed" example restates the review's reproduction.
+const ORDER_CASES: { name: string; text: string; orderOnly: boolean }[] = [
+  { name: "removal order only", text: "Records show that an immigration judge in Chicago ordered the subject removed in absentia on 09/12/2016.", orderOnly: true },
+  { name: "unrelated warrant executed", text: "An immigration judge ordered the subject removed in absentia in 2016, with an arrest warrant executed in 2024.", orderOnly: true },
+  { name: "order explicitly not executed", text: "An immigration judge ordered the subject removed in absentia in 2016, but the order was never executed.", orderOnly: true },
+  { name: "execution unknown", text: "An immigration judge ordered the subject removed in absentia in 2016; it is unknown whether the order was executed.", orderOnly: true },
+  { name: "order explicitly executed", text: "An immigration judge ordered the subject removed in absentia in 2016, and the order was executed on 11/02/2016.", orderOnly: false },
+  { name: "separate completed removal in a mixed sentence", text: "An immigration judge ordered the subject removed in 2016, and he was removed to Guatemala through Houston on 11/02/2016.", orderOnly: false },
+];
+test("helper: execution must be the order's own, affirmed; warrants, negation, unknowns and hypotheticals do not execute it", () => {
+  for (const x of ORDER_CASES) {
+    assert.equal(statesRemovalOrderOnly(x.text), x.orderOnly, x.name);
+    assert.equal(isPriorRemoval(x.text), !x.orderOnly, x.name);
+  }
+  // The same, inside one clause (no clause split to rely on)
+  for (const t of ["The removal order issued in absentia in 2016 was never executed.", "An immigration judge ordered the subject removed in 2016 and the order has not been executed.",
+    "An immigration judge ordered the subject removed in 2016 and records do not show whether the order was executed.", "An immigration judge ordered the subject removed in 2016, pending execution of the order.",
+    "An immigration judge ordered the subject removed in 2016, and the order will be executed after his hearing.", "An immigration judge ordered him removed in 2016 and a search warrant was executed at his home in 2024.",
+    "An immigration judge ordered him removed in 2016 but he never left the United States."]) {
+    assert.equal(statesRemovalOrderOnly(t), true, t);
+    assert.equal(isPriorRemoval(t), false, t);
+  }
+  for (const t of ["The 2016 removal order was executed on 11/02/2016.", "Officers executed the removal order on 11/02/2016.",
+    "He was served a Reinstatement of his original prior order of exclusion that was executed on 06/08/2005.", "An immigration judge ordered him removed in 2016 and he departed the United States in 2017."]) {
+    assert.equal(isPriorRemoval(t), true, t);
+    assert.equal(statesRemovalOrderOnly(t), false, t);
+  }
+  for (const t of ["He may be ordered removed if he does not appear.", "He was offered a stipulated order of removal, which he declined.", "If he is ordered removed, he will be detained."])
+    assert.equal(statesRemovalOrderOnly(t) || isPriorRemoval(t), false, t);
+});
+test("pipeline: under 8 U.S.C. 1326 only an executed order or a completed removal supports the charge; against a NEGATIVE record only those are removal conflicts", async () => {
+  const du03 = load("DU03");
+  const orig = "Records show that an immigration judge in Chicago, Illinois, ordered the subject removed in absentia on 09/12/2016. The records reviewed do not show whether the order was executed or whether the subject departed the United States.";
+  for (const x of ORDER_CASES) {
+    const c = withText(du03, orig, x.text);
+    assert.notEqual(c.narrative.text, du03.narrative.text);
+    const r = await run(c, NONE, { status: "consistent", explanation: "A prior removal is documented." });
+    assert.equal(r.citation.status, x.orderOnly ? "needs_human_review" : "consistent", x.name);
+    if (x.orderOnly) assert.ok(r.humanReview.required, `${x.name}: routed`);
+    const neg = { ...c, selectedCharges: [{ citation: "INA 212(a)(6)(A)(i)", source: "team-assigned-for-testing" }], facts: c.facts.map((f) => (f.path === "history.immigration_record" ? { ...f, value: "NEGATIVE" } : f)) } as CaseRecord;
+    const rn = await run(neg, NONE);
+    assert.equal(ids(rn).includes("F-HISTORY"), !x.orderOnly, `${x.name}: removal conflict`);
+    assert.equal(ids(rn).includes("F-HISTORY-ORDER"), x.orderOnly, `${x.name}: order item`);
+  }
+});

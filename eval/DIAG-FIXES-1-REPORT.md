@@ -6,7 +6,8 @@
   - `6ab57f0`: the locked diag-1 data, unchanged; LOCK hashes verified.
   - `4f56870`: the fixes.
   - `d924152`: removal orders against a NEGATIVE record.
-  - This report.
+  - `0703a8a`: this report (first version).
+  - **The corrected checkpoint** (the commit that adds section 7 below): execution evidence bound to the removal order, paired controls, count reconciliation.
 - **Unchanged:** diag-1 cases, expected answers, scorer, raw outputs and adjudications; all historical labels, scores and results; the presentation. Nothing merged or pushed.
 
 ## What was fixed (the five demonstrated defects, plus the qualification scope)
@@ -38,6 +39,37 @@
    - **Date and place:** entry-date or entry-place conflicts and accounts remain their own findings, still routed.
    - **Model concerns:** a model "mismatch" whose only stated concern is the entry place or date leaves a charge supported by verified evidence "consistent".
 
+7. **Execution bound to the removal order (correction after review of `d924152`).**
+   - **The defect:** `removalOrderOnly()` treated "executed" **anywhere** in the clause as execution of the order. Example: "An immigration judge ordered the subject removed in absentia in 2016, with an arrest warrant executed in 2024." The order was then read as a completed removal.
+   - **The rule now:** an order counts as executed only when the execution is the order's own and is affirmed. Accepted forms:
+     - "the order / it was (subsequently) executed / carried out / enforced";
+     - "executed the (removal) order";
+     - a completed removal stated separately ("was removed to …", "was deported", "physically removed");
+     - a departure under the order ("departed the United States").
+   - **Not execution:**
+     - a warrant, search or subpoena being executed;
+     - negation ("never executed", "has not been executed", "did not depart");
+     - unknowns ("unknown whether", "records do not show whether");
+     - pending or future execution ("pending execution", "will be executed").
+   - **Not an order at all:** hypothetical orders ("may be ordered removed", "If he is ordered removed", "offered a stipulated order …, which he declined").
+   - **Helper defects and pipeline errors, reported separately.** The "before" column is `d924152`.
+
+     | Example | Helper before | Pipeline before (1326; NEGATIVE record) | After (both) |
+     |---|---|---|---|
+     | Removal order only | correct | correct | correct: order only; 1326 needs review and routed; `F-HISTORY-ORDER` |
+     | Unrelated warrant executed | **wrong** (read as removal) | **wrong**: 1326 "consistent"; false `F-HISTORY` | correct, as order only |
+     | Order explicitly not executed, separate clause | correct only because the clause split | correct (protected by the clause split) | correct |
+     | Same, inside one clause ("was never executed") | **wrong** | not exercised by any saved record | correct |
+     | Execution unknown, separate clause | correct only because the clause split | correct (protected by the clause split) | correct |
+     | Same, inside one clause ("do not show whether …") | **wrong** | not exercised by any saved record | correct |
+     | Pending / "will be executed" | `priorRemoval` already false; `orderOnly` **wrong** (false) | not exercised | correct |
+     | Search warrant executed | **wrong** | not exercised | correct |
+     | Order explicitly executed | correct | correct: 1326 consistent; `F-HISTORY` | unchanged |
+     | Separate completed removal in a mixed sentence | correct | correct | unchanged |
+
+   - **Later guards:** the clause split (`HISTORY_CLAUSE_SPLIT`) protected the negated and unknown examples when they were in another clause. Nothing downstream protected the warrant example.
+   - **Tests:** paired helper controls and full-pipeline controls (an 8 U.S.C. 1326 case with a model answering "consistent", and the same case against a NEGATIVE record) for all six examples, plus the same-clause variants.
+
 ## Replay safeguard: explicit sentence-ID mapping (`scripts/remap-saved.ts`)
 **How it works:**
 - Saved results store their sentences, with IDs and offsets. Results that predate that field are rebuilt with a copy of the `df11086` splitter (`scripts/legacy-split-df11086.ts`).
@@ -52,7 +84,7 @@
   - The one resulting difference, `+U-E3` in one C037-M3 record ("reported present, but no valid sentence reference"), is a replay artefact of the dropped references, not a code effect.
 
 ## Validation
-- **Tests:** 381/381 (366 at `df11086`), including 15 in `tests/diag-fixes.test.ts`.
+- **Tests:** 383/383 (366 at `df11086`; 381 at `d924152`), including 17 in `tests/diag-fixes.test.ts`.
   - **Post-observation reproductions:** DG02, DG07, DU02, DU03, DN06/DU01/DU02 and DG10.
   - **Varied controls:** for every fix, both directions.
 - **Five existing assertions changed**, each commented:
@@ -71,6 +103,7 @@
   - **recon:** the model's own claims and reasons rebuilt from each saved result.
 - **Comparison:** the `df11086` code (baseline) against the final code.
 - **Every changed finding, charge check and routing outcome was inspected.**
+- **Section 7 correction:** a second full replay against `d924152` changed **0 of 1,432 records in all four modes**. The sentence-ID remap logs were identical, and the diag-1 rebuild score was identical (DG02, DG07, DU02 and DU03 unchanged). No saved narrative contains an order with an unrelated execution, so this correction is shown only by the tests.
 
 | Mode | Records changed | Findings | Charge check | Routing |
 |---|---|---|---|---|
@@ -105,6 +138,17 @@ In every one, the date conflict or account is still reported and **routed**; stu
 - `U-N1` in DN06, DU01 and DU02.
 - `M-N5` in CAP-E2N, CAP-E2P, CAP-E3U and CAP-E4U (two records each). Their narratives cite "8 U.S.C. 1326/1325", their locked labels expect no N5 flag, and their charge-check outcomes are unchanged.
 
+**Count reconciliation.** A chat summary of this work said "nine false flags removed" while listing eight. The "nine" was a miscount and appears in no committed file. The counts, stated separately:
+- **diag-1:**
+  - **8 incorrect findings removed, in 6 cases:** DG02 `C-1`; DG07 `M-N5` and `F-HISTORY`; DU02 `F-HISTORY`; DU03 `M-N5`; `U-N1` in DN06, DU01 and DU02.
+  - These are the 8 of 18 findings adjudicated incorrect in diag-1, so all 8 are gone in the rebuild.
+- **Historical:** `M-N5` was removed in **4 cases** (CAP-E2N, E2P, E3U, E4U). That is **8 saved records**, because each case has 2 saved runs. It is one defect repeated, not 8 independent flags.
+- **The stub row's "−M-N5 ×10" (records):** 8 CAP records + DG07 + DU03. "−F-HISTORY ×2" is DG07 + DU02.
+- **Replacements:**
+  - DG02 `C-1` was replaced by a correct `F-ENTRY-MANNER`;
+  - DG07 gained a correct `C-1`;
+  - in the 2 CAP-E3U records `M-N5` was replaced by an accurate `U-N5`.
+
 **False flags introduced:** none found.
 - **CAP-E3U** now has `U-N5` ("cites the section but does not state the facts that satisfy it") instead of `M-N5`. The source says only "presented for prosecution under 8 U.S.C. 1326", so this is accurate.
 - **`F-HISTORY-ORDER`** occurs in no saved record.
@@ -128,7 +172,7 @@ In every one, the date conflict or account is still reported and **routed**; stu
 ## Bounded live-validation proposal (not run; needs authorization)
 - **Purpose:** check the fixes against the live model.
 - **Labelling:** reused, post-observation development verification, not an evaluation. The diag-1 cases are no longer fresh.
-- **Candidate:** `d924152`, built once and frozen. Unchanged settings and retry limits.
+- **Candidate:** the corrected checkpoint (the commit adding section 7), built once and frozen. Unchanged settings and retry limits.
 - **Cases (28, each once, concurrency 1):**
   - all 20 diag-1 cases (with the locked checks);
   - 8 historical cases touched by the changes: CAP-E2N, CAP-E2P, CAP-E3U and CAP-E4U (capability-1 runner), and F051, F051-C, C021-X1 and C037-X1.

@@ -252,16 +252,34 @@ export const CHARGE_LANGUAGE_RE = /\b(?:charg\w*|alleg\w*|inadmissible|removable
 // A removal ORDER is not a completed removal: "ordered removed in absentia", "a final order of removal". It counts as one
 // only with wording that the removal was carried out ("was executed", "physically removed", "deported to", "departed").
 const REMOVAL_ORDER_RE = /\b(?:ordered\s+(?:\w+\s+){0,3}?(?:removed|deported|excluded)|orders?\s+of\s+(?:removal|deportation|exclusion)|(?:removal|deportation|exclusion)\s+orders?|final\s+order)\b/i;
-const EXECUTED_RE = /\b(?:executed|carried out|physically removed|was removed|were removed|has been removed|had been removed|removed to|deported to|was deported|were deported|departed|self-deported|returned to (?:Mexico|Guatemala|Honduras|El Salvador|his|her|their) (?:country|home))\b/i;
-export const removalOrderOnly = (cl: string) => REMOVAL_ORDER_RE.test(cl) && !EXECUTED_RE.test(cl);
+// Evidence that the ORDER was carried out, bound to the order: "the order was executed", "the removal order has been
+// carried out", "officers executed the removal order", "order of exclusion that was executed". "Executed" alone is not
+// enough: an arrest or search warrant can be executed too (review of d924152). A completed-removal wording ("was removed
+// to …", "physically removed", "deported to …") also shows execution.
+const ORDER_EXECUTED_RE = /\b(?:order|it)\b(?:(?!\b(?:warrant|search|arrest|subpoena)\b)[^.;]){0,50}?\b(?:was|were|has been|had been|been|is)\s+(?:subsequently\s+|later\s+|then\s+)?(?:executed|carried out|enforced)\b|\b(?:executed|carried out|enforced)\s+(?:the|this|that|his|her|said)\s+(?:\w+\s+){0,2}?order\b/gi;
+const REMOVAL_DONE_RE = /\b(?:physically removed|was removed|were removed|has been removed|had been removed|removed to|deported to|was deported|were deported|self-deported)\b/gi;
+// Wording before an execution that makes it not happen, or not known: negation, a question of whether, an unknown,
+// a pending, future or conditional execution.
+const NOT_DONE_BEFORE_RE = /\b(?:not|never|no|n't|whether|if|unknown|unclear|unable to (?:confirm|determine|verify)|cannot (?:confirm|determine|verify)|pending|awaiting|will|would|may|might|could|to be|yet to)\b[^.;]{0,40}$/i;
+const affirmedIn = (re: RegExp, cl: string) => [...cl.matchAll(re)].some((m) => !NOT_DONE_BEFORE_RE.test(cl.slice(Math.max(0, m.index! - 60), m.index!) + (m[0].match(/^\S+\s+/)?.[0] ?? "")) && !/\b(?:not|never|n't)\b/i.test(m[0]));
+const orderExecuted = (cl: string) => affirmedIn(ORDER_EXECUTED_RE, cl) || affirmedIn(REMOVAL_DONE_RE, cl);
+export const removalOrderOnly = (cl: string) => REMOVAL_ORDER_RE.test(cl) && !orderExecuted(cl);
+// Leaving the United States while an order is outstanding executes it (8 U.S.C. 1326: "departed … while an order of
+// exclusion, deportation, or removal is outstanding"): an order and the subject's own stated departure, neither negated
+// nor hypothetical, in one sentence.
+const DEPARTED_US_RE = /\b(?:departed|left)\s+(?:the\s+)?United States\b/gi;
+const departedUnderOrder = (text: string) => REMOVAL_ORDER_RE.test(text) && affirmedIn(DEPARTED_US_RE, text);
 const priorRemovalClause = (cl: string) =>
   !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && !removalOrderOnly(cl) &&
   REMOVAL_WORD_RE.test(cl.replace(CURRENT_REMOVAL_RE, " "));
 
-export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause);
+export const isPriorRemoval = (text: string) => text.split(HISTORY_CLAUSE_SPLIT).some(priorRemovalClause) || departedUnderOrder(text);
 /** A clause stating a removal order for which no execution or departure is stated (diag-1 DU03). */
+// An order that was itself only possible, offered or refused ("may be ordered removed", "if he is ordered removed",
+// "offered a stipulated order of removal, which he declined"): the hypothetical governs the order, not its execution.
+const orderHypothetical = (cl: string) => { const m = cl.match(REMOVAL_ORDER_RE); return !!m && /\b(?:may|might|could|would|will|if|offered|declined|refused|whether)\b[^.;]{0,30}$/i.test(cl.slice(0, m.index!)) || /\b(?:declined|refused)\b/i.test(cl); };
 export const statesRemovalOrderOnly = (text: string) => !isPriorRemoval(text) &&
-  text.split(HISTORY_CLAUSE_SPLIT).some((cl) => !NOT_HAPPENED_RE.test(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && removalOrderOnly(cl));
+  text.split(HISTORY_CLAUSE_SPLIT).some((cl) => !orderHypothetical(cl) && !NEGATED_REMOVAL_RE.test(cl) && !CHARGE_LANGUAGE_RE.test(cl) && removalOrderOnly(cl));
 /**
  * A prior removal whose participant is not a third party: the removal clause's event is not a relative's, companion's or
  * group's ("Subject stated that his brother was deported in 2012" is the brother's).
