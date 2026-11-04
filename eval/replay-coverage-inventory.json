@@ -1,0 +1,5908 @@
+{
+ "summary": {
+  "runs": 242,
+  "records": 1512,
+  "byGroup": {
+   "historical": {
+    "runs": 142,
+    "records": 1412
+   },
+   "diag-1": {
+    "runs": 20,
+    "records": 20
+   },
+   "live-1 (286d42d)": {
+    "runs": 28,
+    "records": 28
+   },
+   "diag-2": {
+    "runs": 30,
+    "records": 30
+   },
+   "restored: capability-1 re-run (encounter-time verification, a465773)": {
+    "runs": 22,
+    "records": 22
+   }
+  },
+  "everyRunReplayedInEveryMode": true,
+  "duplicateRecords": 0,
+  "skippedRecords": 0,
+  "reconciliation": {
+   "1432": "Historical 142 runs (1,412 records) + diag-1 20 runs (20 records) = 1,432 records (162 runs): the coverage reported for 286d42d and 44a1dae.",
+   "1490": "1,432 + live-1 28 + diag-2 30 = 1,490 distinct records (220 runs): the actual coverage of 06278ed and df54805.",
+   "1496": "Not a record count. 5,984 output lines (the four mode outputs PLUS the two sentence-ID remap logs, 12 lines each) divided by 4: 5,984 = 4 x 1,490 + 24. The 06278ed report's '1,496 per mode' was this miscount; the actual count was 1,490 per mode, with no duplicates.",
+   "1512": "1,490 + 22 restored records (242 runs): the coverage of this checkpoint. The 22 capability-1 re-run records (runner f192a43, server a465773, encounter-time verification) were saved in the capability-1 worktree and unintentionally left out of the earlier replay lists."
+  },
+  "excluded": "No saved run directory with raw results, in the main checkout or any worktree, is excluded. Copies of runs inside earlier evidence bundles and scratch rebuild outputs are duplicates or derived outputs, not saved results."
+ },
+ "runs": [
+  {
+   "runId": "2026-10-29T21-58-11",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-03-32",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-13-53",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-17-19",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-21-33",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-25-33",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-28-28",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 21,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 21,
+    "stub-mismatch": 21,
+    "stub-failall": 21,
+    "recon": 21
+   }
+  },
+  {
+   "runId": "2026-10-29T22-34-04",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T22-38-59",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": null,
+   "runnerCommit": null,
+   "cases": [
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 21,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 21,
+    "stub-mismatch": 21,
+    "stub-failall": 21,
+    "recon": 21
+   }
+  },
+  {
+   "runId": "2026-10-29T22-48-40",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "post-hoc (post-tuning)",
+   "runnerCommit": "2c9e2d4",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-29T23-08-37",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "post-tuning diagnostics (commit 554c9b8)",
+   "runnerCommit": "554c9b8",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-29T23-32-42",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "post-tuning, shipped code (commit 8c0b474)",
+   "runnerCommit": "8c0b474",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T00-19-52",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "M2 merge comparison: samples=2, round 1 (commit bcac131, production build)",
+   "runnerCommit": "bcac131",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-30T00-25-17",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "M2 merge comparison: samples=1, round 1 (commit bcac131, production build)",
+   "runnerCommit": "bcac131",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-30T00-30-49",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "M2 merge comparison: samples=2, round 2 (commit bcac131, production build)",
+   "runnerCommit": "bcac131",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-30T00-36-49",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": null,
+   "label": "M2 merge comparison: samples=1, round 2 (commit bcac131, production build)",
+   "runnerCommit": "bcac131",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 16,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 16,
+    "stub-mismatch": 16,
+    "stub-failall": 16,
+    "recon": 16
+   }
+  },
+  {
+   "runId": "2026-10-30T02-40-21",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "dev-synthetic development run (commit a5ba61b)",
+   "runnerCommit": "a5ba61b",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T02-48-46",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "fresh-v1 internal evaluation (frozen, tag fresh-eval-v1-frozen)",
+   "runnerCommit": "ab6feb6",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T03-03-23",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "post-tuning (eval/dev-synthetic, commit e5a47a7)",
+   "runnerCommit": "e5a47a7",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T03-05-54",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "post-tuning (eval/fresh, commit e5a47a7)",
+   "runnerCommit": "e5a47a7",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T03-16-09",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "post-tuning (eval, commit e5a47a7)",
+   "runnerCommit": "e5a47a7",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T03-48-20",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "post-tuning, post-audit (eval/dev-synthetic, commit 324c393)",
+   "runnerCommit": "324c393",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T03-52-17",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "post-tuning, post-audit (eval/fresh, commit 324c393)",
+   "runnerCommit": "324c393",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T04-06-35",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "post-tuning, post-audit (eval, commit 324c393)",
+   "runnerCommit": "324c393",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T04-35-38",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "post-tuning, post-diagnosis (eval/dev-synthetic, commit 8864d7b)",
+   "runnerCommit": "8864d7b",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T04-38-25",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "post-tuning, post-diagnosis (eval/fresh, commit 8864d7b)",
+   "runnerCommit": "0fd47be",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T04-48-10",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "post-tuning, post-diagnosis (eval, commit 8864d7b)",
+   "runnerCommit": "0fd47be",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T05-12-29",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "post-tuning, refinements (eval/dev-synthetic, build d0ec8c3)",
+   "runnerCommit": "d0ec8c3",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T05-15-26",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "post-tuning, refinements (eval/fresh, build d0ec8c3)",
+   "runnerCommit": "d0ec8c3",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T05-26-47",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "post-tuning, refinements (eval, build d0ec8c3)",
+   "runnerCommit": "d0ec8c3",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T05-52-49",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "post-tuning, refinements, legacy rerun (build d0ec8c3; recorded HEAD has no server changes since)",
+   "runnerCommit": "4c32391",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T06-19-54",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "targeted check, not an evaluation (fresh, build 78f2425)",
+   "runnerCommit": "78f2425",
+   "cases": [
+    "F010-X",
+    "F039",
+    "F039-X",
+    "F051-C",
+    "F055-A",
+    "F055-H",
+    "F075-H",
+    "F075-X",
+    "FS02",
+    "FS10"
+   ],
+   "rawFiles": 10,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 10,
+    "stub-mismatch": 10,
+    "stub-failall": 10,
+    "recon": 10
+   }
+  },
+  {
+   "runId": "2026-10-30T06-23-27",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "targeted check, not an evaluation (legacy, build 78f2425)",
+   "runnerCommit": "78f2425",
+   "cases": [
+    "C001-X1",
+    "C003-AMB",
+    "C012-M2",
+    "C012-X1",
+    "C013-X1",
+    "C037",
+    "C045",
+    "C045-X1",
+    "C119-AMB",
+    "C119-CIT"
+   ],
+   "rawFiles": 10,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 10,
+    "stub-mismatch": 10,
+    "stub-failall": 10,
+    "recon": 10
+   }
+  },
+  {
+   "runId": "2026-10-30T06-26-40",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "targeted check, not an evaluation (dev, build 78f2425)",
+   "runnerCommit": "78f2425",
+   "cases": [
+    "DS06",
+    "DS07",
+    "DS10"
+   ],
+   "rawFiles": 3,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 3,
+    "stub-mismatch": 3,
+    "stub-failall": 3,
+    "recon": 3
+   }
+  },
+  {
+   "runId": "2026-10-30T06-37-21",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "planned evaluation, post-tuning (eval/dev-synthetic, build e4dd17b)",
+   "runnerCommit": "e4dd17b",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T06-40-08",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "planned evaluation, post-tuning (eval/fresh, build e4dd17b)",
+   "runnerCommit": "e4dd17b",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T06-49-35",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "planned evaluation, post-tuning (eval, build e4dd17b)",
+   "runnerCommit": "e4dd17b",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T07-10-11",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "targeted check, not an evaluation (citation, build db07cf6)",
+   "runnerCommit": "db07cf6",
+   "cases": [
+    "C001-CIT",
+    "C003-CIT",
+    "C013-X1",
+    "C021-CIT",
+    "C037-CIT",
+    "C045-CIT",
+    "C119-CIT"
+   ],
+   "rawFiles": 7,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 7,
+    "stub-mismatch": 7,
+    "stub-failall": 7,
+    "recon": 7
+   }
+  },
+  {
+   "runId": "2026-10-30T07-18-04",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "planned evaluation, final build, post-tuning (eval/dev-synthetic, build 4b10d72)",
+   "runnerCommit": "4b10d72",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T07-21-02",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "planned evaluation, final build, post-tuning (eval/fresh, build 4b10d72)",
+   "runnerCommit": "4b10d72",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T07-32-13",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "planned evaluation, final build, post-tuning (eval, build 4b10d72)",
+   "runnerCommit": "4b10d72",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T14-57-41",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+   "runnerCommit": "d95d075",
+   "cases": [
+    "DS06",
+    "DS12"
+   ],
+   "rawFiles": 2,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 2,
+    "stub-mismatch": 2,
+    "stub-failall": 2,
+    "recon": 2
+   }
+  },
+  {
+   "runId": "2026-10-30T14-58-11",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+   "runnerCommit": "d95d075",
+   "cases": [
+    "F036",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "FS10"
+   ],
+   "rawFiles": 5,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 5,
+    "stub-mismatch": 5,
+    "stub-failall": 5,
+    "recon": 5
+   }
+  },
+  {
+   "runId": "2026-10-30T15-00-15",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "targeted post-tuning verification (commit d95d075; not overall target achievement)",
+   "runnerCommit": "d95d075",
+   "cases": [
+    "C001",
+    "C003",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1"
+   ],
+   "rawFiles": 9,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 9,
+    "stub-mismatch": 9,
+    "stub-failall": 9,
+    "recon": 9
+   }
+  },
+  {
+   "runId": "2026-10-30T15-57-53",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "final planned evaluation, post-tuning (frozen rc-closeout = 7efb231; source f5d952b; not held-out)",
+   "runnerCommit": "7efb231",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T16-00-38",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "final planned evaluation, post-tuning (frozen rc-closeout = 7efb231; source f5d952b; not held-out)",
+   "runnerCommit": "7efb231",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T16-10-34",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "final planned evaluation, post-tuning (frozen rc-closeout = 7efb231; source f5d952b; not held-out)",
+   "runnerCommit": "7efb231",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T18-17-17",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded diagnostic, post-tuning: facts-v2.1 on the 10 longest/failed fact calls (commit 48e9dee); not an evaluation",
+   "runnerCommit": "48e9dee",
+   "cases": [
+    "C001-CIT",
+    "C003-AMB",
+    "C021-MC",
+    "C037-CIT",
+    "C037-X1",
+    "C119-AMB"
+   ],
+   "rawFiles": 6,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 6,
+    "stub-mismatch": 6,
+    "stub-failall": 6,
+    "recon": 6
+   }
+  },
+  {
+   "runId": "2026-10-30T18-19-47",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded diagnostic, post-tuning: facts-v2.1 on the 10 longest/failed fact calls (commit 48e9dee); not an evaluation",
+   "runnerCommit": "48e9dee",
+   "cases": [
+    "F055-A",
+    "F055-H",
+    "F075"
+   ],
+   "rawFiles": 3,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 3,
+    "stub-mismatch": 3,
+    "stub-failall": 3,
+    "recon": 3
+   }
+  },
+  {
+   "runId": "2026-10-30T18-20-57",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "bounded diagnostic, post-tuning: facts-v2.1 on the 10 longest/failed fact calls (commit 48e9dee); not an evaluation",
+   "runnerCommit": "48e9dee",
+   "cases": [
+    "DS12"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T18-29-08",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "round-2 planned evaluation, post-tuning (frozen rc-round2 = 1b5f59b; not held-out)",
+   "runnerCommit": "1b5f59b",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T18-32-38",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "round-2 planned evaluation, post-tuning (frozen rc-round2 = 1b5f59b; not held-out)",
+   "runnerCommit": "1b5f59b",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T18-43-05",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "round-2 planned evaluation, post-tuning (frozen rc-round2 = 1b5f59b; not held-out)",
+   "runnerCommit": "1b5f59b",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T18-58-39",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "round-2 planned evaluation, post-tuning (frozen rc-round2 = 1b5f59b; not held-out); gen-v1 team-authored, locked before this run, not independently held out",
+   "runnerCommit": "1b5f59b",
+   "cases": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T21-34-06",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "round-3 measured evaluation, post-tuning (frozen rc-round3 = 4cf02c3; code = 3655aa9; not held-out)",
+   "runnerCommit": "4cf02c3",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T21-36-27",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "round-3 measured evaluation, post-tuning (frozen rc-round3 = 4cf02c3; code = 3655aa9; not held-out)",
+   "runnerCommit": "4cf02c3",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-30T21-48-37",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "round-3 measured evaluation, post-tuning (frozen rc-round3 = 4cf02c3; code = 3655aa9; not held-out)",
+   "runnerCommit": "4cf02c3",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-30T22-09-01",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "round-3 measured evaluation on gen-v1, post-tuning (frozen rc-round3 = 4cf02c3); team-authored, locked before round 2, NOT independently held out",
+   "runnerCommit": "4cf02c3",
+   "cases": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-30T23-22-52",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "G06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-23-07",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "G09"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-23-23",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "G02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-23-38",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "G07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-23-48",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "C119-X1"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-23-58",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "F075-H"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-24-23",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "DS06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-24-41",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "C003-AMB"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-24-54",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "C003-M3"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-25-11",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "F010-D"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-25-27",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "C013"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-30T23-25-55",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded verification of fa4457f (rc-verify-1 = 2f54880; recording-only instrumentation); not an evaluation",
+   "runnerCommit": "2f54880",
+   "cases": [
+    "F051"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T01-00-26",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "full measured run of 2f54880 (rc-full-1 = ae3b04f; server code = 2f54880), post-tuning, NOT held-out",
+   "runnerCommit": "ae3b04f",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-31T01-03-00",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "full measured run of 2f54880 (rc-full-1 = ae3b04f; server code = 2f54880), post-tuning, NOT held-out",
+   "runnerCommit": "ae3b04f",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-10-31T01-13-24",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "full measured run of 2f54880 (rc-full-1 = ae3b04f; server code = 2f54880), post-tuning, NOT held-out",
+   "runnerCommit": "ae3b04f",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-10-31T01-28-34",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "full measured run of 2f54880 (rc-full-1 = ae3b04f; server code = 2f54880), post-tuning, NOT held-out; gen-v1 team-authored, locked before round 2, NOT independently held out",
+   "runnerCommit": "ae3b04f",
+   "cases": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-10-31T04-00-50",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C013-CIT"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-01-45",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C037-X1"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-02-11",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "F075-X"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-02-44",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C013"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-03-24",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C003-CIT"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-03-43",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C003"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-03-54",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "F036-C"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-04-37",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "F055-H"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-05-14",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C021-CIT"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-05-42",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "C037-CIT"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-06-38",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "G01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-10-31T04-06-50",
+   "checkout": "main checkout",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "bounded hedge experiment rc-hedge-1 (improve/round4-detection); not an evaluation",
+   "runnerCommit": "03a3160",
+   "cases": [
+    "G10"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-16-38",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-17-31",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-17-54",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-18-14",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-18-32",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-18-50",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-19-03",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-19-14",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-A2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-19-26",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-19-48",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-20-08",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-20-33",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-20-57",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-21-24",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-21-44",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-22-10",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-B2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-22-28",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-22-41",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-23-01",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-23-30",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-23-53",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-24-08",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-24-30",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-24-52",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-C2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-25-10",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-25-33",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-25-53",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-26-14",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-26-34",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-26-56",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-27-18",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-27-41",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-D2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-28-02",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-28-13",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-28-25",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-28-40",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-28-55",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-29-26",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-29-44",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-30-01",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-30-13",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E3U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-30-33",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E3U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-30-53",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 candidate (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E4U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T08-31-11",
+   "checkout": "wt-exp",
+   "group": "historical",
+   "dataset": "eval/capability-1",
+   "label": "capability-1 verified (not an evaluation)",
+   "runnerCommit": "5b069ca",
+   "cases": [
+    "CAP-E4U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T06-41-00",
+   "checkout": "wt-int",
+   "group": "historical",
+   "dataset": "eval/dev-synthetic",
+   "label": "full measured run rc-int-1 (ed42763, improve/integration-1); post-tuning, not held-out",
+   "runnerCommit": "a30626b",
+   "cases": [
+    "DS01",
+    "DS02",
+    "DS03",
+    "DS04",
+    "DS05",
+    "DS06",
+    "DS07",
+    "DS08",
+    "DS09",
+    "DS10",
+    "DS11",
+    "DS12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-11-01T06-43-40",
+   "checkout": "wt-int",
+   "group": "historical",
+   "dataset": "eval/fresh",
+   "label": "full measured run rc-int-1 (ed42763, improve/integration-1); post-tuning, not held-out",
+   "runnerCommit": "a30626b",
+   "cases": [
+    "F010",
+    "F010-D",
+    "F010-X",
+    "F036",
+    "F036-C",
+    "F036-M",
+    "F039",
+    "F039-G",
+    "F039-X",
+    "F051",
+    "F051-C",
+    "F051-E",
+    "F055",
+    "F055-A",
+    "F055-H",
+    "F075",
+    "F075-H",
+    "F075-X",
+    "FS01",
+    "FS02",
+    "FS03",
+    "FS04",
+    "FS05",
+    "FS06",
+    "FS07",
+    "FS08",
+    "FS09",
+    "FS10"
+   ],
+   "rawFiles": 28,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 28,
+    "stub-mismatch": 28,
+    "stub-failall": 28,
+    "recon": 28
+   }
+  },
+  {
+   "runId": "2026-11-01T06-52-57",
+   "checkout": "wt-int",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "full measured run rc-int-1 (ed42763, improve/integration-1); post-tuning, not held-out",
+   "runnerCommit": "a30626b",
+   "cases": [
+    "C001",
+    "C001-CIT",
+    "C001-M3",
+    "C001-MC",
+    "C001-X1",
+    "C003",
+    "C003-AMB",
+    "C003-CIT",
+    "C003-M3",
+    "C012",
+    "C012-M2",
+    "C012-MC",
+    "C012-X1",
+    "C013",
+    "C013-CIT",
+    "C013-X1",
+    "C021",
+    "C021-CIT",
+    "C021-MC",
+    "C021-X1",
+    "C037",
+    "C037-AMB",
+    "C037-CIT",
+    "C037-M3",
+    "C037-X1",
+    "C045",
+    "C045-CIT",
+    "C045-MC",
+    "C045-X1",
+    "C119",
+    "C119-AMB",
+    "C119-CIT",
+    "C119-X1",
+    "C135",
+    "C135-M2",
+    "C135-M3",
+    "C135-MC"
+   ],
+   "rawFiles": 37,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 37,
+    "stub-mismatch": 37,
+    "stub-failall": 37,
+    "recon": 37
+   }
+  },
+  {
+   "runId": "2026-11-01T07-04-55",
+   "checkout": "wt-int",
+   "group": "historical",
+   "dataset": "eval/gen-v1",
+   "label": "full measured run rc-int-1 (ed42763, improve/integration-1); post-tuning, not held-out",
+   "runnerCommit": "a30626b",
+   "cases": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12"
+   ],
+   "rawFiles": 12,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 12,
+    "stub-mismatch": 12,
+    "stub-failall": 12,
+    "recon": 12
+   }
+  },
+  {
+   "runId": "2026-11-01T00-10-57",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "C045"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-11-08",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "C045-CIT"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-11-22",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "C045-MC"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-11-36",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "C045-X1"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-11-51",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval/visa-live-1",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "VL01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-12-04",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval/visa-live-1",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "VL02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-12-18",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval/visa-live-1",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "VL03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T00-12-31",
+   "checkout": "wt-visa",
+   "group": "historical",
+   "dataset": "eval/visa-live-1",
+   "label": "bounded live verification rc-visa-1 (f77863c, improve/round5-visa-chronology); not an evaluation",
+   "runnerCommit": "2fd5778",
+   "cases": [
+    "VL04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-24-35",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-25-00",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-25-13",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-25-25",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-25-56",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-26-10",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-26-25",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-26-40",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG08"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-26-52",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG09"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-27-02",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DG10"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-27-16",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-27-37",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-27-52",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-28-06",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-28-18",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-28-35",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DN06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-28-50",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DU01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-29-10",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DU02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-29-24",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DU03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T19-30-04",
+   "checkout": "wt-diag",
+   "group": "diag-1",
+   "dataset": "eval/diag-1",
+   "label": "diag-1 (fresh team-authored development diagnostic of df11086; not an evaluation)",
+   "runnerCommit": "fef99e6",
+   "cases": [
+    "DU04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-27-20",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-27-42",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-27-57",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-28-16",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-28-32",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-28-47",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-29-01",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-29-13",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG08"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-29-24",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG09"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-29-39",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DG10"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-29-57",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-30-19",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-30-31",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-30-46",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-31-01",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-31-17",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DN06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-31-26",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DU01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-31-43",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DU02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-31-51",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DU03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-32-38",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/diag-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "DU04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-33-06",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/capability-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "CAP-E2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-33-25",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/capability-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "CAP-E2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-33-37",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/capability-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "CAP-E3U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-33-58",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/capability-1",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "CAP-E4U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-34-13",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/fresh",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "F051"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-34-28",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval/fresh",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "F051-C"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-34-38",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "C021-X1"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T21-35-07",
+   "checkout": "wt-lv",
+   "group": "live-1 (286d42d)",
+   "dataset": "eval",
+   "label": "diag-fixes-live-1 (verification of 286d42d on reused development cases; not an evaluation)",
+   "runnerCommit": "76ab8a1",
+   "cases": [
+    "C037-X1"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-15-08",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-15-25",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-15-46",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-16-34",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-16-53",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-17-06",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-17-18",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-17-26",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG08"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-17-42",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG09"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-18-04",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG10"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-18-19",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG11"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-18-28",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "EG12"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-18-46",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-18-56",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-19-08",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-19-28",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-19-37",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-19-53",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-20-03",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-20-20",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC08"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-20-38",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC09"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-20-49",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "NC10"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-21-01",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN01"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-21-12",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN02"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-21-30",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN03"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-21-45",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN04"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-22-03",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN05"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-22-13",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN06"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-22-33",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN07"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T22-22-54",
+   "checkout": "wt-d2",
+   "group": "diag-2",
+   "dataset": "eval/diag-2",
+   "label": "diag-2 (fresh team-authored development diagnostic of 44a1dae; not an evaluation)",
+   "runnerCommit": "81e3c1e",
+   "cases": [
+    "UN08"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-27-02",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-A1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-27-21",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-A1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-27-40",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-A2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-27-53",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-A2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-28-07",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-B1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-28-27",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-B1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-28-51",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-B2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-29-10",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-B2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-29-36",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-C1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-29-49",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-C1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-30-14",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-C2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-30-34",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-C2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-30-51",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-D1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-31-10",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-D1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-31-31",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-D2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-31-54",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-D2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-32-22",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E1N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-32-31",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E1P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-32-49",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E2N"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-33-08",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E2P"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-33-20",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E3U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-01T17-33-40",
+   "checkout": "wt-exp",
+   "group": "restored: capability-1 re-run (encounter-time verification, a465773)",
+   "dataset": "eval/capability-1",
+   "label": "encounter-time verification, candidate a465773 (reused cases; post-tuning development verification; not an evaluation)",
+   "runnerCommit": "f192a43",
+   "cases": [
+    "CAP-E4U"
+   ],
+   "rawFiles": 1,
+   "inEarlierCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  }
+ ]
+}

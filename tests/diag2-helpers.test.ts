@@ -2,7 +2,7 @@
 // titles). New wordings, not taken from any case.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { crossingClauses, crossingMode, namedStates, orderExplicitlyUnexecuted, isPriorRemoval, statesRemovalOrderOnly } from "../lib/review/facts";
+import { affirmedCrossing, crossingClauses, crossingMode, namedStates, orderExplicitlyUnexecuted, isPriorRemoval, statesRemovalOrderOnly } from "../lib/review/facts";
 
 test("crossing clauses: the crossing is separated from approach travel and later transport", () => {
   assert.deepEqual(crossingClauses("He travelled through Mexico by bus and that he waded across the Rio Grande near Hidalgo at night."), ["he waded across the Rio Grande near Hidalgo at night."]);
@@ -42,4 +42,18 @@ test("crossing polarity (helper): only affirmed, actual crossings are crossing c
   assert.deepEqual([...namedStates(crossingClauses("The subject did not cross near Columbus, New Mexico, but crossed near Sasabe, Arizona.").join(" "))], ["Arizona"]);
   assert.equal(crossingMode("He admitted that he crossed the border in the back of a truck."), "vehicle");
   assert.equal(crossingMode("He has never been inspected and crossed the river on foot near Hidalgo, Texas."), "foot", "negation of something else does not cancel the crossing");
+});
+test("crossing polarity, event-scoped (helper): contracted, curly and fronted negations; denials; scope ends at the conjunction", () => {
+  for (const t of ["The subject didn't cross the border in a truck.", "The subject didn’t cross the border in a truck.", "He hasn't crossed the border in a truck.",
+    "At no point did the subject cross the border in a truck.", "At no time did he cross near Columbus, New Mexico.", "Never did he cross the border in a truck.",
+    "Not once did he cross the border in a truck.", "The subject did not, at any point, cross the border in a truck.", "He denied that he had ever crossed the border in a truck."])
+    assert.deepEqual(crossingClauses(t), [], t);
+  // A negated unrelated action does not reach the crossing
+  for (const t of ["He did not apply for a visa and crossed the border in a truck near Nogales, Arizona.", "He didn't have papers, so he crossed the border in a truck near Nogales, Arizona.",
+    "He has never been inspected but crossed the border in a truck near Nogales, Arizona."])
+    assert.equal(crossingMode(t), "vehicle", t);
+  // Only the denied phrase is set aside; the affirmed one is read
+  assert.equal(crossingMode("The subject didn’t cross the border in a truck but walked across the border near Sasabe, Arizona."), "foot");
+  assert.equal(affirmedCrossing("He didn't cross in a truck").trim(), "");
+  assert.equal(affirmedCrossing("He crossed in a truck"), "He crossed in a truck");
 });

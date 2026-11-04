@@ -375,19 +375,48 @@ export function formEntryMode(value: string): "foot" | "vehicle" | "boat" | "air
 const CLAUSE_SPLIT_RE = /;\s+|:\s+|\s+and that\s+|\s+but\s+(?=(?:he|she|they|walked|waded|swam|crossed|entered|climbed|instead|rather)\b)|,\s*(?:after which|whereupon|where)\s+|,?\s+(?:and\s+|but\s+)?then\s+|,\s*(?:and|but)\s+(?=(?:a|an|the|he|she|they|later|after|was|were|had|walked|drove|took|travel\w*|spent|stayed|worked|lived|went|moved|got)\b)/i;
 const CROSS_WORD_RE = /\b(?:cross\w*|across|enter\w*|re-?enter\w*|waded|swam|climbed)\b/i;
 const BORDER_OBJECT_RE = /\b(?:border|boundary|river|Rio Grande|bridge|fence|wall|port of entry|United States|U\.S\.|Arizona|New Mexico|Texas|California)\b/i;
-// Only an affirmed, actual crossing is a crossing. Removed before testing for a crossing word:
-// - infinitives ("allowing him to enter", "planned to cross", "tried to cross");
-// - what followed a crossing ("after crossing, he was taken by car …", "once across", "having crossed");
-// - negated or denied crossings ("never crossed", "did not cross", "denied crossing", "has not entered");
-// - hypothetical crossings ("if he had crossed", "would have crossed", "could cross").
-const NOT_AFFIRMED_CROSSING_RE = /\b(?:never|not|n't|no longer|denied|denies|deny|denying|refused|would|could|might|may|will|should|if\s+(?:he|she|they|the subject|anyone)|unless\s+(?:he|she|they))\s+(?:(?:have|has|had|ever|been|be|he|she|they|the subject|that he|that she)\s+){0,3}(?:(?:re-?)?(?:cross\w*|enter\w*)|across|waded|swam|climbed)\b/gi;
-const affirmedCrossingText = (cl: string) => cl.replace(/\bto (?:re-?)?(?:enter|cross)\b/gi, " ")
-  .replace(/\b(?:after|once|upon|having|since|before)\s+(?:(?:re-?)?(?:cross\w*|enter\w*)|across)\b/gi, " ")
-  .replace(NOT_AFFIRMED_CROSSING_RE, " ");
+// Only an affirmed, actual crossing is a crossing (event-scoped polarity; reviews of 06278ed and df54805). Each crossing
+// verb is judged by what governs IT, inside its own verb phrase: the phrase runs back to the nearest coordinating or
+// subordinating conjunction ("and", "but", "so", "then", "because", …) or ";", so a negation of an unrelated action
+// ("has never been inspected but crossed …", "did not apply for a visa and crossed …", "didn't have papers, so he
+// crossed …") does not reach the crossing. A crossing verb is not affirmed when its phrase, immediately before it, has:
+// - a negated auxiliary: "did not / didn't / didn’t / hasn't / never / no longer [ever | at any point] cross";
+// - a fronted negation with inversion: "At no point / At no time / Never / Not once / In no way … did he cross";
+// - a denial or refusal governing it: "denied (ever / having / that he [had ever]) crossing / crossed";
+// - a hypothetical or modal: "if / unless / whether he had crossed", "would / could / might have crossed";
+// - an infinitive ("planned to cross", "allowing him to enter") or a time phrase for what followed ("after crossing").
+// Straight and curly apostrophes are treated alike. The verb phrase of a non-affirmed crossing is set aside (blanked,
+// length preserved) before mode and place are read, so "didn't cross in a truck but walked across" reads as on foot.
+const APOSTROPHES_RE = /[‘’ʼ`´]/g;
+const CROSS_VERB_RE = /\b(?:(?:re-?)?(?:cross\w*|enter\w*)|across|waded|swam|climbed)\b/gi;
+const SCOPE_BREAK_RE = /;|\b(?:and|but|or|so|then|yet|instead|while|whereas|although|though|because|after which|where)\b/gi;
+const GOVERNED_NOT_AFFIRMED = [
+  /(?:\b(?:never|not|no longer)|n't)\s*,?\s*(?:(?:ever|at any (?:point|time)|actually|really|personally|himself|herself|have|has|had|been|be)\s*,?\s*){0,3}$/i,
+  /\b(?:at no (?:point|time)|never|not once|in no way|on no occasion|nowhere)\b[^.;]{0,60}?\b(?:did|does|do|had|has|have|was|were|could|would)\s+(?:[\w'-]+\s+){0,4}$/i,
+  /\b(?:den(?:y|ies|ied|ying)|refus(?:e|es|ed|ing))\s+(?:(?:ever|having|that|he|she|they|the|subject|had|has|to)\s+){0,5}$/i,
+  /\b(?:if|unless|whether)\s+(?:[\w'-]+\s+){0,4}$/i,
+  /\b(?:would|could|might|may|will|should|can|cannot|must)\s+(?:(?:have|not|never|ever|he|she|they|be)\s+){0,2}$/i,
+  /\bto\s+$/i,
+  /\b(?:after|once|upon|having|since|before)\s+$/i,
+];
+/** The clause with every non-affirmed crossing's verb phrase blanked (same length); affirmed crossings are untouched. */
+export function affirmedCrossing(clause: string): string {
+  const cl = clause.replace(APOSTROPHES_RE, "'");
+  const breaks = [...cl.matchAll(SCOPE_BREAK_RE)].map((m) => ({ at: m.index!, end: m.index! + m[0].length }));
+  let out = cl;
+  for (const m of cl.matchAll(CROSS_VERB_RE)) {
+    const i = m.index!;
+    const segStart = Math.max(0, ...breaks.filter((b) => b.end <= i).map((b) => b.end));
+    const pre = cl.slice(segStart, i);
+    if (!GOVERNED_NOT_AFFIRMED.some((re) => re.test(pre))) continue;
+    const next = breaks.find((b) => b.at > i);
+    const segEnd = next ? next.at : cl.length;
+    out = out.slice(0, segStart) + " ".repeat(segEnd - segStart) + out.slice(segEnd);
+  }
+  return out;
+}
 export function crossingClauses(text: string): string[] {
-  // "allowing him to enter", "permission to cross": an infinitive is not a crossing.
-  // "after crossing, he was taken by car …", "once across", "having crossed": the clause is about what followed (C001).
-  return text.split(CLAUSE_SPLIT_RE).filter((cl) => CROSS_WORD_RE.test(affirmedCrossingText(cl)) && BORDER_OBJECT_RE.test(cl) && !OTHER_COUNTRY_RE.test(cl) && !leavesUs(cl));
+  return text.split(CLAUSE_SPLIT_RE).filter((cl) => { const a = affirmedCrossing(cl); return CROSS_WORD_RE.test(a) && BORDER_OBJECT_RE.test(a) && !OTHER_COUNTRY_RE.test(cl) && !leavesUs(cl); });
 }
 const MODE_WORDS = [
   ["foot", /\b(?:on foot|afoot|walk(?:ed|ing)?|wad(?:ed|ing)|swam|swimming|hiked|climbed)\b/i],
@@ -398,7 +427,7 @@ const MODE_WORDS = [
 type Mode = "foot" | "vehicle" | "boat" | "air";
 /** The mode of travel a sentence states for its U.S. crossing: the crossing clause's mode, when exactly one is stated. */
 export function crossingMode(text: string): Mode | undefined {
-  const modes = new Set(crossingClauses(text).flatMap((cl) => MODE_WORDS.filter(([, re]) => re.test(cl)).map(([m]) => m)));
+  const modes = new Set(crossingClauses(text).flatMap((cl) => MODE_WORDS.filter(([, re]) => re.test(affirmedCrossing(cl))).map(([m]) => m)));
   return modes.size === 1 ? [...modes][0] : undefined;
 }
 /** Modes that cannot describe the same crossing. A river crossing by raft and one on foot are not distinguished (codes vary). */
@@ -786,16 +815,16 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const fStates = namedStates(fpv);
     if (fStates.size === 1 && fieldQuality(fpv) !== "unknown") {
       const fState = [...fStates][0];
-      const withState = crossings.map((x) => ({ ...x, states: new Set(x.cls.flatMap((cl) => [...namedStates(cl)])) })).filter((x) => x.states.size === 1);
+      const withState = crossings.map((x) => ({ ...x, states: new Set(x.cls.flatMap((cl) => [...namedStates(affirmedCrossing(cl))])) })).filter((x) => x.states.size === 1);
       const own = withState.filter((x) => x.outcome === "supported");
       const states = new Set(own.map((x) => [...x.states][0]));
-      const off = states.size === 1 && !states.has(fState) && !crossings.some((x) => x.outcome === "supported" && x.cls.some((cl) => namedStates(cl).has(fState))) ? own[0] : undefined;
+      const off = states.size === 1 && !states.has(fState) && !crossings.some((x) => x.outcome === "supported" && x.cls.some((cl) => namedStates(affirmedCrossing(cl)).has(fState))) ? own[0] : undefined;
       if (off) {
         const st = [...off.states][0];
         findings.push({
           id: "F-ENTRY-PLACE", category: "inconsistency", title: "Place of entry differs from the form",
           explanation: `The form records the place of entry as "${fpv}" (${fState}), but ${off.s.id} places the subject's crossing in ${st}.`,
-          evidence: [ctx(sentEv(off.s, off.cls.find((cl) => namedStates(cl).has(st))!), attribution(off.s, "unclear"), "us_entry"), fieldEv("entry.place")],
+          evidence: [ctx(sentEv(off.s, off.cls.find((cl) => namedStates(affirmedCrossing(cl)).has(st))!), attribution(off.s, "unclear"), "us_entry"), fieldEv("entry.place")],
           referenceIds: ["E2"], needsHumanReview: true, humanReviewReason: "The place of entry differs between the form and the narrative: a person should decide which is correct.", source: "rule", severity: "medium",
         });
       } else if (multiPerson && !own.length) unattributed.push(...withState.filter((x) => x.outcome !== "supported" && !x.states.has(fState))
