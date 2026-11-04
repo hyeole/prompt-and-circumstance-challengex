@@ -1,0 +1,14 @@
+{
+  "id": "EG09",
+  "base": "EG09",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "INA 212(a)(6)(A)(i) selected, but the last entry was an admission with a B1/B2 visa (earlier EWI entry in the history)",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "212(a)(6)(A)(i) requires presence without admission or parole. The subject's last entry (2019) was an admission with a B1/B2 visa, which the form also records (B2). The 2005 entry without inspection was an earlier entry, followed by departure in 2012, so it does not support the charge. Citation mismatch."
+}

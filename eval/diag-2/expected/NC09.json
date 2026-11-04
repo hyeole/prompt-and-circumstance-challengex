@@ -1,0 +1,10 @@
+{
+  "id": "NC09",
+  "base": "NC09",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Same manner in different words (through a gap in the fence, no checkpoint) vs PWA (AFOOT)",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "Climbing through a fence gap and walking north without any checkpoint is entry on foot without inspection, as the form's PWA (AFOOT) says."
+}

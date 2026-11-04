@@ -1,0 +1,15 @@
+{
+  "id": "EG12",
+  "base": "EG12",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "No disposition or documenting form stated",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "N7"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The narrative ends at the removability ground; it never states what action was taken or the documenting form, and the form's disposition field is empty. N7 is missing."
+}

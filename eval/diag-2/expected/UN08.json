@@ -1,0 +1,15 @@
+{
+  "id": "UN08",
+  "base": "UN08",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "8 U.S.C. 1326 with a dated history list that names no removal; the form defers to the narrative",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "history neither shows nor rules out a removal"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The listed history names an admission, an expiry and a release, and no removal; the list is not said to be complete, and the form only points to the narrative. Neither a removal nor its absence is established: a person decides. A mismatch would treat absence of a listed removal as proof."
+}

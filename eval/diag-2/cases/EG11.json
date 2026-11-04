@@ -1,0 +1,97 @@
+{
+  "id": "EG11",
+  "title": "Manner of entry not stated anywhere (narrative or form)",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Manner of entry not stated anywhere (narrative or form)"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn November 6, 2024, at approximately 0820 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered the subject at the Greyhound station in Battle Creek, Michigan. The subject stated that he is a citizen of Guatemala and that he has no documents allowing him to be in the United States. He showed a Guatemalan identity document (DPI).\nENTRY:\nThe subject stated that he arrived in the United States near El Paso, Texas, in May 2019, and that he stayed with an aunt in El Paso for several months before moving north.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nThe subject was processed for a Notice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "GUATEMALA",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "05/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near El Paso, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "11/06/2024 0820",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "BATTLE CREEK, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

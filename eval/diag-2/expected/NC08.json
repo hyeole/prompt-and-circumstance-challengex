@@ -1,0 +1,12 @@
+{
+  "id": "NC08",
+  "base": "NC08",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Entry into Mexico months before the U.S. entry (Ciudad Hidalgo, Chiapas vs Hidalgo, Texas)",
+  "plants": [],
+  "shouldNotFlag": [
+    "entered Mexico without documents at Ciudad Hidalgo, Chiapas, on 01/10/2019"
+  ],
+  "labelNotes": "The January 2019 entry is into Mexico; the U.S. entry is 06/02/2019 near Hidalgo, Texas, on foot without inspection, as on the form."
+}

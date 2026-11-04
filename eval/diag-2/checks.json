@@ -1,0 +1,459 @@
+{
+  "EG01": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "presented his passport and a B1/B2 visa at the Laredo, Texas, port of entry",
+        "field": "entry.manner"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "EG02": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "hid him and four other people inside the trailer of a tractor-trailer",
+        "field": "entry.manner"
+      }
+    ]
+  },
+  "EG03": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "anchor": "was flown to San Pedro Sula, Honduras, on a removal flight on 03/07/2019",
+        "field": "history.immigration_record"
+      }
+    ]
+  },
+  "EG04": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "anchor": "was voluntarily returned to Piedras Negras the same day",
+        "field": "history.immigration_record"
+      }
+    ]
+  },
+  "EG05": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "in the spring of 2021",
+        "field": "entry.date"
+      }
+    ]
+  },
+  "EG06": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "near Sasabe, Arizona, in October 2016",
+        "field": "entry.date"
+      }
+    ]
+  },
+  "EG07": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "west of Columbus, New Mexico",
+        "field": "entry.place"
+      }
+    ]
+  },
+  "EG08": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "EG09": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "EG10": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "EG11": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "missing",
+        "element": "E3"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "EG12": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "missing",
+        "element": "N7"
+      }
+    ]
+  },
+  "NC01": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.manner"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "NC02": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "field": "history.immigration_record"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "NC03": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "citation",
+        "status": "consistent"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "NC04": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noElementFlag",
+        "elements": [
+          "N1"
+        ]
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "NC05": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noElementFlag",
+        "elements": [
+          "N5"
+        ]
+      },
+      {
+        "kind": "citation",
+        "status": "consistent"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "NC06": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.date"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "NC07": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "field": "history.immigration_record"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "NC08": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.date"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.place"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.manner"
+      }
+    ]
+  },
+  "NC09": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ],
+        "field": "entry.manner"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "NC10": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noMissing"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "UN01": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "citationIn",
+        "status": [
+          "needs_human_review",
+          "insufficient_information"
+        ]
+      },
+      {
+        "kind": "routed"
+      }
+    ]
+  },
+  "UN02": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "citationIn",
+        "status": [
+          "needs_human_review",
+          "insufficient_information"
+        ]
+      },
+      {
+        "kind": "routed"
+      }
+    ]
+  },
+  "UN03": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he was deported to Guatemala back in 2015"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he was deported to Guatemala back in 2015"
+      }
+    ]
+  },
+  "UN04": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "crossed near Douglas in 2016"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "crossed near Douglas in 2016"
+      }
+    ]
+  },
+  "UN05": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "flew into Miami from Bogota in April 2019 on a tourist visa"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "UN06": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "through the San Ysidro port of entry with a visitor visa"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "through the San Ysidro port of entry with a visitor visa"
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "UN07": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "citationIn",
+        "status": [
+          "needs_human_review",
+          "insufficient_information"
+        ]
+      },
+      {
+        "kind": "routed"
+      }
+    ]
+  },
+  "UN08": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "citationIn",
+        "status": [
+          "needs_human_review",
+          "insufficient_information"
+        ]
+      },
+      {
+        "kind": "routed"
+      }
+    ]
+  }
+}

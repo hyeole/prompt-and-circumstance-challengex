@@ -1,0 +1,20 @@
+{
+  "id": "EG06",
+  "base": "EG06",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Designated subject among three occupants gives a different entry year from the form",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "near Sasabe, Arizona, in October 2016"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The driver is designated as this record's subject and states October 2016; the form records 10/2013. The front passenger's 2013 matches the form's year but is another person's entry and must not be used to explain the conflict away."
+}

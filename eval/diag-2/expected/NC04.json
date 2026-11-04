@@ -1,0 +1,10 @@
+{
+  "id": "NC04",
+  "base": "NC04",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Identity documents stated in paraphrase (voter card with photograph; birth certificate)",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "The identifying documents are stated: a Mexican voter identification card with name and photograph, and a birth certificate. N1 is satisfied in paraphrase; the absence of status documents is a separate point (E6)."
+}

@@ -1,0 +1,97 @@
+{
+  "id": "NC10",
+  "title": "A complete, longer case with every core element stated",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "A complete, longer case with every core element stated"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn March 28, 2024, at approximately 0640 hours, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were conducting traffic observation on Interstate 94 near Jackson, Michigan, when the Michigan State Police requested assistance with a commercial vehicle inspection. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself as a Border Patrol Agent to the vehicle's passenger, the subject, and questioned him as to his citizenship and immigration status.\nIDENTITY AND STATUS:\nThe subject stated that he is a citizen and national of Honduras. He presented a Honduran passport issued in 2016 and a Honduran national identity card. He stated that he does not possess any visa, parole document or other document allowing him to enter or remain in the United States, and that he has never applied for any immigration benefit.\nENTRY:\nThe subject stated that on 09/15/2019 he crossed the Rio Grande on a raft near Roma, Texas, at approximately 2300 hours, together with eight other people, and walked inland without presenting himself for inspection at any port of entry. A smuggler arranged the crossing for a fee that his family paid.\nTRAVEL:\nHe was driven from Roma to Houston, where he worked in construction until 2022, and then moved to Michigan by bus to work for a moving company.\nIMMIGRATION AND CRIMINAL HISTORY:\nRecord checks returned no prior immigration encounters and no criminal history. The subject confirmed that he has never been arrested in the United States or in Honduras.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled. He was not admitted or paroled at any time after his entry.\nDISPOSITION:\nThe subject was arrested, transported to the [REDACTED (b)(7)(E)] Station, processed for a Warrant of Arrest and Notice to Appear (Form I-862), and released on an order of recognizance pending his hearing.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "09/15/2019 2300",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Roma, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "03/28/2024 0640",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "JACKSON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "PB",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear/OREC",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

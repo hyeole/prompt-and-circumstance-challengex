@@ -1,0 +1,18 @@
+{
+  "id": "UN03",
+  "base": "UN03",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "A relative relays 'he was deported' (speaker or subject)",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he was deported to Guatemala back in 2015"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "In the uncle's statement 'he' may be the uncle himself or the subject. If it is the subject, it conflicts with the NEGATIVE record; that cannot be decided from the text. Route it; do not assert a history contradiction."
+}

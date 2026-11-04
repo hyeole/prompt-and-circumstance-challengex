@@ -1,0 +1,18 @@
+{
+  "id": "UN04",
+  "base": "UN04",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Two redacted men give different entry years; the record does not say which is the subject",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "crossed near Douglas in 2016"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Two people, both redacted, neither designated. One statement's year matches the form (2012) and the other's does not (2016); a matching value does not identify the subject. Which statement is the subject's is for a person: route, no contradiction."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "NC06",
+  "base": "NC06",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "An entry year corrected and explained in the narrative",
+  "plants": [],
+  "shouldNotFlag": [
+    "came to the United States in 2017"
+  ],
+  "labelNotes": "The 2017 answer was withdrawn and explained (it was his brother's arrival); his own entry is March 2015, as on the form. No conflict."
+}

@@ -1,0 +1,10 @@
+{
+  "id": "NC03",
+  "base": "NC03",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "8 U.S.C. 1326 with a removal order that was explicitly executed",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "The order was explicitly carried out (the subject was escorted across the bridge into Mexico): a completed removal, which is what 8 U.S.C. 1326 requires, and the form's record says removed 10/04/2012. The charge is supported; nothing conflicts."
+}

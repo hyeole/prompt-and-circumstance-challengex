@@ -1,0 +1,12 @@
+{
+  "id": "NC02",
+  "base": "NC02",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "B2 admission and overstay with a NEGATIVE immigration record (237(a)(1)(B))",
+  "plants": [],
+  "shouldNotFlag": [
+    "was admitted at Chicago O'Hare International Airport on 03/14/2017"
+  ],
+  "labelNotes": "A lawful admission and an overstay are not prior immigration history in the sense of the NEGATIVE record (no prior removals, orders or immigration arrests); the records explicitly show no other history. Everything agrees with the form and the charge."
+}

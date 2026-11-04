@@ -1,0 +1,10 @@
+{
+  "id": "NC07",
+  "base": "NC07",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Current removal proceedings (Notice to Appear) with a NEGATIVE record",
+  "plants": [],
+  "shouldNotFlag": [],
+  "labelNotes": "The Notice to Appear and removal proceedings are the current disposition, not prior immigration history; the NEGATIVE record is not contradicted."
+}

@@ -1,0 +1,97 @@
+{
+  "id": "EG09",
+  "title": "INA 212(a)(6)(A)(i) selected, but the last entry was an admission with a B1/B2 visa (earlier EWI entry in the history)",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "INA 212(a)(6)(A)(i) selected, but the last entry was an admission with a B1/B2 visa (earlier EWI entry in the history)"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn August 14, 2024, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] encountered the subject during a consensual interview at a restaurant in Ann Arbor, Michigan, where the owner had reported an employee using another person's Social Security number.\nThe subject stated that he is a citizen of Mexico and presented a Mexican passport issued in 2018.\nENTRY:\nThe subject stated that he first entered the United States illegally near Calexico, California, in 2005 and lived in Fresno until he went back to Mexico in 2012.\nOn 07/09/2019 he flew from Guadalajara to Houston, presented his passport and a valid B1/B2 visa, and was admitted as a visitor until 01/08/2020. He has not left the United States since that entry.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nNotice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "07/09/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "HOUSTON, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "B2",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "08/14/2024 1300",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ANN ARBOR, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "EG02",
+  "base": "EG02",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Narrative: carried across a bridge hidden in a tractor-trailer; form manner AFOOT (mode conflict)",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "hid him and four other people inside the trailer of a tractor-trailer"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Both the narrative and the form say the subject was not inspected, so the inspection category agrees and the charge is supported. The mode does not: the form says AFOOT (on foot), the narrative says he was carried across hidden in a vehicle. A documentation conflict in the manner code that a person should correct."
+}

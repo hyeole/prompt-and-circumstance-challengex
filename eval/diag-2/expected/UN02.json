@@ -1,0 +1,15 @@
+{
+  "id": "UN02",
+  "base": "UN02",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "8 U.S.C. 1326: removal order plus an unrelated arrest warrant executed years later",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "removal order with no stated execution"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The warrant that was executed is a state arrest warrant, not the removal order. Nothing says the order was executed or that he departed (his not knowing about it suggests, but does not establish, that it was not). Unresolved: a person decides."
+}

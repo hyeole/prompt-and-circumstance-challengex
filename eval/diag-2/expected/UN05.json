@@ -1,0 +1,18 @@
+{
+  "id": "UN05",
+  "base": "UN05",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "The same subject gives two unexplained accounts of his last entry (flew in on a visa vs walked across)",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "flew into Miami from Bogota in April 2019 on a tourist visa"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Two incompatible accounts by the same subject of the same entry, unexplained; the form's manner is UNKNOWN. A finding that the accounts conflict is correct; whether he was admitted (and so which charge fits) is for a person. No mismatch."
+}

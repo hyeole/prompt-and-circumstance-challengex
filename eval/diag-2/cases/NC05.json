@@ -1,0 +1,97 @@
+{
+  "id": "NC05",
+  "title": "8 U.S.C. 1326 with a statute citation inside a sentence and a completed removal",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "8 U.S.C. 1326 with a statute citation inside a sentence and a completed removal"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn September 17, 2024, at approximately 0905 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered the subject at the Saint Clair County Jail in Port Huron, Michigan, following his arrest by local police for driving without a license.\nThe subject stated that he is a citizen of Mexico and presented a Mexican consular identification card.\nIMMIGRATION HISTORY:\nRecords show that he was removed to Mexico through Laredo, Texas, on 02/11/2019 after a final order of removal.\nENTRY:\nThe subject stated that he walked across the border illegally near Laredo in April 2020.\nREMOVABILITY:\nThe subject is being presented for prosecution under 8 U.S.C. 1326 because he was found in the United States after his removal on 02/11/2019 without having obtained the consent of the Secretary of Homeland Security to reapply for admission.\nDISPOSITION:\nThe case was accepted for prosecution by the U.S. Attorney's Office.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "04/2020",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Laredo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "09/17/2024 0905",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PORT HURON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - removed 02/11/2019",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "Driving without a license (pending)",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Accepted for prosecution",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "8 U.S.C. 1326",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

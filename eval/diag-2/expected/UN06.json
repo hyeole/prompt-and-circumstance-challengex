@@ -1,0 +1,18 @@
+{
+  "id": "UN06",
+  "base": "UN06",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "A redacted man's visa admission versus a form recording EWI; neither man is designated",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "through the San Ysidro port of entry with a visitor visa"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "If the visa admission is the subject's, it conflicts with the form's EWI and with the charge; if it is the other man's, nothing conflicts. The text does not say which: route, no contradiction, no mismatch."
+}

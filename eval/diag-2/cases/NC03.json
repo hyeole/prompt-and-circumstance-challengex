@@ -1,0 +1,97 @@
+{
+  "id": "NC03",
+  "title": "8 U.S.C. 1326 with a removal order that was explicitly executed",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "8 U.S.C. 1326 with a removal order that was explicitly executed"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn July 2, 2024, at approximately 0600 hours, Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] encountered the subject at his residence in Pontiac, Michigan, while executing an administrative warrant issued for him after fingerprint records matched a prior removal.\nThe subject stated that he is a citizen of Mexico and that he has no documents to be in the United States.\nIMMIGRATION HISTORY:\nAn immigration judge in Atlanta, Georgia, ordered the subject removed on 08/30/2012, and the order was carried out on 10/04/2012, when officers escorted him across the international bridge at Laredo, Texas, into Nuevo Laredo.\nENTRY:\nThe subject stated that he reentered the United States illegally, wading across the river near Laredo, in June 2016, and that he never applied for permission to return.\nREMOVABILITY:\nThe subject is being presented for prosecution under 8 U.S.C. 1326 as an alien found in the United States after removal.\nDISPOSITION:\nThe subject was transported to the [REDACTED (b)(7)(E)] Station and the case was accepted for prosecution.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "06/2016",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Laredo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "07/02/2024 0600",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "PONTIAC, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "POSITIVE - removed 10/04/2012",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Accepted for prosecution",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "8 U.S.C. 1326",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

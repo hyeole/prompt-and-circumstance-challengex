@@ -1,0 +1,20 @@
+{
+  "id": "EG05",
+  "base": "EG05",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Pronoun-linked entry year (spring of 2021) differs from the form (2018)",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "in the spring of 2021"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Only one person is described; 'He said' continues the subject's account. He places his entry in spring 2021; the form records 04/2018. A year conflict for the same entry."
+}

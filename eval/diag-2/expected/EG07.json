@@ -1,0 +1,20 @@
+{
+  "id": "EG07",
+  "base": "EG07",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Entry place (west of Columbus, New Mexico) differs from the form (near Nogales, AZ)",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "west of Columbus, New Mexico"
+      ],
+      "fieldPaths": [
+        "entry.place"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Short narrative, one person. The subject places his entry west of Columbus, New Mexico; the form records near Nogales, Arizona (different state and sector). The date and manner agree."
+}

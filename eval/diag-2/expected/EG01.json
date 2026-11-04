@@ -1,0 +1,20 @@
+{
+  "id": "EG01",
+  "base": "EG01",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Narrative: admitted with a visa at a port; form manner EWI AFOOT (category conflict)",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "presented his passport and a B1/B2 visa at the Laredo, Texas, port of entry"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The subject's own account of his last entry is an inspection and admission with a visa; the form codes the manner as EWI AFOOT (entered without inspection, on foot). These are incompatible inspection categories for the same entry. The selected charge (237(a)(1)(B)) depends on an admission, which the narrative states, so the charge itself is not contradicted by the narrative."
+}

@@ -1,0 +1,97 @@
+{
+  "id": "EG04",
+  "title": "Prior Border Patrol apprehension and voluntary return while the record is NEGATIVE",
+  "kind": "synthetic",
+  "split": "diag-2",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (diag-2), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Prior Border Patrol apprehension and voluntary return while the record is NEGATIVE"
+    ]
+  },
+  "narrative": {
+    "text": "On October 8, 2024, at approximately 1645 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered the subject at a gas station in Adrian, Michigan, after the subject approached the marked patrol vehicle to ask for directions to a nearby farm. Agent [REDACTED (b)(6), (b)(7)(C)] identified himself and asked the subject where he was from. The subject stated that he is a citizen of Mexico and admitted that he had no papers to be in the United States.\nThe subject said that this is not his first time in the United States. In 2014 he was caught by Border Patrol agents shortly after crossing near Eagle Pass, Texas, and was voluntarily returned to Piedras Negras the same day.\nHe stated that he crossed again on foot near Eagle Pass on 03/18/2015 and has worked on farms in Ohio and Michigan since then.\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nThe subject was processed for a Warrant of Arrest and Notice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "03/18/2015",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Eagle Pass, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "10/08/2024 1645",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "ADRIAN, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

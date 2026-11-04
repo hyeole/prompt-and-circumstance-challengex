@@ -1,0 +1,12 @@
+{
+  "id": "NC01",
+  "base": "NC01",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Smuggler (coyote) assistance with a crossing on foot; form EWI AFOOT",
+  "plants": [],
+  "shouldNotFlag": [
+    "led him and six others on foot across the border"
+  ],
+  "labelNotes": "Smuggler help, payment and a later vehicle ride after the crossing are compatible with an entry on foot without inspection. Date, place and manner agree with the form."
+}

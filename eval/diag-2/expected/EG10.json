@@ -1,0 +1,14 @@
+{
+  "id": "EG10",
+  "base": "EG10",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "INA 237(a)(1)(B) selected, but the subject was never inspected or admitted",
+  "plants": [
+    {
+      "type": "citation"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "237(a)(1)(B) applies to a person admitted who remained longer than permitted. The subject explicitly was never inspected or admitted, and the form says EWI. Citation mismatch."
+}

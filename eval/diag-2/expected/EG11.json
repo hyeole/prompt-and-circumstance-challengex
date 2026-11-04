@@ -1,0 +1,15 @@
+{
+  "id": "EG11",
+  "base": "EG11",
+  "split": "diag-2",
+  "datasetVersion": "diag-2",
+  "description": "Manner of entry not stated anywhere (narrative or form)",
+  "plants": [
+    {
+      "type": "missing_element",
+      "elementId": "E3"
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "'Arrived \u2026 near El Paso' gives a place and date but not how he entered (inspected or not, by what means); the form's manner field is empty. E3 is missing. Absence is not contradiction: no citation mismatch."
+}
