@@ -1,0 +1,19 @@
+✔ type: a U.S. crossing typed as another-country entry no longer hides the source's reading (XE02, designated subject) (42.5265ms)
+✔ type: the review model's correct claim on that sentence is not withheld as 'another country' (5.172625ms)
+✔ type control: domestic travel with country 'United States' is not turned into an entry (3.538875ms)
+✔ type control: an entry into another country stays out of the U.S. comparison, and a claim on it is withheld (1.6925ms)
+✔ type control: an entry into Mexico mislabelled with country 'United States' is still not a U.S. entry (1.097333ms)
+✔ type control: unclear identity: a recovered U.S. entry of an unidentified person is routed, never a contradiction (1.305709ms)
+✔ scope: a model claim on 'the second time' (an earlier entry in a stated sequence) is withheld (4.23575ms)
+✔ scope control: a genuine last-entry conflict in a model claim is kept (3.303542ms)
+✔ scope control: a mixed claim keeps its supported last-entry part and drops the earlier sentence (1.91025ms)
+✔ scope control: a 'second time' with no later entry may be the last; a claim on it is not withheld for scope (1.882375ms)
+✔ scope control: several people: an unattributed ordinal is not reordered by another person's 'most recent' crossing (1.441583ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 460.925833

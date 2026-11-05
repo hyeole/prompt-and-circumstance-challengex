@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, priorEntryOnly, namedStates, statesRemovalOrderOnly, isPriorRemoval, orderExplicitlyUnexecuted, NEGATED_REMOVAL_RE, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, priorEntryOnly, namedStates, statesRemovalOrderOnly, isPriorRemoval, orderExplicitlyUnexecuted, NEGATED_REMOVAL_RE, formYear, normalizeFacts, sourceEntryStatements, sequenceEarlierSentences, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -485,7 +485,9 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     // record; with nothing left, the claim is withheld as invalid.
     {
       const entryFields = verified.filter((v) => v.fieldPath?.startsWith("entry."));
-      const priorIds = verified.filter((v) => v.sentenceId && priorEntryOnly(sentences.find((x) => x.id === v.sentenceId)!)).map((v) => v.sentenceId!);
+      // robustness-1: also sentences whose extracted entries are all earlier under the comparison's own sequence scope.
+      const seqEarlier = sequenceEarlierSentences(c, sentences, factsSettled.ok ? withSourceEntries(sentences, factsSettled.v) : { ...EMPTY_FACTS, entry_statements: sourceEntryStatements(sentences) }, multiPerson);
+      const priorIds = verified.filter((v) => v.sentenceId && (priorEntryOnly(sentences.find((x) => x.id === v.sentenceId)!) || seqEarlier.has(v.sentenceId))).map((v) => v.sentenceId!);
       if (iss.type === "inconsistency" && entryFields.length && priorIds.length) {
         const rest = verified.filter((v) => v.sentenceId && !priorIds.includes(v.sentenceId));
         const restText = rest.map((v) => sentences.find((x) => x.id === v.sentenceId)?.text ?? "").join(" ");

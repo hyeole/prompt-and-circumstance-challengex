@@ -737,6 +737,46 @@ function sequenceScopes(sentences: Sentence[], entries: SeqEntry[], multiPerson:
   }
   return out;
 }
+/**
+ * The extracted U.S. entry statements this record's comparisons use: verified against the source, attributed, and
+ * scoped (entryScope, then event sequences told with ordinals, then "first and only"). One definition for the
+ * form comparison (compareFacts) and the model-claim event scope (sequenceEarlierSentences).
+ */
+type ScopedEntry = { e: Entry; v: Verified; exact: boolean; attr: Attr; basis: AttributionOutcome; supported: boolean; scope: EntryScope };
+function scopedEntries(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): { entries: ScopedEntry[]; dropped: number } {
+  let dropped = 0;
+  const entries = facts.entry_statements
+    .filter((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other")
+    .map((e) => {
+      const exact = verify(sentences, e.sentence_id, e.quote);
+      const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
+      // attr labels the evidence (as before); supported is the decision, which also uses account continuity and the
+      // exact-entry link (attributeStatement).
+      const basis = v ? attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person) : null;
+      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person, e.quote) : "unclear" as const, basis: basis!,
+        supported: basis?.outcome === "supported", scope: v ? entryScope(v.s.text, factOffset(v, e.year)) : "unspecified" as EntryScope };
+    })
+    .filter((x) => (x.v ? true : (dropped++, false))) as ScopedEntry[];
+  // Event sequences told with ordinals ("The first time was in 2008", "The second time, in 2012", "his first trip
+  // north", "first visited", "his most recent crossing"). See sequenceScopes.
+  for (const [x, sc] of sequenceScopes(sentences, entries, multiPerson)) x.scope = sc;
+  // A first entry that the source says was the only one is also the last, unless another statement gives a last or
+  // previous entry.
+  if (!entries.some((x) => x.scope === "last" || x.scope === "previous"))
+    for (const x of entries) if (x.scope === "first" && firstEntryIsOnly(x.v.s, factOffset(x.v, x.e.year), x.e.year)) x.scope = "last";
+  return { entries, dropped };
+}
+/**
+ * Sentences whose extracted U.S. entries are ALL earlier ones (first or previous) under the same scope the form
+ * comparison uses, including event sequences told with ordinals. A model claim citing such a sentence cannot
+ * contradict the form's last entry (robustness-1; the deterministic rule priorEntryOnly covers explicit scope words only).
+ */
+export function sequenceEarlierSentences(c: CaseRecord, sentences: Sentence[], facts: FactsOutput, multiPerson: boolean): Set<string> {
+  const { entries } = scopedEntries(c, sentences, facts, multiPerson);
+  const ids = new Set(entries.map((x) => x.v.s.id));
+  return new Set([...ids].filter((id) => entries.filter((x) => x.v.s.id === id).every((x) => x.scope === "first" || x.scope === "previous")));
+}
+
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
 
@@ -755,25 +795,8 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
   // Each statement is verified exactly; a statement with a year may instead match partially, but then it is used
   // only for the date comparison and only if the matched source fragment contains that year.
   // Only U.S. entries are compared with the form; entries into other countries and departures are ignored.
-  const entries = facts.entry_statements
-    .filter((e) => isUsEntry(e) && checkedPerson(sentences, e.sentence_id, e.person, e.quote) !== "other")
-    .map((e) => {
-      const exact = verify(sentences, e.sentence_id, e.quote);
-      const v = exact ?? (e.year ? verify(sentences, e.sentence_id, e.quote, [String(e.year)]) : null);
-      // attr labels the evidence (as before); supported is the decision, which also uses account continuity and the
-      // exact-entry link (attributeStatement).
-      const basis = v ? attributeStatement(sentences, v.s.id, multiPerson, e.quote, c, e.person) : null;
-      return { e, v, exact: !!exact, attr: v ? attribution(v.s, e.person, e.quote) : "unclear" as const, basis: basis!,
-        supported: basis?.outcome === "supported", scope: v ? entryScope(v.s.text, factOffset(v, e.year)) : "unspecified" as EntryScope };
-    })
-    .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: Attr; basis: AttributionOutcome; supported: boolean; scope: EntryScope }[];
-  // Event sequences told with ordinals ("The first time was in 2008", "The second time, in 2012", "his first trip
-  // north", "first visited", "his most recent crossing"). See sequenceScopes.
-  for (const [x, sc] of sequenceScopes(sentences, entries, multiPerson)) x.scope = sc;
-  // A first entry that the source says was the only one is also the last, unless another statement gives a last or
-  // previous entry.
-  if (!entries.some((x) => x.scope === "last" || x.scope === "previous"))
-    for (const x of entries) if (x.scope === "first" && firstEntryIsOnly(x.v.s, factOffset(x.v, x.e.year), x.e.year)) x.scope = "last";
+  const { entries, dropped: d0 } = scopedEntries(c, sentences, facts, multiPerson);
+  dropped += d0;
   // Comparable with the form's last entry, and with each other: last-entry statements (or unspecified ones, as before).
   const lastEntry = (x: { scope: EntryScope }) => x.scope === "last" || x.scope === "unspecified";
   const sameEvent = (a: { scope: EntryScope }, b: { scope: EntryScope }) => (lastEntry(a) && lastEntry(b)) || (a.scope === "first" && b.scope === "first");
@@ -1022,8 +1045,13 @@ const APPLICATION_RE = /\b(applied|applying|application|applicant) for admission
  * verified, so it would otherwise silently drop the sentence: diag-1 DG02, "… near Sasabe, Arizona, and that he did not
  * present himself" quoted without "with a guide"). The same attribution and scope rules then apply to both.
  */
+// robustness-1: a verified extraction suppresses the source's reading only when it lists that sentence as a U.S. entry.
+// An extraction that types a sentence as another-country entry, departure or travel while the source's own event
+// analysis (sourceEntryStatements: an affirmed entry event naming the United States or its border, not leaving it)
+// reads a U.S. entry there is contradicted by the source, so the source's reading is added. The country field alone
+// never decides this, so domestic travel "in the United States" stays travel.
 export function withSourceEntries(sentences: Sentence[], facts: FactsOutput): FactsOutput {
-  const verifiedIds = new Set(facts.entry_statements.filter((e) => verify(sentences, e.sentence_id, e.quote)).map((e) => e.sentence_id));
+  const verifiedIds = new Set(facts.entry_statements.filter((e) => isUsEntry(e) && verify(sentences, e.sentence_id, e.quote)).map((e) => e.sentence_id));
   return { ...facts, entry_statements: [...facts.entry_statements, ...sourceEntryStatements(sentences).filter((s) => !verifiedIds.has(s.sentence_id))] };
 }
 export type RequirementOutcome = "contradicted" | "unresolved" | "undetermined";
@@ -1223,9 +1251,10 @@ export function nonUsEntrySentences(facts: FactsOutput, sentences?: Sentence[]):
   const us = new Set(facts.entry_statements.filter(isUsEntry).map((e) => e.sentence_id));
   const ids = facts.entry_statements.filter((e) => !isUsEntry(e) && !us.has(e.sentence_id)).map((e) => e.sentence_id);
   if (!sentences) return new Set(ids);
+  const sourceUs = new Set(sourceEntryStatements(sentences).map((e) => e.sentence_id));
   return new Set(ids.filter((id) => {
     const t = sentences.find((x) => x.id === id)?.text ?? "";
-    return !(usEntryText(t) && !OTHER_COUNTRY_RE.test(t));
+    return !(usEntryText(t) && !OTHER_COUNTRY_RE.test(t)) && !sourceUs.has(id);
   }));
 }
 const US_ENTRY_TEXT_RE = /\b(enter\w*|cross\w*|arriv\w*|came|walk\w*|swam|wad\w*|smuggled)\b[^.;]{0,90}\b(United States|U\.S\.|USA)\b|\b(United States|U\.S\.)\b[^.;]{0,20}\bborder\b/i;

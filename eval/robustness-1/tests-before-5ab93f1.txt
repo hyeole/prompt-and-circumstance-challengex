@@ -1,0 +1,110 @@
+✖ type: a U.S. crossing typed as another-country entry no longer hides the source's reading (XE02, designated subject) (41.909792ms)
+✖ type: the review model's correct claim on that sentence is not withheld as 'another country' (12.5595ms)
+✔ type control: domestic travel with country 'United States' is not turned into an entry (5.267917ms)
+✔ type control: an entry into another country stays out of the U.S. comparison, and a claim on it is withheld (7.914458ms)
+✔ type control: an entry into Mexico mislabelled with country 'United States' is still not a U.S. entry (1.515417ms)
+✖ type control: unclear identity: a recovered U.S. entry of an unidentified person is routed, never a contradiction (2.233709ms)
+✖ scope: a model claim on 'the second time' (an earlier entry in a stated sequence) is withheld (3.642291ms)
+✔ scope control: a genuine last-entry conflict in a model claim is kept (1.770083ms)
+✖ scope control: a mixed claim keeps its supported last-entry part and drops the earlier sentence (3.844459ms)
+✔ scope control: a 'second time' with no later entry may be the last; a claim on it is not withheld for scope (2.63575ms)
+✔ scope control: several people: an unattributed ordinal is not reordered by another person's 'most recent' crossing (1.44075ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 6
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 328.194834
+
+✖ failing tests:
+
+test at tests/robustness.test.ts:37:1
+✖ type: a U.S. crossing typed as another-country entry no longer hides the source's reading (XE02, designated subject) (41.909792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'S8'
+  - ]
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-rb/tests/robustness.test.ts:39:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'S8' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/robustness.test.ts:41:1
+✖ type: the review model's correct claim on that sentence is not withheld as 'another country' (12.5595ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(!anotherCountry(r))
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-rb/tests/robustness.test.ts:43:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/robustness.test.ts:61:1
+✖ type control: unclear identity: a recovered U.S. entry of an unidentified person is routed, never a contradiction (2.233709ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((r.humanReview.accounts ?? []).some((a) => a.sentenceIds.includes(sid(c, "waded across"))))
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-rb/tests/robustness.test.ts:65:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/robustness.test.ts:70:1
+✖ scope: a model claim on 'the second time' (an earlier entry in a stated sequence) is withheld (3.642291ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(earlierWithheld(r) && !modelKept(r).length)
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-rb/tests/robustness.test.ts:74:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/robustness.test.ts:82:1
+✖ scope control: a mixed claim keeps its supported last-entry part and drops the earlier sentence (3.844459ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.discarded.some((d) => /^Part withheld/.test(d.reason)))
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-rb/tests/robustness.test.ts:89:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
