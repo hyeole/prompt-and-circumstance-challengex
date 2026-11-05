@@ -8,7 +8,7 @@ import { computeCompletion } from "@/lib/completion";
 import { runRules } from "./rules";
 import { ModelOutput } from "./schema";
 import { agreement, mergeOutputs } from "./merge";
-import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, statesRemovalOrderOnly, isPriorRemoval, orderExplicitlyUnexecuted, NEGATED_REMOVAL_RE, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
+import { FACTS_PROMPT_VERSION, FACTS_SYSTEM_PROMPT, FactsOutput, accountConflicts, visaChronologyConflicts, buildFactsPrompt, describesUsEntry, checkChargeRequirement, compareFacts, hasMannerStatement, mannerAbsentFromCompletedExtraction, supportsRequirement, EMPTY_FACTS, statusStatements, nonUsEntrySentences, usEntryMannerBySentence, formMannerCategory, formEntryMode, crossingMode, describesRecordHistory, conflictManner, priorEntryOnly, namedStates, statesRemovalOrderOnly, isPriorRemoval, orderExplicitlyUnexecuted, NEGATED_REMOVAL_RE, formYear, normalizeFacts, sourceEntryStatements, withSourceEntries, type Requires } from "./facts";
 import { unsupportedValues } from "./support";
 import { encounterTimeConflict, narrativeStatesFormDate, timeRoutingReasons, unsupportedTimeClaim } from "./times";
 import { applies, caseContext, detect, DISPOSITION_RE, DOCUMENT_RE, locatesEntry, type ChecklistItem } from "./checklist";
@@ -91,6 +91,20 @@ function factsOf(t: string): Set<string> {
   return f;
 }
 const CONFLICT_RE = /\b(conflict\w*|mismatch\w*|discrepan\w*|inconsisten\w*|differ\w*|contradict\w*)\b/i;
+/**
+ * The record facts a model's charge concern raises: its clauses minus restatements of what the charge requires ("The
+ * selected charge requires a prior admission …"), read with factsOf, where inspection or admission wording ("inspected",
+ * "admitted", "port of entry", "visa", "illegally", "manner") counts as the manner of entry, not a place.
+ */
+function concernFacts(explanation: string): Set<string> {
+  const out = new Set<string>();
+  for (const cl of explanation.split(/[.;]\s+|,\s*(?:but|while|whereas|yet)\s+/i)) {
+    if (/\brequir\w*\b/i.test(cl)) continue;
+    for (const f of factsOf(cl.replace(/\bports? of entry\b/gi, "inspection point"))) out.add(f);
+    if (/\b(?:manner|inspect\w*|admi(?:t|tted|ssion)\w*|parole\w*|visa|illegal\w*|EWI|inspection point|ports? of entry)\b/i.test(cl)) out.add("entry manner");
+  }
+  return out;
+}
 // Words that carry no concern of their own in a routing reason: conflict wording, the two sources, and filler.
 const GENERIC = new Set("conflict conflicts conflicting mismatch mismatches mismatched discrepancy discrepancies inconsistent inconsistency inconsistencies differ differs different difference differences contradict contradicts contradiction contradictory between form forms field fields narrative narratives information info record records the and with for from regarding about data value values listed lists list reported reports states stated says said shows indicates entry entries last potential possible apparent noted noted there this that these those its their his her are was were has have had".split(" "));
 // A generic follow-on with no concern of its own: it only says that some conflict matters.
@@ -108,7 +122,7 @@ const words = (t: string) => (t.toLowerCase().match(/[a-z][a-z'-]{2,}/g) ?? []);
  * only content is a generic follow-on ("Potential impact on charge determination") goes only when a dependent part was
  * removed and nothing else about a conflict remains: no kept finding or account, and no kept conflict reason.
  */
-export function modelRoutingReasons(reasons: string[], invalidClaims: string[], standing: string[]): { reasons: string[]; removed: string[] } {
+export function modelRoutingReasons(reasons: string[], invalidClaims: string[], standing: string[], unsupported: Set<string> = new Set()): { reasons: string[]; removed: string[] } {
   const stand = new Set(standing.flatMap((t) => [...factsOf(t)]));
   const claims = invalidClaims.map((t) => ({ facts: factsOf(t), words: new Set(words(t)) }));
   const PERSON = /\b(person|people|subjects?|who|whom|whose|attribut\w*|individuals?|identity|identit\w*)\b/i;
@@ -119,15 +133,21 @@ export function modelRoutingReasons(reasons: string[], invalidClaims: string[], 
     return claims.some((c) => f.every((x) => c.facts.has(x)) && words(part).every((w) => GENERIC.has(w) || c.words.has(w) || ["date", "dates", "place", "places", "location", "manner", "time", "encounter", "history", "immigration", "prior", "removal", "year"].includes(w)));
   };
   const followOn = (part: string) => !CONFLICT_RE.test(part) && words(part).length > 0 && words(part).every((w) => FOLLOW_ON.has(w) || GENERIC.has(w));
+  // A conflict assertion about a record fact that only a withheld model claim asserted, and that no kept finding or routed
+  // account supports (unsupported), is not a reason to route: "Conflicting entry dates and entry manner" when only the
+  // date conflict stands (live verification of 452dcb8, C021-X1, C037-X1). The supported fact keeps its own reason.
+  const asserts = (part: string) => unsupported.size > 0 && CONFLICT_RE.test(part) && !PERSON.test(part) && [...factsOf(part)].some((x) => unsupported.has(x));
   const removed: string[] = [];
   const kept: string[] = [];
   const pendingFollowOns: string[] = [];
   for (const r of reasons) {
     const parts = r.split(/\s*;\s*|:\s+|\.\s+(?=[A-Z])/).map((x) => x.trim().replace(/\.$/, "")).filter(Boolean);
-    const dep = parts.filter(dependent);
+    const dep = parts.filter((x) => dependent(x) || asserts(x));
     if (!dep.length) { (parts.every(followOn) ? pendingFollowOns : kept).push(r); continue; }
     const rest = parts.filter((x) => !dep.includes(x));
     if (rest.every(followOn)) { removed.push(r); continue; } // the whole reason is the withheld claim plus "this matters"
+    // After an unsupported assertion, a remainder that names no conflict, fact or person only qualifies it.
+    if (parts.some(asserts) && !rest.some((x) => CONFLICT_RE.test(x) || factsOf(x).size > 0 || PERSON.test(x))) { removed.push(r); continue; }
     removed.push(...dep);
     kept.push(rest.join("; "));
   }
@@ -458,6 +478,31 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
       invalidate(iss, verified);
       return;
     }
+    // (1h) Event scope (live verification of 452dcb8, EG09): the form's entry fields record the LAST entry, so a cited
+    // sentence describing only an explicitly first or previous entry (priorEntryOnly: the deterministic comparison's own
+    // scope rule) cannot contradict them. Those sentences are removed from the claim; a part the remaining last-entry
+    // evidence supports on its own (a differing year or place; an incompatible manner) is kept and restated from the
+    // record; with nothing left, the claim is withheld as invalid.
+    {
+      const entryFields = verified.filter((v) => v.fieldPath?.startsWith("entry."));
+      const priorIds = verified.filter((v) => v.sentenceId && priorEntryOnly(sentences.find((x) => x.id === v.sentenceId)!)).map((v) => v.sentenceId!);
+      if (iss.type === "inconsistency" && entryFields.length && priorIds.length) {
+        const rest = verified.filter((v) => v.sentenceId && !priorIds.includes(v.sentenceId));
+        const restText = rest.map((v) => sentences.find((x) => x.id === v.sentenceId)?.text ?? "").join(" ");
+        const fm = c.facts.find((f) => f.path === "entry.manner" && f.status === "present");
+        const parts = entryFields.map((v) => {
+          if (v.fieldPath !== "entry.manner") return { path: v.fieldPath!, text: supportedEntryPart(c, v.fieldPath!, restText) };
+          const formCat = formMannerCategory(fm?.value ?? ""), m = restText ? conflictManner(restText) : undefined;
+          return { path: v.fieldPath!, text: formCat && m && m !== formCat ? `The cited narrative statement describes ${m === "admitted" ? "admission at a port of entry or with a document" : "entry without inspection"}, but the form code "${fm!.value}" indicates otherwise.` : null };
+        }).filter((x) => x.text);
+        const note = `${[...new Set(priorIds)].join(" and ")} describe${priorIds.length > 1 ? "" : "s"} an earlier (first or previous) entry, and the form records the last entry, so that comparison was withheld.`;
+        discarded.push({ title: iss.title, reason: rest.length && parts.length ? `Part withheld. ${note}` : note });
+        if (!rest.length || !parts.length) { invalidate(iss, verified); return; }
+        verified = [...rest, ...verified.filter((v) => v.fieldPath && (!v.fieldPath.startsWith("entry.") || parts.some((x) => x.path === v.fieldPath)))];
+        iss = { ...iss, title: parts.length > 1 ? "Entry facts differ from the form" : parts[0].path === "entry.date" ? "Entry date differs from the form" : parts[0].path === "entry.place" ? "Place of entry differs from the form" : "Manner of entry differs from the form",
+          explanation: `${parts.map((x) => x.text).join(" ")} ${note}` };
+      }
+    }
     // (1b) A claimed conflict between the form's manner-of-entry code and a narrative sentence the extractor classified in
     // the SAME manner category (e.g. EWI/PWA vs "crossed illegally") is not a conflict.
     // Generalised (live verification of 286d42d, C037-X1: "smuggler-assisted crossing, whereas form lists EWI AFOOT"):
@@ -548,7 +593,18 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         citedSentences.some((x) => attribution(x, "unclear") !== "subject")) {
       discarded.push({ title: iss.title, reason: "Several people are described and the compared statements may be about different people, so they cannot show a contradiction." });
       humanReasons.push(`Several people are described with redacted names, and ${citedSentences.map((x) => x.id).join(" and ")} may be about different people. A person should decide whether they conflict.`);
-      accounts.push({ sentenceIds: citedSentences.map((x) => x.id), detail: `${citedSentences.map((x) => x.id).join(" and ")} give different accounts (the model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"), and they may be about different people.` });
+      // The fact the two accounts differ on, from the statements themselves (live verification of 452dcb8, UN04): different
+      // years → the entry date; different stated manners → the manner; different named U.S. states → the place. One
+      // fact only; otherwise the account is left without a field, as before.
+      const yrs = citedSentences.map((x) => [...new Set(x.text.match(/\b(?:19|20)\d\d\b/g) ?? [])]);
+      const mans = citedSentences.map((x) => conflictManner(x.text));
+      const sts = citedSentences.map((x) => [...namedStates(x.text)]);
+      const differs = [
+        yrs.every((y) => y.length === 1) && new Set(yrs.map((y) => y[0])).size > 1 ? "entry.date" : null,
+        mans.every(Boolean) && new Set(mans).size > 1 ? "entry.manner" : null,
+        sts.every((x) => x.length === 1) && new Set(sts.map((x) => x[0])).size > 1 ? "entry.place" : null,
+      ].filter(Boolean) as string[];
+      accounts.push({ sentenceIds: citedSentences.map((x) => x.id), ...(differs.length === 1 ? { fieldPath: differs[0] } : {}), detail: `${citedSentences.map((x) => x.id).join(" and ")} give different accounts (the model reported: "${stripChargeAdvice(iss.explanation, selected.map((x) => x.citation)).text}"), and they may be about different people.` });
       return;
     }
     // (1e) A time conflict must compare the same event (lib/review/times.ts): the form's encounter hour only with a time
@@ -659,6 +715,19 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   const routedAccounts = [...accountGroups.values()];
 
 
+  // Record facts that only model claims withheld as INVALID asserted (shown wrong: out of scope, same manner, outside
+  // the record field's scope, …; a claim withheld only because its quote could not be verified is not shown wrong), and
+  // that no kept finding or routed account supports. Model prose (a charge concern, a routing reason) asserting a
+  // conflict about one of these facts has nothing to rest on.
+  const withheldFacts = new Set(invalidClaims.flatMap((t) => [...factsOf(t)]));
+  const standingFacts = new Set([
+    ...findings.filter((f) => f.category === "inconsistency" || f.category === "unclear").flatMap((f) => [...factsOf(`${f.title} ${f.explanation} ${f.evidence.map((e) => e.fieldPath ?? "").join(" ")}`)]),
+    ...routedAccounts.flatMap((g) => [...factsOf(`${g.fieldPath ?? ""} ${g.details.join(" ")}`)]),
+  ]);
+  // Encounter-time reasons keep their own event-scoped handling (timeRoutingReasons), which may keep an unresolved time
+  // question even after a time claim is withheld; they are not decided here.
+  const unsupportedFacts = new Set([...withheldFacts].filter((x) => !standingFacts.has(x) && x !== "encounter time"));
+
   // ---- Citation check
   let citation: ReviewResult["citation"];
   const citeText = selected.map((s) => s.citation).join("; ");
@@ -670,12 +739,15 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
   } else {
     let status: ReviewResult["citation"]["status"] = "not_checked";
     let unsupportedConsistent = false;
+    // Whether the explanation is still the model's own prose (not an explanation the code wrote).
+    let modelProse = false;
     let explanation = "The citation check could not run because the model check was unavailable.";
     let evidence: EvidenceRef[] = [];
     if (out) {
       evidence = out.citation.evidence.map((x) => verifyEvidence(x, sentences, c)).filter(Boolean) as EvidenceRef[];
       explanation = stripChargeAdvice(out.citation.explanation, selected.map((s) => s.citation)).text || "See evidence.";
       status = out.citation.status;
+      modelProse = true;
       if (status === "insufficient_information" && charge) {
         // The reference exists, so "insufficient" means the record does not establish a key fact for this charge.
         status = "needs_human_review";
@@ -688,7 +760,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         // manner-based charge: diag-1 DG10), the check stays consistent; that conflict is reported as its own finding.
         if (concernsOnlyOtherFacts(out.citation.explanation, reqs)) {
           status = "consistent";
-          explanation = `The record states the fact this charge depends on. The model's concern is about a fact this charge does not depend on, and is reported as its own finding if supported. Model explanation: ${explanation}`;
+          modelProse = false; explanation = `The record states the fact this charge depends on. The model's concern is about a fact this charge does not depend on, and is reported as its own finding if supported. Model explanation: ${explanation}`;
         } else {
           status = "needs_human_review";
           explanation = `The record states the core fact this charge depends on, but the model raised a concern: ${explanation}`;
@@ -698,20 +770,20 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
         // The verdict and the model's own explanation disagree (F075-X, C013-X1). The wording is not support: the
         // record establishes the requirement only through verified evidence (checked just above). Without it, unresolved.
         status = "needs_human_review";
-        explanation = `Unresolved: the model's verdict is "likely mismatch", but its own explanation says the record supports or documents what the charge requires, and no verified statement in the record establishes that requirement. A person must decide. Model explanation: ${explanation}`;
+        modelProse = false; explanation = `Unresolved: the model's verdict is "likely mismatch", but its own explanation says the record supports or documents what the charge requires, and no verified statement in the record establishes that requirement. A person must decide. Model explanation: ${explanation}`;
       }
       if (req?.outcome === "unresolved" && status === "likely_mismatch") {
         // The record cannot say whose the deciding statements are (several people with redacted names, or an
         // unidentified member of a group). A model "mismatch" cannot settle that: the case stays with a person.
         status = "needs_human_review";
-        explanation = `${req.explanation} The model's "likely mismatch" verdict is not adopted, because the record does not resolve this. Model explanation: ${explanation}`;
+        modelProse = false; explanation = `${req.explanation} The model's "likely mismatch" verdict is not adopted, because the record does not resolve this. Model explanation: ${explanation}`;
       }
       if (reqs && status === "likely_mismatch" && req?.status !== "likely_mismatch") {
         // For a charge whose requirement the references record, a mismatch needs a contradiction established from
         // subject-specific evidence (the rule above). Without one, the record neither establishes nor contradicts the
         // requirement as far as the code can attribute it: the model's concern goes to a person, not into a verdict.
         status = "needs_human_review";
-        explanation = `Unresolved: the model's verdict is "likely mismatch", but no statement or form value attributable to this subject contradicts what the charge requires. A person should decide. Model explanation: ${explanation}`;
+        modelProse = false; explanation = `Unresolved: the model's verdict is "likely mismatch", but no statement or form value attributable to this subject contradicts what the charge requires. A person should decide. Model explanation: ${explanation}`;
       }
       if (status === "consistent") {
         // A "consistent" verdict needs verified support (audit item 6): a verified statement of the fact the charge
@@ -720,12 +792,38 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
           : evidence.some((e) => e.kind === "sentence");
         if (!supported) {
           status = "needs_human_review";
-          explanation = reqs && !factsSettled.ok
+          modelProse = false; explanation = reqs && !factsSettled.ok
             ? "The model reported the charge as consistent, but the fact extraction did not complete, so the fact this charge depends on could not be verified."
             : "The model reported the charge as consistent, but no verified statement of the fact this charge depends on was found. A person should confirm.";
           unsupportedConsistent = factsSettled.ok || !reqs;
         }
       }
+    }
+    // A model concern is linked to record facts (factsOf) and compared with the charge's configured requirement (live
+    // verification of 452dcb8: EG06, C021-X1, C037-X1). When the requirement is verified (supportsRequirement) and
+    // nothing contradicts or leaves it unresolved (no requirement-check result), a concern whose remaining facts are
+    // ones the charge does not depend on (an entry date or place for a manner-based charge), after facts asserted only by
+    // withheld claims are set aside, does not qualify the verdict: those facts are reported and routed as their own
+    // findings. A concern naming no recognisable record fact is left as it is; an unverified requirement stays unresolved.
+    // The same requirement map as the qualification below: a manner-based charge depends on the manner only; reentry
+    // after removal (8 U.S.C. 1326) depends on the entry and the immigration history, so entry facts still qualify it.
+    const reqFacts = reqs?.entryManner ? ["entry manner"] : reqs?.priorRemoval ? ["entry date", "entry place", "entry manner", "immigration history"] : null;
+    // Only with a completed fact extraction: without it the other facts cannot be checked as their own findings, and
+    // the partial review keeps the concern (timeout fallback, F075-X).
+    if (out && reqFacts && !req && factsSettled.ok && status === "needs_human_review" && supportsRequirement(c, sentences, factsSettled.ok ? factsSettled.v : EMPTY_FACTS, reqs, multiPerson)) {
+      const named = [...concernFacts(out.citation.explanation)];
+      const eff = named.filter((x) => !unsupportedFacts.has(x)), dropped = named.filter((x) => unsupportedFacts.has(x));
+      if (named.length && eff.every((x) => !reqFacts.includes(x))) {
+        status = "consistent";
+        modelProse = false; explanation = `The record states the fact this charge depends on (verified).${eff.length ? ` The model's remaining concern is about the ${eff.join(" and ")}, which this charge does not depend on; it is reported and routed as its own finding where the record supports it.` : ""}${dropped.length ? ` The model also asserted a conflict about the ${dropped.join(" and ")}, which the record does not support; that claim was withheld.` : ""}`;
+      }
+    }
+    // When the requirement check reaches the same unresolved verdict as the model, the check decides it: its supported
+    // explanation and evidence replace the model's prose (live verification of 452dcb8, UN01: an order whose execution is
+    // unknown was explained by the model as "confirms a prior removal").
+    if (req && modelProse && factsSettled.ok && req.status === status && status === "needs_human_review" && req.explanation) {
+      explanation = req.explanation;
+      if (req.evidence.length) evidence = req.evidence;
     }
     // The more cautious result wins.
     const rank = { not_checked: -1, consistent: 0, insufficient_information: 1, needs_human_review: 2, likely_mismatch: 3 } as const;
@@ -789,7 +887,7 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     const kept = modelRoutingReasons(out.human_review.reasons, invalidClaims, [
       ...findings.filter((f) => f.category === "inconsistency" || f.category === "unclear").map((f) => `${f.title} ${f.explanation} ${f.evidence.map((e) => e.fieldPath ?? "").join(" ")}`),
       ...routedAccounts.map((g) => `${g.fieldPath ?? "entry.date entry.place entry.manner"} ${g.details.join(" ")}`),
-    ]);
+    ], unsupportedFacts);
     for (const r of kept.removed) discarded.push({ title: "Model routing reason", reason: `"${r}" depends only on a claim that was withheld as invalid, so it is not a reason to route.` });
     // Encounter-time concerns the source does not support (event-scoped; lib/review/times.ts).
     const timeSupported = !!encounterTimeConflict(sentences, encounterFormValue(c), true) ||

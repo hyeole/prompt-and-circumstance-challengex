@@ -1,7 +1,7 @@
 {
  "summary": {
-  "runs": 242,
-  "records": 1512,
+  "runs": 280,
+  "records": 1550,
   "byGroup": {
    "historical": {
     "runs": 142,
@@ -22,18 +22,19 @@
    "restored: capability-1 re-run (encounter-time verification, a465773)": {
     "runs": 22,
     "records": 22
+   },
+   "live-452dcb8": {
+    "runs": 38,
+    "records": 38
    }
   },
   "everyRunReplayedInEveryMode": true,
   "duplicateRecords": 0,
   "skippedRecords": 0,
   "reconciliation": {
-   "1432": "Historical 142 runs (1,412 records) + diag-1 20 runs (20 records) = 1,432 records (162 runs): the coverage reported for 286d42d and 44a1dae.",
-   "1490": "1,432 + live-1 28 + diag-2 30 = 1,490 distinct records (220 runs): the actual coverage of 06278ed and df54805.",
-   "1496": "Not a record count. 5,984 output lines (the four mode outputs PLUS the two sentence-ID remap logs, 12 lines each) divided by 4: 5,984 = 4 x 1,490 + 24. The 06278ed report's '1,496 per mode' was this miscount; the actual count was 1,490 per mode, with no duplicates.",
-   "1512": "1,490 + 22 restored records (242 runs): the coverage of this checkpoint. The 22 capability-1 re-run records (runner f192a43, server a465773, encounter-time verification) were saved in the capability-1 worktree and unintentionally left out of the earlier replay lists."
-  },
-  "excluded": "No saved run directory with raw results, in the main checkout or any worktree, is excluded. Copies of runs inside earlier evidence bundles and scratch rebuild outputs are duplicates or derived outputs, not saved results."
+   "1512": "Coverage of 452dcb8 (242 runs).",
+   "1550": "1,512 + 38 live-452dcb8 records (30 diag-2 + 8 historical controls) = 1,550 records (280 runs): the coverage of this checkpoint. Every saved run with raw results in the main checkout and all worktrees is included; nothing is excluded."
+  }
  },
  "runs": [
   {
@@ -62,7 +63,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -96,7 +97,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -130,7 +131,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -164,7 +165,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -198,7 +199,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -232,7 +233,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -271,7 +272,7 @@
     "C135-MC"
    ],
    "rawFiles": 21,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 21,
     "stub-mismatch": 21,
@@ -305,7 +306,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -344,7 +345,7 @@
     "C135-MC"
    ],
    "rawFiles": 21,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 21,
     "stub-mismatch": 21,
@@ -399,7 +400,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -433,7 +434,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -488,7 +489,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -522,7 +523,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -556,7 +557,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -590,7 +591,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -624,7 +625,7 @@
     "C013-X1"
    ],
    "rawFiles": 16,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 16,
     "stub-mismatch": 16,
@@ -654,7 +655,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -700,7 +701,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -730,7 +731,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -776,7 +777,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -831,7 +832,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -861,7 +862,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -907,7 +908,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -962,7 +963,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -992,7 +993,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1038,7 +1039,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -1093,7 +1094,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1123,7 +1124,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1169,7 +1170,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -1224,7 +1225,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1279,7 +1280,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1307,7 +1308,7 @@
     "FS10"
    ],
    "rawFiles": 10,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 10,
     "stub-mismatch": 10,
@@ -1335,7 +1336,7 @@
     "C119-CIT"
    ],
    "rawFiles": 10,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 10,
     "stub-mismatch": 10,
@@ -1356,7 +1357,7 @@
     "DS10"
    ],
    "rawFiles": 3,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 3,
     "stub-mismatch": 3,
@@ -1386,7 +1387,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1432,7 +1433,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -1487,7 +1488,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1512,7 +1513,7 @@
     "C119-CIT"
    ],
    "rawFiles": 7,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 7,
     "stub-mismatch": 7,
@@ -1542,7 +1543,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1588,7 +1589,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -1643,7 +1644,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1663,7 +1664,7 @@
     "DS12"
    ],
    "rawFiles": 2,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 2,
     "stub-mismatch": 2,
@@ -1686,7 +1687,7 @@
     "FS10"
    ],
    "rawFiles": 5,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 5,
     "stub-mismatch": 5,
@@ -1713,7 +1714,7 @@
     "C013-X1"
    ],
    "rawFiles": 9,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 9,
     "stub-mismatch": 9,
@@ -1743,7 +1744,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1789,7 +1790,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -1844,7 +1845,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -1868,7 +1869,7 @@
     "C119-AMB"
    ],
    "rawFiles": 6,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 6,
     "stub-mismatch": 6,
@@ -1889,7 +1890,7 @@
     "F075"
    ],
    "rawFiles": 3,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 3,
     "stub-mismatch": 3,
@@ -1908,7 +1909,7 @@
     "DS12"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -1938,7 +1939,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -1984,7 +1985,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -2039,7 +2040,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -2069,7 +2070,7 @@
     "G12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -2099,7 +2100,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -2145,7 +2146,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -2200,7 +2201,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -2230,7 +2231,7 @@
     "G12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -2249,7 +2250,7 @@
     "G06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2268,7 +2269,7 @@
     "G09"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2287,7 +2288,7 @@
     "G02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2306,7 +2307,7 @@
     "G07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2325,7 +2326,7 @@
     "C119-X1"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2344,7 +2345,7 @@
     "F075-H"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2363,7 +2364,7 @@
     "DS06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2382,7 +2383,7 @@
     "C003-AMB"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2401,7 +2402,7 @@
     "C003-M3"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2420,7 +2421,7 @@
     "F010-D"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2439,7 +2440,7 @@
     "C013"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2458,7 +2459,7 @@
     "F051"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2488,7 +2489,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -2534,7 +2535,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -2589,7 +2590,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -2619,7 +2620,7 @@
     "G12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -2638,7 +2639,7 @@
     "C013-CIT"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2657,7 +2658,7 @@
     "C037-X1"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2676,7 +2677,7 @@
     "F075-X"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2695,7 +2696,7 @@
     "C013"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2714,7 +2715,7 @@
     "C003-CIT"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2733,7 +2734,7 @@
     "C003"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2752,7 +2753,7 @@
     "F036-C"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2771,7 +2772,7 @@
     "F055-H"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2790,7 +2791,7 @@
     "C021-CIT"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2809,7 +2810,7 @@
     "C037-CIT"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2828,7 +2829,7 @@
     "G01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2847,7 +2848,7 @@
     "G10"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2866,7 +2867,7 @@
     "CAP-A1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2885,7 +2886,7 @@
     "CAP-A1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2904,7 +2905,7 @@
     "CAP-A1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2923,7 +2924,7 @@
     "CAP-A1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2942,7 +2943,7 @@
     "CAP-A2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2961,7 +2962,7 @@
     "CAP-A2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2980,7 +2981,7 @@
     "CAP-A2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -2999,7 +3000,7 @@
     "CAP-A2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3018,7 +3019,7 @@
     "CAP-B1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3037,7 +3038,7 @@
     "CAP-B1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3056,7 +3057,7 @@
     "CAP-B1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3075,7 +3076,7 @@
     "CAP-B1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3094,7 +3095,7 @@
     "CAP-B2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3113,7 +3114,7 @@
     "CAP-B2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3132,7 +3133,7 @@
     "CAP-B2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3151,7 +3152,7 @@
     "CAP-B2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3170,7 +3171,7 @@
     "CAP-C1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3189,7 +3190,7 @@
     "CAP-C1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3208,7 +3209,7 @@
     "CAP-C1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3227,7 +3228,7 @@
     "CAP-C1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3246,7 +3247,7 @@
     "CAP-C2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3265,7 +3266,7 @@
     "CAP-C2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3284,7 +3285,7 @@
     "CAP-C2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3303,7 +3304,7 @@
     "CAP-C2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3322,7 +3323,7 @@
     "CAP-D1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3341,7 +3342,7 @@
     "CAP-D1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3360,7 +3361,7 @@
     "CAP-D1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3379,7 +3380,7 @@
     "CAP-D1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3398,7 +3399,7 @@
     "CAP-D2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3417,7 +3418,7 @@
     "CAP-D2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3436,7 +3437,7 @@
     "CAP-D2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3455,7 +3456,7 @@
     "CAP-D2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3474,7 +3475,7 @@
     "CAP-E1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3493,7 +3494,7 @@
     "CAP-E1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3512,7 +3513,7 @@
     "CAP-E1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3531,7 +3532,7 @@
     "CAP-E1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3550,7 +3551,7 @@
     "CAP-E2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3569,7 +3570,7 @@
     "CAP-E2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3588,7 +3589,7 @@
     "CAP-E2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3607,7 +3608,7 @@
     "CAP-E2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3626,7 +3627,7 @@
     "CAP-E3U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3645,7 +3646,7 @@
     "CAP-E3U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3664,7 +3665,7 @@
     "CAP-E4U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3683,7 +3684,7 @@
     "CAP-E4U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3713,7 +3714,7 @@
     "DS12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -3759,7 +3760,7 @@
     "FS10"
    ],
    "rawFiles": 28,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 28,
     "stub-mismatch": 28,
@@ -3814,7 +3815,7 @@
     "C135-MC"
    ],
    "rawFiles": 37,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 37,
     "stub-mismatch": 37,
@@ -3844,7 +3845,7 @@
     "G12"
    ],
    "rawFiles": 12,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 12,
     "stub-mismatch": 12,
@@ -3863,7 +3864,7 @@
     "C045"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3882,7 +3883,7 @@
     "C045-CIT"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3901,7 +3902,7 @@
     "C045-MC"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3920,7 +3921,7 @@
     "C045-X1"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3939,7 +3940,7 @@
     "VL01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3958,7 +3959,7 @@
     "VL02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3977,7 +3978,7 @@
     "VL03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -3996,7 +3997,7 @@
     "VL04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4015,7 +4016,7 @@
     "DG01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4034,7 +4035,7 @@
     "DG02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4053,7 +4054,7 @@
     "DG03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4072,7 +4073,7 @@
     "DG04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4091,7 +4092,7 @@
     "DG05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4110,7 +4111,7 @@
     "DG06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4129,7 +4130,7 @@
     "DG07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4148,7 +4149,7 @@
     "DG08"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4167,7 +4168,7 @@
     "DG09"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4186,7 +4187,7 @@
     "DG10"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4205,7 +4206,7 @@
     "DN01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4224,7 +4225,7 @@
     "DN02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4243,7 +4244,7 @@
     "DN03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4262,7 +4263,7 @@
     "DN04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4281,7 +4282,7 @@
     "DN05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4300,7 +4301,7 @@
     "DN06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4319,7 +4320,7 @@
     "DU01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4338,7 +4339,7 @@
     "DU02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4357,7 +4358,7 @@
     "DU03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4376,7 +4377,7 @@
     "DU04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4395,7 +4396,7 @@
     "DG01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4414,7 +4415,7 @@
     "DG02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4433,7 +4434,7 @@
     "DG03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4452,7 +4453,7 @@
     "DG04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4471,7 +4472,7 @@
     "DG05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4490,7 +4491,7 @@
     "DG06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4509,7 +4510,7 @@
     "DG07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4528,7 +4529,7 @@
     "DG08"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4547,7 +4548,7 @@
     "DG09"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4566,7 +4567,7 @@
     "DG10"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4585,7 +4586,7 @@
     "DN01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4604,7 +4605,7 @@
     "DN02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4623,7 +4624,7 @@
     "DN03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4642,7 +4643,7 @@
     "DN04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4661,7 +4662,7 @@
     "DN05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4680,7 +4681,7 @@
     "DN06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4699,7 +4700,7 @@
     "DU01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4718,7 +4719,7 @@
     "DU02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4737,7 +4738,7 @@
     "DU03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4756,7 +4757,7 @@
     "DU04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4775,7 +4776,7 @@
     "CAP-E2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4794,7 +4795,7 @@
     "CAP-E2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4813,7 +4814,7 @@
     "CAP-E3U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4832,7 +4833,7 @@
     "CAP-E4U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4851,7 +4852,7 @@
     "F051"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4870,7 +4871,7 @@
     "F051-C"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4889,7 +4890,7 @@
     "C021-X1"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4908,7 +4909,7 @@
     "C037-X1"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4927,7 +4928,7 @@
     "EG01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4946,7 +4947,7 @@
     "EG02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4965,7 +4966,7 @@
     "EG03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -4984,7 +4985,7 @@
     "EG04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5003,7 +5004,7 @@
     "EG05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5022,7 +5023,7 @@
     "EG06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5041,7 +5042,7 @@
     "EG07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5060,7 +5061,7 @@
     "EG08"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5079,7 +5080,7 @@
     "EG09"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5098,7 +5099,7 @@
     "EG10"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5117,7 +5118,7 @@
     "EG11"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5136,7 +5137,7 @@
     "EG12"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5155,7 +5156,7 @@
     "NC01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5174,7 +5175,7 @@
     "NC02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5193,7 +5194,7 @@
     "NC03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5212,7 +5213,7 @@
     "NC04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5231,7 +5232,7 @@
     "NC05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5250,7 +5251,7 @@
     "NC06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5269,7 +5270,7 @@
     "NC07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5288,7 +5289,7 @@
     "NC08"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5307,7 +5308,7 @@
     "NC09"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5326,7 +5327,7 @@
     "NC10"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5345,7 +5346,7 @@
     "UN01"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5364,7 +5365,7 @@
     "UN02"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5383,7 +5384,7 @@
     "UN03"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5402,7 +5403,7 @@
     "UN04"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5421,7 +5422,7 @@
     "UN05"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5440,7 +5441,7 @@
     "UN06"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5459,7 +5460,7 @@
     "UN07"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5478,7 +5479,7 @@
     "UN08"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": true,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5497,7 +5498,7 @@
     "CAP-A1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5516,7 +5517,7 @@
     "CAP-A1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5535,7 +5536,7 @@
     "CAP-A2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5554,7 +5555,7 @@
     "CAP-A2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5573,7 +5574,7 @@
     "CAP-B1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5592,7 +5593,7 @@
     "CAP-B1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5611,7 +5612,7 @@
     "CAP-B2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5630,7 +5631,7 @@
     "CAP-B2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5649,7 +5650,7 @@
     "CAP-C1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5668,7 +5669,7 @@
     "CAP-C1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5687,7 +5688,7 @@
     "CAP-C2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5706,7 +5707,7 @@
     "CAP-C2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5725,7 +5726,7 @@
     "CAP-D1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5744,7 +5745,7 @@
     "CAP-D1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5763,7 +5764,7 @@
     "CAP-D2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5782,7 +5783,7 @@
     "CAP-D2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5801,7 +5802,7 @@
     "CAP-E1N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5820,7 +5821,7 @@
     "CAP-E1P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5839,7 +5840,7 @@
     "CAP-E2N"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5858,7 +5859,7 @@
     "CAP-E2P"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5877,7 +5878,7 @@
     "CAP-E3U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,
@@ -5896,7 +5897,729 @@
     "CAP-E4U"
    ],
    "rawFiles": 1,
-   "inEarlierCoverage": false,
+   "inPreviousCoverage": true,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-32-49",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG01"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-33-05",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG02"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-33-18",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG03"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-33-31",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG04"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-33-49",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG05"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-34-06",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG06"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-34-19",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG07"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-34-27",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG08"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-34-43",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG09"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-35-03",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG10"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-35-20",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG11"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-35-35",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "EG12"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-35-44",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC01"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-35-56",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC02"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-36-05",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC03"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-36-30",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC04"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-36-41",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC05"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-36-57",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC06"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-37-08",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC07"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-37-21",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC08"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-37-37",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC09"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-37-45",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "NC10"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-38-15",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN01"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-38-29",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN02"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-38-46",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN03"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-38-58",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN04"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-39-14",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN05"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-39-34",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN06"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-39-53",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN07"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-40-10",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/diag-2",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "UN08"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-40-20",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/capability-1",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "CAP-E2N"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-40-37",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/capability-1",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "CAP-E2P"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-40-47",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/capability-1",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "CAP-E3U"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-41-09",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/capability-1",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "CAP-E4U"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-41-24",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/fresh",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "F051"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-41-48",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval/fresh",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "F051-C"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-42-07",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "C021-X1"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
+   "recordsPerMode": {
+    "stub": 1,
+    "stub-mismatch": 1,
+    "stub-failall": 1,
+    "recon": 1
+   }
+  },
+  {
+   "runId": "2026-11-04T23-42-34",
+   "checkout": "wt-l2",
+   "group": "live-452dcb8",
+   "dataset": "eval",
+   "label": "live-452dcb8 (verification of 452dcb8 on reused development cases; post-observation; not an evaluation)",
+   "runnerCommit": "a536978",
+   "cases": [
+    "C037-X1"
+   ],
+   "rawFiles": 1,
+   "inPreviousCoverage": false,
    "recordsPerMode": {
     "stub": 1,
     "stub-mismatch": 1,

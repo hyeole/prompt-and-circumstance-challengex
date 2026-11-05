@@ -638,6 +638,20 @@ const DEPARTURE_WORD_RE = /\b(?:returned|left|departed|removed|deported|went bac
  *     says nothing about this entry.
  * Anything less leaves the entry as a first entry.
  */
+/**
+ * A sentence whose entries are all explicitly earlier ones: every entry word in it is scoped "first" (and the source
+ * does not say that first entry was the only one) or "previous / prior / earlier". The form records the LAST entry, so
+ * such a sentence cannot be compared with the form's entry fields (diag-2 EG09: "first entered … in 2005" vs the form's
+ * 2019 entry). The same scope rule the deterministic comparison uses (entryScope, firstEntryIsOnly).
+ */
+export function priorEntryOnly(s: Sentence): boolean {
+  const trig = [...s.text.matchAll(ENTRY_TRIGGER_RE)];
+  if (!trig.length) return false;
+  const scopes = trig.map((m) => entryScope(s.text, m.index!));
+  if (!scopes.every((x) => x === "first" || x === "previous")) return false;
+  const year = Number(s.text.match(/\b(?:19|20)\d\d\b/)?.[0]) || null;
+  return scopes.some((x) => x === "previous") || !trig.some((m) => firstEntryIsOnly(s, m.index!, year));
+}
 function firstEntryIsOnly(s: Sentence, at: number, year?: number | null): boolean {
   const found = entryTrigger(s.text, at);
   if (!found) return false;
