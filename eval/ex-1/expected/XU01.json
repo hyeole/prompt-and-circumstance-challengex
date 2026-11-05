@@ -1,0 +1,18 @@
+{
+  "id": "XU01",
+  "base": "XU01",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Two redacted men; one gives 2016, the form 2019; the record does not say which is the subject",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he crossed the border near Nogales, Arizona, in 2016"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The redacted names cannot be told apart and nothing designates the subject. The 2016 statement may be the other man's: route, no contradiction."
+}

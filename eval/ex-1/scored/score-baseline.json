@@ -1,0 +1,1305 @@
+[
+ {
+  "id": "XE01",
+  "category": "established",
+  "checksPassed": false,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "his most recent crossing was in the summer of 2017",
+    "field": "entry.date",
+    "sentence": "S8",
+    "pass": false,
+    "detail": "none citing S8 and entry.date"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "The first time was in 2008",
+    "sentence": "S6",
+    "pass": false,
+    "detail": "F-ENTRY-DATE"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Conflicting accounts of the same fact require human review to determine the correct entry date.",
+   "Conflicting entry dates between form field and narrative.",
+   "Entry date differs from the form: Conflicting entry dates: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by stating the subject is present in the U.S. without admission or parole."
+  },
+  "findings": [
+   {
+    "id": "U-N1",
+    "category": "unclear",
+    "source": "model",
+    "title": "Unclear: identifying documents",
+    "explanation": "The cited sentence mentions a document but does not say what identifying documents the person had.",
+    "evidence": [
+     "S3"
+    ],
+    "needsHumanReview": false
+   },
+   {
+    "id": "F-ENTRY-DATE",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Entry date differs from the form",
+    "explanation": "The narrative gives 2008 for the entry, but the form records the last entry in 2019. S6 does not name the subject itself; the narrative describes only one person of interest, so the statement is treated as the subject's.",
+    "evidence": [
+     "S6",
+     "entry.date"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 29757,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 29689
+   },
+   {
+    "role": "review-1",
+    "status": "cancelled",
+    "attempts": 1,
+    "ms": 29323
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 17278
+   }
+  ]
+ },
+ {
+  "id": "XE02",
+  "category": "established",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "waded across the Rio Grande near Roma, Texas, in March 2020",
+    "field": "entry.date",
+    "sentence": "S8",
+    "pass": true,
+    "detail": "F-ENTRY-DATE"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he crossed the border near Hidalgo, Texas, in 2022",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "The conflicting dates could affect the applicability of the selected charge and require adjudication.",
+   "Conflicting entry dates between form and narrative.",
+   "Potential impact on charge applicability.",
+   "Entry date differs from the form: Conflicting entry dates: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The record states the fact this charge depends on (verified). The model's remaining concern is about the entry date, which this charge does not depend on; it is reported and routed as its own finding where the record supports it."
+  },
+  "findings": [
+   {
+    "id": "F-ENTRY-DATE",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Entry date differs from the form",
+    "explanation": "The narrative gives 2020 for the entry, but the form records the last entry in 2022.",
+    "evidence": [
+     "S8",
+     "entry.date"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 18464,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 11676
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 18447
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8269
+   }
+  ]
+ },
+ {
+  "id": "XE03",
+  "category": "established",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": [
+     "inconsistency",
+     "unclear"
+    ],
+    "anchor": "he was removed on foot through the Laredo, Texas, port of entry on 04/02/2016",
+    "field": "history.immigration_record",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "F-HISTORY"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Conflicting immigration history records",
+   "Potential impact on charge determination",
+   "Immigration record conflicts with the narrative: Conflicting immigration history: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by showing the subject is present in the U.S. without admission or parole."
+  },
+  "findings": [
+   {
+    "id": "M-N1",
+    "category": "missing_element",
+    "source": "model",
+    "title": "Missing: identifying documents",
+    "explanation": "Which identity documents the traveler had or presented (passport, ID card, license, visa), or a statement that there were none. The narrative and form fields reviewed do not state this. Note: No identity documents mentioned",
+    "evidence": [
+     "N1"
+    ],
+    "needsHumanReview": false
+   },
+   {
+    "id": "F-HISTORY",
+    "category": "inconsistency",
+    "source": "rule",
+    "title": "Immigration record conflicts with the narrative",
+    "explanation": "The form records the immigration record as \"NEGATIVE\", but the narrative describes a prior removal or deportation for the subject.",
+    "evidence": [
+     "S5",
+     "history.immigration_record"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 19214,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 19195
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 17441
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 17179
+   }
+  ]
+ },
+ {
+  "id": "XE04",
+  "category": "established",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "showed his border crossing card to an officer at the San Ysidro port of entry",
+    "field": "entry.manner",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "F-ENTRY-MANNER"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "by climbing the fence near Tijuana",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "The record states the core fact this charge depends on, but the model raised a concern: The narrative states the subject was admitted at San Ysidro on 06/20/2018, conflicting with the form field entry.manner of EWI.",
+   "Conflicting accounts of how the subject entered: Two accounts of the manner of entry conflict; the facts could support different charges."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "needs_human_review",
+   "explanation": "The record states the core fact this charge depends on, but the model raised a concern: The narrative states the subject was admitted at San Ysidro on 06/20/2018, conflicting with the form field entry.manner of EWI."
+  },
+  "findings": [
+   {
+    "id": "F-ENTRY-MANNER",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Conflicting accounts of how the subject entered",
+    "explanation": "The form code \"EWI\" indicates entry without inspection, but a narrative statement describes admission at a port of entry or with a document.",
+    "evidence": [
+     "S6",
+     "entry.manner"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 8313,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8301
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8127
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8162
+   }
+  ]
+ },
+ {
+  "id": "XE05",
+  "category": "established",
+  "checksPassed": false,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "crossed on foot through a gap in the fence on the west side of El Paso, Texas",
+    "field": "entry.place",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "F-ENTRY-PLACE"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "his first trip north was in 2015 through the desert near Nogales, Arizona",
+    "sentence": "S5",
+    "pass": false,
+    "detail": "F-ENTRY-DATE"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Entry date differs from the form: Conflicting entry dates: a person should decide which is correct.",
+   "Place of entry differs from the form: The place of entry differs between the form and the narrative: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by stating the subject entered without inspection and is present without admission or parole."
+  },
+  "findings": [
+   {
+    "id": "F-ENTRY-DATE",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Entry date differs from the form",
+    "explanation": "The narrative gives 2015 for the entry, but the form records the last entry in 2021.",
+    "evidence": [
+     "S5",
+     "entry.date"
+    ],
+    "needsHumanReview": true
+   },
+   {
+    "id": "F-ENTRY-PLACE",
+    "category": "inconsistency",
+    "source": "rule",
+    "title": "Place of entry differs from the form",
+    "explanation": "The form records the place of entry as \"near Tucson, AZ\" (Arizona), but S6 places the subject's crossing in Texas.",
+    "evidence": [
+     "S6",
+     "entry.place"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 29884,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 29871
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6721
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7095
+   }
+  ]
+ },
+ {
+  "id": "XE06",
+  "category": "established",
+  "checksPassed": false,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "hid him under tarps in the cargo bed of a pickup truck",
+    "field": "entry.manner",
+    "sentence": "S5",
+    "pass": false,
+    "detail": "none citing S5 and entry.manner"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by stating the subject entered without inspection and is present without admission."
+  },
+  "findings": [],
+  "latencyMs": 12432,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 12420
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 5109
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6876
+   }
+  ]
+ },
+ {
+  "id": "XE07",
+  "category": "established",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": "inconsistency",
+    "anchor": "on the night of 11/14/2015",
+    "field": "entry.date",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "F-ENTRY-DATE"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "The conflicting dates could affect the applicability of the selected charge and require adjudication.",
+   "The narrative supports the charge of INA 212(a)(6)(A)(i) as the subject is present without admission, but the entry date inconsistency may alter the factual basis.",
+   "Conflicting entry dates",
+   "Potential impact on charge validity",
+   "Conflicting entry dates between narrative and form field.",
+   "Entry date differs from the form: Conflicting entry dates: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "needs_human_review",
+   "explanation": "The narrative supports the charge of INA 212(a)(6)(A)(i) as the subject is present without admission, but the entry date inconsistency may alter the factual basis."
+  },
+  "findings": [
+   {
+    "id": "M-N1",
+    "category": "missing_element",
+    "source": "model",
+    "title": "Missing: identifying documents",
+    "explanation": "Which identity documents the traveler had or presented (passport, ID card, license, visa), or a statement that there were none. The narrative and form fields reviewed do not state this. Note: no identity documents mentioned",
+    "evidence": [
+     "N1"
+    ],
+    "needsHumanReview": false
+   },
+   {
+    "id": "F-ENTRY-DATE",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Entry date differs from the form",
+    "explanation": "The narrative gives 2015 for the entry, but the form records the last entry in 2017. S6 does not name the subject itself; the narrative describes only one person of interest, so the statement is treated as the subject's.",
+    "evidence": [
+     "S6",
+     "entry.date"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 22007,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 21994
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 16175
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 14196
+   }
+  ]
+ },
+ {
+  "id": "XE08",
+  "category": "established",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "finding",
+    "category": [
+     "inconsistency",
+     "unclear"
+    ],
+    "anchor": "that he was given expedited removal, and that he was bused to Mexicali the next day",
+    "field": "history.immigration_record",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "F-HISTORY"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Immigration record conflicts with the narrative: Conflicting immigration history: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by indicating the subject is a Mexican citizen present in the U.S. without admission or parole, having entered without inspection."
+  },
+  "findings": [
+   {
+    "id": "F-HISTORY",
+    "category": "inconsistency",
+    "source": "rule",
+    "title": "Immigration record conflicts with the narrative",
+    "explanation": "The form records the immigration record as \"NEGATIVE\", but the narrative describes a prior removal or deportation for the subject.",
+    "evidence": [
+     "S5",
+     "history.immigration_record"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 27375,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 27361
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7666
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 9769
+   }
+  ]
+ },
+ {
+  "id": "XN01",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he first entered the United States in 2010 near Sasabe, Arizona",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by indicating the subject is a Mexican citizen, present in the U.S. without admission or parole, and entered without inspection."
+  },
+  "findings": [
+   {
+    "id": "U-N1",
+    "category": "unclear",
+    "source": "model",
+    "title": "Unclear: identifying documents",
+    "explanation": "The cited sentence mentions a document but does not say what identifying documents the person had.",
+    "evidence": [
+     "S3"
+    ],
+    "needsHumanReview": false
+   }
+  ],
+  "latencyMs": 10467,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 9461
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 10454
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6810
+   }
+  ]
+ },
+ {
+  "id": "XN02",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he crossed near Eagle Pass in 2017",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative confirms the subject entered without inspection and is present in the U.S. without admission or parole, matching the selected charge."
+  },
+  "findings": [],
+  "latencyMs": 11284,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 11276
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6227
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8104
+   }
+  ]
+ },
+ {
+  "id": "XN03",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "Narrative confirms subject entered without inspection at Sasabe, AZ in May 2019, matching form fields and supporting the selected charge."
+  },
+  "findings": [],
+  "latencyMs": 12842,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 12836
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 4487
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 5140
+   }
+  ]
+ },
+ {
+  "id": "XN04",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency",
+     "unclear"
+    ],
+    "field": "history.immigration_record",
+    "pass": true,
+    "detail": "none"
+   },
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative confirms the subject entered without inspection on foot near Eagle Pass, Texas, and is present in the United States without admission or parole, matching the selected charge."
+  },
+  "findings": [],
+  "latencyMs": 8198,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8190
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 4832
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 5854
+   }
+  ]
+ },
+ {
+  "id": "XN05",
+  "category": "negative",
+  "checksPassed": false,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": false,
+    "detail": "F-ENTRY-DATE"
+   },
+   {
+    "kind": "citationNot",
+    "status": "likely_mismatch",
+    "pass": true,
+    "detail": "consistent"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Entry date differs from the form: Conflicting entry dates: a person should decide which is correct."
+  ],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 237(a)(1)(B) by showing the subject was admitted and remained beyond the authorized period."
+  },
+  "findings": [
+   {
+    "id": "F-ENTRY-DATE",
+    "category": "inconsistency",
+    "source": "model",
+    "title": "Entry date differs from the form",
+    "explanation": "The narrative gives 2012 for the entry, but the form records the last entry in 2019.",
+    "evidence": [
+     "S5",
+     "entry.date"
+    ],
+    "needsHumanReview": true
+   }
+  ],
+  "latencyMs": 8578,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7203
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8571
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8494
+   }
+  ]
+ },
+ {
+  "id": "XN06",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by stating the subject entered without inspection and is present without admission."
+  },
+  "findings": [],
+  "latencyMs": 8453,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8447
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 4505
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6378
+   }
+  ]
+ },
+ {
+  "id": "XN07",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) with consistent entry and encounter facts."
+  },
+  "findings": [
+   {
+    "id": "M-N1",
+    "category": "missing_element",
+    "source": "model",
+    "title": "Missing: identifying documents",
+    "explanation": "Which identity documents the traveler had or presented (passport, ID card, license, visa), or a statement that there were none. The narrative and form fields reviewed do not state this. Note: no identity documents mentioned",
+    "evidence": [
+     "N1"
+    ],
+    "needsHumanReview": false
+   }
+  ],
+  "latencyMs": 13568,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 9979
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 12447
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 13562
+   }
+  ]
+ },
+ {
+  "id": "XN08",
+  "category": "negative",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "noFinding",
+    "category": [
+     "inconsistency"
+    ],
+    "pass": true,
+    "detail": "none"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he crossed into Mexico from Guatemala at Tecun Uman in December 2017",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": false,
+  "reasons": [],
+  "accounts": [],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative confirms the subject entered the United States on 05/22/2018 near Eagle Pass, TX without inspection, matching the form fields and supporting the selected charge of INA 212(a)(6)(A)(i)."
+  },
+  "findings": [],
+  "latencyMs": 12052,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 12032
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7232
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7102
+   }
+  ]
+ },
+ {
+  "id": "XU01",
+  "category": "unresolved",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "route",
+    "anchor": "he crossed the border near Nogales, Arizona, in 2016",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "routed=true; S6 named=true"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he crossed the border near Nogales, Arizona, in 2016",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Several people are described with redacted names, and S6 may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.",
+   "The record states the core fact this charge depends on, but the model raised a concern: The selected charge requires that the subject entered without inspection; the narrative confirms EWI AFOOT but the entry date conflict raises uncertainty.",
+   "Conflicting entry dates between narrative and form fields; unclear which is correct",
+   "Conflicting entry dates between narrative and form fields"
+  ],
+  "accounts": [
+   {
+    "fieldPath": "entry.date",
+    "sentenceIds": [
+     "S6"
+    ],
+    "details": [
+     "S6 gives 2016 for the entry; the form records the last entry in 2019."
+    ]
+   }
+  ],
+  "citation": {
+   "status": "needs_human_review",
+   "explanation": "The record states the core fact this charge depends on, but the model raised a concern: The selected charge requires that the subject entered without inspection; the narrative confirms EWI AFOOT but the entry date conflict raises uncertainty."
+  },
+  "findings": [],
+  "latencyMs": 9506,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 5822
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 9498
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 9489
+   }
+  ]
+ },
+ {
+  "id": "XU02",
+  "category": "unresolved",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "route",
+    "anchor": "he crossed near Laredo, Texas, on 07/19/2018",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "routed=true; S6 named=true"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he crossed near Laredo, Texas, on 07/19/2018",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Several people are described with redacted names, and S5 and S6 may be about different people. A person should decide whether they conflict.",
+   "Several people are described with redacted names, and S6 may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.",
+   "The narrative contains conflicting entry dates that are not reconciled, raising uncertainty about the subject’s last entry date and manner.",
+   "Conflicting entry dates in narrative"
+  ],
+  "accounts": [
+   {
+    "fieldPath": "entry.date",
+    "sentenceIds": [
+     "S6",
+     "S5"
+    ],
+    "details": [
+     "S6 gives 2018 for the entry; the form records the last entry in 2021.",
+     "S5 and S6 give different accounts (the model reported: \"Narrative reports two different dates of entry, 03/03/2021 and 07/19/2018, while form field lists only 03/03/2021.\"), and they may be about different people."
+    ]
+   }
+  ],
+  "citation": {
+   "status": "needs_human_review",
+   "explanation": "The narrative contains conflicting entry dates that are not reconciled, raising uncertainty about the subject’s last entry date and manner."
+  },
+  "findings": [],
+  "latencyMs": 11367,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 8230
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 11332
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 11348
+   }
+  ]
+ },
+ {
+  "id": "XU03",
+  "category": "unresolved",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "route",
+    "anchor": "he had been deported in 2014 through Nogales",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "routed=true; S5 named=true"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he had been deported in 2014 through Nogales",
+    "sentence": "S5",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Several people are described with redacted names, and S5 may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.",
+   "Conflicting immigration history records require adjudication to determine prior removal status."
+  ],
+  "accounts": [
+   {
+    "fieldPath": "history.immigration_record",
+    "sentenceIds": [
+     "S5"
+    ],
+    "details": [
+     "S5 describes a prior removal; the form records the immigration record as \"NEGATIVE\"."
+    ]
+   }
+  ],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The selected charge of INA 212(a)(6)(A)(i) is supported by the narrative that the subject is present in the U.S. without admission or parole."
+  },
+  "findings": [],
+  "latencyMs": 18168,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 18154
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 13786
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 7336
+   }
+  ]
+ },
+ {
+  "id": "XU04",
+  "category": "unresolved",
+  "checksPassed": true,
+  "checks": [
+   {
+    "kind": "route",
+    "anchor": "he walked across the border near Lukeville, Arizona, in 2015",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "routed=true; S6 named=true"
+   },
+   {
+    "kind": "noContradiction",
+    "anchor": "he walked across the border near Lukeville, Arizona, in 2015",
+    "sentence": "S6",
+    "pass": true,
+    "detail": "none"
+   }
+  ],
+  "completion": "complete",
+  "completionFailed": [],
+  "modelStatus": "ok",
+  "routed": true,
+  "reasons": [
+   "Several people are described with redacted names, and S6 may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about."
+  ],
+  "accounts": [
+   {
+    "fieldPath": "entry.date",
+    "sentenceIds": [
+     "S6"
+    ],
+    "details": [
+     "S6 gives 2015 for the entry; the form records the last entry in 2017."
+    ]
+   }
+  ],
+  "citation": {
+   "status": "consistent",
+   "explanation": "The narrative supports the selected charge of INA 212(a)(6)(A)(i) by stating the subject entered without inspection and is present without admission."
+  },
+  "findings": [],
+  "latencyMs": 11143,
+  "calls": [
+   {
+    "role": "facts",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 11127
+   },
+   {
+    "role": "review-1",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 5705
+   },
+   {
+    "role": "review-2",
+    "status": "ok",
+    "attempts": 1,
+    "ms": 6193
+   }
+  ]
+ }
+]

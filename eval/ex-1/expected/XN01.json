@@ -1,0 +1,12 @@
+{
+  "id": "XN01",
+  "base": "XN01",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "First entry 2010 (different year) and last entry 2018 matching the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "he first entered the United States in 2010 near Sasabe, Arizona"
+  ],
+  "labelNotes": "The 2010 entry near Sasabe is explicitly the first entry; the last entry (09/09/2018, near Lukeville) matches the form's date, place and manner."
+}

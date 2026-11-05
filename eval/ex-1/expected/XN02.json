@@ -1,0 +1,12 @@
+{
+  "id": "XN02",
+  "base": "XN02",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Companion's different entry year; the designated subject's account matches the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "he crossed near Eagle Pass in 2017"
+  ],
+  "labelNotes": "The companion's 2017 Eagle Pass crossing is another person's entry. The designated subject's April 2021 McAllen crossing matches the form."
+}

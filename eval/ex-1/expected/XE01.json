@@ -1,0 +1,20 @@
+{
+  "id": "XE01",
+  "base": "XE01",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Last of three crossings (summer 2017) differs from the form's 2019; earlier crossings in 2008 and 2012",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "his most recent crossing was in the summer of 2017"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The subject names his most recent crossing as summer 2017 and says he has not left since; the form's last entry is 07/2019. The 2008 and 2012 crossings are earlier events and must not be compared with the form's last entry."
+}

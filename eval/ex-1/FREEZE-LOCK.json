@@ -1,0 +1,7 @@
+{
+ "note": "Frozen before any model call on ex-1.",
+ "sha256": {
+  "eval/ex-1/driver.py": "ead95b403731183e7c9096c6285dd83c4174da0ef8e666a9580eb4e2a9c196da",
+  "eval/ex-1/FREEZE.md": "dd1714303efa3284539d4da86f6d514be07884655b9136b9ae571a4dda607af7"
+ }
+}

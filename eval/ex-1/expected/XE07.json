@@ -1,0 +1,20 @@
+{
+  "id": "XE07",
+  "base": "XE07",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Single subject, pronoun-continued account: crossing on the night of 11/14/2015; form 11/14/2017",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "on the night of 11/14/2015"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Only one person of interest; 'He said' continues the subject's account. He crossed on 11/14/2015; the form records 11/14/2017. The agent is an official, not a second person of interest."
+}

@@ -1,0 +1,20 @@
+{
+  "id": "XE06",
+  "base": "XE06",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Subject carried across hidden in a pickup's cargo area; form EWI AFOOT; companions walked",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "hid him under tarps in the cargo bed of a pickup truck"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Both sources say no inspection, so the charge is supported. The mode differs: the subject was carried in a vehicle, the form says AFOOT. Walking is the group's mode, not the subject's."
+}

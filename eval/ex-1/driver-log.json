@@ -1,0 +1,421 @@
+{
+ "servers": {
+  "baseline": {
+   "engine": "74e15fb",
+   "head": "74e15fb",
+   "buildId": "P9gsRs-e9wO6Ec4z2QH0G",
+   "port": 3101
+  },
+  "candidate": {
+   "engine": "6c49e14",
+   "head": "6c49e14",
+   "buildId": "5Y3vmROtKL5M6rWM76H-h",
+   "port": 3102
+  }
+ },
+ "label": "ex-1: paired comparison of 74e15fb and 6c49e14 on 20 locked team-authored cases (NOT independent validation)",
+ "runs": [
+  {
+   "case": "XE01",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-02-17",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 29829
+  },
+  {
+   "case": "XE01",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-02-47",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 21274
+  },
+  {
+   "case": "XE02",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-03-09",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 20603
+  },
+  {
+   "case": "XE02",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-03-30",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 18510
+  },
+  {
+   "case": "XE03",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-03-49",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19253
+  },
+  {
+   "case": "XE03",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-04-09",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 17721
+  },
+  {
+   "case": "XE04",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-04-27",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13529
+  },
+  {
+   "case": "XE04",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-04-42",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 8349
+  },
+  {
+   "case": "XE05",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-04-50",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 29924
+  },
+  {
+   "case": "XE05",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-05-21",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13505
+  },
+  {
+   "case": "XE06",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-05-35",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 9534
+  },
+  {
+   "case": "XE06",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-05-45",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12478
+  },
+  {
+   "case": "XE07",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-05-58",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 22048
+  },
+  {
+   "case": "XE07",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-06-21",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19636
+  },
+  {
+   "case": "XE08",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-06-41",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19612
+  },
+  {
+   "case": "XE08",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-07-02",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 27426
+  },
+  {
+   "case": "XN01",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-07-29",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 10510
+  },
+  {
+   "case": "XN01",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-07-40",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 16585
+  },
+  {
+   "case": "XN02",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-07-58",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 16947
+  },
+  {
+   "case": "XN02",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-08-15",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11331
+  },
+  {
+   "case": "XN03",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-08-27",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12883
+  },
+  {
+   "case": "XN03",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-08-40",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 8645
+  },
+  {
+   "case": "XN04",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-08-49",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11777
+  },
+  {
+   "case": "XN04",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-09-02",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 8239
+  },
+  {
+   "case": "XN05",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-09-10",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 8621
+  },
+  {
+   "case": "XN05",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-09-19",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11383
+  },
+  {
+   "case": "XN06",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-09-31",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 9369
+  },
+  {
+   "case": "XN06",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-09-41",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 8496
+  },
+  {
+   "case": "XN07",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-09-50",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 13610
+  },
+  {
+   "case": "XN07",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-10-04",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19944
+  },
+  {
+   "case": "XN08",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-10-24",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12394
+  },
+  {
+   "case": "XN08",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-10-37",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12187
+  },
+  {
+   "case": "XU01",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-10-51",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 9553
+  },
+  {
+   "case": "XU01",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-11-01",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 10691
+  },
+  {
+   "case": "XU02",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-11-12",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 17913
+  },
+  {
+   "case": "XU02",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-11-31",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11410
+  },
+  {
+   "case": "XU03",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-11-42",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 18209
+  },
+  {
+   "case": "XU03",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-12-01",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 12004
+  },
+  {
+   "case": "XU04",
+   "engine": "candidate",
+   "commit": "6c49e14",
+   "run": "eval/runs/2026-11-05T05-12-14",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 19148
+  },
+  {
+   "case": "XU04",
+   "engine": "baseline",
+   "commit": "74e15fb",
+   "run": "eval/runs/2026-11-05T05-12-34",
+   "http_ok": true,
+   "requests": 3,
+   "all_calls_failed": false,
+   "ms": 11181
+  }
+ ],
+ "stopped": null,
+ "requests": 120
+}

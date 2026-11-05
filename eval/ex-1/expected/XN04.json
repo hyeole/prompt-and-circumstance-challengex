@@ -1,0 +1,12 @@
+{
+  "id": "XN04",
+  "base": "XN04",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Cousin's deportation mentioned; the subject's record NEGATIVE stands",
+  "plants": [],
+  "shouldNotFlag": [
+    "his cousin was deported to Mexico in 2018"
+  ],
+  "labelNotes": "The deportation is the cousin's. The subject's own history is a single entry and no arrests, consistent with NEGATIVE."
+}

@@ -1,0 +1,144 @@
+✖ XE01 (live baseline extraction): the most recent crossing (S8, 2017) is reported, not the first (S6, 2008) (42.629208ms)
+✖ XE01 (live candidate extraction): not the second time (S7, 2012) either (2.464541ms)
+✖ XE05 (live): 'his first trip north was in 2015' is not compared; the planted place conflict stays (3.620583ms)
+✖ XN05 (live): 'first visited … in 2012' is not compared with the last admission (07/02/2019) (1.98975ms)
+✔ control: a second entry with no later entry stated may itself be the last; it is still compared (1.494833ms)
+✖ control: an ordinal below a stated count with no other evidence of order is still earlier only for the same person (1.245666ms)
+✔ control: a first-and-only crossing is the last entry and is compared (1.180041ms)
+✔ control: a genuine most-recent-crossing conflict is reported even after an earlier ordinal (1.339916ms)
+✖ control: no conflict when the most recent crossing matches the form and earlier ordinals differ (6.962833ms)
+✔ control: an answer the narrative itself corrects stays a resolved discrepancy (unchanged rule) (1.169375ms)
+✔ control: several people: another person's 'most recent crossing' does not make an unattributed ordinal earlier; it stays routed (1.243416ms)
+✔ control: an ordinal not tied to an entry ('the second time he saw a doctor') does not make an entry earlier (1.103083ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 6
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 301.33075
+
+✖ failing tests:
+
+test at tests/chronology.test.ts:34:1
+✖ XE01 (live baseline extraction): the most recent crossing (S8, 2017) is reported, not the first (S6, 2008) (42.629208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'S6'
+  -   'S8'
+    ]
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:36:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'S6' ],
+    expected: [ 'S8' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/chronology.test.ts:39:1
+✖ XE01 (live candidate extraction): not the second time (S7, 2012) either (2.464541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'S7'
+  -   'S8'
+    ]
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:44:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'S7' ],
+    expected: [ 'S8' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/chronology.test.ts:46:1
+✖ XE05 (live): 'his first trip north was in 2015' is not compared; the planted place conflict stays (3.620583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   'S5'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:51:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'S5' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/chronology.test.ts:54:1
+✖ XN05 (live): 'first visited … in 2012' is not compared with the last admission (07/02/2019) (1.98975ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   'S5'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:59:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'S5' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/chronology.test.ts:77:1
+✖ control: an ordinal below a stated count with no other evidence of order is still earlier only for the same person (1.245666ms)
+  AssertionError [ERR_ASSERTION]: the first of two crossings is not the last
+  + actual - expected
+  
+  + [
+  +   'S6'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:80:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'S6' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/chronology.test.ts:92:1
+✖ control: no conflict when the most recent crossing matches the form and earlier ordinals differ (6.962833ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(!r.findings.some((f) => f.category === "inconsistency"))
+  
+      at TestContext.<anonymous> (<scratchpad>/wt-ch/tests/chronology.test.ts:95:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

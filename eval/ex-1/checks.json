@@ -1,0 +1,276 @@
+{
+  "XE01": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "his most recent crossing was in the summer of 2017",
+        "field": "entry.date"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "The first time was in 2008"
+      }
+    ]
+  },
+  "XE02": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "waded across the Rio Grande near Roma, Texas, in March 2020",
+        "field": "entry.date"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he crossed the border near Hidalgo, Texas, in 2022"
+      }
+    ]
+  },
+  "XE03": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "anchor": "he was removed on foot through the Laredo, Texas, port of entry on 04/02/2016",
+        "field": "history.immigration_record"
+      }
+    ]
+  },
+  "XE04": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "showed his border crossing card to an officer at the San Ysidro port of entry",
+        "field": "entry.manner"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "by climbing the fence near Tijuana"
+      }
+    ]
+  },
+  "XE05": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "crossed on foot through a gap in the fence on the west side of El Paso, Texas",
+        "field": "entry.place"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "his first trip north was in 2015 through the desert near Nogales, Arizona"
+      }
+    ]
+  },
+  "XE06": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "hid him under tarps in the cargo bed of a pickup truck",
+        "field": "entry.manner"
+      }
+    ]
+  },
+  "XE07": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": "inconsistency",
+        "anchor": "on the night of 11/14/2015",
+        "field": "entry.date"
+      }
+    ]
+  },
+  "XE08": {
+    "category": "established",
+    "checks": [
+      {
+        "kind": "finding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "anchor": "that he was given expedited removal, and that he was bused to Mexicali the next day",
+        "field": "history.immigration_record"
+      }
+    ]
+  },
+  "XN01": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he first entered the United States in 2010 near Sasabe, Arizona"
+      }
+    ]
+  },
+  "XN02": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he crossed near Eagle Pass in 2017"
+      }
+    ]
+  },
+  "XN03": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "XN04": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency",
+          "unclear"
+        ],
+        "field": "history.immigration_record"
+      },
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "XN05": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "citationNot",
+        "status": "likely_mismatch"
+      }
+    ]
+  },
+  "XN06": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "XN07": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      }
+    ]
+  },
+  "XN08": {
+    "category": "negative",
+    "checks": [
+      {
+        "kind": "noFinding",
+        "category": [
+          "inconsistency"
+        ]
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he crossed into Mexico from Guatemala at Tecun Uman in December 2017"
+      }
+    ]
+  },
+  "XU01": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he crossed the border near Nogales, Arizona, in 2016"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he crossed the border near Nogales, Arizona, in 2016"
+      }
+    ]
+  },
+  "XU02": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he crossed near Laredo, Texas, on 07/19/2018"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he crossed near Laredo, Texas, on 07/19/2018"
+      }
+    ]
+  },
+  "XU03": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he had been deported in 2014 through Nogales"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he had been deported in 2014 through Nogales"
+      }
+    ]
+  },
+  "XU04": {
+    "category": "unresolved",
+    "checks": [
+      {
+        "kind": "route",
+        "anchor": "he walked across the border near Lukeville, Arizona, in 2015"
+      },
+      {
+        "kind": "noContradiction",
+        "anchor": "he walked across the border near Lukeville, Arizona, in 2015"
+      }
+    ]
+  }
+}

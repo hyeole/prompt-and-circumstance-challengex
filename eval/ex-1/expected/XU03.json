@@ -1,0 +1,18 @@
+{
+  "id": "XU03",
+  "base": "XU03",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "One of the men 'had been deported in 2014' while the record is NEGATIVE; which man is not stated",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he had been deported in 2014 through Nogales"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "'One of the men' could be the subject or not. If it is the subject, the removal conflicts with NEGATIVE. Route; no contradiction."
+}

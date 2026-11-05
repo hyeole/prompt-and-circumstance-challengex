@@ -1,0 +1,97 @@
+{
+  "id": "XE03",
+  "title": "Executed removal through the Laredo bridge (2016) while the record is NEGATIVE; a later voluntary departure",
+  "kind": "synthetic",
+  "split": "ex-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (ex-1), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Executed removal through the Laredo bridge (2016) while the record is NEGATIVE; a later voluntary departure"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn October 29, 2024, at approximately 0820 hours, ICE Officer [REDACTED (b)(6), (b)(7)(C)] interviewed the subject at the Ingham County Jail in Mason, Michigan, following his arrest for driving without a license. The subject stated that he is a citizen of Mexico.\nIMMIGRATION HISTORY:\nBiometric record checks for the subject show that an immigration judge in Houston ordered him removed on 02/09/2016 and that he was removed on foot through the Laredo, Texas, port of entry on 04/02/2016.\nThe subject also stated that in 2019 he went back to Mexico on his own to visit his mother and returned a month later by crossing the river near Piedras Negras.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nAn immigration detainer was lodged with the Ingham County Jail.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Piedras Negras, MX / Eagle Pass, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "10/29/2024 0820",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "MASON, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "No license (pending)",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Detainer lodged",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

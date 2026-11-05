@@ -1,0 +1,12 @@
+{
+  "id": "XN06",
+  "base": "XN06",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Approximate month ('in or around June 2019') with a full form date in that month",
+  "plants": [],
+  "shouldNotFlag": [
+    "he crossed in or around June 2019"
+  ],
+  "labelNotes": "Month-level precision ('in or around June 2019') is compatible with the form's 06/14/2019."
+}

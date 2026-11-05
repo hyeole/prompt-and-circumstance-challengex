@@ -1,0 +1,250 @@
+{
+ "note": "Adjudicated by hand against the source text, both engines, every finding and explanation, including extras in passing cases. Team-authored development cases.",
+ "items": [
+  {
+   "case": "XE03",
+   "engine": "baseline",
+   "item": "F-HISTORY (S5)",
+   "verdict": "correct",
+   "note": "Planted: executed removal through Laredo vs NEGATIVE."
+  },
+  {
+   "case": "XE04",
+   "engine": "baseline",
+   "item": "F-ENTRY-MANNER (S6)",
+   "verdict": "correct",
+   "note": "Planted: border crossing card at San Ysidro vs EWI."
+  },
+  {
+   "case": "XE05",
+   "engine": "baseline",
+   "item": "F-ENTRY-PLACE (S6)",
+   "verdict": "correct",
+   "note": "Planted: El Paso, Texas vs near Tucson, AZ."
+  },
+  {
+   "case": "XE05",
+   "engine": "baseline",
+   "item": "F-ENTRY-DATE (S5, 2015)",
+   "verdict": "incorrect",
+   "note": "Compares the explicitly first trip ('his first trip north was in 2015') with the form's last entry. Pre-existing scope gap: 'first trip' is not an entry word for entryScope."
+  },
+  {
+   "case": "XE07",
+   "engine": "baseline",
+   "item": "F-ENTRY-DATE (S6)",
+   "verdict": "correct",
+   "note": "Planted: 11/14/2015 vs 11/14/2017; single person of interest."
+  },
+  {
+   "case": "XE08",
+   "engine": "baseline",
+   "item": "F-HISTORY (S5)",
+   "verdict": "correct",
+   "note": "Planted: subject's executed expedited removal vs NEGATIVE."
+  },
+  {
+   "case": "XN05",
+   "engine": "baseline",
+   "item": "F-ENTRY-DATE (S5, 2012)",
+   "verdict": "incorrect",
+   "note": "Compares the first visit ('first visited ... in 2012') with the last admission. Same pre-existing scope gap ('first visited')."
+  },
+  {
+   "case": "XE01",
+   "engine": "baseline",
+   "item": "U-N1 (S3)",
+   "verdict": "valid_observation",
+   "note": "No identity document of the subject is stated; 'no papers' is about status."
+  },
+  {
+   "case": "XN01",
+   "engine": "baseline",
+   "item": "U-N1 (S3)",
+   "verdict": "valid_observation",
+   "note": "As above."
+  },
+  {
+   "case": "XE03",
+   "engine": "baseline",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XE07",
+   "engine": "baseline",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XN07",
+   "engine": "baseline",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XE06",
+   "engine": "baseline",
+   "item": "(none)",
+   "verdict": "missed",
+   "note": "Planted mode conflict (carried in a pickup vs AFOOT) not found by either engine."
+  },
+  {
+   "case": "XE03",
+   "engine": "candidate",
+   "item": "F-HISTORY (S5)",
+   "verdict": "correct",
+   "note": "Planted: executed removal through Laredo vs NEGATIVE."
+  },
+  {
+   "case": "XE04",
+   "engine": "candidate",
+   "item": "F-ENTRY-MANNER (S6)",
+   "verdict": "correct",
+   "note": "Planted: border crossing card at San Ysidro vs EWI."
+  },
+  {
+   "case": "XE05",
+   "engine": "candidate",
+   "item": "F-ENTRY-PLACE (S6)",
+   "verdict": "correct",
+   "note": "Planted: El Paso, Texas vs near Tucson, AZ."
+  },
+  {
+   "case": "XE05",
+   "engine": "candidate",
+   "item": "F-ENTRY-DATE (S5, 2015)",
+   "verdict": "incorrect",
+   "note": "Compares the explicitly first trip ('his first trip north was in 2015') with the form's last entry. Pre-existing scope gap: 'first trip' is not an entry word for entryScope."
+  },
+  {
+   "case": "XE07",
+   "engine": "candidate",
+   "item": "F-ENTRY-DATE (S6)",
+   "verdict": "correct",
+   "note": "Planted: 11/14/2015 vs 11/14/2017; single person of interest."
+  },
+  {
+   "case": "XE08",
+   "engine": "candidate",
+   "item": "F-HISTORY (S5)",
+   "verdict": "correct",
+   "note": "Planted: subject's executed expedited removal vs NEGATIVE."
+  },
+  {
+   "case": "XN05",
+   "engine": "candidate",
+   "item": "F-ENTRY-DATE (S5, 2012)",
+   "verdict": "incorrect",
+   "note": "Compares the first visit ('first visited ... in 2012') with the last admission. Same pre-existing scope gap ('first visited')."
+  },
+  {
+   "case": "XE01",
+   "engine": "candidate",
+   "item": "U-N1 (S3)",
+   "verdict": "valid_observation",
+   "note": "No identity document of the subject is stated; 'no papers' is about status."
+  },
+  {
+   "case": "XN01",
+   "engine": "candidate",
+   "item": "U-N1 (S3)",
+   "verdict": "valid_observation",
+   "note": "As above."
+  },
+  {
+   "case": "XE03",
+   "engine": "candidate",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XE07",
+   "engine": "candidate",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XN07",
+   "engine": "candidate",
+   "item": "M-N1",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XE06",
+   "engine": "candidate",
+   "item": "(none)",
+   "verdict": "missed",
+   "note": "Planted mode conflict (carried in a pickup vs AFOOT) not found by either engine."
+  },
+  {
+   "case": "XE01",
+   "engine": "baseline",
+   "item": "F-ENTRY-DATE (S6, 2008)",
+   "verdict": "incorrect",
+   "note": "Compares 'The first time was in 2008' with the form's last entry; the planted most-recent crossing (S8, 2017) is extracted but not the one reported. Scope gap: 'The first time' has no entry word."
+  },
+  {
+   "case": "XE01",
+   "engine": "candidate",
+   "item": "F-ENTRY-DATE (S7, 2012)",
+   "verdict": "incorrect",
+   "note": "Compares 'The second time, in 2012' (an earlier crossing) with the form's last entry; S8 (2017) extracted but not reported. Same scope gap, different sentence."
+  },
+  {
+   "case": "XE02",
+   "engine": "baseline",
+   "item": "F-ENTRY-DATE (S8)",
+   "verdict": "correct",
+   "note": "Planted: designated rear passenger, March 2020 vs 03/2022."
+  },
+  {
+   "case": "XE02",
+   "engine": "candidate",
+   "item": "(none for S8)",
+   "verdict": "missed (lost)",
+   "note": "The candidate extraction typed S8 and S5 as other_country_entry (country 'United States'); the adapter passed the type; the comparison skipped them and the review model's correct date claim was withheld as being about another country."
+  },
+  {
+   "case": "XE02",
+   "engine": "candidate",
+   "item": "U-N1 (S8)",
+   "verdict": "valid_observation",
+   "note": "No identity document stated."
+  },
+  {
+   "case": "XE02",
+   "engine": "candidate",
+   "item": "routing reason 'Potential impact on charge determination'",
+   "verdict": "unsupported",
+   "note": "The only remaining routing reason after the date claim was withheld; no accepted finding supports it (the real conflict exists but is not reported)."
+  },
+  {
+   "case": "XE07",
+   "engine": "candidate",
+   "item": "citation explanation",
+   "verdict": "unsupported",
+   "note": "Embeds model text 'The selected charge requires a last entry date of 11/14/2015'; 212(a)(6)(A)(i) does not depend on the date. The verdict 'consistent' is correct."
+  },
+  {
+   "case": "XE07",
+   "engine": "baseline",
+   "item": "citation verdict needs_human_review ('entry date inconsistency may alter the factual basis')",
+   "verdict": "debatable",
+   "note": "The date conflict does not bear on the charge's manner requirement; over-qualified, as in earlier runs."
+  },
+  {
+   "case": "XU01",
+   "engine": "baseline",
+   "item": "citation concern ('the entry date conflict raises uncertainty')",
+   "verdict": "debatable",
+   "note": "Concern rests on an unattributed statement; routing is justified by the account anyway."
+  }
+ ]
+}

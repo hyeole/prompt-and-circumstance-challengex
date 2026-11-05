@@ -1,0 +1,20 @@
+{
+  "id": "XE03",
+  "base": "XE03",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Executed removal through the Laredo bridge (2016) while the record is NEGATIVE; a later voluntary departure",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "he was removed on foot through the Laredo, Texas, port of entry on 04/02/2016"
+      ],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Record checks for the subject show a removal order and its execution (removed through Laredo in 2016). The form's NEGATIVE record conflicts with that history. The 2019 visit home is a voluntary trip, not a removal."
+}

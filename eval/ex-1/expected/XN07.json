@@ -1,0 +1,12 @@
+{
+  "id": "XN07",
+  "base": "XN07",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Travel and residence inside Mexico across several years; U.S. crossing in 2018 matches the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "he left Oaxaca in 2014"
+  ],
+  "labelNotes": "2014 and 2017 are moves inside Mexico, not U.S. entries. The U.S. crossing (August 2018, west of Calexico, on foot) matches the form."
+}

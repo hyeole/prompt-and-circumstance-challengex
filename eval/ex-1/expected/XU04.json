@@ -1,0 +1,18 @@
+{
+  "id": "XU04",
+  "base": "XU04",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "'The driver' crossed near Lukeville in 2015; the subject is not identified as the driver",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he walked across the border near Lukeville, Arizona, in 2015"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The record does not say whether its subject is the driver or the passenger. The driver's 2015 crossing would conflict with the form's 2017 only if he is the subject: route, no contradiction."
+}

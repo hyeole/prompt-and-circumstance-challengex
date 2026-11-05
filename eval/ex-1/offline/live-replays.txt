@@ -1,0 +1,4 @@
+ex1-replay-wt-s1-baseline       20 c0f15b0bb91dfa80
+ex1-replay-wt-ev-baseline       20 c0f15b0bb91dfa80
+ex1-replay-wt-s1-candidate       20 71800f25cd8d4929
+ex1-replay-wt-ev-candidate       20 71800f25cd8d4929

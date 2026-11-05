@@ -1,0 +1,20 @@
+{
+  "id": "XE05",
+  "base": "XE05",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Last entry near El Paso, Texas (2021); form place near Tucson, AZ; first entry near Nogales",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "crossed on foot through a gap in the fence on the west side of El Paso, Texas"
+      ],
+      "fieldPaths": [
+        "entry.place"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "Only one person of interest is described. His last entry was near El Paso, Texas; the form records near Tucson, Arizona. The 2015 Nogales trip is his first entry; it matches the form's state but is a different event."
+}

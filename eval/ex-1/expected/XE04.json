@@ -1,0 +1,20 @@
+{
+  "id": "XE04",
+  "base": "XE04",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Last entry with a border crossing card at San Ysidro (2018); earlier EWI entry in 2009; form manner EWI",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "showed his border crossing card to an officer at the San Ysidro port of entry"
+      ],
+      "fieldPaths": [
+        "entry.manner"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The subject's last entry (06/20/2018) was an inspection with a border crossing card at a port; the form codes the manner as EWI. The 2009 fence crossing is the first entry and must not be compared with the form's last entry."
+}

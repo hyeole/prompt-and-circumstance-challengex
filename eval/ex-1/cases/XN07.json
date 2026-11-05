@@ -1,0 +1,97 @@
+{
+  "id": "XN07",
+  "title": "Travel and residence inside Mexico across several years; U.S. crossing in 2018 matches the form",
+  "kind": "synthetic",
+  "split": "ex-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (ex-1), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Travel and residence inside Mexico across several years; U.S. crossing in 2018 matches the form"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn August 8, 2024, at approximately 1240 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered the subject at a dairy farm near Coopersville, Michigan. The subject stated that he is a citizen of Mexico and that he does not have permission to be in the United States.\nTRAVEL:\nThe subject stated that he left Oaxaca in 2014 and worked in Tijuana for three years, then moved to Mexicali in 2017.\nIn August 2018 he crossed into the United States by walking through the desert west of Calexico, California.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nNotice to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "08/2018",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Calexico, CA",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "08/08/2024 1240",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "COOPERSVILLE, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

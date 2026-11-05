@@ -1,0 +1,97 @@
+{
+  "id": "XN02",
+  "title": "Companion's different entry year; the designated subject's account matches the form",
+  "kind": "synthetic",
+  "split": "ex-1",
+  "context": [
+    "interior"
+  ],
+  "provenance": {
+    "source": "Team-authored fresh development case (ex-1), 2026-11-04. NOT independent or unbiased validation.",
+    "extraction": "Written directly as text; not taken from any document.",
+    "verification": "Synthetic; expected answers set from the source text and config/references.json before any engine run.",
+    "replacements": [],
+    "textOrigin": "synthetic-test",
+    "modifications": [
+      "Companion's different entry year; the designated subject's account matches the form"
+    ]
+  },
+  "narrative": {
+    "text": "ENCOUNTER:\nOn June 2, 2024, at approximately 0715 hours, Agent [REDACTED (b)(6), (b)(7)(C)] encountered two men waiting at a bus stop in Holland, Michigan. Both stated that they are citizens of Honduras without documents.\nINTERVIEWS:\nThe subject of this record, [REDACTED (b)(6), (b)(7)(C)], stated that he crossed the river near McAllen, Texas, in April 2021.\nHis companion, [REDACTED (b)(6), (b)(7)(C)], stated that he crossed near Eagle Pass in 2017 and is documented on a separate record.\nREMOVABILITY:\nThe subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act, in that he is an alien present in the United States without being admitted or paroled.\nDISPOSITION:\nBoth men were processed for Notices to Appear.\n"
+  },
+  "facts": [
+    {
+      "path": "subject.name",
+      "label": "Subject name",
+      "value": "",
+      "status": "redacted"
+    },
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "HONDURAS",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "04/2021",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near McAllen, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "06/02/2024 0715",
+      "status": "present"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "HOLLAND, MI",
+      "status": "present"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "OA",
+      "status": "present"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "NEGATIVE",
+      "status": "present"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "None Known",
+      "status": "present"
+    },
+    {
+      "path": "form.disposition",
+      "label": "Disposition",
+      "value": "Warrant of Arrest/Notice to Appear",
+      "status": "present"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "team-assigned-for-testing",
+      "note": "Development case."
+    }
+  ]
+}

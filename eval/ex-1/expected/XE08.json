@@ -1,0 +1,20 @@
+{
+  "id": "XE08",
+  "base": "XE08",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Subject's own prior apprehension and expedited removal (2013) while the record is NEGATIVE; brother's arrest also mentioned",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "that he was given expedited removal, and that he was bused to Mexicali the next day"
+      ],
+      "fieldPaths": [
+        "history.immigration_record"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The sentence names the subject and describes his own apprehension and executed expedited removal (bused to Mexicali). The form's NEGATIVE record conflicts. The brother's arrest is another person's history."
+}

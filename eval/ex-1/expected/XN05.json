@@ -1,0 +1,12 @@
+{
+  "id": "XN05",
+  "base": "XN05",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Two visa admissions (2012 visit; last admission 2019); form records the 2019 admission; overstay charge",
+  "plants": [],
+  "shouldNotFlag": [
+    "was admitted at Miami International Airport"
+  ],
+  "labelNotes": "The 2012 Miami admission is an earlier visit; the last admission (Detroit, 07/02/2019, B2) matches the form and supports the overstay charge."
+}

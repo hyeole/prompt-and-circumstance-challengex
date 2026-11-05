@@ -1,0 +1,12 @@
+{
+  "id": "XN08",
+  "base": "XN08",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Entry into Mexico from Guatemala (2017) and U.S. entry (2018) matching the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "he crossed into Mexico from Guatemala at Tecun Uman in December 2017"
+  ],
+  "labelNotes": "The 2017 crossing is into Mexico, not the United States. The U.S. entry matches the form."
+}

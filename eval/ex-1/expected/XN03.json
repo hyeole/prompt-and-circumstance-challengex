@@ -1,0 +1,12 @@
+{
+  "id": "XN03",
+  "base": "XN03",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Denied crossing at Nogales; affirmed crossing near Sasabe in 2019 matches the form",
+  "plants": [],
+  "shouldNotFlag": [
+    "he has never crossed at Nogales"
+  ],
+  "labelNotes": "The Nogales crossing is denied, not affirmed; the affirmed crossing matches the form's date and place."
+}

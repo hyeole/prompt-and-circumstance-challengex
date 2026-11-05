@@ -1,0 +1,20 @@
+{
+  "id": "XE02",
+  "base": "XE02",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Designated subject (rear passenger) gives a 2020 river crossing; the form records 2022; the driver's account differs",
+  "plants": [
+    {
+      "type": "inconsistency",
+      "anchors": [
+        "waded across the Rio Grande near Roma, Texas, in March 2020"
+      ],
+      "fieldPaths": [
+        "entry.date"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "The rear passenger is expressly designated as the subject of this record and states March 2020; the form records 03/2022. The driver's 2022 crossing matches the form's year but is another person's entry and must not be used to explain the conflict away."
+}

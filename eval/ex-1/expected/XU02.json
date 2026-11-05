@@ -1,0 +1,18 @@
+{
+  "id": "XU02",
+  "base": "XU02",
+  "split": "ex-1",
+  "datasetVersion": "ex-1",
+  "description": "Three occupants; one unnamed statement matches the form's date exactly, another differs; neither is designated",
+  "plants": [
+    {
+      "type": "human_review",
+      "reason": "ambiguity",
+      "anchors": [
+        "he crossed near Laredo, Texas, on 07/19/2018"
+      ]
+    }
+  ],
+  "shouldNotFlag": [],
+  "labelNotes": "One statement matches the form's date in full; that does not establish that it is the subject's (identity is never inferred from matching values), and the other statement may be the subject's. Route; no contradiction."
+}

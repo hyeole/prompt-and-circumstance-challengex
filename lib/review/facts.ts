@@ -676,6 +676,67 @@ function firstEntryIsOnly(s: Sentence, at: number, year?: number | null): boolea
   });
 }
 
+// ---- Event sequences told with ordinals (chronology correction, from ex-1 XE01, XE05, XN05) ----
+// "The first time …", "the second time …", "his first trip north …", "first visited …", "his most recent crossing …".
+// The ordinal must be tied to an entry: its noun is itself an entry ("crossing", "entry"), or "visited"/"admitted"
+// (the statement is already a U.S. entry), or "time"/"trip"/"visit" with entry wording in the same clause
+// (an entry verb, "trip north", "trip to the United States"), or "time" answering an earlier count of crossings by the
+// same person ("he has crossed the border three times"). An ordinal alone does not make an entry earlier than the last
+// one: "first"/"second" … become first/previous only when the source gives the SAME person a later entry in the same
+// sequence (a higher ordinal, a "most recent"/"last" entry, or a count larger than the ordinal). Otherwise the existing
+// scope stands (a second entry may itself be the last). "Last"/"most recent" wording makes the statement the last entry.
+// Same person: both statements attributed to the subject by the existing rules (attributeStatement), or, in a
+// single-person narrative, both unattributed. Unattributed statements in a multi-person narrative are left unchanged.
+const ORDINALS: Record<string, number> = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6 };
+const COUNTS: Record<string, number> = { two: 2, twice: 2, three: 3, four: 4, five: 5, six: 6, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6 };
+const SEQ_RE = /\b(first|second|third|fourth|fifth|sixth|last|latest|final|most recent)\s+(time|trip|visit|crossing|entry)\b|\b(first|last|most recently)\s+(visited|admitted)\b/gi;
+const SEQ_ENTRY_WORDS_RE = /\b(?:re-?enter\w*|enter\w*|entry|cross\w*|came|arriv\w*|swam|wad\w*|walk\w*|admitted)\b|\btrip (?:north|to the United States|into the United States|to the U\.S\.)\b/i;
+const COUNT_RE = /\b(?:cross\w*|enter\w*|come|came|been)\b[^.;]{0,40}?\b(two|three|four|five|six|[2-6])\s+times\b|\b(twice)\b/i;
+type SeqEntry = { v: Verified; e: { year?: number | null }; supported: boolean; scope: EntryScope };
+function sequenceOf(sentences: Sentence[], x: SeqEntry): { rank: number; last: boolean } | null {
+  const t = x.v.s.text, at = factOffset(x.v, x.e.year);
+  const clauseStart = Math.max(t.lastIndexOf(";", at) + 1, 0);
+  const nextSemi = t.indexOf(";", at);
+  const clause = t.slice(clauseStart, nextSemi < 0 ? t.length : nextSemi);
+  const ms = [...t.matchAll(SEQ_RE)].filter((m) => m.index! >= clauseStart && m.index! <= at);
+  const m = ms.at(-1);
+  if (!m) return null;
+  const word = (m[1] ?? m[3]).toLowerCase(), noun = (m[2] ?? m[4]).toLowerCase();
+  // "time"/"visit": the verb it governs must be an entry ("the first time he crossed"; not "the first time he saw a
+  // doctor"), or it answers a stated count of crossings ("The first time was in 2008"). "trip": entry wording anywhere in
+  // its clause, or "trip north / to the United States".
+  const after = t.slice(m.index! + m[0].length).match(/^\W*(?:(?:he|she|they|the subject|that|was|were|had|has)\s+){0,3}(\S+)/i)?.[1] ?? "";
+  const tied = /^(crossing|entry|visited|admitted)$/.test(noun) ||
+    (noun === "trip" && SEQ_ENTRY_WORDS_RE.test(clause)) ||
+    ((noun === "time" || noun === "visit") && (SEQ_ENTRY_WORDS_RE.test(after) || countBefore(sentences, x.v.s.id) !== null));
+  if (!tied) return null;
+  if (/^(last|latest|final|most recent|most recently)$/.test(word)) return { rank: Infinity, last: true };
+  return { rank: ORDINALS[word], last: false };
+}
+/** A count of crossings stated in one of the two sentences before this one ("he has crossed the border three times"). */
+function countBefore(sentences: Sentence[], id: string): { n: number; sentenceId: string } | null {
+  const i = sentences.findIndex((s) => s.id === id);
+  for (const s of sentences.slice(Math.max(0, i - 2), i).reverse()) {
+    const m = s.text.match(COUNT_RE);
+    if (m) return { n: COUNTS[(m[1] ?? m[2]).toLowerCase()], sentenceId: s.id };
+  }
+  return null;
+}
+function sequenceScopes(sentences: Sentence[], entries: SeqEntry[], multiPerson: boolean): Map<SeqEntry, EntryScope> {
+  const out = new Map<SeqEntry, EntryScope>();
+  const samePerson = (a: SeqEntry, b: SeqEntry) => (a.supported && b.supported) || (!multiPerson && !a.supported && !b.supported);
+  const seq = entries.map((x) => ({ x, q: sequenceOf(sentences, x) }));
+  for (const { x, q } of seq) {
+    if (!q) continue;
+    if (multiPerson && !x.supported) continue;
+    if (q.last) { out.set(x, "last"); continue; }
+    const laterOrdinal = seq.some((o) => o.x !== x && o.q && o.q.rank > q.rank && samePerson(o.x, x));
+    const c = countBefore(sentences, x.v.s.id);
+    const laterByCount = !!c && c.n > q.rank && attributeStatement(sentences, c.sentenceId, multiPerson).outcome === "supported" && (x.supported || !multiPerson);
+    if (laterOrdinal || laterByCount) out.set(x, q.rank === 1 ? "first" : "previous");
+  }
+  return out;
+}
 /** Compare extracted statements with each other and with the form fields. Returns findings with verified evidence only. */
 const CORRECTION_RE = /\b(when first asked|initially|at first|first (said|stated|claimed)|then corrected|corrected (himself|herself|themselves|the)|later (explained|clarified|corrected))\b/i;
 
@@ -706,6 +767,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
         supported: basis?.outcome === "supported", scope: v ? entryScope(v.s.text, factOffset(v, e.year)) : "unspecified" as EntryScope };
     })
     .filter((x) => (x.v ? true : (dropped++, false))) as { e: Entry; v: Verified; exact: boolean; attr: Attr; basis: AttributionOutcome; supported: boolean; scope: EntryScope }[];
+  // Event sequences told with ordinals ("The first time was in 2008", "The second time, in 2012", "his first trip
+  // north", "first visited", "his most recent crossing"). See sequenceScopes.
+  for (const [x, sc] of sequenceScopes(sentences, entries, multiPerson)) x.scope = sc;
   // A first entry that the source says was the only one is also the last, unless another statement gives a last or
   // previous entry.
   if (!entries.some((x) => x.scope === "last" || x.scope === "previous"))
@@ -732,7 +796,9 @@ export function compareFacts(c: CaseRecord, sentences: Sentence[], facts: FactsO
     const differs = entries.filter((x) => x.e.year && x.e.year !== fy && x.v.s.text.includes(String(x.e.year)) && lastEntry(x) && !correctedLater(x, fy));
     // Identity is never inferred from values matching the form (month and day, place, manner): an unattributed statement
     // in a multi-person narrative stays unattributed and goes to a person (accuracy iteration 1 audit).
-    const off = differs.find(counts);
+    // A verified statement explicitly about the LAST entry is reported before an unscoped one (ex-1 XE01: the earlier
+    // "first time" statement used to be reported and the "most recent crossing" never was).
+    const off = differs.find((x) => x.scope === "last" && counts(x)) ?? differs.find(counts);
     if (!off) unattributed.push(...differs.filter((x) => x.attr === "unclear" && multiPerson)
       .map((x) => ({ sentenceId: x.v.s.id, fieldPath: "entry.date", detail: `${x.v.s.id} gives ${x.e.year} for the entry; the form records the last entry in ${fy}.` })));
     const offEv = off ? ctx(showing(off.v, String(off.e.year)), off.attr, "us_entry") : null;
