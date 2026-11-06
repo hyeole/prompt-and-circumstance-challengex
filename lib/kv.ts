@@ -25,7 +25,9 @@ export class BudgetError extends Error {
 // ---------- metering: storage bandwidth and commands per request, for the monthly budget
 
 type Meter = { bytes: number; commands: number };
-const meterStore = new AsyncLocalStorage<Meter>();
+// One per process, shared through globalThis: a production bundle can contain more than one copy of this module,
+// and a per-copy store let the storage client and the request meter disagree (API routes metered nothing).
+const meterStore = ((globalThis as unknown as { __ncMeter?: AsyncLocalStorage<Meter> }).__ncMeter ??= new AsyncLocalStorage<Meter>());
 /** Commands a script is charged as (the provider's per-script accounting is not documented; counted conservatively). */
 const SCRIPT_COMMAND_WEIGHT = 10;
 function meter(cmds: Cmd[], resultText: string) {
