@@ -1,0 +1,24 @@
+✔ [in-process twin] review admission: 40 parallel requests never exceed the in-flight cap (3.562584ms)
+✔ [in-process twin] review admission: 30 parallel requests never exceed the daily cap, and nothing is reserved on refusal (0.654ms)
+✔ [in-process twin] review admission: per judge session, per IP and total limits (0.396875ms)
+✔ [in-process twin] expired leases free capacity (a crashed instance cannot hold it) (403.070208ms)
+✔ [in-process twin] write admission: 25 parallel case writes never exceed the global daily cap, even from new cookies (5.811792ms)
+✔ [in-process twin] write admission: per-visitor records, per-IP, and byte caps (stored base64 size) (14.252042ms)
+✔ [in-process twin] 25 parallel saves to one case get versions 1..25: none lost or reused (6.397708ms)
+✔ [in-process twin] cancellation is bound to the visitor and prevents the save on any instance (0.779125ms)
+✔ [Valkey via Upstash-REST shim] review admission: 40 parallel requests never exceed the in-flight cap (62.072875ms)
+✔ [Valkey via Upstash-REST shim] review admission: 30 parallel requests never exceed the daily cap, and nothing is reserved on refusal (13.200542ms)
+✔ [Valkey via Upstash-REST shim] review admission: per judge session, per IP and total limits (5.076875ms)
+✔ [Valkey via Upstash-REST shim] expired leases free capacity (a crashed instance cannot hold it) (404.2155ms)
+✔ [Valkey via Upstash-REST shim] write admission: 25 parallel case writes never exceed the global daily cap, even from new cookies (22.500084ms)
+✔ [Valkey via Upstash-REST shim] write admission: per-visitor records, per-IP, and byte caps (stored base64 size) (55.890333ms)
+✔ [Valkey via Upstash-REST shim] 25 parallel saves to one case get versions 1..25: none lost or reused (15.583042ms)
+✔ [Valkey via Upstash-REST shim] cancellation is bound to the visitor and prevents the save on any instance (12.908958ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1147.077917

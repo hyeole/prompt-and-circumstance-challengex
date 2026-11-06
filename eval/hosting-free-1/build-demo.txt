@@ -1,0 +1,73 @@
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.ts took 60ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 497ms
+  Running TypeScript ...
+  Finished TypeScript in 343ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/9) ...
+  Generating static pages using 7 workers (2/9) 
+  Generating static pages using 7 workers (4/9) 
+  Generating static pages using 7 workers (6/9) 
+✓ Generating static pages using 7 workers (9/9) in 139ms
+Turbopack build encountered 1 warning:
+./lib/cases.ts:11:15
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m 9 |[0m [90m *  dev-synthetic evaluation inputs (opened by id only, e.g. for report exports; never lis...[0m
+  [90m10 |[0m [36mexport[0m [36mfunction[0m loadCases(set: keyof [36mtypeof[0m [33mDIRS[0m = [32m"app"[0m): [33mCaseRecord[0m[] {
+[33m[1m>[0m [90m11 |[0m   [36mconst[0m dir = path.join(process.cwd(), ...[33mDIRS[0m[set]);
+  [90m   |[0m               [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m12 |[0m   [36mreturn[0m readdirSync(dir)
+  [90m13 |[0m     .filter((f) => f.endsWith([32m".json"[0m))
+  [90m14 |[0m     .sort()
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: path.join(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./lib/cases.ts
+    ./lib/caseSource.ts
+    ./app/api/review/route.ts
+
+  Server Component:
+    ./lib/cases.ts
+    ./lib/caseSource.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/access
+├ ƒ /api/cases
+├ ƒ /api/cases/[id]
+├ ƒ /api/cases/[id]/decisions
+├ ƒ /api/cases/[id]/pdf
+├ ƒ /api/review
+├ ƒ /api/review/cancel
+├ ƒ /audit/[id]
+├ ƒ /cases
+├ ○ /cases/new
+├ ○ /icon.svg
+├ ○ /references
+├ ƒ /report/[id]
+├ ƒ /review/[id]
+└ ƒ /review/[id]/history
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

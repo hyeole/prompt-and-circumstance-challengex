@@ -1,0 +1,30 @@
+PASS  each browser gets its own signed visitor cookie  (X=ymWN…, Y=S54Q…)
+PASS  pages are private and uncacheable  (private, no-store)
+PASS  API responses are private and uncacheable  (private, no-store)
+PASS  review without the judge code: 403, no model call  (403 judge_required)
+PASS  cross-origin and origin-less writes: 403, no model call  (403/403)
+PASS  wrong access code: 401  (401)
+PASS  correct access code: session cookie set  (200)
+PASS  judge cookie copied into another visitor's session is refused, no model call  (403 judge_required)
+PASS  access attempts limited: 6th attempt in 15 min is 429  (401,401,401,401,401,429)
+PASS  authorized review runs and is saved (offline fixture replay)  (200 v1, 3 fixture requests)
+PASS  the saved version is visible to the same visitor on the other instance
+PASS  another visitor does not see X's saved review
+PASS  another visitor's review page shows no saved review
+PASS  another visitor's case: not listed, not readable, no decision, no PDF (404)  (404/404/404)
+PASS  a visitor cannot record a decision on another visitor's review  (404)
+PASS  another visitor's cancel is ignored (reported unknown)  (unknown)
+PASS  cancel through instance B stops the review on instance A and nothing is saved  (cancel=cancelled, review=409, 2029 ms (fixture delay 8000 ms))
+PASS  5 simultaneous reviews on two instances: exactly 2 run (in-flight cap), 3 refused with 429  (429,200,429,200,429)
+PASS  refused reviews made no model calls (3 fixture requests per admitted review)  (6 fixture requests)
+PASS  simultaneous saves: versions 1..3 with none lost or reused  ([1,2,3])
+PASS  daily cap: 2 more run, then 429 day_limit with a clear message  (200,200,429: The demo has reached today's limit of 6 live reviews (resets at 00:00 UTC). Nothing was run.)
+PASS  storage down: review 503 without a model call; case creation 503; pages error out  (review 503 storage_unavailable; create 503; page 500)
+PASS  storage http500: review 503 without a model call; case creation 503; pages error out  (review 503 storage_unavailable; create 503; page 500)
+PASS  upload over 3 MB: 413; not a PDF: 400; valid PDF: stored and served  (413/400/200/200)
+PASS  upload without the judge code: 403  (403 judge_required)
+PASS  per-visitor case limit: 10 created, the 11th refused (429 visitor_limit)  (200,200,200,200,200,200,200,200,200,200,429)
+PASS  clearing cookies does not bypass the per-IP daily limit (20): a third cookie gets 429 ip_day_limit  (200,200,200,200,200,200,200,200,200,200 then 429 ip_day_limit)
+PASS  visitor data expiry is 30 days, renewed on each change  (TTL 2592000 s)
+
+28/28 checks passed

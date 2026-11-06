@@ -1,5 +1,16 @@
 # NarrativeCheck hosting plan at $0: Vercel Hobby and Upstash Redis Free
 
+> **Corrections and status (hosting-free-1, 2026-11-06):**
+> - **Implemented** offline on `improve/hosting-free-1` (`2acec51`, `207aff5`); see `eval/hosting-free-1/REPORT.md`.
+> - **Changes requested at implementation:**
+>   - atomic admission with per-request leases (not a shared INCR/DECR counter);
+>   - record and byte caps on every storage write;
+>   - judge sessions and cancellations bound to the visitor;
+>   - same-origin checks;
+>   - private, uncacheable responses.
+> - **Upstash inactivity (corrects §3 "Upstash, expiry"):** Upstash documents that free databases are **archived after at least 30 days of inactivity**. This is the correction as supplied; the page was not re-read in this step.
+> - **Retention:** saved data is deleted 30 days after the visitor's **last change**. Every write renews the expiry, and the notice says so.
+
 **Status:** a plan only. Nothing is purchased, upgraded, created or deployed. There are no model calls and no engine change.
 
 **Supersedes:** the Pro recommendation in `REPORT.md` §"Recommended setup". The blocker table there still holds.

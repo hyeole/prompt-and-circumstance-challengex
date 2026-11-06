@@ -1,0 +1,33 @@
+{
+ "live review with save (C012-X1)": {
+  "status": 200,
+  "bytes": 25422,
+  "commands": 38
+ },
+ "review page load (1 saved version)": {
+  "status": 200,
+  "bytes": 22740,
+  "commands": 10
+ },
+ "history page load (1 saved version)": {
+  "status": 200,
+  "bytes": 22740,
+  "commands": 10
+ },
+ "workspace page load": {
+  "status": 200,
+  "bytes": 1139,
+  "commands": 8
+ },
+ "case list API": {
+  "status": 200,
+  "bytes": 1139,
+  "commands": 8
+ },
+ "decision": {
+  "status": 200,
+  "bytes": 1710,
+  "commands": 19
+ },
+ "stored visitor hash bytes (1 version)": 21128
+}
