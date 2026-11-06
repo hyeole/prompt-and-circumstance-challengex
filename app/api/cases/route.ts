@@ -1,14 +1,25 @@
-import { NextResponse } from "next/server";
 import { z } from "zod";
 import { allCases } from "@/lib/caseSource";
-import { historySummary, newUserCaseId, saveUserCase } from "@/lib/store";
+import { errorResponse, fail, json, sameOriginProblem } from "@/lib/http";
+import { metered } from "@/lib/kv";
+import { caseSummaries, newUserCaseId, saveUserCase } from "@/lib/store";
 import type { CaseRecord } from "@/lib/types";
+import { clientIp, currentVisitor } from "@/lib/visitor";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   const set = new URL(req.url).searchParams.get("set") === "eval" ? "eval" : "app";
-  return NextResponse.json(allCases(set).map((c) => ({ id: c.id, title: c.title, kind: c.kind, summary: historySummary(c.id) })));
+  try {
+    const vid = await currentVisitor();
+    return await metered(async () => {
+      const cases = await allCases(vid, set);
+      const sums = await caseSummaries(vid, cases.map((c) => c.id));
+      return json(cases.map((c) => ({ id: c.id, title: c.title, kind: c.kind, summary: sums.get(c.id) })));
+    });
+  } catch (e) {
+    return errorResponse(e, "cases");
+  }
 }
 
 const FACT_PATHS = ["subject.citizenship", "subject.birthplace", "subject.age", "subject.us_address", "entry.date", "entry.place", "entry.manner",
@@ -27,8 +38,10 @@ const NewCase = z.object({
 });
 
 export async function POST(req: Request) {
+  const bad = sameOriginProblem(req.method, req.headers);
+  if (bad) return fail(403, "origin", `Refused: ${bad}.`);
   const parsed = NewCase.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Please check the case details.", issues: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) }, { status: 400 });
+  if (!parsed.success) return fail(400, "invalid", "Please check the case details.", { issues: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) });
   const d = parsed.data;
   const id = newUserCaseId();
   const origin = { "officer-entered": "Typed or pasted by the user as officer-written text", "transcribed-from-source": "Transcribed by the user from a source document", "synthetic-test": "Synthetic test text written by the user" }[d.textOrigin];
@@ -48,6 +61,11 @@ export async function POST(req: Request) {
     userCase: { createdAt: new Date().toISOString() },
     context: d.context?.length ? d.context : undefined,
   };
-  saveUserCase(c);
-  return NextResponse.json({ id });
+  try {
+    const vid = await currentVisitor();
+    await metered(() => saveUserCase({ vid, ip: clientIp(req.headers) }, c, "case"));
+    return json({ id });
+  } catch (e) {
+    return errorResponse(e, "cases");
+  }
 }

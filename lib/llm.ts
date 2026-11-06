@@ -38,9 +38,26 @@ function getClient(): ChatClient {
   if (testClient) return testClient;
   const apiKey = process.env.CHALLENGEX_API_KEY;
   if (!apiKey || apiKey === "replace-with-your-key") throw new ModelError("CHALLENGEX_API_KEY is not configured on the server.", "config", 0);
+  const unsafe = productionEndpointProblem(BASE_URL, apiKey);
+  if (unsafe) throw new ModelError(unsafe, "config", 0);
   client ??= new OpenAI({ baseURL: BASE_URL, apiKey, maxRetries: 0 }) as unknown as ChatClient;
   return client;
 }
+/**
+ * hosting-free-1 configuration guard (no model setting changes): on the Vercel production deployment, refuse an
+ * endpoint that is not HTTPS or points to this machine, and refuse the offline-fixture placeholder key, so a test
+ * configuration can never serve (or appear to serve) live reviews in production. Returns the reason, or null.
+ */
+export function productionEndpointProblem(baseUrl: string, apiKey: string, env: NodeJS.ProcessEnv = process.env): string | null {
+  if (env.VERCEL_ENV !== "production") return null;
+  let u: URL;
+  try { u = new URL(baseUrl); } catch { return "The model endpoint URL is invalid."; }
+  if (u.protocol !== "https:") return "The model endpoint must use HTTPS in production.";
+  if (/^(localhost|127\.|0\.0\.0\.0|\[?::1\]?$)/i.test(u.hostname) || u.hostname.endsWith(".localhost")) return "The model endpoint must not be a local address in production.";
+  if (/fixture|offline|placeholder|replace-with/i.test(apiKey)) return "A test placeholder key is configured; live reviews are disabled in production.";
+  return null;
+}
+
 /** Tests only: replace the HTTP client (controlled failures offline). */
 let testClient: ChatClient | null = null;
 export function __setClientForTests(c: ChatClient | null) { testClient = c; }

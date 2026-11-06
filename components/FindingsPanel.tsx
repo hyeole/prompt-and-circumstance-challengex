@@ -22,6 +22,8 @@ export default function FindingsPanel(props: {
   running: boolean;
   elapsed: number;
   error: string | null;
+  /** True when the server refused to run the review (limit, access, storage), as opposed to a failed review. */
+  errorRefused?: boolean;
   selected: string | null;
   onSelect: (id: string | null) => void;
   onRun: () => void;
@@ -41,7 +43,7 @@ export default function FindingsPanel(props: {
         {error ? (
           <div className="card state">
             <div className="state-icon" style={{ background: "var(--err-bg)", color: "var(--err)" }}><Icon name="alert" size={24} /></div>
-            <h3>The review did not complete</h3>
+            <h3>{props.errorRefused ? "The review was not run" : "The review did not complete"}</h3>
             <p>{error} No results were substituted.</p>
             <button className="btn btn-primary" onClick={onRun}><Icon name="refresh" /> Try again</button>
           </div>

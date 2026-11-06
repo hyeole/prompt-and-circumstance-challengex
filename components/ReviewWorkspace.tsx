@@ -11,6 +11,7 @@ import FindingsPanel from "./FindingsPanel";
 import FactsPanel from "./FactsPanel";
 import PrintReport from "./PrintReport";
 import Icon from "./Icon";
+import JudgeAccess, { type AccessState } from "./JudgeAccess";
 
 type Phase = "idle" | "running" | "done" | "error" | "cancelled";
 type Snap = Pick<CaseRecord, "narrative" | "facts" | "selectedCharges">;
@@ -30,8 +31,8 @@ export function kindLabel(kind: CaseRecord["kind"]) {
   return kind === "adapted-public-record" ? "Adapted source record" : kind === "synthetic-variant" ? "Synthetic test variant" : kind === "user-case" ? "Entered case" : "Synthetic";
 }
 
-export default function ReviewWorkspace({ kase: original, initialHistory, pdf, viewVersion: requestedVersion }: {
-  kase: CaseRecord; initialHistory: CaseHistory; pdf: string | null; viewVersion?: number;
+export default function ReviewWorkspace({ kase: original, initialHistory, pdf, viewVersion: requestedVersion, access: initialAccess }: {
+  kase: CaseRecord; initialHistory: CaseHistory; pdf: string | null; viewVersion?: number; access: AccessState;
 }) {
   const caseId = original.id;
   const [history, setHistory] = useState(initialHistory);
@@ -71,6 +72,8 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
+  // A refusal (limit, missing access, storage outage) means nothing ran; a failure means a review started and failed.
+  const [refused, setRefused] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [factsOpen, setFactsOpen] = useState(true);
@@ -80,6 +83,10 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
   const seqRef = useRef(0); // guards against stale responses after cancel or retry
   const requestRef = useRef<string | null>(null); // id of the in-flight review, so it can be cancelled on the server
   const [cancelNote, setCancelNote] = useState<string | null>(null);
+  // Public demo: live reviews need the judge access code. Asking for it never runs or replaces a review.
+  const [access, setAccess] = useState(initialAccess);
+  const runAfterUnlock = useRef(false);
+  const needsCode = access.required && !access.active;
 
   // Leaving the page (or this case) mid-review cancels the request on the server, so nothing is saved behind the
   // officer's back. Unsaved edits stay in this browser session either way.
@@ -113,10 +120,17 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
 
   async function runReview() {
     if (phase === "running" || viewingOld) return;
+    if (needsCode) {
+      // No request is sent without a judge session; the code form is shown instead (and the review starts after it).
+      runAfterUnlock.current = true;
+      setError(null);
+      document.getElementById("judge-code")?.focus();
+      return;
+    }
     const seq = ++seqRef.current;
     const requestId = crypto.randomUUID();
     requestRef.current = requestId;
-    setEditing(false); setPhase("running"); setError(null); setElapsed(0); setSelected(null); setCancelNote(null);
+    setEditing(false); setPhase("running"); setError(null); setRefused(false); setElapsed(0); setSelected(null); setCancelNote(null);
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     const timer = setTimeout(() => ctrl.abort("timeout"), CLIENT_TIMEOUT_MS);
@@ -125,6 +139,8 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
       const body = await res.json().catch(() => ({}));
       if (seq !== seqRef.current) return; // superseded by a cancel or a newer request: ignore the late result
       requestRef.current = null;
+      if (res.status === 403 && body.code === "judge_required") setAccess((a) => ({ ...a, active: false }));
+      setRefused(res.status === 429 || res.status === 403 || res.status === 503);
       if (!res.ok) throw new Error(body.error ?? `Review request failed (HTTP ${res.status}).`);
       await refreshHistory();
       discardEdits(); // the reviewed snapshot is now saved as a version
@@ -175,6 +191,15 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
     setHistory((h) => ({ ...h, decisions: { ...h.decisions, [reviewed.reviewId]: { ...(h.decisions[reviewed.reviewId] ?? {}), [findingId]: saved } } }));
   }
 
+  function unlocked() {
+    setAccess((a) => ({ ...a, active: true }));
+  }
+  // Start the review the judge asked for once the unlocked state has rendered (not with the pre-unlock closure).
+  useEffect(() => {
+    if (access.active && runAfterUnlock.current) { runAfterUnlock.current = false; void runReview(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [access.active]);
+
   const status = useMemo(() => {
     if (phase === "running") return { label: `Reviewing… ${elapsed}s`, tone: "info", pulse: true };
     if (phase === "error" && !reviewed) return { label: "Review failed", tone: "error" };
@@ -204,7 +229,7 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
     <AppShell caseId={caseId} actions={actions} crumbs={[{ label: "Workspace", href: "/" }, { label: "Cases", href: "/cases" }, { label: `${caseId} · ${shortTitle(original.title, 38)}` }]}>
       <div className="subheader no-print">
         <span className={`tag ${current.kind === "synthetic-variant" ? "tag-variant" : current.kind === "user-case" ? "tag-user" : "tag-source"}`}>{kindLabel(current.kind)}</span>
-        {latest ? <span className="tag" title="Reviewed versions are saved on this computer">{viewingOld ? `Viewing v${viewVersion}` : `v${latest.version}`} of {history.versions.length} · saved</span> : <span className="tag">No saved review</span>}
+        {latest ? <span className="tag" title="Reviewed versions are saved for this workspace">{viewingOld ? `Viewing v${viewVersion}` : `v${latest.version}`} of {history.versions.length} · saved</span> : <span className="tag">No saved review</span>}
         {unsavedEdits && <span className="tag tag-edited" title="Kept for this browser session until a review saves them">Unsaved edits (this session)</span>}
         {unsavedEdits && <button className="btn btn-ghost btn-sm" onClick={discardEdits}>Discard edits</button>}
         <button className="title-btn" onClick={() => setDetailsOpen((o) => !o)} aria-expanded={detailsOpen} aria-controls="case-details">
@@ -231,15 +256,20 @@ export default function ReviewWorkspace({ kase: original, initialHistory, pdf, v
         </section>
       )}
       {viewingOld && <div className="banner banner-info no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}><Icon name="clock" /> <span>Viewing saved version {viewVersion} (read-only, older than the latest). <Link href={`/review/${encodeURIComponent(caseId)}`}>Go to the latest version</Link></span></div>}
+      {needsCode && !viewingOld && (
+        <div className="banner banner-info no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}>
+          {access.configured ? <JudgeAccess purpose="Live reviews" onGranted={unlocked} /> : <span><strong>Live reviews are not available on this deployment</strong> (the judge access code is not configured). Saved reviews can still be viewed.</span>}
+        </div>
+      )}
       {phase === "cancelled" && <div className="banner banner-warn no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="status"><Icon name="x" /> <span><strong>Review cancelled.</strong> {cancelNote}</span></div>}
-      {error && reviewed && <div className="banner banner-error no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="alert"><Icon name="alert" /> <span><strong>The latest review did not complete.</strong> {error} The findings shown are from the previous saved review.</span></div>}
+      {error && reviewed && <div className="banner banner-error no-print" style={{ borderRadius: 0, borderWidth: "0 0 1px" }} role="alert"><Icon name="alert" /> <span><strong>{refused ? "The review was not run." : "The latest review did not complete."}</strong> {error} The findings shown are from the previous saved review.</span></div>}
 
       <div className={`body no-print ${factsOpen ? "" : "facts-collapsed"}`}>
         <FactsPanel open={factsOpen} onToggle={() => setFactsOpen((o) => !o)} kase={current} original={original} onChange={update}
           linkedFields={reviewed?.findings.find((f) => f.id === selected)?.evidence.filter((e) => e.kind === "field").map((e) => e.fieldPath!) ?? []} disabled={phase === "running" || viewingOld} />
         <DocumentView kase={current} original={original} review={reviewed && !outdated ? reviewed : null} outdated={outdated} selected={selected} onSelect={setSelected}
           editing={editing && !viewingOld} setEditing={setEditing} onChange={update} disabled={phase === "running" || viewingOld} />
-        <FindingsPanel kase={current} review={reviewed} outdated={outdated} running={phase === "running"} elapsed={elapsed} error={phase === "error" ? error : null}
+        <FindingsPanel kase={current} review={reviewed} outdated={outdated} running={phase === "running"} elapsed={elapsed} error={phase === "error" ? error : null} errorRefused={refused}
           selected={selected} onSelect={setSelected} onRun={runReview} decisions={decisions} onDecide={decide} readOnly={viewingOld || outdated} pdfAvailable={!!pdf} caseId={caseId} />
       </div>
 

@@ -3,6 +3,7 @@
 // Shared frame for every page: navigation rail with active-page labels, brand header with breadcrumbs, and footer credit.
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import Icon from "./Icon";
 
 export type Crumb = { label: string; href?: string };
@@ -19,6 +20,9 @@ function NavItem({ href, icon, label, active }: { href: string; icon: string; la
 export default function AppShell({ crumbs, actions, children, caseId }: { crumbs: Crumb[]; actions?: React.ReactNode; children: React.ReactNode; caseId?: string }) {
   const path = usePathname() ?? "/";
   const reviewHref = caseId ? `/review/${encodeURIComponent(caseId)}` : null;
+  // Public demo notice (set by the root layout from lib/deploy.ts), shown in the footer of every page.
+  const [notice, setNotice] = useState<string | null>(null);
+  useEffect(() => { setNotice(document.body.dataset.demoNotice || null); }, []);
   return (
     <div className="shell">
       <nav className="rail no-print" aria-label="Main">
@@ -54,6 +58,7 @@ export default function AppShell({ crumbs, actions, children, caseId }: { crumbs
         {children}
         <footer className="footer no-print">
           <span>Decision support only. Findings are not legal determinations; the officer keeps the narrative and the charge.</span>
+          {notice && <span className="demo-notice" role="note">{notice}</span>}
           <span className="credit">Built by Prompt &amp; Circumstance</span>
         </footer>
       </div>

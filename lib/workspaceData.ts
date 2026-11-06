@@ -1,9 +1,10 @@
 // Case summaries for the Workspace and Cases pages, built only from saved data (no derived scores).
 import "server-only";
 import { allCases } from "./caseSource";
-import { getHistory } from "./store";
-import { completionOf } from "./completion";
+import { metered } from "./kv";
+import { caseSummaries } from "./store";
 import type { CaseRecord } from "./types";
+import { currentVisitor } from "./visitor";
 
 export type CaseGroup = "source" | "variant" | "entered";
 export const groupOf = (c: CaseRecord): CaseGroup => (c.kind === "user-case" ? "entered" : c.kind === "synthetic-variant" || c.kind === "synthetic" ? "variant" : "source");
@@ -23,17 +24,19 @@ export interface CaseRow {
   openDecisions?: number; // findings in the latest review with no officer decision yet
 }
 
-export function caseRows(set: "app" | "eval" = "app"): CaseRow[] {
-  return allCases(set).map((c) => {
-    const h = getHistory(c.id);
-    const last = h.versions.at(-1);
-    const base = { id: c.id, title: c.title, kind: c.kind, group: groupOf(c), createdAt: c.userCase?.createdAt, versions: h.versions.length };
-    if (!last) return { ...base, state: "not_reviewed" as const };
-    const decided = h.decisions[last.review.reviewId] ?? {};
-    const open = last.review.findings.filter((f) => !decided[f.id] || decided[f.id].state === "open").length;
-    // Recomputed from the review, so reviews saved before the completion field existed follow the same rule.
-    const state: ReviewState = completionOf(last.review).status === "partial" || last.completion === "partial" ? "incomplete" : last.review.humanReview.required ? "needs_human_review" : "reviewed";
-    return { ...base, lastReviewedAt: last.savedAt, state, findings: last.review.findings.length, openDecisions: open };
+/** The current visitor's case list: their entered cases plus the sample cases, with their own review status. */
+export async function caseRows(set: "app" | "eval" = "app"): Promise<CaseRow[]> {
+  const vid = await currentVisitor();
+  return metered(async () => {
+    const cases = await allCases(vid, set);
+    const sums = await caseSummaries(vid, cases.map((c) => c.id));
+    return cases.map((c) => {
+      const h = sums.get(c.id) ?? { versions: 0 };
+      const base = { id: c.id, title: c.title, kind: c.kind, group: groupOf(c), createdAt: c.userCase?.createdAt, versions: h.versions };
+      if (!h.versions) return { ...base, state: "not_reviewed" as const };
+      const state: ReviewState = h.completion === "partial" ? "incomplete" : h.humanReview ? "needs_human_review" : "reviewed";
+      return { ...base, lastReviewedAt: h.lastReviewedAt, state, findings: h.findings, openDecisions: h.openDecisions };
+    });
   });
 }
 

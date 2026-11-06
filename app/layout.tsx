@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { demoNotice } from "@/lib/deploy";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const serif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-serif" });
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body data-demo-notice={demoNotice() ?? undefined}>{children}</body>
     </html>
   );
 }

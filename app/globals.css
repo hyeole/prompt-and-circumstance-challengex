@@ -493,3 +493,13 @@ a.btn { text-decoration: none; }
   .brand-mark { width: 30px; height: 30px; font-size: 11.5px; }
 }
 @media print { .shell { display: block; height: auto; } .ev-goto { display: none !important; } }
+
+/* ---------- Public demo (hosting-free-1): judge access code and demo notice */
+.judge-access { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.judge-access-text { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; }
+.judge-access-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.judge-access-row input { flex: 1 1 180px; min-width: 0; max-width: 320px; padding: 6px 10px; border: 1px solid var(--line-2); border-radius: 8px; font: inherit; }
+.judge-access-err { color: var(--error, #b42318); font-size: 12.5px; }
+.judge-access.compact { margin-top: 8px; padding: 8px 10px; border: 1px dashed var(--line-2); border-radius: 8px; }
+.demo-notice { display: block; font-weight: 600; order: 3; flex-basis: 100%; }
+.footer { flex-wrap: wrap; }

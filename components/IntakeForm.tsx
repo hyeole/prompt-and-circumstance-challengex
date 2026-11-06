@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { fieldQuality, QUALITY_LABEL } from "@/lib/fieldQuality";
 import { splitSentences } from "@/lib/text";
 import Icon from "./Icon";
+import JudgeAccess, { type AccessState } from "./JudgeAccess";
+
+/** Same limit as the server (lib/deploy.ts MAX_PDF_BYTES). */
+const MAX_PDF_MB = 3;
 
 type Status = "present" | "absent" | "redacted" | "unreadable" | "not_applicable";
 const FACTS: { path: string; label: string; hint: string }[] = [
@@ -42,6 +46,11 @@ export default function IntakeForm() {
   const [charges, setCharges] = useState<string[]>([""]);
   const [facts, setFacts] = useState<Record<string, { value: string; status: Status }>>(Object.fromEntries(FACTS.map((f) => [f.path, { value: "", status: "absent" as Status }])));
   const [pdf, setPdf] = useState<File | null>(null);
+  // Public demo: PDF uploads need the judge access code (lib/judge.ts); the local tool needs none.
+  const [access, setAccess] = useState<AccessState | null>(null);
+  useEffect(() => {
+    fetch("/api/access", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((a) => a && setAccess(a as AccessState)).catch(() => {});
+  }, []);
   const [error, setError] = useState<string | null>(null);
 
   const dirty = !!(title || narrative || charges.some(Boolean) || Object.values(facts).some((f) => f.value) || pdf);
@@ -88,6 +97,8 @@ export default function IntakeForm() {
     narrative.trim().length < 40 && "Enter the narrative (at least a few sentences).",
     !charges.some((c) => c.trim().length >= 3) && "Enter the officer-selected charge.",
     pdf && pdf.type !== "application/pdf" && !pdf.name.toLowerCase().endsWith(".pdf") && "The attachment must be a PDF.",
+    pdf && pdf.size > MAX_PDF_MB * 1024 * 1024 && `The PDF must be ${MAX_PDF_MB} MB or smaller.`,
+    pdf && access && access.required && !access.active && "Attaching a PDF needs the judge access code (enter it below), or remove the file.",
   ].filter(Boolean) as string[];
 
   const setFact = (path: string, patch: Partial<{ value: string; status: Status }>) =>
@@ -131,7 +142,7 @@ export default function IntakeForm() {
             <dt>Narrative text</dt><dd>{ORIGIN[origin]}. {sentences.length} sentence(s), {narrative.trim().length} characters. It will be reviewed exactly as entered.</dd>
             <dt>Context</dt><dd>{context.length ? context.map((c) => CONTEXTS[c as keyof typeof CONTEXTS]).join(", ") : "Not set: NarrativeCheck will infer it carefully, and items that depend on it may show “applicability unclear”."}</dd>
             <dt>Officer-selected charge</dt><dd className="mono">{charges.filter(Boolean).join("; ")}</dd>
-            <dt>Source PDF</dt><dd>{pdf ? `${pdf.name} (stored on this computer for viewing only; no text will be read from it)` : "None attached"}{pdfPages.length ? ` · narrative pages ${pdfPages.join(", ")}` : ""}</dd>
+            <dt>Source PDF</dt><dd>{pdf ? `${pdf.name} (stored with this case for viewing only; no text will be read from it)` : "None attached"}{pdfPages.length ? ` · narrative pages ${pdfPages.join(", ")}` : ""}</dd>
           </dl>
         </dl>
         <h3 className="section-title" style={{ marginTop: 14 }}>Form fields</h3>
@@ -204,7 +215,8 @@ export default function IntakeForm() {
       <h3 className="section-title" style={{ marginTop: 18 }}>Source document (optional)</h3>
       <div className="form-grid">
         <div className="field"><label htmlFor="sd">Source description</label><input id="sd" value={sourceDescription} onChange={(e) => setSourceDescription(e.target.value)} placeholder="e.g. I-213 for event 2017-0412" maxLength={300} /></div>
-        <div className="field"><label htmlFor="pdf">Attach the source PDF</label><input id="pdf" type="file" accept="application/pdf,.pdf" onChange={(e) => setPdf(e.target.files?.[0] ?? null)} /><span className="help">Stored on this computer for viewing pages only. NarrativeCheck does not read text from PDFs: scanned pages are not read.</span></div>
+        <div className="field"><label htmlFor="pdf">Attach the source PDF</label><input id="pdf" type="file" accept="application/pdf,.pdf" onChange={(e) => setPdf(e.target.files?.[0] ?? null)} /><span className="help">At most {MAX_PDF_MB} MB. Stored with this case for viewing pages only. NarrativeCheck does not read text from PDFs: scanned pages are not read.</span>
+          {access?.required && !access.active && (access.configured ? <JudgeAccess compact purpose="PDF uploads" onGranted={() => setAccess({ ...access, active: true })} /> : <span className="help">PDF upload is not available on this deployment.</span>)}</div>
         <div className="field"><label htmlFor="pp">Narrative pages in the PDF</label><input id="pp" value={pages} onChange={(e) => setPages(e.target.value)} placeholder="e.g. 2, 3, 4" /></div>
       </div>
 

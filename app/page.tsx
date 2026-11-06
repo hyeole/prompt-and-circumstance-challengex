@@ -3,6 +3,7 @@ import AppShell from "@/components/AppShell";
 import Icon from "@/components/Icon";
 import { GroupTag, StatePill, fmtDate } from "@/components/StateTag";
 import { caseRows } from "@/lib/workspaceData";
+import { savedWhere } from "@/lib/deploy";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
     const { redirect } = await import("next/navigation");
     redirect(`/review/${encodeURIComponent(legacy)}${set === "eval" ? "?set=eval" : ""}`);
   }
-  const rows = caseRows("app");
+  const rows = await caseRows("app");
   const recent = rows.filter((r) => r.lastReviewedAt).sort((a, b) => b.lastReviewedAt!.localeCompare(a.lastReviewedAt!)).slice(0, 8);
   // Every case whose latest review is incomplete or has any finding without an officer decision (audit item 8),
   // whether or not that review required human review.
@@ -25,7 +26,7 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
       <main className="page" id="main">
         <div className="page-inner">
           <h1 className="page-title">Workspace</h1>
-          <p className="lede">Review officer-written narratives against the case facts and the selected charge. Everything shown here is saved on this computer.</p>
+          <p className="lede">Review officer-written narratives against the case facts and the selected charge. Everything shown here is saved {savedWhere()}.</p>
 
           <div className="stat-row" aria-label="Cases by review status">
             <Link className="stat" href="/cases?state=not_reviewed"><div className="n">{count("not_reviewed")}</div><div className="l">Not reviewed</div></Link>
