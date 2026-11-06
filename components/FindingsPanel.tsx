@@ -60,6 +60,10 @@ export default function FindingsPanel(props: {
   const sorted = [...review.findings].sort((a, b) => ORDER.indexOf(a.category) - ORDER.indexOf(b.category));
   const completion = completionOf(review);
   const partial = completion.status === "partial";
+  // The checks that did not complete, named as the partial-review banner names them (ui-accept-1: the panel used to say
+  // "the model checks did not run" for every partial review, also when only the fact extraction or some checklist
+  // elements were missing and the model review had run).
+  const notCompleted = completion.failed.map((f) => f.check.toLowerCase()).join(", ");
 
   return (
     <aside className={`col review ${outdated ? "is-outdated" : ""}`} aria-label="Review">
@@ -101,7 +105,7 @@ export default function FindingsPanel(props: {
             </button>
           ))}
         </div>
-        {partial && <p className="small muted" style={{ margin: "8px 2px 0" }}>Findings from completed checks only. The model checks did not run.</p>}
+        {partial && <p className="small muted" style={{ margin: "8px 2px 0" }}>Findings from completed checks only. Not completed: {notCompleted}.</p>}
         <div className="citation-line">
           <Icon name="citation" />
           <span className="mono">{review.citation.citation || "No charge selected"}</span>
@@ -128,7 +132,7 @@ export default function FindingsPanel(props: {
             <div className="card state">
               <div className="state-icon" style={{ background: "#e9eef4", color: "#46546a" }}><Icon name="clock" size={22} /></div>
               <h3>Review incomplete</h3>
-              <p>No findings came from the checks that completed, but the model checks did not run. This is not a clean result. Run a fresh review when the endpoint responds.</p>
+              <p>No findings came from the checks that completed, but some checks did not complete ({notCompleted}). This is not a clean result. Run a fresh review when the endpoint responds.</p>
               <button className="btn btn-primary btn-sm" onClick={onRun}><Icon name="refresh" size={13} /> Run fresh review</button>
             </div>
           ) : (
