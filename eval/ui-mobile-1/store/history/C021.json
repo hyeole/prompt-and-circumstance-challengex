@@ -1,0 +1,863 @@
+{
+  "caseId": "C021",
+  "versions": [
+    {
+      "version": 1,
+      "savedAt": "2026-11-06T22:49:31.869Z",
+      "snapshotHash": "a210a970feedc5ae",
+      "snapshot": {
+        "narrative": {
+          "text": "NARRATIVE:\n\nREMOVEABILITY:\n\nSubject is removable per Section 237(a)(1)(B) of the Immigration and Nationality Act (Act), as amended, in that after admission as a nonimmigrant under Section 101(a)(15) of the Act, you have remained in the United States for a time longer than permitted, in violation of this Act or any other law of the United States.\n\nEntry: Subject entered the United States at the Miami International Airport port of entry (MIA) on 12/23/2015.\n\nTRAVEL DATA:\n\nSubject traveled by bus to Houston, TX where he resided and worked as a part-time mechanic. On 4/12/2017 he boarded a bus with [REDACTED (b)(6), (b)(7)(C)] and arrived in Sault Sainte Marie on 4/14/2017. He then took another bus to Ann Harbor, MI where he was picked up by the smuggler and brought back to Sault Sainte Marie.\n\nFACTS OF ARREST/ENCOUNTER:\n\nAt 0412 am, Sector Dispatch requested a Supervisory Border Patrol Agent contact Customs and [REDACTED (b)(6), (b)(7)(C)] Border Protection Supervisor [REDACTED (b)(6), (b)(7)(C)] at the Sault Sainte Marie Port of Entry. SBPA called Supervisor [REDACTED (b)(6), (b)(7)(C)] and he informed SBPA [REDACTED (b)(6), (b)(7)(C)] that the Canadian Customs Service Agency had apprehended a smuggling load of Nigerians and that there could possibly be more at the [REDACTED (b)(7)(E)] The driver of the vehicle claimed to Canadian Customs that he had rented this room. After advising Supervisory Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] of the situation, he and SBPA [REDACTED (b)(6), (b)(7)(C] proceeded to the [REDACTED (b)(7)(E)] and found that a [REDACTED (b)(6), (b)(7)(C)] , [REDACTED (b)(6), (b)(7)(C)] , North York, Ontario, Canada had rented [REDACTED (b)(6), (b)(7)(C)] the previous evening but according to the clerk, he was travelling alone. A check of the parking lot indicated no Canadian plated vehicles. SBPA [REDACTED (b)(6), (b)(7)(C)] called Supervisor [REDACTED (b)(6), (b)(7)(C)] who stated that [REDACTED (b)(6), (b)(7)(C)] was the driver of the smuggling load and was in Canadian custody. He advised me to call [REDACTED (b)(6), (b)(7)(C)] , the Canadian Customs Officer handling the case at [REDACTED (b)(6), (b)(7)(C)] . Officer [REDACTED (b)(6), (b)(7)(C)] advised that [REDACTED (b)(6), (b)(7)(C)] stated that he had travelled to Ann Arbor, Michigan yesterday morning and picked up 5 Nigerians, returning to Sault Sainte Marie, MI. [REDACTED (b)(6), (b)(7)(C)] stated that the two females and one male who were apprehended with [REDACTED (b)(6), (b)(7)(C)] had obtained real documents and were found to be [REDACTED (b)(6), (b)(7)(C)] imposters when they tried to enter Canada. Officer advised that [REDACTED (b)(6), (b)(7)(C)] claimed two more Nigerians were in [REDACTED (b)(6), (b)(7)(C)] at this time. Additional Border Patrol Agents were called in at 0630 am. SBPA [REDACTED (b)(6), (b)(7)(C)] accompanied BPA's [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] and they knocked on [REDACTED (b)(6), (b)(7)(C)] . When a male opened the door, BPA [REDACTED (b)(6), (b)(7)(C)] announ were Border Patrol Agents and asked if they could come in and talk. The male, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria said yes, and additional agents entered into the room. A female was also found in the room, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria. Both subjects were advised that the U.S. Border Patrol had received information that additional Nigerian Nationals were in this room and were thought to be in the U.S. Illegally and were possibly going to attempt to try and illegally enter Canada. When question as to their citizenship, both claimed to be from Nigeria and both claimed to have entered the U.S. with passports as visitors.\n\nBPA [REDACTED (b)(6), (b)(7)(C)] obtained both Subjects passports and ran checks through Sector Dispatch. [REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B1/B2 arriving on 12-23-2015 at MIA, admitted to 06-22-2016, with a departure date of 01-10-2016. [REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay. [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B-1/B2 arriving on 06- 01-2016 with a departure date of 06-09-2016. [REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay. Subjects were arrested and transported to [REDACTED (b)(7)(E)] Border Patrol Station for processing.\n\nIMMIGRATION HISTORY:\n\nSubject arrived at Miami on 12/23/2015 and was admitted as a B2 Visitor until 06/22/2016.\n\nCRIMINAL HISTORY:\n\nNo criminal history found.\n\nHEALTH:\n\nSubject appears to be in good health.\n\nEQUITIES:\n\nSubject has $6,638.00 (USD) in possession. All money was transferred with subject to [REDACTED (b)(7)(E)] County Jail.\n\nDISPOSITION:\n\nSubject is being held in Service custody pending a hearing at a time and place to be determined. Subject is currently lodged in the [REDACTED (b)(7)(E)] County Jail. Subject was served a Warrant of Arrest/Notice to Appear, Notice of Custody, and was provided a list of free legal services.",
+          "pageSpans": [
+            {
+              "page": 92,
+              "start": 0,
+              "end": 347
+            },
+            {
+              "page": 93,
+              "start": 349,
+              "end": 3813
+            },
+            {
+              "page": 94,
+              "start": 3815,
+              "end": 5200
+            }
+          ]
+        },
+        "facts": [
+          {
+            "path": "subject.name",
+            "label": "Subject name",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 91,
+            "sourceField": "Family Name (CAPS)"
+          },
+          {
+            "path": "subject.citizenship",
+            "label": "Country of citizenship",
+            "value": "NIGERIA",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Country of Citizenship"
+          },
+          {
+            "path": "subject.birthplace",
+            "label": "City and country of birth",
+            "value": "BENIN CITY, EDO, NIGERIA",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "City, Province (State) and Country of Birth"
+          },
+          {
+            "path": "subject.age",
+            "label": "Age",
+            "value": "39",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Date of Birth / Age"
+          },
+          {
+            "path": "subject.us_address",
+            "label": "U.S. address",
+            "value": "[REDACTED (b)(6), (b)(7)(C)] HOUSTON, TEXAS, 77036",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "U S Address"
+          },
+          {
+            "path": "entry.date",
+            "label": "Date and time of last entry",
+            "value": "12/23/2015, 0730",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.place",
+            "label": "Place of last entry",
+            "value": "0 mile(s) A of MIA",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.manner",
+            "label": "Manner of last entry",
+            "value": "NIM",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "status.at_entry",
+            "label": "Status at entry",
+            "value": "Non-Immigrant",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Status at Entry"
+          },
+          {
+            "path": "status.when_found",
+            "label": "Status when found",
+            "value": "IN TRAVEL",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Status When Found"
+          },
+          {
+            "path": "status.time_illegally_in_us",
+            "label": "Length of time illegally in U.S.",
+            "value": "OVER 1 YEAR",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Length of Time Illegally in U S"
+          },
+          {
+            "path": "encounter.date_time",
+            "label": "Encounter date and hour",
+            "value": "04/16/2017 0730",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "At/Near Date/Hour"
+          },
+          {
+            "path": "encounter.location",
+            "label": "Encounter location (at/near)",
+            "value": "SAULT STE MARIE, MI",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "At/Near"
+          },
+          {
+            "path": "encounter.method",
+            "label": "Method of location/apprehension",
+            "value": "PB",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Method of Location/Apprehension"
+          },
+          {
+            "path": "encounter.station",
+            "label": "Station / location code",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 91,
+            "sourceField": "Location Code"
+          },
+          {
+            "path": "history.immigration_record",
+            "label": "Immigration record",
+            "value": "NEGATIVE",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Immigration Record"
+          },
+          {
+            "path": "history.criminal_record",
+            "label": "Criminal record",
+            "value": "None Known",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Criminal Record"
+          },
+          {
+            "path": "form.charge_code",
+            "label": "Charge code words (as printed)",
+            "value": "R1B",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Charge Code Words(s)"
+          },
+          {
+            "path": "documents.visa_issued",
+            "label": "Date visa issued",
+            "value": "09/23/2015",
+            "status": "present",
+            "sourcePage": 91,
+            "sourceField": "Date Visa Issued"
+          },
+          {
+            "path": "documents.niv",
+            "label": "NIV issuing post and number",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 91,
+            "sourceField": "NIV Issuing Post and NIV Number"
+          }
+        ],
+        "selectedCharges": [
+          {
+            "citation": "INA 237(a)(1)(B)",
+            "referenceId": "INA-237a1B",
+            "source": "stated-in-record",
+            "note": "Citation as stated in the original narrative (PDF page 92)."
+          }
+        ]
+      },
+      "review": {
+        "reviewId": "R-mw5kh87x",
+        "caseId": "C021",
+        "narrativeHash": "2f926c492f7dd5b7",
+        "factsHash": "d0c490e59cbb3e70",
+        "createdAt": "2026-11-06T22:49:31.869Z",
+        "mode": "live",
+        "model": "gpt-oss-20b",
+        "promptVersion": "review-v1.4",
+        "modelConfig": {
+          "reasoningEffort": "low",
+          "samples": 2,
+          "validSamples": 2,
+          "factsPromptVersion": "facts-v2.0",
+          "factsStatus": "failed"
+        },
+        "referenceVersion": "team-provisional-2026-10-31.1",
+        "latencyMs": 345,
+        "modelLatencyMs": 312,
+        "modelAttempts": 2,
+        "modelStatus": "ok",
+        "sentences": [
+          {
+            "id": "S1",
+            "start": 0,
+            "end": 10,
+            "text": "NARRATIVE:",
+            "page": 92
+          },
+          {
+            "id": "S2",
+            "start": 12,
+            "end": 26,
+            "text": "REMOVEABILITY:",
+            "page": 92
+          },
+          {
+            "id": "S3",
+            "start": 28,
+            "end": 347,
+            "text": "Subject is removable per Section 237(a)(1)(B) of the Immigration and Nationality Act (Act), as amended, in that after admission as a nonimmigrant under Section 101(a)(15) of the Act, you have remained in the United States for a time longer than permitted, in violation of this Act or any other law of the United States.",
+            "page": 92
+          },
+          {
+            "id": "S4",
+            "start": 349,
+            "end": 459,
+            "text": "Entry: Subject entered the United States at the Miami International Airport port of entry (MIA) on 12/23/2015.",
+            "page": 93
+          },
+          {
+            "id": "S5",
+            "start": 461,
+            "end": 473,
+            "text": "TRAVEL DATA:",
+            "page": 93
+          },
+          {
+            "id": "S6",
+            "start": 475,
+            "end": 566,
+            "text": "Subject traveled by bus to Houston, TX where he resided and worked as a part-time mechanic.",
+            "page": 93
+          },
+          {
+            "id": "S7",
+            "start": 567,
+            "end": 678,
+            "text": "On 4/12/2017 he boarded a bus with [REDACTED (b)(6), (b)(7)(C)] and arrived in Sault Sainte Marie on 4/14/2017.",
+            "page": 93
+          },
+          {
+            "id": "S8",
+            "start": 679,
+            "end": 800,
+            "text": "He then took another bus to Ann Harbor, MI where he was picked up by the smuggler and brought back to Sault Sainte Marie.",
+            "page": 93
+          },
+          {
+            "id": "S9",
+            "start": 802,
+            "end": 828,
+            "text": "FACTS OF ARREST/ENCOUNTER:",
+            "page": 93
+          },
+          {
+            "id": "S10",
+            "start": 830,
+            "end": 1049,
+            "text": "At 0412 am, Sector Dispatch requested a Supervisory Border Patrol Agent contact Customs and [REDACTED (b)(6), (b)(7)(C)] Border Protection Supervisor [REDACTED (b)(6), (b)(7)(C)] at the Sault Sainte Marie Port of Entry.",
+            "page": 93
+          },
+          {
+            "id": "S11",
+            "start": 1050,
+            "end": 1388,
+            "text": "SBPA called Supervisor [REDACTED (b)(6), (b)(7)(C)] and he informed SBPA [REDACTED (b)(6), (b)(7)(C)] that the Canadian Customs Service Agency had apprehended a smuggling load of Nigerians and that there could possibly be more at the [REDACTED (b)(7)(E)] The driver of the vehicle claimed to Canadian Customs that he had rented this room.",
+            "page": 93
+          },
+          {
+            "id": "S12",
+            "start": 1389,
+            "end": 1781,
+            "text": "After advising Supervisory Border Patrol Agent [REDACTED (b)(6), (b)(7)(C)] of the situation, he and SBPA [REDACTED (b)(6), (b)(7)(C] proceeded to the [REDACTED (b)(7)(E)] and found that a [REDACTED (b)(6), (b)(7)(C)] , [REDACTED (b)(6), (b)(7)(C)] , North York, Ontario, Canada had rented [REDACTED (b)(6), (b)(7)(C)] the previous evening but according to the clerk, he was travelling alone.",
+            "page": 93
+          },
+          {
+            "id": "S13",
+            "start": 1782,
+            "end": 1847,
+            "text": "A check of the parking lot indicated no Canadian plated vehicles.",
+            "page": 93
+          },
+          {
+            "id": "S14",
+            "start": 1848,
+            "end": 2039,
+            "text": "SBPA [REDACTED (b)(6), (b)(7)(C)] called Supervisor [REDACTED (b)(6), (b)(7)(C)] who stated that [REDACTED (b)(6), (b)(7)(C)] was the driver of the smuggling load and was in Canadian custody.",
+            "page": 93
+          },
+          {
+            "id": "S15",
+            "start": 2040,
+            "end": 2173,
+            "text": "He advised me to call [REDACTED (b)(6), (b)(7)(C)] , the Canadian Customs Officer handling the case at [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 93
+          },
+          {
+            "id": "S16",
+            "start": 2174,
+            "end": 2386,
+            "text": "Officer [REDACTED (b)(6), (b)(7)(C)] advised that [REDACTED (b)(6), (b)(7)(C)] stated that he had travelled to Ann Arbor, Michigan yesterday morning and picked up 5 Nigerians, returning to Sault Sainte Marie, MI.",
+            "page": 93
+          },
+          {
+            "id": "S17",
+            "start": 2387,
+            "end": 2632,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] stated that the two females and one male who were apprehended with [REDACTED (b)(6), (b)(7)(C)] had obtained real documents and were found to be [REDACTED (b)(6), (b)(7)(C)] imposters when they tried to enter Canada.",
+            "page": 93
+          },
+          {
+            "id": "S18",
+            "start": 2633,
+            "end": 2760,
+            "text": "Officer advised that [REDACTED (b)(6), (b)(7)(C)] claimed two more Nigerians were in [REDACTED (b)(6), (b)(7)(C)] at this time.",
+            "page": 93
+          },
+          {
+            "id": "S19",
+            "start": 2761,
+            "end": 2819,
+            "text": "Additional Border Patrol Agents were called in at 0630 am.",
+            "page": 93
+          },
+          {
+            "id": "S20",
+            "start": 2820,
+            "end": 2984,
+            "text": "SBPA [REDACTED (b)(6), (b)(7)(C)] accompanied BPA's [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] and they knocked on [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 93
+          },
+          {
+            "id": "S21",
+            "start": 2985,
+            "end": 3121,
+            "text": "When a male opened the door, BPA [REDACTED (b)(6), (b)(7)(C)] announ were Border Patrol Agents and asked if they could come in and talk.",
+            "page": 93
+          },
+          {
+            "id": "S22",
+            "start": 3122,
+            "end": 3286,
+            "text": "The male, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria said yes, and additional agents entered into the room.",
+            "page": 93
+          },
+          {
+            "id": "S23",
+            "start": 3287,
+            "end": 3424,
+            "text": "A female was also found in the room, later identified as [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria.",
+            "page": 93
+          },
+          {
+            "id": "S24",
+            "start": 3425,
+            "end": 3672,
+            "text": "Both subjects were advised that the U.S. Border Patrol had received information that additional Nigerian Nationals were in this room and were thought to be in the U.S. Illegally and were possibly going to attempt to try and illegally enter Canada.",
+            "page": 93
+          },
+          {
+            "id": "S25",
+            "start": 3673,
+            "end": 3813,
+            "text": "When question as to their citizenship, both claimed to be from Nigeria and both claimed to have entered the U.S. with passports as visitors.",
+            "page": 93
+          },
+          {
+            "id": "S26",
+            "start": 3815,
+            "end": 3920,
+            "text": "BPA [REDACTED (b)(6), (b)(7)(C)] obtained both Subjects passports and ran checks through Sector Dispatch.",
+            "page": 94
+          },
+          {
+            "id": "S27",
+            "start": 3921,
+            "end": 4140,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] [REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B1/B2 arriving on 12-23-2015 at MIA, admitted to 06-22-2016, with a departure date of 01-10-2016.",
+            "page": 94
+          },
+          {
+            "id": "S28",
+            "start": 4141,
+            "end": 4217,
+            "text": "[REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay.",
+            "page": 94
+          },
+          {
+            "id": "S29",
+            "start": 4218,
+            "end": 4378,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] , DOB: [REDACTED (b)(6), (b)(7)(C)] , POB: Nigeria entered as a B-1/B2 arriving on 06- 01-2016 with a departure date of 06-09-2016.",
+            "page": 94
+          },
+          {
+            "id": "S30",
+            "start": 4379,
+            "end": 4455,
+            "text": "[REDACTED (b)(7)(E)] reveals [REDACTED (b)(6), (b)(7)(C)] to be an Overstay.",
+            "page": 94
+          },
+          {
+            "id": "S31",
+            "start": 4456,
+            "end": 4556,
+            "text": "Subjects were arrested and transported to [REDACTED (b)(7)(E)] Border Patrol Station for processing.",
+            "page": 94
+          },
+          {
+            "id": "S32",
+            "start": 4558,
+            "end": 4578,
+            "text": "IMMIGRATION HISTORY:",
+            "page": 94
+          },
+          {
+            "id": "S33",
+            "start": 4580,
+            "end": 4669,
+            "text": "Subject arrived at Miami on 12/23/2015 and was admitted as a B2 Visitor until 06/22/2016.",
+            "page": 94
+          },
+          {
+            "id": "S34",
+            "start": 4671,
+            "end": 4688,
+            "text": "CRIMINAL HISTORY:",
+            "page": 94
+          },
+          {
+            "id": "S35",
+            "start": 4690,
+            "end": 4716,
+            "text": "No criminal history found.",
+            "page": 94
+          },
+          {
+            "id": "S36",
+            "start": 4718,
+            "end": 4725,
+            "text": "HEALTH:",
+            "page": 94
+          },
+          {
+            "id": "S37",
+            "start": 4727,
+            "end": 4764,
+            "text": "Subject appears to be in good health.",
+            "page": 94
+          },
+          {
+            "id": "S38",
+            "start": 4766,
+            "end": 4775,
+            "text": "EQUITIES:",
+            "page": 94
+          },
+          {
+            "id": "S39",
+            "start": 4777,
+            "end": 4819,
+            "text": "Subject has $6,638.00 (USD) in possession.",
+            "page": 94
+          },
+          {
+            "id": "S40",
+            "start": 4820,
+            "end": 4895,
+            "text": "All money was transferred with subject to [REDACTED (b)(7)(E)] County Jail.",
+            "page": 94
+          },
+          {
+            "id": "S41",
+            "start": 4897,
+            "end": 4909,
+            "text": "DISPOSITION:",
+            "page": 94
+          },
+          {
+            "id": "S42",
+            "start": 4911,
+            "end": 5007,
+            "text": "Subject is being held in Service custody pending a hearing at a time and place to be determined.",
+            "page": 94
+          },
+          {
+            "id": "S43",
+            "start": 5008,
+            "end": 5076,
+            "text": "Subject is currently lodged in the [REDACTED (b)(7)(E)] County Jail.",
+            "page": 94
+          },
+          {
+            "id": "S44",
+            "start": 5077,
+            "end": 5200,
+            "text": "Subject was served a Warrant of Arrest/Notice to Appear, Notice of Custody, and was provided a list of free legal services.",
+            "page": 94
+          }
+        ],
+        "checks": [
+          {
+            "id": "required_elements",
+            "label": "Required elements",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "consistency",
+            "label": "Consistency",
+            "status": "partial",
+            "note": "The entry and history fact comparison did not run."
+          },
+          {
+            "id": "clarity",
+            "label": "Clarity",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "citation",
+            "label": "Citation check",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "routing",
+            "label": "Human-review routing",
+            "status": "completed_with_findings"
+          }
+        ],
+        "elements": [
+          {
+            "elementId": "E1",
+            "label": "Date or time of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.date"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E2",
+            "label": "Place of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.place"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E3",
+            "label": "Manner of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.manner"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E4",
+            "label": "How the subject was located or apprehended",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "encounter.date_time",
+              "encounter.location",
+              "encounter.method"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E5",
+            "label": "Citizenship or alienage",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "subject.citizenship"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "E6",
+            "label": "Basis for the immigration violation",
+            "sponsorCategory": "S3",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S28",
+              "S30"
+            ],
+            "note": "The narrative states the facts behind the violation."
+          },
+          {
+            "elementId": "E7",
+            "label": "Means and route of travel to the interior",
+            "status": "present",
+            "sentenceIds": [
+              "S4",
+              "S6",
+              "S7",
+              "S8"
+            ],
+            "fieldPaths": [],
+            "note": "Narrative describes travel by bus from Miami to Houston, then to Sault Sainte Marie and Ann Arbor",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N1",
+            "label": "Identifying documents",
+            "sponsorCategory": "S1",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S26"
+            ],
+            "note": "The narrative states what identity documents the person had, or that there were none."
+          },
+          {
+            "elementId": "N2",
+            "label": "Status or classification claimed for admission",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N3",
+            "label": "Application for admission: port, documents presented, purpose of travel",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N4",
+            "label": "Source of key facts identified",
+            "status": "present",
+            "sentenceIds": [
+              "S27",
+              "S28",
+              "S29",
+              "S30"
+            ],
+            "fieldPaths": [],
+            "note": "Source of key facts identified via passport checks and records",
+            "sponsorCategory": "S3"
+          },
+          {
+            "elementId": "N5",
+            "label": "Specific ground stated and explained",
+            "sponsorCategory": "S4",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S3"
+            ],
+            "note": "The narrative states the precise section and explains how the facts meet it."
+          },
+          {
+            "elementId": "N6",
+            "label": "Traveler's explanation for a discrepancy",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "No discrepancy was found, so no explanation is needed.",
+            "sponsorCategory": "S5"
+          },
+          {
+            "elementId": "N7",
+            "label": "Disposition and documenting form",
+            "sponsorCategory": "S6",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S42",
+              "S44"
+            ],
+            "note": "The narrative states the action taken."
+          },
+          {
+            "elementId": "N8",
+            "label": "Expedited removal: advisal, opportunity to respond, review and service",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: expedited removal.",
+            "sponsorCategory": "S6"
+          }
+        ],
+        "citation": {
+          "status": "consistent",
+          "citation": "INA 237(a)(1)(B)",
+          "explanation": "The selected charge of INA 237(a)(1)(B) is supported by the narrative that the subject entered the U.S. as a B‑2 visitor on 12/23/2015 and remained in the U.S. beyond the authorized period.",
+          "evidence": [
+            {
+              "kind": "sentence",
+              "sentenceId": "S4",
+              "quote": "Subject entered the United States at the Miami International Airport port of entry (MIA) on 12/23/2015.",
+              "start": 356,
+              "end": 459,
+              "page": 93,
+              "verified": true,
+              "match": "exact"
+            },
+            {
+              "kind": "sentence",
+              "sentenceId": "S27",
+              "quote": "entered as a B1/B2 arriving on 12-23-2015 at MIA, admitted to 06-22-2016",
+              "start": 4030,
+              "end": 4102,
+              "page": 94,
+              "verified": true,
+              "match": "exact"
+            }
+          ]
+        },
+        "humanReview": {
+          "required": true,
+          "reasons": [
+            "This review is partial: Fact extraction did not complete (http); entry and history comparisons used only statements read from the source text by rules."
+          ]
+        },
+        "findings": [],
+        "notes": [
+          "The narrative describes more than one person (for example S24). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution."
+        ],
+        "caseContext": {
+          "contexts": [
+            "interior"
+          ],
+          "source": "inferred",
+          "basis": "the form records a method of location/apprehension"
+        },
+        "checklistVersion": "v2",
+        "discarded": [],
+        "calls": [
+          {
+            "role": "facts",
+            "status": "failed",
+            "ms": 12,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 7,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 7,
+                "ms": 5,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          },
+          {
+            "role": "review-1",
+            "status": "ok",
+            "ms": 311,
+            "attempts": 1,
+            "chars": 2088,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 312,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-2",
+            "status": "ok",
+            "ms": 309,
+            "attempts": 1,
+            "chars": 2088,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 309,
+                "outcome": "ok"
+              }
+            ]
+          }
+        ],
+        "factsExtraction": {
+          "status": "failed",
+          "reason": "The model endpoint returned HTTP 500."
+        },
+        "completion": {
+          "status": "partial",
+          "failed": [
+            {
+              "check": "Fact extraction",
+              "reason": "did not complete (http); entry and history comparisons used only statements read from the source text by rules"
+            }
+          ],
+          "unsupported": []
+        },
+        "sampleIssues": {
+          "perSample": [
+            0,
+            0
+          ],
+          "merged": 0,
+          "inAllSamples": 0
+        }
+      },
+      "completion": "partial"
+    }
+  ],
+  "decisions": {}
+}

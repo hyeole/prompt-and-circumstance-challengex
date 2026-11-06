@@ -1,0 +1,796 @@
+{
+  "caseId": "C012-X1",
+  "versions": [
+    {
+      "version": 1,
+      "savedAt": "2026-11-06T22:44:40.217Z",
+      "snapshotHash": "7822ebd2403bbdb7",
+      "snapshot": {
+        "narrative": {
+          "text": "NARRATIVE:\n\nFacts of Arrest: On April 8, 2017, at approximately 2000 hours, a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals. Agent [REDACTED (b)(6), (b)(7)(C)] arrived on scene and questioned the three individuals as to their immigration status. One individual was a Legal Alien Permanent Resident, [REDACTED (b)(6), (b)(7)(C)] (Honduras, [REDACTED (b)(6), (b)(7)(C)] ). The other two individuals [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] ) admitted they were illegally present in the United States and did not possess any immigration documents to remain or pass through the United States.\n\nThe illegal immigrants were arrested and transported to [REDACTED (b)(7)(E)] station at 2145 hours by Agent [REDACTED (b)(6), (b)(7)(C)] One subject was processed as a WA/NTA and the second subject was processed as a Reinstate. Upon further questioning it was discovered that there was another vehicle following them. Agents went looking for the other vehicle [REDACTED (b)(6), (b)(7)(C)] . The vehicle was located in St. Ignace at the [REDACTED (b)(7)(E)] After agents knocked on the window, the driver accelerated away from the agent. A pursuit followed and the vehicle eventually stopped at [REDACTED (b)(7)(E)] and passenger took off on foot. The driver, [REDACTED (b)(6), (b)(7)(C)] a Legal Alien Permanent Resident remained in the vehicle. The passenger, the owner of the vehicle, is [REDACTED (b)(6), (b)(7)(C)] . Records checks through Central Dispatch returned with negative results. [REDACTED (b)(6), (b)(7)(C)] was taken into custody by Michigan State Police for Resisting and Obstructing a police officer. Removability: Subject is inadmissible under 212(a) (6) (A) (i) of the Immigration and Nationality Act, as amended in that he is an alien present in the United States without being admitted or paroled, or who arrived in the United States at any time or place other than as designated by the Attorney General.\n\nENTRY:\n\n[REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] COC: Nicaragua) claims to have entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa. He stated that he did not cross through a designated Port of Entry and was not inspected or admitted by an immigration official. IMMIGRATION HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior immigration history. CRIMINAL HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior criminal history. HEALTHY: [REDACTED (b)(6), (b)(7)(C)] claims and appears to be in good health and is not taking any medications. EQUITIES: 1116 U.S. Dollars DISPOSITION: [REDACTED (b)(6), (b)(7)(C)] was served a Warrant of Arrest/Notice to Appear. Subject and his personal property were transported to the [REDACTED (b)(7)(E)] county jail pending removal proceedings.",
+          "pageSpans": [
+            {
+              "page": 52,
+              "start": 0,
+              "end": 740
+            },
+            {
+              "page": 53,
+              "start": 742,
+              "end": 2931
+            }
+          ]
+        },
+        "facts": [
+          {
+            "path": "subject.name",
+            "label": "Subject name",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 51,
+            "sourceField": "Family Name (CAPS)"
+          },
+          {
+            "path": "subject.citizenship",
+            "label": "Country of citizenship",
+            "value": "NICARAGUA",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Country of Citizenship"
+          },
+          {
+            "path": "subject.birthplace",
+            "label": "City and country of birth",
+            "value": "OCOTAL, NUEVA SEGORIA, NICARAGUA",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "City, Province (State) and Country of Birth"
+          },
+          {
+            "path": "subject.age",
+            "label": "Age",
+            "value": "30",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Date of Birth / Age"
+          },
+          {
+            "path": "subject.us_address",
+            "label": "U.S. address",
+            "value": "[REDACTED (b)(6), (b)(7)(C)] ALANSON, MICHIGAN",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "U S Address"
+          },
+          {
+            "path": "entry.date",
+            "label": "Date and time of last entry",
+            "value": "Unknown Date, Unknown Time",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.place",
+            "label": "Place of last entry",
+            "value": "0 mile(s) of LAR",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.manner",
+            "label": "Manner of last entry",
+            "value": "PWA (AFOOT)",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "status.at_entry",
+            "label": "Status at entry",
+            "value": "PWA Mexico",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Status at Entry"
+          },
+          {
+            "path": "status.when_found",
+            "label": "Status when found",
+            "value": "IN TRAVEL",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Status When Found"
+          },
+          {
+            "path": "status.time_illegally_in_us",
+            "label": "Length of time illegally in U.S.",
+            "value": "OVER 1 YEAR",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Length of Time Illegally in U S"
+          },
+          {
+            "path": "encounter.date_time",
+            "label": "Encounter date and hour",
+            "value": "04/08/2017 2040",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "At/Near Date/Hour"
+          },
+          {
+            "path": "encounter.location",
+            "label": "Encounter location (at/near)",
+            "value": "ST IGNACE, MI",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "At/Near"
+          },
+          {
+            "path": "encounter.method",
+            "label": "Method of location/apprehension",
+            "value": "OA",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Method of Location/Apprehension"
+          },
+          {
+            "path": "encounter.station",
+            "label": "Station / location code",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 51,
+            "sourceField": "Location Code"
+          },
+          {
+            "path": "history.immigration_record",
+            "label": "Immigration record",
+            "value": "NEGATIVE",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Immigration Record"
+          },
+          {
+            "path": "history.criminal_record",
+            "label": "Criminal record",
+            "value": "None Known",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Criminal Record"
+          },
+          {
+            "path": "form.charge_code",
+            "label": "Charge code words (as printed)",
+            "value": "I6A",
+            "status": "present",
+            "sourcePage": 51,
+            "sourceField": "Charge Code Words(s)"
+          }
+        ],
+        "selectedCharges": [
+          {
+            "citation": "INA 212(a)(6)(A)(i)",
+            "referenceId": "INA-212a6Ai",
+            "source": "stated-in-record",
+            "note": "Citation as stated in the original narrative (PDF page 53)."
+          }
+        ]
+      },
+      "review": {
+        "reviewId": "R-mw5kaz6h",
+        "caseId": "C012-X1",
+        "narrativeHash": "48748d9f8450363c",
+        "factsHash": "47f13b00eb139f98",
+        "createdAt": "2026-11-06T22:44:40.217Z",
+        "mode": "live",
+        "model": "gpt-oss-20b",
+        "promptVersion": "review-v1.4",
+        "modelConfig": {
+          "reasoningEffort": "low",
+          "samples": 2,
+          "validSamples": 2,
+          "factsPromptVersion": "facts-v2.0",
+          "factsStatus": "ok"
+        },
+        "referenceVersion": "team-provisional-2026-10-31.1",
+        "latencyMs": 373,
+        "modelLatencyMs": 324,
+        "modelAttempts": 2,
+        "modelStatus": "ok",
+        "sentences": [
+          {
+            "id": "S1",
+            "start": 0,
+            "end": 10,
+            "text": "NARRATIVE:",
+            "page": 52
+          },
+          {
+            "id": "S2",
+            "start": 12,
+            "end": 173,
+            "text": "Facts of Arrest: On April 8, 2017, at approximately 2000 hours, a Michigan State Trooper requested assistance from the U.S. Border Patrol with three individuals.",
+            "page": 52
+          },
+          {
+            "id": "S3",
+            "start": 174,
+            "end": 294,
+            "text": "Agent [REDACTED (b)(6), (b)(7)(C)] arrived on scene and questioned the three individuals as to their immigration status.",
+            "page": 52
+          },
+          {
+            "id": "S4",
+            "start": 295,
+            "end": 419,
+            "text": "One individual was a Legal Alien Permanent Resident, [REDACTED (b)(6), (b)(7)(C)] (Honduras, [REDACTED (b)(6), (b)(7)(C)] ).",
+            "page": 52
+          },
+          {
+            "id": "S5",
+            "start": 420,
+            "end": 740,
+            "text": "The other two individuals [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] (Nicaragua, [REDACTED (b)(6), (b)(7)(C)] ) admitted they were illegally present in the United States and did not possess any immigration documents to remain or pass through the United States.",
+            "page": 52
+          },
+          {
+            "id": "S6",
+            "start": 742,
+            "end": 969,
+            "text": "The illegal immigrants were arrested and transported to [REDACTED (b)(7)(E)] station at 2145 hours by Agent [REDACTED (b)(6), (b)(7)(C)] One subject was processed as a WA/NTA and the second subject was processed as a Reinstate.",
+            "page": 53
+          },
+          {
+            "id": "S7",
+            "start": 970,
+            "end": 1059,
+            "text": "Upon further questioning it was discovered that there was another vehicle following them.",
+            "page": 53
+          },
+          {
+            "id": "S8",
+            "start": 1060,
+            "end": 1132,
+            "text": "Agents went looking for the other vehicle [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 53
+          },
+          {
+            "id": "S9",
+            "start": 1133,
+            "end": 1278,
+            "text": "The vehicle was located in St. Ignace at the [REDACTED (b)(7)(E)] After agents knocked on the window, the driver accelerated away from the agent.",
+            "page": 53
+          },
+          {
+            "id": "S10",
+            "start": 1279,
+            "end": 1388,
+            "text": "A pursuit followed and the vehicle eventually stopped at [REDACTED (b)(7)(E)] and passenger took off on foot.",
+            "page": 53
+          },
+          {
+            "id": "S11",
+            "start": 1389,
+            "end": 1487,
+            "text": "The driver, [REDACTED (b)(6), (b)(7)(C)] a Legal Alien Permanent Resident remained in the vehicle.",
+            "page": 53
+          },
+          {
+            "id": "S12",
+            "start": 1488,
+            "end": 1562,
+            "text": "The passenger, the owner of the vehicle, is [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 53
+          },
+          {
+            "id": "S13",
+            "start": 1563,
+            "end": 1634,
+            "text": "Records checks through Central Dispatch returned with negative results.",
+            "page": 53
+          },
+          {
+            "id": "S14",
+            "start": 1635,
+            "end": 1759,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] was taken into custody by Michigan State Police for Resisting and Obstructing a police officer.",
+            "page": 53
+          },
+          {
+            "id": "S15",
+            "start": 1760,
+            "end": 2067,
+            "text": "Removability: Subject is inadmissible under 212(a) (6) (A) (i) of the Immigration and Nationality Act, as amended in that he is an alien present in the United States without being admitted or paroled, or who arrived in the United States at any time or place other than as designated by the Attorney General.",
+            "page": 53
+          },
+          {
+            "id": "S16",
+            "start": 2069,
+            "end": 2075,
+            "text": "ENTRY:",
+            "page": 53
+          },
+          {
+            "id": "S17",
+            "start": 2077,
+            "end": 2288,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] COC: Nicaragua) claims to have entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa.",
+            "page": 53
+          },
+          {
+            "id": "S18",
+            "start": 2289,
+            "end": 2417,
+            "text": "He stated that he did not cross through a designated Port of Entry and was not inspected or admitted by an immigration official.",
+            "page": 53
+          },
+          {
+            "id": "S19",
+            "start": 2418,
+            "end": 2501,
+            "text": "IMMIGRATION HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior immigration history.",
+            "page": 53
+          },
+          {
+            "id": "S20",
+            "start": 2502,
+            "end": 2579,
+            "text": "CRIMINAL HISTORY: [REDACTED (b)(6), (b)(7)(C)] has no prior criminal history.",
+            "page": 53
+          },
+          {
+            "id": "S21",
+            "start": 2580,
+            "end": 2692,
+            "text": "HEALTHY: [REDACTED (b)(6), (b)(7)(C)] claims and appears to be in good health and is not taking any medications.",
+            "page": 53
+          },
+          {
+            "id": "S22",
+            "start": 2693,
+            "end": 2811,
+            "text": "EQUITIES: 1116 U.S. Dollars DISPOSITION: [REDACTED (b)(6), (b)(7)(C)] was served a Warrant of Arrest/Notice to Appear.",
+            "page": 53
+          },
+          {
+            "id": "S23",
+            "start": 2812,
+            "end": 2931,
+            "text": "Subject and his personal property were transported to the [REDACTED (b)(7)(E)] county jail pending removal proceedings.",
+            "page": 53
+          }
+        ],
+        "checks": [
+          {
+            "id": "required_elements",
+            "label": "Required elements",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "consistency",
+            "label": "Consistency",
+            "status": "completed_with_findings"
+          },
+          {
+            "id": "clarity",
+            "label": "Clarity",
+            "status": "completed_with_findings"
+          },
+          {
+            "id": "citation",
+            "label": "Citation check",
+            "status": "completed_with_findings"
+          },
+          {
+            "id": "routing",
+            "label": "Human-review routing",
+            "status": "completed_with_findings"
+          }
+        ],
+        "elements": [
+          {
+            "elementId": "E1",
+            "label": "Date or time of last entry",
+            "status": "present",
+            "sentenceIds": [
+              "S17"
+            ],
+            "fieldPaths": [
+              "entry.date"
+            ],
+            "note": "Stated in the narrative. The form records this as unknown. It is documented, but no usable value is recorded.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E2",
+            "label": "Place of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.place"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E3",
+            "label": "Manner of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.manner"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E4",
+            "label": "How the subject was located or apprehended",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "encounter.date_time",
+              "encounter.location",
+              "encounter.method"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E5",
+            "label": "Citizenship or alienage",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "subject.citizenship"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "E6",
+            "label": "Basis for the immigration violation",
+            "sponsorCategory": "S3",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S5"
+            ],
+            "note": "The narrative states the facts behind the violation."
+          },
+          {
+            "elementId": "E7",
+            "label": "Means and route of travel to the interior",
+            "status": "present",
+            "sentenceIds": [
+              "S17"
+            ],
+            "fieldPaths": [],
+            "note": "Means of travel reported as flight to Chicago",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N1",
+            "label": "Identifying documents",
+            "status": "unclear",
+            "sentenceIds": [
+              "S17"
+            ],
+            "fieldPaths": [],
+            "note": "The cited sentence mentions a document but does not say what identifying documents the person had.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N2",
+            "label": "Status or classification claimed for admission",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N3",
+            "label": "Application for admission: port, documents presented, purpose of travel",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N4",
+            "label": "Source of key facts identified",
+            "status": "present",
+            "sentenceIds": [
+              "S17"
+            ],
+            "fieldPaths": [],
+            "note": "Key fact source is traveler’s statement",
+            "sponsorCategory": "S3"
+          },
+          {
+            "elementId": "N5",
+            "label": "Specific ground stated and explained",
+            "sponsorCategory": "S4",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S15"
+            ],
+            "note": "The narrative states the precise section and explains how the facts meet it."
+          },
+          {
+            "elementId": "N6",
+            "label": "Traveler's explanation for a discrepancy",
+            "status": "absent",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "No discrepancy noted",
+            "sponsorCategory": "S5"
+          },
+          {
+            "elementId": "N7",
+            "label": "Disposition and documenting form",
+            "sponsorCategory": "S6",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S6",
+              "S22"
+            ],
+            "note": "The narrative states the action taken."
+          },
+          {
+            "elementId": "N8",
+            "label": "Expedited removal: advisal, opportunity to respond, review and service",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: expedited removal.",
+            "sponsorCategory": "S6"
+          }
+        ],
+        "citation": {
+          "status": "needs_human_review",
+          "citation": "INA 212(a)(6)(A)(i)",
+          "explanation": "The record states the core fact this charge depends on, but the model raised a concern: The selected charge requires entry without admission or parole, but the narrative indicates entry with a tourist visa and no inspection.",
+          "evidence": [
+            {
+              "kind": "sentence",
+              "sentenceId": "S17",
+              "quote": "entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa",
+              "start": 2172,
+              "end": 2287,
+              "page": 53,
+              "verified": true,
+              "match": "exact"
+            }
+          ]
+        },
+        "humanReview": {
+          "required": true,
+          "reasons": [
+            "Several people are described with redacted names, and S17, S6 may conflict with this record but cannot be attributed to its subject. A person should decide who each statement is about.",
+            "The record states the core fact this charge depends on, but the model raised a concern: The selected charge requires entry without admission or parole, but the narrative indicates entry with a tourist visa and no inspection.",
+            "Conflicting entry facts between narrative and form fields; unclear if subject entered without inspection or with a visa",
+            "Conflicting entry facts between narrative and form fields; need to determine correct entry status for charge applicability",
+            "One person's account of the entry contradicts itself (manner): One person's account of the entry contradicts itself; a person must decide which statement is correct and whose account it is."
+          ],
+          "accounts": [
+            {
+              "fieldPath": "history.immigration_record",
+              "sentenceIds": [
+                "S6"
+              ],
+              "details": [
+                "S6 describes a prior removal; the form records the immigration record as \"NEGATIVE\"."
+              ]
+            }
+          ]
+        },
+        "findings": [
+          {
+            "id": "U-N1",
+            "category": "unclear",
+            "title": "Unclear: identifying documents",
+            "explanation": "The cited sentence mentions a document but does not say what identifying documents the person had.",
+            "evidence": [
+              {
+                "kind": "sentence",
+                "sentenceId": "S17",
+                "quote": "[REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] COC: Nicaragua) claims to have entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa.",
+                "start": 2077,
+                "end": 2288,
+                "page": 53,
+                "verified": true
+              }
+            ],
+            "referenceIds": [
+              "N1"
+            ],
+            "needsHumanReview": false,
+            "source": "model",
+            "severity": "low"
+          },
+          {
+            "id": "F-ACCOUNT",
+            "category": "inconsistency",
+            "title": "One person's account of the entry contradicts itself (manner)",
+            "explanation": "S17 and S18 are one continuous account (S18 continues it with \"He\"), but they disagree about how this person entered: S17 describes admission at a port of entry or with a document, S18 describes entry without inspection. The narrative does not establish whether this person is this record's subject, so this is not stated as a conflict with the form. A person must resolve the account and decide whose it is.",
+            "evidence": [
+              {
+                "kind": "sentence",
+                "sentenceId": "S17",
+                "quote": "[REDACTED (b)(6), (b)(7)(C)] (DOB: [REDACTED (b)(6), (b)(7)(C)] COC: Nicaragua) claims to have entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa.",
+                "start": 2077,
+                "end": 2288,
+                "page": 53,
+                "verified": true,
+                "match": "exact",
+                "context": {
+                  "attribution": "unclear",
+                  "event": "Entry into the U.S."
+                }
+              },
+              {
+                "kind": "sentence",
+                "sentenceId": "S18",
+                "quote": "He stated that he did not cross through a designated Port of Entry and was not inspected or admitted by an immigration official.",
+                "start": 2289,
+                "end": 2417,
+                "page": 53,
+                "verified": true,
+                "match": "exact",
+                "context": {
+                  "attribution": "unclear",
+                  "event": "Entry into the U.S."
+                }
+              }
+            ],
+            "referenceIds": [
+              "E3"
+            ],
+            "needsHumanReview": true,
+            "humanReviewReason": "One person's account of the entry contradicts itself; a person must decide which statement is correct and whose account it is.",
+            "source": "rule",
+            "severity": "medium"
+          }
+        ],
+        "notes": [
+          "The narrative describes more than one person (for example S2). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution."
+        ],
+        "caseContext": {
+          "contexts": [
+            "interior"
+          ],
+          "source": "inferred",
+          "basis": "the form records a method of location/apprehension"
+        },
+        "checklistVersion": "v2",
+        "discarded": [],
+        "calls": [
+          {
+            "role": "facts",
+            "status": "ok",
+            "ms": 319,
+            "attempts": 1,
+            "chars": 1041,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 320,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-1",
+            "status": "ok",
+            "ms": 315,
+            "attempts": 1,
+            "chars": 2226,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 315,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-2",
+            "status": "ok",
+            "ms": 321,
+            "attempts": 1,
+            "chars": 2226,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 321,
+                "outcome": "ok"
+              }
+            ]
+          }
+        ],
+        "factsExtraction": {
+          "status": "valid",
+          "output": {
+            "entry_statements": [
+              {
+                "sentence_id": "S17",
+                "quote": "entered into the United States in August 2013 by flying into Chicago O'Hare International Airport on a tourist visa",
+                "event": "us_entry",
+                "country": "United States",
+                "year": 2013,
+                "manner": "admitted",
+                "person": "unclear",
+                "uncertainty": "stated"
+              },
+              {
+                "sentence_id": "S18",
+                "quote": "did not cross through a designated Port of Entry and was not inspected or admitted by an immigration official",
+                "event": "us_entry",
+                "country": "United States",
+                "year": null,
+                "manner": "without_inspection",
+                "person": "unclear",
+                "uncertainty": "stated"
+              }
+            ],
+            "removal_statements": [],
+            "status_statements": [
+              {
+                "sentence_id": "S5",
+                "quote": "admitted they were illegally present in the United States and did not possess any immigration documents to remain or pass through the United States",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S15",
+                "quote": "Subject is inadmissible under 212(a) (6) (A) (i) of the Immigration and Nationality Act, as amended in that he is an alien present in the United States without being admitted or paroled",
+                "person": "unclear"
+              }
+            ]
+          }
+        },
+        "completion": {
+          "status": "complete",
+          "failed": [],
+          "unsupported": []
+        },
+        "sampleIssues": {
+          "perSample": [
+            0,
+            0
+          ],
+          "merged": 0,
+          "inAllSamples": 0
+        }
+      },
+      "completion": "complete"
+    }
+  ],
+  "decisions": {
+    "R-mw5kaz6h": {
+      "F-ACCOUNT": {
+        "state": "acknowledged",
+        "decidedAt": "2026-11-06T22:50:14.977Z"
+      }
+    }
+  }
+}

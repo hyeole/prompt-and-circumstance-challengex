@@ -1,0 +1,101 @@
+{
+  "id": "U001-osq8",
+  "title": "Mobile intake check (synthetic)",
+  "kind": "user-case",
+  "provenance": {
+    "source": "Entered in NarrativeCheck",
+    "extraction": "Synthetic test text written by the user. NarrativeCheck did not read text from any attached PDF; the narrative is exactly what was entered.",
+    "verification": "Entered by the user; not verified by NarrativeCheck.",
+    "replacements": [],
+    "textOrigin": "synthetic-test"
+  },
+  "narrative": {
+    "text": "Synthetic test narrative for a layout check. [REDACTED] was encountered near Avon, Ohio on 03/22/2017 and stated that he entered the United States without inspection near Brownsville, Texas."
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport / identity document",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code (as printed)",
+      "value": "",
+      "status": "absent"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "officer-selected"
+    }
+  ],
+  "userCase": {
+    "createdAt": "2026-11-06T22:55:25.040Z"
+  },
+  "context": [
+    "interior"
+  ]
+}
