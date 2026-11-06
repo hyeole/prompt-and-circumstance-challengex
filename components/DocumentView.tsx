@@ -133,6 +133,8 @@ export default function DocumentView({
                     <mark
                       className={`hl hl-${first.category} ${isSel ? "hl-selected" : ""}`}
                       data-fid={s.findingIds.join(" ")}
+                      data-start={s.start}
+                      data-end={s.end}
                       tabIndex={0}
                       role="button"
                       aria-label={`${cat.label}: ${s.findingIds.map((id) => byId[id].title).join("; ")}`}

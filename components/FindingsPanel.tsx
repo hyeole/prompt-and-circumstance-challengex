@@ -207,8 +207,18 @@ function LoadingState({ elapsed }: { elapsed: number }) {
 
 const WHO: Record<string, string> = { subject: "Subject (named as “Subject” in the text)", unclear: "Unattributed (names redacted)", other: "A different person" };
 
+// Stacked (narrow) layout only: the narrative sits above the findings in one scroll area, so selecting a finding cannot
+// show both. This button scrolls the narrative to the exact highlighted text of one evidence item. Hidden on desktop (CSS).
+function showInNarrative(fid: string, start?: number) {
+  const marks = [...document.querySelectorAll<HTMLElement>(`.doc-text mark[data-fid~="${fid}"]`)];
+  const el = (start != null && marks.find((m) => Number(m.dataset.start) <= start && start < Number(m.dataset.end))) || marks[0];
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  el.focus({ preventScroll: true });
+}
+
 /** One piece of evidence: the full source sentence with the quoted words marked, plus its context and match type. */
-function EvidenceItem({ e, kase, review, pdfHref }: { e: EvidenceRef; kase: CaseRecord; review: ReviewResult; pdfHref: string | null }) {
+function EvidenceItem({ e, kase, review, pdfHref, fid }: { e: EvidenceRef; kase: CaseRecord; review: ReviewResult; pdfHref: string | null; fid: string }) {
   if (e.kind === "missing") {
     const el = review.elements.find((x) => x.elementId === e.elementId);
     return <div className="stmt"><div className="who"><span className="match match-none">Not stated</span>{el?.sponsorCategory && <span>Sponsor category {el.sponsorCategory}</span>}</div>{el?.label ?? "Required element"} is not stated in the narrative or the form fields reviewed. There is no source text to point to.</div>;
@@ -236,6 +246,7 @@ function EvidenceItem({ e, kase, review, pdfHref }: { e: EvidenceRef; kase: Case
         <span>{e.sentenceId}{(e.page ?? s?.page) ? ` · PDF p.${e.page ?? s?.page}` : ""}</span>
       </div>
       <span className="ev-q">{qs >= 0 && qe > qs ? <>{text.slice(0, qs)}<mark>{text.slice(qs, qe)}</mark>{text.slice(qe)}</> : text}</span>
+      <button type="button" className="ev-goto linkish small" onClick={() => showInNarrative(fid, e.start)}>Show in narrative</button>
       {e.match === "partial" && <div className="ev-partial">The extracted wording differed; the marked words are the matching source text and contain the fact being compared.</div>}
       {pdfHref && (e.page ?? s?.page) && <div><a className="small" href={`${pdfHref}#page=${e.page ?? s?.page}`} target="_blank" rel="noopener">Open source page {e.page ?? s?.page} <Icon name="external" size={11} /></a> <span className="small muted">(page only; the exact position on the page is not mapped)</span></div>}
     </div>
@@ -281,11 +292,11 @@ function FindingCard({ f, kase, review, selected, onSelect, decision, onDecide, 
           <p>{f.explanation}</p>
           {sideBySide ? (
             <div className="side-by-side" aria-label="Conflicting sources">
-              {sentenceEv.slice(0, 2).map((e, i) => <div key={i}><div className="small muted" style={{ marginBottom: 4 }}>{i === 0 ? "Statement A" : "Statement B"}</div><EvidenceItem e={e} kase={kase} review={review} pdfHref={pdfHref} /></div>)}
-              {sentenceEv.length > 2 && <div style={{ gridColumn: "1 / -1" }}>{sentenceEv.slice(2).map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} />)}</div>}
+              {sentenceEv.slice(0, 2).map((e, i) => <div key={i}><div className="small muted" style={{ marginBottom: 4 }}>{i === 0 ? "Statement A" : "Statement B"}</div><EvidenceItem e={e} kase={kase} review={review} pdfHref={pdfHref} fid={f.id} /></div>)}
+              {sentenceEv.length > 2 && <div style={{ gridColumn: "1 / -1" }}>{sentenceEv.slice(2).map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} fid={f.id} />)}</div>}
             </div>
           ) : (
-            <div className="evidence" aria-label="Evidence">{f.evidence.map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} />)}</div>
+            <div className="evidence" aria-label="Evidence">{f.evidence.map((e, i) => <EvidenceItem key={i} e={e} kase={kase} review={review} pdfHref={pdfHref} fid={f.id} />)}</div>
           )}
           {f.needsHumanReview && <div className="hr-note"><Icon name="review" size={14} /> <span>{f.humanReviewReason}</span></div>}
 

@@ -430,3 +430,66 @@ a.stat:hover { border-color: var(--teal); }
 }
 
 a.btn { text-decoration: none; }
+
+/* ---------- Responsive layout (ui-mobile-1). Only narrower screens change; 1280px and wider keep the desktop layout.
+   Below 1180px the three review panels stack. They used to stay single grid rows with min-height 0 inside a fixed-height
+   grid, so their content overflowed and overlapped (375px check, ui-accept-1). They now flow as normal blocks in one
+   scrolling area, findings first (the review result is what is read after a run; facts and narrative follow). Selecting a
+   finding cannot show both card and narrative in one stacked column, so each evidence quote gets a "Show in narrative"
+   control (.ev-goto, hidden on desktop) that scrolls to its exact highlight. Below 900px the header wraps, padding shrinks
+   and two-column grids stack; below 600px the side rail becomes a bottom bar and the header scrolls away with the page. */
+/* All widths: contain the visually hidden (.sr-only, absolute) labels of the review panels inside their own scrolling
+   panel. Without a positioned ancestor they were placed against the page, making it taller than the window, so selecting
+   a finding scrolled the whole page (by 41 px at 1280x800, hiding the header). No visible layout change. */
+.body, .body > .col { position: relative; }
+.ev-goto { display: none; }
+@media (max-width: 1180px) {
+  .body, .body.facts-collapsed { display: flex; flex-direction: column; overflow-y: auto; }
+  .body > .col { flex: none; }
+  .body > .review { order: -1; border-bottom: 1px solid var(--line, #e3e6ea); }
+  .ev-goto { display: block; margin-top: 6px; padding: 4px 0; background: none; border: 0; font: inherit; font-size: 12.5px; }
+  .body > .col { overflow: visible; min-height: auto; }
+  .facts.collapsed { display: block; padding: 10px 16px; }
+  .facts.collapsed .btn { writing-mode: horizontal-tb; transform: none; }
+  .case-details { left: 12px; right: 12px; width: auto; max-width: 560px; }
+  .finding-kicker { flex-wrap: wrap; row-gap: 2px; }
+}
+@media (max-width: 900px) {
+  .header { flex-wrap: wrap; gap: 8px 12px; padding: 10px 14px; }
+  .brand { padding-right: 12px; }
+  .breadcrumbs { flex: 1 1 160px; }
+  .breadcrumbs ol { font-size: 12.5px; }
+  .header-actions { flex: 1 1 100%; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+  .subheader { padding: 8px 14px; }
+  .title-btn h1 { white-space: normal; }
+  .facts, .review { padding: 16px; }
+  .canvas { padding: 14px 10px; }
+  .paper-head { flex-wrap: wrap; padding: 12px 16px; }
+  .paper-body { padding: 20px 18px 28px; }
+  .doc-editor { min-height: 50vh; padding: 12px; }
+  .case-details dl { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; gap: 2px; padding: 8px 14px; }
+  .toolbar input[type="search"] { min-width: 0; width: 100%; }
+  /* Data tables scroll inside their own box instead of widening the page. */
+  .table, .check-table { display: block; overflow-x: auto; }
+  /* Positioned so visually hidden labels (.sr-only, absolute) stay inside the scroll box instead of widening the page. */
+  .page, .table, .check-table { position: relative; }
+  .report-screen { padding: 18px 14px; max-width: 100%; overflow-x: auto; }
+  .report-screen .r-head { flex-wrap: wrap; gap: 8px; }
+  /* !important: the history page sets its two-column grid inline. */
+  .grid-2 { grid-template-columns: minmax(0, 1fr) !important; }
+}
+@media (max-width: 600px) {
+  .report-screen .r-grid { grid-template-columns: minmax(0, 1fr); }
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; height: 100dvh; }
+  .main { grid-row: 1; overflow-y: auto; }
+  .body, .body.facts-collapsed { flex: none; overflow: visible; }
+  .rail { grid-row: 2; width: auto; flex-direction: row; justify-content: space-around; align-items: stretch; padding: 4px 6px calc(4px + env(safe-area-inset-bottom)); gap: 2px; }
+  .rail-spacer, .rail-credit { display: none; }
+  .rail-link { width: auto; flex: 1 1 0; min-width: 0; padding: 6px 0 5px; font-size: 10px; }
+  .rail-link.is-active::before { left: 18%; right: 18%; top: -4px; bottom: auto; width: auto; height: 3px; border-radius: 0 0 3px 3px; }
+  .wordmark { font-size: 15px; }
+  .brand { border-right: 0; padding-right: 0; }
+  .brand-mark { width: 30px; height: 30px; font-size: 11.5px; }
+}
+@media print { .shell { display: block; height: auto; } .ev-goto { display: none !important; } }
