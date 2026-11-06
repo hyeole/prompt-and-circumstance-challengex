@@ -1,0 +1,249 @@
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.ts took 64ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1560ms
+  Running TypeScript ...
+  Finished TypeScript in 524ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 110ms
+Turbopack build encountered 6 warnings:
+./lib/caseSource.ts:26:10
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m24 |[0m [36mexport[0m [36mfunction[0m sourcePdfPath(): string | [36mnull[0m {
+  [90m25 |[0m   [36mconst[0m p = process.env.[33mNC_SOURCE_PDF[0m ?? path.join(process.cwd(), [32m"reference-materials"[0m, [32m"...[0m
+[33m[1m>[0m [90m26 |[0m   [36mreturn[0m existsSync(p) ? p : [36mnull[0m;
+  [90m   |[0m          [33m[1m^^^^^^^^^^^^^[0m
+  [90m27 |[0m }
+  [90m28 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #2 [App Route]:
+    ./lib/caseSource.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #3 [Server Component]:
+    ./lib/caseSource.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+./lib/cases.ts:11:15
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m 9 |[0m [90m *  dev-synthetic evaluation inputs (opened by id only, e.g. for report exports; never lis...[0m
+  [90m10 |[0m [36mexport[0m [36mfunction[0m loadCases(set: keyof [36mtypeof[0m [33mDIRS[0m = [32m"app"[0m): [33mCaseRecord[0m[] {
+[33m[1m>[0m [90m11 |[0m   [36mconst[0m dir = path.join(process.cwd(), ...[33mDIRS[0m[set]);
+  [90m   |[0m               [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m12 |[0m   [36mreturn[0m readdirSync(dir)
+  [90m13 |[0m     .filter((f) => f.endsWith([32m".json"[0m))
+  [90m14 |[0m     .sort()
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: path.join(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/cases.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #2 [App Route]:
+    ./lib/cases.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #3 [Server Component]:
+    ./lib/cases.ts
+    ./lib/caseSource.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+./lib/store.ts:30:8
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m28 |[0m
+  [90m29 |[0m [36mexport[0m [36mfunction[0m listUserCases(): [33mCaseRecord[0m[] {
+[33m[1m>[0m [90m30 |[0m   [36mif[0m (!existsSync([33mDIRS[0m.cases)) [36mreturn[0m [];
+  [90m   |[0m        [33m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m31 |[0m   [36mreturn[0m readdirSync([33mDIRS[0m.cases).filter((f) => f.endsWith([32m".json"[0m)).sort().map((f) => read...
+  [90m32 |[0m }
+  [90m33 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/store.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #2 [App Route]:
+    ./lib/store.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #3 [Server Component]:
+    ./lib/store.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+./lib/store.ts:39:13
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m37 |[0m
+  [90m38 |[0m [36mexport[0m [36mfunction[0m newUserCaseId() {
+[33m[1m>[0m [90m39 |[0m   [36mconst[0m n = existsSync([33mDIRS[0m.cases) ? readdirSync([33mDIRS[0m.cases).length : [35m0[0m;
+  [90m   |[0m             [33m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m40 |[0m   [36mreturn[0m [32m`U[0m${[33mString[0m(n + [35m1[0m).padStart([35m3[0m, [32m"0"[0m)[32m}-[0m${[33mDate[0m.now().toString([35m36[0m).slice(-[35m4[0m)[32m}`[0m;
+  [90m41 |[0m }
+  [90m42 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/store.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #2 [App Route]:
+    ./lib/store.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #3 [Server Component]:
+    ./lib/store.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+./lib/store.ts:31:10
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m29 |[0m [36mexport[0m [36mfunction[0m listUserCases(): [33mCaseRecord[0m[] {
+  [90m30 |[0m   [36mif[0m (!existsSync([33mDIRS[0m.cases)) [36mreturn[0m [];
+[33m[1m>[0m [90m31 |[0m   [36mreturn[0m readdirSync([33mDIRS[0m.cases).filter((f) => f.endsWith([32m".json"[0m)).sort().map((f) => read...
+  [90m   |[0m          [33m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m32 |[0m }
+  [90m33 |[0m
+  [90m34 |[0m [36mexport[0m [36mfunction[0m getUserCase(id: string) {
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readdir(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/store.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #2 [App Route]:
+    ./lib/store.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #3 [Server Component]:
+    ./lib/store.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+./lib/store.ts:39:38
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m37 |[0m
+  [90m38 |[0m [36mexport[0m [36mfunction[0m newUserCaseId() {
+[33m[1m>[0m [90m39 |[0m   [36mconst[0m n = existsSync([33mDIRS[0m.cases) ? readdirSync([33mDIRS[0m.cases).length : [35m0[0m;
+  [90m   |[0m                                      [33m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m40 |[0m   [36mreturn[0m [32m`U[0m${[33mString[0m(n + [35m1[0m).padStart([35m3[0m, [32m"0"[0m)[32m}-[0m${[33mDate[0m.now().toString([35m36[0m).slice(-[35m4[0m)[32m}`[0m;
+  [90m41 |[0m }
+  [90m42 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readdir(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/store.ts
+    ./app/api/cases/[id]/pdf/route.ts
+
+  #2 [App Route]:
+    ./lib/store.ts
+    ./lib/caseSource.ts
+    ./app/api/cases/[id]/route.ts
+
+  #3 [Server Component]:
+    ./lib/store.ts
+    ./lib/casePage.ts
+    ./app/review/[id]/page.tsx
+
+
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/cases
+├ ƒ /api/cases/[id]
+├ ƒ /api/cases/[id]/decisions
+├ ƒ /api/cases/[id]/pdf
+├ ƒ /api/review
+├ ƒ /api/review/cancel
+├ ƒ /audit/[id]
+├ ƒ /cases
+├ ○ /cases/new
+├ ○ /icon.svg
+├ ○ /references
+├ ƒ /report/[id]
+├ ƒ /review/[id]
+└ ƒ /review/[id]/history
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,450 @@
+{
+  "caseId": "U001-osa4",
+  "versions": [
+    {
+      "version": 1,
+      "savedAt": "2026-11-06T22:27:41.942Z",
+      "snapshotHash": "a71f343098d89f8d",
+      "snapshot": {
+        "narrative": {
+          "text": "On March 2, 2024, at approximately 0930 hours, Border Patrol Agent [REDACTED] encountered the subject at a gas station in Monroe, Michigan. The subject stated that he is a citizen of Mexico and that he has no immigration documents. The subject stated that he crossed the river near Laredo, Texas, in June 2019 without inspection. The subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act. The subject was processed for a Notice to Appear."
+        },
+        "facts": [
+          {
+            "path": "subject.citizenship",
+            "label": "Country of citizenship",
+            "value": "MEXICO",
+            "status": "present"
+          },
+          {
+            "path": "entry.date",
+            "label": "Date and time of last entry",
+            "value": "06/2019",
+            "status": "present"
+          },
+          {
+            "path": "entry.place",
+            "label": "Place of last entry",
+            "value": "near Laredo, TX",
+            "status": "present"
+          },
+          {
+            "path": "entry.manner",
+            "label": "Manner of last entry",
+            "value": "EWI AFOOT",
+            "status": "present"
+          },
+          {
+            "path": "status.at_entry",
+            "label": "Status at entry",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "encounter.date_time",
+            "label": "Encounter date and hour",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "encounter.location",
+            "label": "Encounter location (at/near)",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "encounter.method",
+            "label": "Method of location/apprehension",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "history.immigration_record",
+            "label": "Immigration record",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "history.criminal_record",
+            "label": "Criminal record",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "documents.passport",
+            "label": "Passport / identity document",
+            "value": "",
+            "status": "absent"
+          },
+          {
+            "path": "form.charge_code",
+            "label": "Charge code (as printed)",
+            "value": "",
+            "status": "absent"
+          }
+        ],
+        "selectedCharges": [
+          {
+            "citation": "INA 212(a)(6)(A)(i)",
+            "source": "officer-selected"
+          }
+        ]
+      },
+      "review": {
+        "reviewId": "R-mw5jp5h2",
+        "caseId": "U001-osa4",
+        "narrativeHash": "9c3a2c9862a272e6",
+        "factsHash": "6a7e0ed86e42686e",
+        "createdAt": "2026-11-06T22:27:41.942Z",
+        "mode": "live",
+        "model": "gpt-oss-20b",
+        "promptVersion": "review-v1.4",
+        "modelConfig": {
+          "reasoningEffort": "low",
+          "samples": 2,
+          "validSamples": 0,
+          "factsPromptVersion": "facts-v2.0",
+          "factsStatus": "failed"
+        },
+        "referenceVersion": "team-provisional-2026-10-31.1",
+        "latencyMs": 35,
+        "modelLatencyMs": 31,
+        "modelAttempts": 4,
+        "modelStatus": "failed",
+        "modelError": "The model endpoint returned HTTP 503.",
+        "sentences": [
+          {
+            "id": "S1",
+            "start": 0,
+            "end": 139,
+            "text": "On March 2, 2024, at approximately 0930 hours, Border Patrol Agent [REDACTED] encountered the subject at a gas station in Monroe, Michigan."
+          },
+          {
+            "id": "S2",
+            "start": 140,
+            "end": 231,
+            "text": "The subject stated that he is a citizen of Mexico and that he has no immigration documents."
+          },
+          {
+            "id": "S3",
+            "start": 232,
+            "end": 329,
+            "text": "The subject stated that he crossed the river near Laredo, Texas, in June 2019 without inspection."
+          },
+          {
+            "id": "S4",
+            "start": 330,
+            "end": 427,
+            "text": "The subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act."
+          },
+          {
+            "id": "S5",
+            "start": 428,
+            "end": 477,
+            "text": "The subject was processed for a Notice to Appear."
+          }
+        ],
+        "checks": [
+          {
+            "id": "required_elements",
+            "label": "Required elements",
+            "status": "partial",
+            "note": "Some elements were not checked because the model check was unavailable."
+          },
+          {
+            "id": "consistency",
+            "label": "Consistency",
+            "status": "unavailable",
+            "note": "Only the rule-based time comparison ran."
+          },
+          {
+            "id": "clarity",
+            "label": "Clarity",
+            "status": "unavailable"
+          },
+          {
+            "id": "citation",
+            "label": "Citation check",
+            "status": "unavailable"
+          },
+          {
+            "id": "routing",
+            "label": "Human-review routing",
+            "status": "completed_with_findings"
+          }
+        ],
+        "elements": [
+          {
+            "elementId": "E1",
+            "label": "Date or time of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.date"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E2",
+            "label": "Place of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.place"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E3",
+            "label": "Manner of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.manner"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E4",
+            "label": "How the subject was located or apprehended",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E5",
+            "label": "Citizenship or alienage",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "subject.citizenship"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "E6",
+            "label": "Basis for the immigration violation",
+            "sponsorCategory": "S3",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S2"
+            ],
+            "note": "The narrative states the facts behind the violation."
+          },
+          {
+            "elementId": "E7",
+            "label": "Means and route of travel to the interior",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N1",
+            "label": "Identifying documents",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N2",
+            "label": "Status or classification claimed for admission",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N3",
+            "label": "Application for admission: port, documents presented, purpose of travel",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N4",
+            "label": "Source of key facts identified",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S3"
+          },
+          {
+            "elementId": "N5",
+            "label": "Specific ground stated and explained",
+            "sponsorCategory": "S4",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S4",
+              "S3"
+            ],
+            "note": "The narrative states the precise section, and other sentences state the facts that meet it."
+          },
+          {
+            "elementId": "N6",
+            "label": "Traveler's explanation for a discrepancy",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "No discrepancy was found, so no explanation is needed.",
+            "sponsorCategory": "S5"
+          },
+          {
+            "elementId": "N7",
+            "label": "Disposition and documenting form",
+            "sponsorCategory": "S6",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S5"
+            ],
+            "note": "The narrative states the action taken."
+          },
+          {
+            "elementId": "N8",
+            "label": "Expedited removal: advisal, opportunity to respond, review and service",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: expedited removal.",
+            "sponsorCategory": "S6"
+          }
+        ],
+        "citation": {
+          "status": "not_checked",
+          "citation": "INA 212(a)(6)(A)(i)",
+          "explanation": "The citation check could not run because the model check was unavailable.",
+          "evidence": []
+        },
+        "humanReview": {
+          "required": true,
+          "reasons": [
+            "This review is partial: Model review did not complete (The model endpoint returned HTTP 503.); Fact extraction did not complete (http); entry and history comparisons used only statements read from the source text by rules; Citation check did not run."
+          ]
+        },
+        "findings": [],
+        "notes": [],
+        "caseContext": {
+          "contexts": [
+            "interior"
+          ],
+          "source": "case"
+        },
+        "checklistVersion": "v2",
+        "discarded": [],
+        "calls": [
+          {
+            "role": "facts",
+            "status": "failed",
+            "ms": 31,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 18,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 18,
+                "ms": 13,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          },
+          {
+            "role": "review-1",
+            "status": "failed",
+            "ms": 31,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 23,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 23,
+                "ms": 8,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          },
+          {
+            "role": "review-2",
+            "status": "failed",
+            "ms": 24,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 19,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 19,
+                "ms": 5,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          }
+        ],
+        "factsExtraction": {
+          "status": "failed",
+          "reason": "The model endpoint returned HTTP 503."
+        },
+        "completion": {
+          "status": "partial",
+          "failed": [
+            {
+              "check": "Model review",
+              "reason": "did not complete (The model endpoint returned HTTP 503.)"
+            },
+            {
+              "check": "Fact extraction",
+              "reason": "did not complete (http); entry and history comparisons used only statements read from the source text by rules"
+            },
+            {
+              "check": "Citation check",
+              "reason": "did not run"
+            }
+          ],
+          "unsupported": []
+        },
+        "sampleIssues": {
+          "perSample": [],
+          "merged": 0,
+          "inAllSamples": 0
+        }
+      },
+      "completion": "partial"
+    }
+  ],
+  "decisions": {}
+}

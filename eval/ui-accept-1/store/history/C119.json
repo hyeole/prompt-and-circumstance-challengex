@@ -1,0 +1,1705 @@
+{
+  "caseId": "C119",
+  "versions": [
+    {
+      "version": 1,
+      "savedAt": "2026-11-06T22:21:39.080Z",
+      "snapshotHash": "2819a1b0fe523688",
+      "snapshot": {
+        "narrative": {
+          "text": "NARRATIVE:\n\nFACTS OF ENCOUNTER/ ARREST:\n\nOn July 11th, 2017, United States Border Patrol Agents assigned to the [REDACTED (b)(7)(E)] Station received information of a possible visa overstay living in Lake Leelanau, Michigan. Based on that information and record checks that were conducted, agents identified a total of three possible overstays. First subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Second subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Third subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. On August 10, 2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] and observed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] working inside the [REDACTED (b)(7)(E)] in Lake Leelanau, Michigan. At approximately 8:45p.m., both Agents observed [REDACTED (b)(6), (b)(7)(C)] leaving that grocery store and walking south on [REDACTED (b)(7)(E)] Agents approached [REDACTED (b)(6), (b)(7)(C)] , identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. While talking to [REDACTED (b)(6), (b)(7)(C)] , Agents were approached by a female, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents identified themselves as United States Border Patrol Agents, and questioned her as to her immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that her visa had expired and she was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow her to live, to work, or to remain in the U.S. legally. Both subjects were arrested and taken into custody for being in the United States illegally. Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] then, accompanied both [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] to their home in Lake Leelenau, Michigan, in order to retrieve [REDACTED (b)(6), (b)(7)(C)] needed medications. While there, they encountered a male, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely admitted that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. At that time, [REDACTED (b)(6), (b)(7)(C)] was subsequently arrested and taken into custody. All three subjects were then transported to the [REDACTED (b)(7)(E)] Border Patrol Station at approximately 2142 hours for further investigation and processing. Once at the [REDACTED (b)(7)(E)] Border Patrol Station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems. Additional records checks were conducted through Detroit Sector Radio. The following was discovered:\n\nIMMIGRATION HISTORY:\n\n8/11/2004 Arrived into the United States as a B1 Visitor Visa 10/20/2007 Changed status to an F1 Student. [REDACTED (b)(6), (b)(7)(C)] 08/21/2008 Changed status to H4 Child of H-1B1 5/4/2009 Application to extend/change Non-Immigrant Status to F1 Student 9/13/2013 Visa Overstay 7/22/2014 Applied for Re-instatement of Status 9/5/2014 Denial of Re-instatement of Status 10/16/2014 Denial notice ordered, Status revoked 11/28/2014 Appealed Revocation Order 1/09/2015 Denied Appeal Issued A# [REDACTED (b)(6), (b)(7)(C)]\n\nINADMISIBILITY/DEPORTABILITY:\n\n237(a)(1)(B) Nonimmigrant Overstay\n\nCRIMINAL HISTORY:\n\nNone FBI# [REDACTED (b)(7)(E)]\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/Notice to Appear. [REDACTED (b)(6), (b)(7)(C)] (along with all of his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings. [REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017. [REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health, however has General Anxiety issues and has been prescribed [REDACTED (b)(6), (b)(7)(C)] to be taken as needed. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Indian Consulate Office at 2:00 A.M., to which he declined to exercise (as witnessed by Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] ). [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services and copies of the I-862 and I-826. [REDACTED (b)(6), (b)(7)(C)] does not have any fear of returning to his native country of India.",
+          "pageSpans": [
+            {
+              "page": 511,
+              "start": 0,
+              "end": 1036
+            },
+            {
+              "page": 512,
+              "start": 1037,
+              "end": 3956
+            },
+            {
+              "page": 513,
+              "start": 3958,
+              "end": 5142
+            }
+          ]
+        },
+        "facts": [
+          {
+            "path": "subject.name",
+            "label": "Subject name",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 510,
+            "sourceField": "Family Name (CAPS)"
+          },
+          {
+            "path": "subject.citizenship",
+            "label": "Country of citizenship",
+            "value": "INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Country of Citizenship"
+          },
+          {
+            "path": "subject.birthplace",
+            "label": "City and country of birth",
+            "value": "NEW DELHI, UNK, INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "City, Province (State) and Country of Birth"
+          },
+          {
+            "path": "subject.age",
+            "label": "Age",
+            "value": "28",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date of Birth / Age"
+          },
+          {
+            "path": "subject.us_address",
+            "label": "U.S. address",
+            "value": "See Narrative",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "U S Address"
+          },
+          {
+            "path": "entry.date",
+            "label": "Date and time of last entry",
+            "value": "08/11/2004, 1502",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.place",
+            "label": "Place of last entry",
+            "value": "0 mile(s) A of LOS",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.manner",
+            "label": "Manner of last entry",
+            "value": "AIR",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "status.at_entry",
+            "label": "Status at entry",
+            "value": "Non-Immigrant",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Status at Entry"
+          },
+          {
+            "path": "status.when_found",
+            "label": "Status when found",
+            "value": "IN TRAVEL",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Status When Found"
+          },
+          {
+            "path": "status.time_illegally_in_us",
+            "label": "Length of time illegally in U.S.",
+            "value": "OVER 1 YEAR",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Length of Time Illegally in U S"
+          },
+          {
+            "path": "encounter.date_time",
+            "label": "Encounter date and hour",
+            "value": "08/10/2017 2337",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "At/Near Date/Hour"
+          },
+          {
+            "path": "encounter.location",
+            "label": "Encounter location (at/near)",
+            "value": "LAKE LEELANAU, MI",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "At/Near"
+          },
+          {
+            "path": "encounter.method",
+            "label": "Method of location/apprehension",
+            "value": "O",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Method of Location/Apprehension"
+          },
+          {
+            "path": "encounter.station",
+            "label": "Station / location code",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 510,
+            "sourceField": "Location Code"
+          },
+          {
+            "path": "history.immigration_record",
+            "label": "Immigration record",
+            "value": "POSITIVE - See Narrative",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Immigration Record"
+          },
+          {
+            "path": "history.criminal_record",
+            "label": "Criminal record",
+            "value": "None Known",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Criminal Record"
+          },
+          {
+            "path": "form.charge_code",
+            "label": "Charge code words (as printed)",
+            "value": "R1B",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Charge Code Words(s)"
+          },
+          {
+            "path": "documents.visa_issued",
+            "label": "Date visa issued",
+            "value": "08/11/2004",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date Visa Issued"
+          },
+          {
+            "path": "documents.passport",
+            "label": "Passport number and country",
+            "value": "[REDACTED (b)(6), (b)(7)(C)], INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Passport Number and Country of Issue"
+          }
+        ],
+        "selectedCharges": [
+          {
+            "citation": "INA 237(a)(1)(B)",
+            "referenceId": "INA-237a1B",
+            "source": "stated-in-record",
+            "note": "Citation as stated in the original narrative (PDF page 513)."
+          }
+        ]
+      },
+      "review": {
+        "reviewId": "R-mw5jhdhb",
+        "caseId": "C119",
+        "narrativeHash": "6bd5f974659eb153",
+        "factsHash": "0671e7ba9daf3fdf",
+        "createdAt": "2026-11-06T22:21:39.071Z",
+        "mode": "live",
+        "model": "gpt-oss-20b",
+        "promptVersion": "review-v1.4",
+        "modelConfig": {
+          "reasoningEffort": "low",
+          "samples": 2,
+          "validSamples": 2,
+          "factsPromptVersion": "facts-v2.0",
+          "factsStatus": "ok"
+        },
+        "referenceVersion": "team-provisional-2026-10-31.1",
+        "latencyMs": 6080,
+        "modelLatencyMs": 6038,
+        "modelAttempts": 2,
+        "modelStatus": "ok",
+        "sentences": [
+          {
+            "id": "S1",
+            "start": 0,
+            "end": 10,
+            "text": "NARRATIVE:",
+            "page": 511
+          },
+          {
+            "id": "S2",
+            "start": 12,
+            "end": 39,
+            "text": "FACTS OF ENCOUNTER/ ARREST:",
+            "page": 511
+          },
+          {
+            "id": "S3",
+            "start": 41,
+            "end": 224,
+            "text": "On July 11th, 2017, United States Border Patrol Agents assigned to the [REDACTED (b)(7)(E)] Station received information of a possible visa overstay living in Lake Leelanau, Michigan.",
+            "page": 511
+          },
+          {
+            "id": "S4",
+            "start": 225,
+            "end": 344,
+            "text": "Based on that information and record checks that were conducted, agents identified a total of three possible overstays.",
+            "page": 511
+          },
+          {
+            "id": "S5",
+            "start": 345,
+            "end": 451,
+            "text": "First subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S6",
+            "start": 452,
+            "end": 559,
+            "text": "Second subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S7",
+            "start": 560,
+            "end": 666,
+            "text": "Third subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S8",
+            "start": 667,
+            "end": 959,
+            "text": "On August 10, 2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] and observed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] working inside the [REDACTED (b)(7)(E)] in Lake Leelanau, Michigan.",
+            "page": 511
+          },
+          {
+            "id": "S9",
+            "start": 960,
+            "end": 1264,
+            "text": "At approximately 8:45p.m., both Agents observed [REDACTED (b)(6), (b)(7)(C)] leaving that grocery store and walking south on [REDACTED (b)(7)(E)] Agents approached [REDACTED (b)(6), (b)(7)(C)] , identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status.",
+            "page": 511
+          },
+          {
+            "id": "S10",
+            "start": 1265,
+            "end": 1509,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely stated that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S11",
+            "start": 1510,
+            "end": 1644,
+            "text": "While talking to [REDACTED (b)(6), (b)(7)(C)] , Agents were approached by a female, later identified as [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 512
+          },
+          {
+            "id": "S12",
+            "start": 1645,
+            "end": 1761,
+            "text": "Agents identified themselves as United States Border Patrol Agents, and questioned her as to her immigration status.",
+            "page": 512
+          },
+          {
+            "id": "S13",
+            "start": 1762,
+            "end": 2007,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely stated that her visa had expired and she was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow her to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S14",
+            "start": 2008,
+            "end": 2100,
+            "text": "Both subjects were arrested and taken into custody for being in the United States illegally.",
+            "page": 512
+          },
+          {
+            "id": "S15",
+            "start": 2101,
+            "end": 2366,
+            "text": "Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] then, accompanied both [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] to their home in Lake Leelenau, Michigan, in order to retrieve [REDACTED (b)(6), (b)(7)(C)] needed medications.",
+            "page": 512
+          },
+          {
+            "id": "S16",
+            "start": 2367,
+            "end": 2455,
+            "text": "While there, they encountered a male, later identified as [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 512
+          },
+          {
+            "id": "S17",
+            "start": 2456,
+            "end": 2634,
+            "text": "Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status.",
+            "page": 512
+          },
+          {
+            "id": "S18",
+            "start": 2635,
+            "end": 2881,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely admitted that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S19",
+            "start": 2882,
+            "end": 2974,
+            "text": "At that time, [REDACTED (b)(6), (b)(7)(C)] was subsequently arrested and taken into custody.",
+            "page": 512
+          },
+          {
+            "id": "S20",
+            "start": 2975,
+            "end": 3135,
+            "text": "All three subjects were then transported to the [REDACTED (b)(7)(E)] Border Patrol Station at approximately 2142 hours for further investigation and processing.",
+            "page": 512
+          },
+          {
+            "id": "S21",
+            "start": 3136,
+            "end": 3313,
+            "text": "Once at the [REDACTED (b)(7)(E)] Border Patrol Station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems.",
+            "page": 512
+          },
+          {
+            "id": "S22",
+            "start": 3314,
+            "end": 3384,
+            "text": "Additional records checks were conducted through Detroit Sector Radio.",
+            "page": 512
+          },
+          {
+            "id": "S23",
+            "start": 3385,
+            "end": 3414,
+            "text": "The following was discovered:",
+            "page": 512
+          },
+          {
+            "id": "S24",
+            "start": 3416,
+            "end": 3436,
+            "text": "IMMIGRATION HISTORY:",
+            "page": 512
+          },
+          {
+            "id": "S25",
+            "start": 3438,
+            "end": 3543,
+            "text": "8/11/2004 Arrived into the United States as a B1 Visitor Visa 10/20/2007 Changed status to an F1 Student.",
+            "page": 512
+          },
+          {
+            "id": "S26",
+            "start": 3544,
+            "end": 3956,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] 08/21/2008 Changed status to H4 Child of H-1B1 5/4/2009 Application to extend/change Non-Immigrant Status to F1 Student 9/13/2013 Visa Overstay 7/22/2014 Applied for Re-instatement of Status 9/5/2014 Denial of Re-instatement of Status 10/16/2014 Denial notice ordered, Status revoked 11/28/2014 Appealed Revocation Order 1/09/2015 Denied Appeal Issued A# [REDACTED (b)(6), (b)(7)(C)]",
+            "page": 512
+          },
+          {
+            "id": "S27",
+            "start": 3958,
+            "end": 3987,
+            "text": "INADMISIBILITY/DEPORTABILITY:",
+            "page": 513
+          },
+          {
+            "id": "S28",
+            "start": 3989,
+            "end": 4023,
+            "text": "237(a)(1)(B) Nonimmigrant Overstay",
+            "page": 513
+          },
+          {
+            "id": "S29",
+            "start": 4025,
+            "end": 4042,
+            "text": "CRIMINAL HISTORY:",
+            "page": 513
+          },
+          {
+            "id": "S30",
+            "start": 4044,
+            "end": 4074,
+            "text": "None FBI# [REDACTED (b)(7)(E)]",
+            "page": 513
+          },
+          {
+            "id": "S31",
+            "start": 4076,
+            "end": 4088,
+            "text": "DISPOSITION:",
+            "page": 513
+          },
+          {
+            "id": "S32",
+            "start": 4090,
+            "end": 4165,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/Notice to Appear.",
+            "page": 513
+          },
+          {
+            "id": "S33",
+            "start": 4166,
+            "end": 4313,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] (along with all of his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings.",
+            "page": 513
+          },
+          {
+            "id": "S34",
+            "start": 4314,
+            "end": 4516,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017.",
+            "page": 513
+          },
+          {
+            "id": "S35",
+            "start": 4517,
+            "end": 4697,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health, however has General Anxiety issues and has been prescribed [REDACTED (b)(6), (b)(7)(C)] to be taken as needed.",
+            "page": 513
+          },
+          {
+            "id": "S36",
+            "start": 4698,
+            "end": 4941,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Indian Consulate Office at 2:00 A.M., to which he declined to exercise (as witnessed by Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] ).",
+            "page": 513
+          },
+          {
+            "id": "S37",
+            "start": 4942,
+            "end": 5045,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services and copies of the I-862 and I-826.",
+            "page": 513
+          },
+          {
+            "id": "S38",
+            "start": 5046,
+            "end": 5142,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] does not have any fear of returning to his native country of India.",
+            "page": 513
+          }
+        ],
+        "checks": [
+          {
+            "id": "required_elements",
+            "label": "Required elements",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "consistency",
+            "label": "Consistency",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "clarity",
+            "label": "Clarity",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "citation",
+            "label": "Citation check",
+            "status": "completed_no_findings"
+          },
+          {
+            "id": "routing",
+            "label": "Human-review routing",
+            "status": "completed_with_findings"
+          }
+        ],
+        "elements": [
+          {
+            "elementId": "E1",
+            "label": "Date or time of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.date"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E2",
+            "label": "Place of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.place"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E3",
+            "label": "Manner of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.manner"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E4",
+            "label": "How the subject was located or apprehended",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "encounter.date_time",
+              "encounter.location",
+              "encounter.method"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E5",
+            "label": "Citizenship or alienage",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "subject.citizenship"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "E6",
+            "label": "Basis for the immigration violation",
+            "sponsorCategory": "S3",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S3",
+              "S10",
+              "S13"
+            ],
+            "note": "The narrative states the facts behind the violation."
+          },
+          {
+            "elementId": "E7",
+            "label": "Means and route of travel to the interior",
+            "status": "present",
+            "sentenceIds": [
+              "S25"
+            ],
+            "fieldPaths": [],
+            "note": "Narrative describes travel from entry to Lake Leelanau",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N1",
+            "label": "Identifying documents",
+            "sponsorCategory": "S1",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S3"
+            ],
+            "note": "The narrative states what identity documents the person had, or that there were none."
+          },
+          {
+            "elementId": "N2",
+            "label": "Status or classification claimed for admission",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N3",
+            "label": "Application for admission: port, documents presented, purpose of travel",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N4",
+            "label": "Source of key facts identified",
+            "status": "present",
+            "sentenceIds": [
+              "S10",
+              "S13",
+              "S18"
+            ],
+            "fieldPaths": [],
+            "note": "Key facts from traveler statements",
+            "sponsorCategory": "S3"
+          },
+          {
+            "elementId": "N5",
+            "label": "Specific ground stated and explained",
+            "sponsorCategory": "S4",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S28",
+              "S3",
+              "S4"
+            ],
+            "note": "The narrative states the precise section, and other sentences state the facts that meet it."
+          },
+          {
+            "elementId": "N6",
+            "label": "Traveler's explanation for a discrepancy",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "No discrepancy was found, so no explanation is needed.",
+            "sponsorCategory": "S5"
+          },
+          {
+            "elementId": "N7",
+            "label": "Disposition and documenting form",
+            "sponsorCategory": "S6",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S32",
+              "S33"
+            ],
+            "note": "The narrative states the action taken."
+          },
+          {
+            "elementId": "N8",
+            "label": "Expedited removal: advisal, opportunity to respond, review and service",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: expedited removal.",
+            "sponsorCategory": "S6"
+          }
+        ],
+        "citation": {
+          "status": "consistent",
+          "citation": "INA 237(a)(1)(B)",
+          "explanation": "The narrative supports the selected charge of INA 237(a)(1)(B) by showing the subject was admitted on 08/11/2004 and is now present in the U.S. illegally.",
+          "evidence": [
+            {
+              "kind": "sentence",
+              "sentenceId": "S25",
+              "quote": "8/11/2004 Arrived into the United States as a B1 Visitor Visa",
+              "start": 3438,
+              "end": 3499,
+              "page": 512,
+              "verified": true,
+              "match": "exact"
+            },
+            {
+              "kind": "sentence",
+              "sentenceId": "S26",
+              "quote": "Visa Overstay 7/22/2014",
+              "start": 3703,
+              "end": 3726,
+              "page": 512,
+              "verified": true,
+              "match": "exact"
+            }
+          ]
+        },
+        "humanReview": {
+          "required": true,
+          "reasons": [
+            "The narrative gives 2045 hours for an encounter (S9), which differs from the form's At/Near date and hour (2337 hours), but several people are described and it does not say this subject was among those encountered. A person should confirm whether it is this subject's encounter."
+          ]
+        },
+        "findings": [],
+        "notes": [
+          "The narrative describes more than one person (for example S14). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution."
+        ],
+        "caseContext": {
+          "contexts": [
+            "interior"
+          ],
+          "source": "inferred",
+          "basis": "the form records a method of location/apprehension"
+        },
+        "checklistVersion": "v2",
+        "discarded": [],
+        "calls": [
+          {
+            "role": "facts",
+            "status": "ok",
+            "ms": 6032,
+            "attempts": 1,
+            "chars": 753,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 6031,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-1",
+            "status": "ok",
+            "ms": 6034,
+            "attempts": 1,
+            "chars": 2181,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 6034,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-2",
+            "status": "ok",
+            "ms": 6036,
+            "attempts": 1,
+            "chars": 2181,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 6036,
+                "outcome": "ok"
+              }
+            ]
+          }
+        ],
+        "factsExtraction": {
+          "status": "valid",
+          "output": {
+            "entry_statements": [
+              {
+                "sentence_id": "S25",
+                "quote": "Arrived into the United States as a B1 Visitor Visa",
+                "event": "us_entry",
+                "country": "United States",
+                "year": 2004,
+                "manner": "admitted",
+                "person": "unclear",
+                "uncertainty": "stated"
+              }
+            ],
+            "removal_statements": [],
+            "status_statements": [
+              {
+                "sentence_id": "S10",
+                "quote": "freely stated that his visa had expired and he was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S13",
+                "quote": "freely stated that her visa had expired and she was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S18",
+                "quote": "freely admitted that his visa had expired and he was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S14",
+                "quote": "Both subjects were arrested and taken into custody for being in the United States illegally",
+                "person": "unclear"
+              }
+            ]
+          }
+        },
+        "completion": {
+          "status": "complete",
+          "failed": [],
+          "unsupported": []
+        },
+        "sampleIssues": {
+          "perSample": [
+            0,
+            0
+          ],
+          "merged": 0,
+          "inAllSamples": 0
+        }
+      },
+      "completion": "complete"
+    },
+    {
+      "version": 2,
+      "savedAt": "2026-11-06T22:25:53.739Z",
+      "snapshotHash": "4dc57da11f1edbc0",
+      "snapshot": {
+        "narrative": {
+          "text": "NARRATIVE:\n\nFACTS OF ENCOUNTER/ ARREST:\n\nOn July 11th, 2017, United States Border Patrol Agents assigned to the [REDACTED (b)(7)(E)] Station received information of a possible visa overstay living in Lake Leelanau, Michigan. Based on that information and record checks that were conducted, agents identified a total of three possible overstays. First subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Second subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. Third subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India. On August 10, 2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] and observed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] working inside the [REDACTED (b)(7)(E)] in Lake Leelanau, Michigan. At approximately 8:45p.m., both Agents observed [REDACTED (b)(6), (b)(7)(C)] leaving that grocery store and walking south on [REDACTED (b)(7)(E)] Agents approached [REDACTED (b)(6), (b)(7)(C)] , identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. While talking to [REDACTED (b)(6), (b)(7)(C)] , Agents were approached by a female, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents identified themselves as United States Border Patrol Agents, and questioned her as to her immigration status. [REDACTED (b)(6), (b)(7)(C)] freely stated that her visa had expired and she was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow her to live, to work, or to remain in the U.S. legally. Both subjects were arrested and taken into custody for being in the United States illegally. Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] then, accompanied both [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] to their home in Lake Leelenau, Michigan, in order to retrieve [REDACTED (b)(6), (b)(7)(C)] needed medications. While there, they encountered a male, later identified as [REDACTED (b)(6), (b)(7)(C)] . Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status. [REDACTED (b)(6), (b)(7)(C)] freely admitted that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally. At that time, [REDACTED (b)(6), (b)(7)(C)] was subsequently arrested and taken into custody. All three subjects were then transported to the [REDACTED (b)(7)(E)] Border Patrol Station at approximately 2142 hours for further investigation and processing. Once at the [REDACTED (b)(7)(E)] Border Patrol Station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems. Additional records checks were conducted through Detroit Sector Radio. The following was discovered:\n\nIMMIGRATION HISTORY:\n\n8/11/2004 Arrived into the United States as a B1 Visitor Visa 10/20/2007 Changed status to an F1 Student. [REDACTED (b)(6), (b)(7)(C)] 08/21/2008 Changed status to H4 Child of H-1B1 5/4/2009 Application to extend/change Non-Immigrant Status to F1 Student 9/13/2013 Visa Overstay 7/22/2014 Applied for Re-instatement of Status 9/5/2014 Denial of Re-instatement of Status 10/16/2014 Denial notice ordered, Status revoked 11/28/2014 Appealed Revocation Order 1/09/2015 Denied Appeal Issued A# [REDACTED (b)(6), (b)(7)(C)]\n\nINADMISIBILITY/DEPORTABILITY:\n\n237(a)(1)(B) Nonimmigrant Overstay\n\nCRIMINAL HISTORY:\n\nNone FBI# [REDACTED (b)(7)(E)]\n\nDISPOSITION:\n\n[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/Notice to Appear. [REDACTED (b)(6), (b)(7)(C)] (along with all of his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings. [REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017. [REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health, however has General Anxiety issues and has been prescribed [REDACTED (b)(6), (b)(7)(C)] to be taken as needed. [REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Indian Consulate Office at 2:00 A.M., to which he declined to exercise (as witnessed by Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] ). [REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services and copies of the I-862 and I-826. [REDACTED (b)(6), (b)(7)(C)] does not have any fear of returning to his native country of India.",
+          "pageSpans": [
+            {
+              "page": 511,
+              "start": 0,
+              "end": 1036
+            },
+            {
+              "page": 512,
+              "start": 1037,
+              "end": 3956
+            },
+            {
+              "page": 513,
+              "start": 3958,
+              "end": 5142
+            }
+          ]
+        },
+        "facts": [
+          {
+            "path": "subject.name",
+            "label": "Subject name",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 510,
+            "sourceField": "Family Name (CAPS)"
+          },
+          {
+            "path": "subject.citizenship",
+            "label": "Country of citizenship",
+            "value": "INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Country of Citizenship"
+          },
+          {
+            "path": "subject.birthplace",
+            "label": "City and country of birth",
+            "value": "NEW DELHI, UNK, INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "City, Province (State) and Country of Birth"
+          },
+          {
+            "path": "subject.age",
+            "label": "Age",
+            "value": "28",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date of Birth / Age"
+          },
+          {
+            "path": "subject.us_address",
+            "label": "U.S. address",
+            "value": "See Narrative",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "U S Address"
+          },
+          {
+            "path": "entry.date",
+            "label": "Date and time of last entry",
+            "value": "08/11/2004, 1502",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.place",
+            "label": "Place of last entry",
+            "value": "0 mile(s) A of LOS",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "entry.manner",
+            "label": "Manner of last entry",
+            "value": "AIR",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date, Place, Time, and Manner of Last Entry"
+          },
+          {
+            "path": "status.at_entry",
+            "label": "Status at entry",
+            "value": "Non-Immigrant",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Status at Entry"
+          },
+          {
+            "path": "status.when_found",
+            "label": "Status when found",
+            "value": "IN TRAVEL",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Status When Found"
+          },
+          {
+            "path": "status.time_illegally_in_us",
+            "label": "Length of time illegally in U.S.",
+            "value": "OVER 1 YEAR",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Length of Time Illegally in U S"
+          },
+          {
+            "path": "encounter.date_time",
+            "label": "Encounter date and hour",
+            "value": "08/10/2017 2337",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "At/Near Date/Hour"
+          },
+          {
+            "path": "encounter.location",
+            "label": "Encounter location (at/near)",
+            "value": "LAKE LEELANAU, MI",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "At/Near"
+          },
+          {
+            "path": "encounter.method",
+            "label": "Method of location/apprehension",
+            "value": "O",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Method of Location/Apprehension"
+          },
+          {
+            "path": "encounter.station",
+            "label": "Station / location code",
+            "value": "",
+            "status": "redacted",
+            "sourcePage": 510,
+            "sourceField": "Location Code"
+          },
+          {
+            "path": "history.immigration_record",
+            "label": "Immigration record",
+            "value": "POSITIVE - See Narrative",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Immigration Record"
+          },
+          {
+            "path": "history.criminal_record",
+            "label": "Criminal record",
+            "value": "None Known",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Criminal Record"
+          },
+          {
+            "path": "form.charge_code",
+            "label": "Charge code words (as printed)",
+            "value": "R1B",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Charge Code Words(s)"
+          },
+          {
+            "path": "documents.visa_issued",
+            "label": "Date visa issued",
+            "value": "08/11/2004",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Date Visa Issued"
+          },
+          {
+            "path": "documents.passport",
+            "label": "Passport number and country",
+            "value": "[REDACTED (b)(6), (b)(7)(C)], INDIA",
+            "status": "present",
+            "sourcePage": 510,
+            "sourceField": "Passport Number and Country of Issue"
+          }
+        ],
+        "selectedCharges": [
+          {
+            "citation": "INA 212(a)(6)(A)(i)",
+            "source": "officer-selected",
+            "note": "Citation as stated in the original narrative (PDF page 513)."
+          }
+        ]
+      },
+      "review": {
+        "reviewId": "R-mw5jmtze",
+        "caseId": "C119",
+        "narrativeHash": "6bd5f974659eb153",
+        "factsHash": "e16f0275ac5a84a5",
+        "createdAt": "2026-11-06T22:25:53.739Z",
+        "mode": "live",
+        "model": "gpt-oss-20b",
+        "promptVersion": "review-v1.4",
+        "modelConfig": {
+          "reasoningEffort": "low",
+          "samples": 2,
+          "validSamples": 0,
+          "factsPromptVersion": "facts-v2.0",
+          "factsStatus": "ok"
+        },
+        "referenceVersion": "team-provisional-2026-10-31.1",
+        "latencyMs": 317,
+        "modelLatencyMs": 306,
+        "modelAttempts": 4,
+        "modelStatus": "failed",
+        "modelError": "The model endpoint returned HTTP 503.",
+        "sentences": [
+          {
+            "id": "S1",
+            "start": 0,
+            "end": 10,
+            "text": "NARRATIVE:",
+            "page": 511
+          },
+          {
+            "id": "S2",
+            "start": 12,
+            "end": 39,
+            "text": "FACTS OF ENCOUNTER/ ARREST:",
+            "page": 511
+          },
+          {
+            "id": "S3",
+            "start": 41,
+            "end": 224,
+            "text": "On July 11th, 2017, United States Border Patrol Agents assigned to the [REDACTED (b)(7)(E)] Station received information of a possible visa overstay living in Lake Leelanau, Michigan.",
+            "page": 511
+          },
+          {
+            "id": "S4",
+            "start": 225,
+            "end": 344,
+            "text": "Based on that information and record checks that were conducted, agents identified a total of three possible overstays.",
+            "page": 511
+          },
+          {
+            "id": "S5",
+            "start": 345,
+            "end": 451,
+            "text": "First subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S6",
+            "start": 452,
+            "end": 559,
+            "text": "Second subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S7",
+            "start": 560,
+            "end": 666,
+            "text": "Third subject was identified as [REDACTED (b)(6), (b)(7)(C)] DOB: [REDACTED (b)(6), (b)(7)(C)] COB: India.",
+            "page": 511
+          },
+          {
+            "id": "S8",
+            "start": 667,
+            "end": 959,
+            "text": "On August 10, 2017, Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] were [REDACTED (b)(7)(E)] [REDACTED (b)(7)(E)] and observed [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] working inside the [REDACTED (b)(7)(E)] in Lake Leelanau, Michigan.",
+            "page": 511
+          },
+          {
+            "id": "S9",
+            "start": 960,
+            "end": 1264,
+            "text": "At approximately 8:45p.m., both Agents observed [REDACTED (b)(6), (b)(7)(C)] leaving that grocery store and walking south on [REDACTED (b)(7)(E)] Agents approached [REDACTED (b)(6), (b)(7)(C)] , identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status.",
+            "page": 511
+          },
+          {
+            "id": "S10",
+            "start": 1265,
+            "end": 1509,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely stated that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S11",
+            "start": 1510,
+            "end": 1644,
+            "text": "While talking to [REDACTED (b)(6), (b)(7)(C)] , Agents were approached by a female, later identified as [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 512
+          },
+          {
+            "id": "S12",
+            "start": 1645,
+            "end": 1761,
+            "text": "Agents identified themselves as United States Border Patrol Agents, and questioned her as to her immigration status.",
+            "page": 512
+          },
+          {
+            "id": "S13",
+            "start": 1762,
+            "end": 2007,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely stated that her visa had expired and she was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow her to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S14",
+            "start": 2008,
+            "end": 2100,
+            "text": "Both subjects were arrested and taken into custody for being in the United States illegally.",
+            "page": 512
+          },
+          {
+            "id": "S15",
+            "start": 2101,
+            "end": 2366,
+            "text": "Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] then, accompanied both [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] to their home in Lake Leelenau, Michigan, in order to retrieve [REDACTED (b)(6), (b)(7)(C)] needed medications.",
+            "page": 512
+          },
+          {
+            "id": "S16",
+            "start": 2367,
+            "end": 2455,
+            "text": "While there, they encountered a male, later identified as [REDACTED (b)(6), (b)(7)(C)] .",
+            "page": 512
+          },
+          {
+            "id": "S17",
+            "start": 2456,
+            "end": 2634,
+            "text": "Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] identified themselves as United States Border Patrol Agents, and questioned him as to his immigration status.",
+            "page": 512
+          },
+          {
+            "id": "S18",
+            "start": 2635,
+            "end": 2881,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] freely admitted that his visa had expired and he was a citizen and national of India who was not in possession of any U.S. Immigration documents that would allow him to live, to work, or to remain in the U.S. legally.",
+            "page": 512
+          },
+          {
+            "id": "S19",
+            "start": 2882,
+            "end": 2974,
+            "text": "At that time, [REDACTED (b)(6), (b)(7)(C)] was subsequently arrested and taken into custody.",
+            "page": 512
+          },
+          {
+            "id": "S20",
+            "start": 2975,
+            "end": 3135,
+            "text": "All three subjects were then transported to the [REDACTED (b)(7)(E)] Border Patrol Station at approximately 2142 hours for further investigation and processing.",
+            "page": 512
+          },
+          {
+            "id": "S21",
+            "start": 3136,
+            "end": 3313,
+            "text": "Once at the [REDACTED (b)(7)(E)] Border Patrol Station, [REDACTED (b)(6), (b)(7)(C)] fingerprints and photograph were obtained and entered into the [REDACTED (b)(7)(E)] systems.",
+            "page": 512
+          },
+          {
+            "id": "S22",
+            "start": 3314,
+            "end": 3384,
+            "text": "Additional records checks were conducted through Detroit Sector Radio.",
+            "page": 512
+          },
+          {
+            "id": "S23",
+            "start": 3385,
+            "end": 3414,
+            "text": "The following was discovered:",
+            "page": 512
+          },
+          {
+            "id": "S24",
+            "start": 3416,
+            "end": 3436,
+            "text": "IMMIGRATION HISTORY:",
+            "page": 512
+          },
+          {
+            "id": "S25",
+            "start": 3438,
+            "end": 3543,
+            "text": "8/11/2004 Arrived into the United States as a B1 Visitor Visa 10/20/2007 Changed status to an F1 Student.",
+            "page": 512
+          },
+          {
+            "id": "S26",
+            "start": 3544,
+            "end": 3956,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] 08/21/2008 Changed status to H4 Child of H-1B1 5/4/2009 Application to extend/change Non-Immigrant Status to F1 Student 9/13/2013 Visa Overstay 7/22/2014 Applied for Re-instatement of Status 9/5/2014 Denial of Re-instatement of Status 10/16/2014 Denial notice ordered, Status revoked 11/28/2014 Appealed Revocation Order 1/09/2015 Denied Appeal Issued A# [REDACTED (b)(6), (b)(7)(C)]",
+            "page": 512
+          },
+          {
+            "id": "S27",
+            "start": 3958,
+            "end": 3987,
+            "text": "INADMISIBILITY/DEPORTABILITY:",
+            "page": 513
+          },
+          {
+            "id": "S28",
+            "start": 3989,
+            "end": 4023,
+            "text": "237(a)(1)(B) Nonimmigrant Overstay",
+            "page": 513
+          },
+          {
+            "id": "S29",
+            "start": 4025,
+            "end": 4042,
+            "text": "CRIMINAL HISTORY:",
+            "page": 513
+          },
+          {
+            "id": "S30",
+            "start": 4044,
+            "end": 4074,
+            "text": "None FBI# [REDACTED (b)(7)(E)]",
+            "page": 513
+          },
+          {
+            "id": "S31",
+            "start": 4076,
+            "end": 4088,
+            "text": "DISPOSITION:",
+            "page": 513
+          },
+          {
+            "id": "S32",
+            "start": 4090,
+            "end": 4165,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] received a Warrant of Arrest/Notice to Appear.",
+            "page": 513
+          },
+          {
+            "id": "S33",
+            "start": 4166,
+            "end": 4313,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] (along with all of his property) will be held at the [REDACTED (b)(7)(E)] County Jail pending his removal proceedings.",
+            "page": 513
+          },
+          {
+            "id": "S34",
+            "start": 4314,
+            "end": 4516,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] did not receive a bond due to the new Executive Order Implementing the President's Border Security and Immigration Enforcement Improvements Policies dated February 20, 2017.",
+            "page": 513
+          },
+          {
+            "id": "S35",
+            "start": 4517,
+            "end": 4697,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] appeared to be lucid and in good health, however has General Anxiety issues and has been prescribed [REDACTED (b)(6), (b)(7)(C)] to be taken as needed.",
+            "page": 513
+          },
+          {
+            "id": "S36",
+            "start": 4698,
+            "end": 4941,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] was notified of his right to contact the Indian Consulate Office at 2:00 A.M., to which he declined to exercise (as witnessed by Border Patrol Agents [REDACTED (b)(6), (b)(7)(C)] and [REDACTED (b)(6), (b)(7)(C)] ).",
+            "page": 513
+          },
+          {
+            "id": "S37",
+            "start": 4942,
+            "end": 5045,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] was given a list of free legal services and copies of the I-862 and I-826.",
+            "page": 513
+          },
+          {
+            "id": "S38",
+            "start": 5046,
+            "end": 5142,
+            "text": "[REDACTED (b)(6), (b)(7)(C)] does not have any fear of returning to his native country of India.",
+            "page": 513
+          }
+        ],
+        "checks": [
+          {
+            "id": "required_elements",
+            "label": "Required elements",
+            "status": "partial",
+            "note": "Some elements were not checked because the model check was unavailable."
+          },
+          {
+            "id": "consistency",
+            "label": "Consistency",
+            "status": "partial",
+            "note": "Only the fact comparison and rules ran."
+          },
+          {
+            "id": "clarity",
+            "label": "Clarity",
+            "status": "unavailable"
+          },
+          {
+            "id": "citation",
+            "label": "Citation check",
+            "status": "completed_with_findings"
+          },
+          {
+            "id": "routing",
+            "label": "Human-review routing",
+            "status": "completed_with_findings"
+          }
+        ],
+        "elements": [
+          {
+            "elementId": "E1",
+            "label": "Date or time of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.date"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E2",
+            "label": "Place of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.place"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E3",
+            "label": "Manner of last entry",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "entry.manner"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E4",
+            "label": "How the subject was located or apprehended",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "encounter.date_time",
+              "encounter.location",
+              "encounter.method"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "E5",
+            "label": "Citizenship or alienage",
+            "status": "present",
+            "sentenceIds": [],
+            "fieldPaths": [
+              "subject.citizenship"
+            ],
+            "note": "Recorded in a structured form field.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "E6",
+            "label": "Basis for the immigration violation",
+            "sponsorCategory": "S3",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S3",
+              "S10",
+              "S13"
+            ],
+            "note": "The narrative states the facts behind the violation."
+          },
+          {
+            "elementId": "E7",
+            "label": "Means and route of travel to the interior",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N1",
+            "label": "Identifying documents",
+            "sponsorCategory": "S1",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S3"
+            ],
+            "note": "The narrative states what identity documents the person had, or that there were none."
+          },
+          {
+            "elementId": "N2",
+            "label": "Status or classification claimed for admission",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S1"
+          },
+          {
+            "elementId": "N3",
+            "label": "Application for admission: port, documents presented, purpose of travel",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: port of entry.",
+            "sponsorCategory": "S2"
+          },
+          {
+            "elementId": "N4",
+            "label": "Source of key facts identified",
+            "status": "not_checked",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Model check unavailable.",
+            "sponsorCategory": "S3"
+          },
+          {
+            "elementId": "N5",
+            "label": "Specific ground stated and explained",
+            "sponsorCategory": "S4",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S28",
+              "S3",
+              "S4"
+            ],
+            "note": "The narrative states the precise section, and other sentences state the facts that meet it."
+          },
+          {
+            "elementId": "N6",
+            "label": "Traveler's explanation for a discrepancy",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "No discrepancy was found, so no explanation is needed.",
+            "sponsorCategory": "S5"
+          },
+          {
+            "elementId": "N7",
+            "label": "Disposition and documenting form",
+            "sponsorCategory": "S6",
+            "fieldPaths": [],
+            "status": "present",
+            "sentenceIds": [
+              "S32",
+              "S33"
+            ],
+            "note": "The narrative states the action taken."
+          },
+          {
+            "elementId": "N8",
+            "label": "Expedited removal: advisal, opportunity to respond, review and service",
+            "status": "not_applicable",
+            "sentenceIds": [],
+            "fieldPaths": [],
+            "note": "Applies only in: expedited removal.",
+            "sponsorCategory": "S6"
+          }
+        ],
+        "citation": {
+          "status": "likely_mismatch",
+          "citation": "INA 212(a)(6)(A)(i)",
+          "explanation": "The selected charge depends on entry without inspection or admission, but the record describes the opposite and does not state entry without inspection or admission. (Checked from form fields and rules; the model check was unavailable.)",
+          "evidence": [
+            {
+              "kind": "field",
+              "fieldPath": "entry.manner",
+              "quote": "AIR",
+              "page": 510,
+              "verified": true
+            }
+          ]
+        },
+        "humanReview": {
+          "required": true,
+          "reasons": [
+            "The narrative gives 2045 hours for an encounter (S9), which differs from the form's At/Near date and hour (2337 hours), but several people are described and it does not say this subject was among those encountered. A person should confirm whether it is this subject's encounter.",
+            "Possible mismatch between the narrative and the selected charge.",
+            "This review is partial: Model review did not complete (The model endpoint returned HTTP 503.).",
+            "Possible citation mismatch: INA 212(a)(6)(A)(i): The officer decides the charge; the tool does not select one."
+          ]
+        },
+        "findings": [
+          {
+            "id": "C-1",
+            "category": "citation",
+            "title": "Possible citation mismatch: INA 212(a)(6)(A)(i)",
+            "explanation": "The selected charge depends on entry without inspection or admission, but the record describes the opposite and does not state entry without inspection or admission. (Checked from form fields and rules; the model check was unavailable.)",
+            "evidence": [
+              {
+                "kind": "field",
+                "fieldPath": "entry.manner",
+                "quote": "AIR",
+                "page": 510,
+                "verified": true
+              }
+            ],
+            "referenceIds": [
+              "INA-212a6Ai"
+            ],
+            "needsHumanReview": true,
+            "humanReviewReason": "The officer decides the charge; the tool does not select one.",
+            "source": "rule",
+            "severity": "high"
+          }
+        ],
+        "notes": [
+          "The narrative describes more than one person (for example S14). Where names are redacted, statements may not be attributable to this record's subject; the model was told not to assume attribution."
+        ],
+        "caseContext": {
+          "contexts": [
+            "interior"
+          ],
+          "source": "inferred",
+          "basis": "the form records a method of location/apprehension"
+        },
+        "checklistVersion": "v2",
+        "discarded": [],
+        "calls": [
+          {
+            "role": "facts",
+            "status": "ok",
+            "ms": 305,
+            "attempts": 1,
+            "chars": 753,
+            "tokens": {
+              "prompt": 0,
+              "completion": 0
+            },
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 305,
+                "outcome": "ok"
+              }
+            ]
+          },
+          {
+            "role": "review-1",
+            "status": "failed",
+            "ms": 8,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 3,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 3,
+                "ms": 5,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          },
+          {
+            "role": "review-2",
+            "status": "failed",
+            "ms": 7,
+            "attempts": 2,
+            "error": "http",
+            "attemptLog": [
+              {
+                "n": 1,
+                "startMs": 0,
+                "ms": 5,
+                "outcome": "http"
+              },
+              {
+                "n": 2,
+                "startMs": 5,
+                "ms": 2,
+                "outcome": "http",
+                "why": "retry"
+              }
+            ]
+          }
+        ],
+        "factsExtraction": {
+          "status": "valid",
+          "output": {
+            "entry_statements": [
+              {
+                "sentence_id": "S25",
+                "quote": "Arrived into the United States as a B1 Visitor Visa",
+                "event": "us_entry",
+                "country": "United States",
+                "year": 2004,
+                "manner": "admitted",
+                "person": "unclear",
+                "uncertainty": "stated"
+              }
+            ],
+            "removal_statements": [],
+            "status_statements": [
+              {
+                "sentence_id": "S10",
+                "quote": "freely stated that his visa had expired and he was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S13",
+                "quote": "freely stated that her visa had expired and she was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S18",
+                "quote": "freely admitted that his visa had expired and he was a citizen",
+                "person": "unclear"
+              },
+              {
+                "sentence_id": "S14",
+                "quote": "Both subjects were arrested and taken into custody for being in the United States illegally",
+                "person": "unclear"
+              }
+            ]
+          }
+        },
+        "completion": {
+          "status": "partial",
+          "failed": [
+            {
+              "check": "Model review",
+              "reason": "did not complete (The model endpoint returned HTTP 503.)"
+            }
+          ],
+          "unsupported": []
+        },
+        "sampleIssues": {
+          "perSample": [],
+          "merged": 0,
+          "inAllSamples": 0
+        }
+      },
+      "completion": "partial"
+    }
+  ],
+  "decisions": {}
+}

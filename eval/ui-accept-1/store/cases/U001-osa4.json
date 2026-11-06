@@ -1,0 +1,105 @@
+{
+  "id": "U001-osa4",
+  "title": "UI acceptance test case (synthetic)",
+  "kind": "user-case",
+  "provenance": {
+    "source": "Entered in NarrativeCheck",
+    "extraction": "Synthetic test text written by the user. NarrativeCheck did not read text from any attached PDF; the narrative is exactly what was entered.",
+    "verification": "Entered by the user; not verified by NarrativeCheck.",
+    "replacements": [],
+    "textOrigin": "synthetic-test"
+  },
+  "narrative": {
+    "text": "On March 2, 2024, at approximately 0930 hours, Border Patrol Agent [REDACTED] encountered the subject at a gas station in Monroe, Michigan. The subject stated that he is a citizen of Mexico and that he has no immigration documents. The subject stated that he crossed the river near Laredo, Texas, in June 2019 without inspection. The subject is inadmissible under Section 212(a)(6)(A)(i) of the Immigration and Nationality Act. The subject was processed for a Notice to Appear."
+  },
+  "facts": [
+    {
+      "path": "subject.citizenship",
+      "label": "Country of citizenship",
+      "value": "MEXICO",
+      "status": "present"
+    },
+    {
+      "path": "entry.date",
+      "label": "Date and time of last entry",
+      "value": "06/2019",
+      "status": "present"
+    },
+    {
+      "path": "entry.place",
+      "label": "Place of last entry",
+      "value": "near Laredo, TX",
+      "status": "present"
+    },
+    {
+      "path": "entry.manner",
+      "label": "Manner of last entry",
+      "value": "EWI AFOOT",
+      "status": "present"
+    },
+    {
+      "path": "status.at_entry",
+      "label": "Status at entry",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.date_time",
+      "label": "Encounter date and hour",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.location",
+      "label": "Encounter location (at/near)",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "encounter.method",
+      "label": "Method of location/apprehension",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "history.immigration_record",
+      "label": "Immigration record",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "history.criminal_record",
+      "label": "Criminal record",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "documents.passport",
+      "label": "Passport / identity document",
+      "value": "",
+      "status": "absent"
+    },
+    {
+      "path": "form.charge_code",
+      "label": "Charge code (as printed)",
+      "value": "",
+      "status": "absent"
+    }
+  ],
+  "selectedCharges": [
+    {
+      "citation": "INA 212(a)(6)(A)(i)",
+      "source": "officer-selected"
+    }
+  ],
+  "userCase": {
+    "createdAt": "2026-11-06T22:27:24.844Z",
+    "sourcePdf": {
+      "originalName": "ui-accept-synthetic.pdf",
+      "size": 412
+    }
+  },
+  "context": [
+    "interior"
+  ]
+}

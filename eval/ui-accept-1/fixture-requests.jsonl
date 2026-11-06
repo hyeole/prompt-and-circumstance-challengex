@@ -1,0 +1,61 @@
+{"t":"2026-11-06T22:21:29.018Z","control":{"mode":"slow","delayMs":6000}}
+{"t":"2026-11-06T22:21:39.025Z","kind":"facts","case":"C119","mode":"slow","effort":"low","status":200}
+{"t":"2026-11-06T22:21:39.027Z","kind":"review","case":"C119","charge":"INA 237(a)(1)(B)","mode":"slow","effort":"low","status":200}
+{"t":"2026-11-06T22:21:39.027Z","kind":"review","case":"C119","charge":"INA 237(a)(1)(B)","mode":"slow","effort":"low","status":200}
+{"t":"2026-11-06T22:22:07.313Z","control":{"mode":"replay","delayMs":0}}
+{"t":"2026-11-06T22:22:12.251Z","kind":"facts","case":"C012-M2","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:12.252Z","kind":"review","case":"C012-M2","charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:12.252Z","kind":"review","case":"C012-M2","charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:40.458Z","kind":"facts","case":"C003-AMB","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:40.459Z","kind":"review","case":"C003-AMB","charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:40.459Z","kind":"review","case":"C003-AMB","charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:51.823Z","kind":"facts","case":"C001-MC","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:51.825Z","kind":"review","case":"C001-MC","charge":"INA 212(a)(6)(A)(i); 8 U.S.C. 1325(a)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:22:51.825Z","kind":"review","case":"C001-MC","charge":"INA 212(a)(6)(A)(i); 8 U.S.C. 1325(a)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:23:47.893Z","kind":"facts","case":"C001-MC","candidates":["C001-MC","C001"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:48.211Z","kind":"review","case":"C001","candidates":["C001"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:48.522Z","kind":"facts","case":"C001-MC","candidates":["C001-MC","C001"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:48.828Z","kind":"review","case":"C001-MC","candidates":["C001-MC"],"charge":"INA 212(a)(6)(A)(i); 8 U.S.C. 1325(a)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:49.136Z","kind":"facts","case":"C003","candidates":["C003"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:49.443Z","kind":"review","case":"C003","candidates":["C003"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:49.751Z","kind":"facts","case":"C003-AMB","candidates":["C003-AMB"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:50.058Z","kind":"review","case":"C003-AMB","candidates":["C003-AMB"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:50.367Z","kind":"facts","case":"C012","candidates":["C012"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:50.673Z","kind":"review","case":"C012","candidates":["C012"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:50.979Z","kind":"facts","case":"C012-M2","candidates":["C012-M2"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:51.286Z","kind":"review","case":"C012-M2","candidates":["C012-M2"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:51.592Z","kind":"facts","case":"C012-X1","candidates":["C012-X1"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:51.895Z","kind":"review","case":"C012-X1","candidates":["C012-X1"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","status":200}
+{"t":"2026-11-06T22:23:52.203Z","kind":"facts","case":"C119","candidates":["C119"],"mode":"replay","status":200}
+{"t":"2026-11-06T22:23:52.508Z","kind":"review","case":"C119","candidates":["C119"],"charge":"INA 237(a)(1)(B)","mode":"replay","status":200}
+{"t":"2026-11-06T22:24:05.687Z","kind":"facts","case":"C012-X1","candidates":["C012-X1"],"mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:24:05.689Z","kind":"review","case":"C012-X1","candidates":["C012-X1"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:24:05.690Z","kind":"review","case":"C012-X1","candidates":["C012-X1"],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:24:17.091Z","control":{"mode":"fail-all","delayMs":0}}
+{"t":"2026-11-06T22:24:23.815Z","kind":"facts","case":"C135","candidates":["C135"],"mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:23.816Z","kind":"review","case":"C135","candidates":["C135"],"charge":"INA 212(a)(6)(A)(i)","mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:23.816Z","kind":"review","case":"C135","candidates":["C135"],"charge":"INA 212(a)(6)(A)(i)","mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:23.818Z","kind":"review","case":"C135","candidates":["C135"],"charge":"INA 212(a)(6)(A)(i)","mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:23.820Z","kind":"facts","case":"C135","candidates":["C135"],"mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:23.820Z","kind":"review","case":"C135","candidates":["C135"],"charge":"INA 212(a)(6)(A)(i)","mode":"fail-all","effort":"low","status":500}
+{"t":"2026-11-06T22:24:35.342Z","control":{"mode":"fail-facts","delayMs":0}}
+{"t":"2026-11-06T22:24:41.116Z","kind":"facts","case":"C021","candidates":["C021"],"mode":"fail-facts","effort":"low","status":500}
+{"t":"2026-11-06T22:24:41.119Z","kind":"facts","case":"C021","candidates":["C021"],"mode":"fail-facts","effort":"low","status":500}
+{"t":"2026-11-06T22:24:41.418Z","kind":"review","case":"C021","candidates":["C021"],"charge":"INA 237(a)(1)(B)","mode":"fail-facts","effort":"low","status":200}
+{"t":"2026-11-06T22:24:41.419Z","kind":"review","case":"C021","candidates":["C021"],"charge":"INA 237(a)(1)(B)","mode":"fail-facts","effort":"low","status":200}
+{"t":"2026-11-06T22:25:09.714Z","control":{"mode":"stall","delayMs":0}}
+{"t":"2026-11-06T22:25:13.672Z","kind":"review","case":"C037","candidates":["C037"],"charge":"INA 212(a)(6)(A)(i)","mode":"stall","effort":"low","status":"stalled"}
+{"t":"2026-11-06T22:25:13.673Z","kind":"facts","case":"C037","candidates":["C037"],"mode":"stall","effort":"low","status":"stalled"}
+{"t":"2026-11-06T22:25:13.673Z","kind":"review","case":"C037","candidates":["C037"],"charge":"INA 212(a)(6)(A)(i)","mode":"stall","effort":"low","status":"stalled"}
+{"t":"2026-11-06T22:25:34.831Z","control":{"mode":"replay","delayMs":0}}
+{"t":"2026-11-06T22:25:53.426Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:25:53.427Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:25:53.430Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:25:53.431Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:25:53.727Z","kind":"facts","case":"C119","candidates":["C119"],"mode":"replay","effort":"low","status":200}
+{"t":"2026-11-06T22:27:41.924Z","kind":"facts","case":null,"candidates":[],"mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:27:41.925Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:27:41.926Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:27:41.929Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:27:41.937Z","kind":"review","case":null,"candidates":[],"charge":"INA 212(a)(6)(A)(i)","mode":"replay","effort":"low","status":503}
+{"t":"2026-11-06T22:27:41.938Z","kind":"facts","case":null,"candidates":[],"mode":"replay","effort":"low","status":503}
