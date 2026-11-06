@@ -1,0 +1,85 @@
+✖ C003-M3 reproduction: a first answer that omits N4/N6 does not cancel the twin; its answer completes the checklist (12120.896458ms)
+✔ control: a complete first answer still cancels a slow twin after the grace period (unchanged) (12068.856458ms)
+✖ control: when both answers omit N4/N6, the review stays partial and nothing is invented (12080.371292ms)
+✖ control: when the twin fails, the omitted items stay unchecked and the review is partial (12078.214208ms)
+✖ same rule: an unusable (invalid) first answer does not cancel a pending twin that gives a usable one (12073.730125ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 1
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 60740.036333
+
+✖ failing tests:
+
+test at tests/grace-complete.test.ts:36:1
+✖ C003-M3 reproduction: a first answer that omits N4/N6 does not cancel the twin; its answer completes the checklist (12120.896458ms)
+  AssertionError [ERR_ASSERTION]: the pending twin is not cancelled
+  
+  'cancelled' !== 'ok'
+  
+      at TestContext.<anonymous> (<home>/Downloads/ChallengeX/.worktrees/grace-complete-1/tests/grace-complete.test.ts:38:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'cancelled',
+    expected: 'ok',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/grace-complete.test.ts:48:1
+✖ control: when both answers omit N4/N6, the review stays partial and nothing is invented (12080.371292ms)
+  AssertionError [ERR_ASSERTION]: the twin was waited for
+  
+  'cancelled' !== 'ok'
+  
+      at TestContext.<anonymous> (<home>/Downloads/ChallengeX/.worktrees/grace-complete-1/tests/grace-complete.test.ts:50:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'cancelled',
+    expected: 'ok',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/grace-complete.test.ts:55:1
+✖ control: when the twin fails, the omitted items stay unchecked and the review is partial (12078.214208ms)
+  AssertionError [ERR_ASSERTION]: the twin ran to its own outcome instead of being cancelled at the grace period
+  + actual - expected
+  
+  + 'cancelled'
+  - 'failed'
+  
+      at TestContext.<anonymous> (<home>/Downloads/ChallengeX/.worktrees/grace-complete-1/tests/grace-complete.test.ts:57:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'cancelled',
+    expected: 'failed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/grace-complete.test.ts:62:1
+✖ same rule: an unusable (invalid) first answer does not cancel a pending twin that gives a usable one (12073.730125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'cancelled' !== 'ok'
+  
+      at TestContext.<anonymous> (<home>/Downloads/ChallengeX/.worktrees/grace-complete-1/tests/grace-complete.test.ts:64:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'cancelled',
+    expected: 'ok',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

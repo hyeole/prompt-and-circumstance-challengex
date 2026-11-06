@@ -210,14 +210,20 @@ function stripChargeAdvice(text: string, selected: string[]): { text: string; st
 
 const SAMPLE_GRACE_MS = 12_000;
 
-/** Run n samples in parallel. After the first one succeeds, wait at most SAMPLE_GRACE_MS for the rest, then cancel them. */
-async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal, i: number) => Promise<T>): Promise<PromiseSettledResult<T>[]> {
+/**
+ * Run n samples in parallel. After the first USABLE one succeeds, wait at most SAMPLE_GRACE_MS for the rest, then cancel
+ * them. `usable` decides whether an answer may start that grace period (grace-complete-1): an answer that is not valid
+ * output, or that omits checklist items it was asked about, does not, so a pending sample that may supply them is not
+ * cancelled early. Every sample keeps its own deadline; nothing is retried or extended, and an omitted item is never
+ * filled in: if no sample supplies it, it stays unchecked and the review is partial.
+ */
+async function samplesWithGrace<T>(n: number, run: (signal: AbortSignal, i: number) => Promise<T>, usable: (v: T) => boolean = () => true): Promise<PromiseSettledResult<T>[]> {
   const ctrls = Array.from({ length: n }, () => new AbortController());
   const all = ctrls.map((c, i) => run(c.signal, i));
   let timer: ReturnType<typeof setTimeout> | undefined;
   const grace = new Promise<void>((resolve) => {
     let pending = n;
-    all.forEach((p) => p.then(() => { timer ??= setTimeout(resolve, SAMPLE_GRACE_MS); }, () => {}).finally(() => { if (--pending === 0) resolve(); }));
+    all.forEach((p) => p.then((v) => { if (usable(v)) timer ??= setTimeout(resolve, SAMPLE_GRACE_MS); }, () => {}).finally(() => { if (--pending === 0) resolve(); }));
   });
   await grace;
   if (timer) clearTimeout(timer);
@@ -317,7 +323,13 @@ export async function reviewCase(c: CaseRecord, completeFn: Complete = completeJ
     return logged(calls, "facts-retry", complete(FACTS_SYSTEM_PROMPT, buildFactsPrompt(sentences), remaining)).then(parseFacts("facts-retry"));
   });
   const [settled, factsSettled] = await Promise.all([
-    samplesWithGrace(SAMPLES, (signal, i) => logged(calls, `review-${i + 1}`, complete(SYSTEM_PROMPT, user, undefined, signal))),
+    samplesWithGrace(SAMPLES, (signal, i) => logged(calls, `review-${i + 1}`, complete(SYSTEM_PROMPT, user, undefined, signal)), (v) => {
+      // Usable: valid output that answers every checklist item the model was asked about (toCheck).
+      try {
+        const parsed = ModelOutput.safeParse(extractJSON(v.text));
+        return parsed.success && toCheck.every((el) => parsed.data.elements.some((e) => e.element_id === el.id));
+      } catch { return false; }
+    }),
     // The failure reason is kept for the review record (never the model's text: invalid output is described, not stored).
     factsCall.then((v) => ({ ok: true as const, v }), (e) => ({ ok: false as const, reason: e instanceof ModelError ? e.message : invalidReason(e) })),
   ]);

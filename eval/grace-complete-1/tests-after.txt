@@ -1,0 +1,13 @@
+✔ C003-M3 reproduction: a first answer that omits N4/N6 does not cancel the twin; its answer completes the checklist (13074.329459ms)
+✔ control: a complete first answer still cancels a slow twin after the grace period (unchanged) (12075.12975ms)
+✔ control: when both answers omit N4/N6, the review stays partial and nothing is invented (13021.782ms)
+✔ control: when the twin fails, the omitted items stay unchecked and the review is partial (13016.233125ms)
+✔ same rule: an unusable (invalid) first answer does not cancel a pending twin that gives a usable one (13018.368916ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64729.179208
