@@ -162,7 +162,9 @@ export interface ReviewResult {
   checklistVersion?: string;
   discarded: { reason: string; title: string }[]; // model output dropped because evidence could not be verified
   /** Every model request made for this review, including failed and cancelled ones. */
-  calls: { role: string; status: "ok" | "failed" | "cancelled" | "invalid_output"; ms: number; attempts: number; error?: string; chars?: number; tokens?: { prompt?: number; completion?: number; reasoning?: number } }[];
+  calls: { role: string; status: "ok" | "failed" | "cancelled" | "invalid_output"; ms: number; attempts: number; error?: string; chars?: number; tokens?: { prompt?: number; completion?: number; reasoning?: number };
+    /** Every request attempt of this call (retry-reachable-1): start (ms after the call began), duration, outcome, and why it was started. */
+    attemptLog?: { n: number; startMs: number; ms: number; outcome: string; why?: string }[] }[];
   /** Raw issue counts per sample before verification, to check that merging does not just accumulate flags. */
   sampleIssues: { perSample: number[]; merged: number; inAllSamples: number };
   /** Completion across every required check (lib/completion.ts). Absent on reviews saved before it existed. */

@@ -237,13 +237,16 @@ function logged<T extends { attempts: number }>(log: CallLog[], role: string, p:
     // Output length (characters only, never content) and token counts reported by the endpoint, for latency analysis.
     (v) => {
       const u = (v as { usage?: { completion_tokens?: number; prompt_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } } }).usage;
+      const al = (v as { attemptLog?: CallLog["attemptLog"] }).attemptLog;
       log.push({ role, status: "ok", ms: Date.now() - t0, attempts: v.attempts, chars: (v as { text?: string }).text?.length,
-        ...(u ? { tokens: { prompt: u.prompt_tokens, completion: u.completion_tokens, reasoning: u.completion_tokens_details?.reasoning_tokens } } : {}) });
+        ...(u ? { tokens: { prompt: u.prompt_tokens, completion: u.completion_tokens, reasoning: u.completion_tokens_details?.reasoning_tokens } } : {}),
+        ...(al?.length ? { attemptLog: al } : {}) });
       return v;
     },
     (e) => {
       const cancelled = e instanceof ModelError && /cancelled/i.test(e.message);
-      log.push({ role, status: cancelled ? "cancelled" : "failed", ms: Date.now() - t0, attempts: e instanceof ModelError ? e.attempts : 1, error: e instanceof ModelError ? e.kind : "error" });
+      log.push({ role, status: cancelled ? "cancelled" : "failed", ms: Date.now() - t0, attempts: e instanceof ModelError ? e.attempts : 1, error: e instanceof ModelError ? e.kind : "error",
+        ...(e instanceof ModelError && e.attemptLog.length ? { attemptLog: e.attemptLog } : {}) });
       throw e;
     },
   );
