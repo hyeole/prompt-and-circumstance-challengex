@@ -114,6 +114,8 @@ limits/fair-use-guidelines).
 | 12 | Data handling | **Unverified concern**: policy | **What visitors could submit:** real I-213 text holds personal data. In the demo it would be sent to the shared model endpoint and stored in Blob. The app labels text origin but does not stop real data. | **Notice:** a demo banner saying "synthetic or public redacted text only". **Uploads:** off in the demo (blocker 5). **Retention:** a scheduled clean-up deleting visitor namespaces older than N days (Vercel Cron and Blob `list`/`del`). |
 
 ### Recommended setup
+> **Superseded (budget is $0):** the Pro recommendation below is replaced by `HOSTING-PLAN-FREE.md` (Vercel Hobby + Upstash Redis Free). The blocker table above still applies.
+
 **Vercel Pro**, with these settings:
 - **Access:** **Password Protection** on the project, covering production too. Share the password with judges by email, not in the repository or the deck.
 - **Storage:** one **private Vercel Blob store** for cases, versions, decisions, cancel markers and any uploads.
