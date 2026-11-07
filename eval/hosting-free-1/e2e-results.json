@@ -1,10 +1,10 @@
 {
-  "ranAt": "2026-11-06T23:52:44.143Z",
+  "ranAt": "2026-11-07T00:19:44.899Z",
   "results": [
     {
       "check": "each browser gets its own signed visitor cookie",
       "pass": true,
-      "detail": "X=ymWN…, Y=S54Q…"
+      "detail": "X=gU52…, Y=DQjW…"
     },
     {
       "check": "pages are private and uncacheable",
@@ -84,12 +84,12 @@
     {
       "check": "cancel through instance B stops the review on instance A and nothing is saved",
       "pass": true,
-      "detail": "cancel=cancelled, review=409, 2029 ms (fixture delay 8000 ms)"
+      "detail": "cancel=cancelled, review=409, 2023 ms (fixture delay 8000 ms)"
     },
     {
       "check": "5 simultaneous reviews on two instances: exactly 2 run (in-flight cap), 3 refused with 429",
       "pass": true,
-      "detail": "429,200,429,200,429"
+      "detail": "200,429,200,429,429"
     },
     {
       "check": "refused reviews made no model calls (3 fixture requests per admitted review)",

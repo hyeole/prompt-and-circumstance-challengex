@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const A = "http://localhost:3171", B = "http://localhost:3172", SHIM = "http://127.0.0.1:8079", FIX = "http://localhost:4555";
-const LOG = "eval/hosting-free-1/fixture-requests.jsonl";
+const LOG = process.env.FIXTURE_LOG ?? "eval/hosting-free-1/fixture-requests.jsonl";
 const CODE = process.env.NC_JUDGE_CODE!, SHIM_TOKEN = process.env.SHIM_TOKEN!;
 const results: { check: string; pass: boolean; detail: string }[] = [];
 const check = (name: string, pass: boolean, detail = "") => { results.push({ check: name, pass, detail }); console.log(`${pass ? "PASS" : "FAIL"}  ${name}${detail ? `  (${detail})` : ""}`); };

@@ -1,0 +1,65 @@
+{
+  "label": "after",
+  "ranAt": "2026-11-07T00:17:34.700Z",
+  "issue1_sameId": {
+    "statuses": [
+      "409:conflict",
+      "409:conflict",
+      "200",
+      "409:conflict",
+      "409:conflict",
+      "200"
+    ],
+    "modelCalls": 6,
+    "reviewsRun": 2,
+    "savedVersions": 2,
+    "peakLeases": 2
+  },
+  "issue1_crossInstance": {
+    "first": 200,
+    "leasesWhileSecondRuns": 0,
+    "cancelReply": {
+      "status": "saved",
+      "version": 1
+    },
+    "second": "409:conflict",
+    "savedVersions": 1
+  },
+  "issue2_oversized": {
+    "statuses": [
+      "413:too_large",
+      "413:too_large",
+      "413:too_large",
+      "413:too_large",
+      "413:too_large"
+    ],
+    "visitorBytes": 0,
+    "limit": 12582912,
+    "storedHashBytes": null,
+    "savedVersions": 0
+  },
+  "issue3_refusedQuota": {
+    "statuses": [
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "429:judge_hour_limit",
+      "429:judge_hour_limit",
+      "429:judge_hour_limit"
+    ],
+    "saved": 8,
+    "refused": 3,
+    "versionQuotaUsed": 8,
+    "reviewAllowanceUsed": 8,
+    "bytesReserved": 737776
+  },
+  "cancelRoute": {
+    "statuses": "30x200, 2x429",
+    "budgetCommandsAdded": 595
+  }
+}

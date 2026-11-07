@@ -1,16 +1,16 @@
 ▲ Next.js 16.4.3 (Turbopack)
-✓ Running next.config.ts took 60ms
+✓ Running next.config.ts took 13ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 497ms
+✓ Compiled successfully in 187ms
   Running TypeScript ...
-  Finished TypeScript in 343ms ...
+  Finished TypeScript in 271ms ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/9) ...
   Generating static pages using 7 workers (2/9) 
   Generating static pages using 7 workers (4/9) 
   Generating static pages using 7 workers (6/9) 
-✓ Generating static pages using 7 workers (9/9) in 139ms
+✓ Generating static pages using 7 workers (9/9) in 118ms
 Turbopack build encountered 1 warning:
 ./lib/cases.ts:11:15
 Warning: Dynamic filesystem access causes tracing of the whole project

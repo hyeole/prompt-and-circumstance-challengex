@@ -1,0 +1,65 @@
+{
+  "label": "before-5474b34",
+  "ranAt": "2026-11-07T00:17:05.456Z",
+  "issue1_sameId": {
+    "statuses": [
+      "200",
+      "200",
+      "200",
+      "200",
+      "429:busy",
+      "200"
+    ],
+    "modelCalls": 15,
+    "reviewsRun": 5,
+    "savedVersions": 5,
+    "peakLeases": 2
+  },
+  "issue1_crossInstance": {
+    "first": 200,
+    "leasesWhileSecondRuns": 0,
+    "cancelReply": {
+      "status": "saved",
+      "version": 1
+    },
+    "second": "409:cancelled",
+    "savedVersions": 1
+  },
+  "issue2_oversized": {
+    "statuses": [
+      "200",
+      "200",
+      "200",
+      "200",
+      "429:visitor_bytes"
+    ],
+    "visitorBytes": 14092088,
+    "limit": 12582912,
+    "storedHashBytes": 14156696,
+    "savedVersions": 4
+  },
+  "issue3_refusedQuota": {
+    "statuses": [
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "200",
+      "429:judge_hour_limit",
+      "429:judge_hour_limit",
+      "429:judge_hour_limit"
+    ],
+    "saved": 8,
+    "refused": 3,
+    "versionQuotaUsed": 11,
+    "reviewAllowanceUsed": 8,
+    "bytesReserved": 1320000
+  },
+  "cancelRoute": {
+    "statuses": "32x200, 0x429",
+    "budgetCommandsAdded": 7
+  }
+}

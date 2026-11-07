@@ -1,0 +1,220 @@
+✖ [in-process twin] issue 1: a request id can be claimed for only one execution (running or completed) (1.455625ms)
+✖ [in-process twin] issue 1: a second lease for the same request is refused, so the in-flight cap holds (1.176292ms)
+✖ [in-process twin] issue 1: a request id saves at most once, and a late cancel is told the truth (0.7415ms)
+✖ [in-process twin] issue 1: early cancellation still wins (cancel before the request claims its id) (0.446625ms)
+✖ [in-process twin] issue 2: bytes beyond the reservation are checked atomically; the visitor byte limit is never exceeded (0.418708ms)
+✖ [in-process twin] issue 2: the global byte limit is checked the same way (0.164916ms)
+✖ [in-process twin] issue 3: review and save capacity are admitted together; a refused review consumes neither (0.328708ms)
+✖ [in-process twin] issue 3: save capacity reserved for a review that saved nothing is returned (0.132667ms)
+✖ [in-process twin] cancellation is rate-limited per IP and per visitor, without a judge session (0.085917ms)
+✖ issue 2: only supported editable fields are kept; unknown properties are dropped (0.547125ms)
+✖ issue 2: every sample and benchmark case passes the strict schema unchanged (the engine input is the same) (0.291584ms)
+✖ issue 2: the request body is bounded before parsing (0.240792ms)
+✖ published example values are refused as the visitor secret and the judge code (6.00025ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 0
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 184.514583
+
+✖ failing tests:
+
+test at tests/hosting-fixes.test.ts:38:3
+✖ [in-process twin] issue 1: a request id can be claimed for only one execution (running or completed) (1.455625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection: same visitor, same id, while running
+      at async TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:41:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /already in use/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:46:3
+✖ [in-process twin] issue 1: a second lease for the same request is refused, so the in-flight cap holds (1.176292ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:50:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:56:3
+✖ [in-process twin] issue 1: a request id saves at most once, and a late cancel is told the truth (0.7415ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:61:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /already saved/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:66:3
+✖ [in-process twin] issue 1: early cancellation still wins (cancel before the request claims its id) (0.446625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'cancelled'
+  
+      at TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:69:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'cancelled',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:76:3
+✖ [in-process twin] issue 2: bytes beyond the reservation are checked atomically; the visitor byte limit is never exceeded (0.418708ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:85:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:90:3
+✖ [in-process twin] issue 2: the global byte limit is checked the same way (0.164916ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:96:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:101:3
+✖ [in-process twin] issue 3: review and save capacity are admitted together; a refused review consumes neither (0.328708ms)
+  AssertionError [ERR_ASSERTION]: only the admitted review holds save capacity
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:108:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:118:3
+✖ [in-process twin] issue 3: save capacity reserved for a review that saved nothing is returned (0.132667ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 5000
+  
+      at TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:121:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 5000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/hosting-fixes.test.ts:130:3
+✖ [in-process twin] cancellation is rate-limited per IP and per visitor, without a judge session (0.085917ms)
+  TypeError: countCancel is not a function
+      at TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:133:40)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests/hosting-fixes.test.ts:140:1
+✖ issue 2: only supported editable fields are kept; unknown properties are dropped (0.547125ms)
+  Error [ERR_MODULE_NOT_FOUND]: Cannot find module '<copy-of-5474b34>/lib/reviewInput' imported from <copy-of-5474b34>/tests/hosting-fixes.test.ts
+      at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+      at moduleResolve (node:internal/modules/esm/resolve:865:10)
+      at defaultResolve (node:internal/modules/esm/resolve:991:11)
+      at #cachedDefaultResolve (node:internal/modules/esm/loader:713:20)
+      at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:730:38)
+      at nextStep (node:internal/modules/customization_hooks:189:26)
+      at resolveBaseSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+      at resolveDirectorySync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+      at resolveTsPathsSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605)
+      at resolve (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:16832) {
+    code: 'ERR_MODULE_NOT_FOUND',
+    url: 'file://<copy-of-5474b34>/lib/reviewInput'
+  }
+
+test at tests/hosting-fixes.test.ts:146:1
+✖ issue 2: every sample and benchmark case passes the strict schema unchanged (the engine input is the same) (0.291584ms)
+  Error [ERR_MODULE_NOT_FOUND]: Cannot find module '<copy-of-5474b34>/lib/reviewInput' imported from <copy-of-5474b34>/tests/hosting-fixes.test.ts
+      at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+      at moduleResolve (node:internal/modules/esm/resolve:865:10)
+      at defaultResolve (node:internal/modules/esm/resolve:991:11)
+      at #cachedDefaultResolve (node:internal/modules/esm/loader:713:20)
+      at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:730:38)
+      at nextStep (node:internal/modules/customization_hooks:189:26)
+      at resolveBaseSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+      at resolveDirectorySync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+      at resolveTsPathsSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605)
+      at resolve (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:16832) {
+    code: 'ERR_MODULE_NOT_FOUND',
+    url: 'file://<copy-of-5474b34>/lib/reviewInput'
+  }
+
+test at tests/hosting-fixes.test.ts:162:1
+✖ issue 2: the request body is bounded before parsing (0.240792ms)
+  Error [ERR_MODULE_NOT_FOUND]: Cannot find module '<copy-of-5474b34>/lib/reviewInput' imported from <copy-of-5474b34>/tests/hosting-fixes.test.ts
+      at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+      at moduleResolve (node:internal/modules/esm/resolve:865:10)
+      at defaultResolve (node:internal/modules/esm/resolve:991:11)
+      at #cachedDefaultResolve (node:internal/modules/esm/loader:713:20)
+      at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:730:38)
+      at nextStep (node:internal/modules/customization_hooks:189:26)
+      at resolveBaseSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+      at resolveDirectorySync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+      at resolveTsPathsSync (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605)
+      at resolve (file://<worktree>/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:16832) {
+    code: 'ERR_MODULE_NOT_FOUND',
+    url: 'file://<copy-of-5474b34>/lib/reviewInput'
+  }
+
+test at tests/hosting-fixes.test.ts:172:1
+✖ published example values are refused as the visitor secret and the judge code (6.00025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'replace-with-32-plus-random-characters'
+  - null
+  
+      at TestContext.<anonymous> (<copy-of-5474b34>/tests/hosting-fixes.test.ts:178:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'replace-with-32-plus-random-characters',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

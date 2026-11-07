@@ -1,5 +1,12 @@
 # hosting-free-1: $0 public-demo implementation (offline only)
 
+> **Superseded in part (2026-11-06):** the independent review of `5474b34` reproduced three blockers. They are fixed in `641ec0f`; see `FIXES-REPORT.md`:
+> - request-id reuse;
+> - unchecked bytes beyond the reservation;
+> - quota consumed by refused reviews.
+>
+> **Correction to §2.4:** the monthly storage budget is approximate, not a hard cap. It can overshoot by the requests in flight, and Upstash Free's own limits are the hard stop.
+
 **Branch:** `improve/hosting-free-1`, started from `28ece07` (the $0 plan, on `3369d9e`).
 
 **Commits:**
