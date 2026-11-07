@@ -62,5 +62,6 @@ Every record is kept where it was written. Files were not moved or renamed, so l
 - **Run outputs:** [runs/](runs/) (scored reports; raw model outputs are not committed); [archive/](archive/)
 
 ## Not on this branch (local branches, not pushed)
-- **Rounds after the deployed engine:** the round-4 detection investigation and the hedge experiment are on branch `improve/round4-detection` (`eval/DETECTION-INVESTIGATION-round4.md`, `eval/HEDGE-EXPERIMENT-*`). They are offline or not evaluated, and are not deployed.
+- **Unmerged round-4 work, from before the deployed engine:** the rc-full-1 full run (`eval/EVALUATION-full-rc-full-1.md`), the detection investigation and the hedge experiment. They are on the local branch `improve/round4-detection` and not deployed.
+- **Later local branches:** `improve/round5-visa-chronology` and `improve/round6-person-event` hold bounded checks and a prototype, not evaluations.
 - **Demo videos and voice recordings:** kept outside Git.

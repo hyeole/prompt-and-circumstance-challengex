@@ -49,7 +49,7 @@ They are **different runs of different builds**. Neither is a recount of the oth
 
 | Run | Build | Completion | Detection | Incorrect flags (claim layer) | Report |
 |---|---|---|---|---|---|
-| Checkpoint | `4b10d72` | 74/77 | 36/54 | 2/100 (5/101 in the key-only layer) | `eval/EVALUATION-4b10d72.md` |
+| Checkpoint | `4b10d72` | 74/77 | 36/54 | 2/100 (5/101 in the key-only layer, scoring policy v2.4) | `eval/EVALUATION-4b10d72.md` |
 | **Closeout** (tag `rc-closeout`) | `7efb231` | **75/77** | 42/54 | 2/100 | `eval/EVALUATION-closeout-7efb231.md` |
 | Round 2 candidate, not promoted | `1b5f59b` | 73/77 | 41/54 | | `eval/RUNS.md` |
 | Round 3 candidate, not promoted | `4cf02c3` | 67/77 | 41/54 | | `eval/RUNS.md` |
@@ -72,7 +72,7 @@ Each was a single run on a synthetic case. They are not accuracy measurements.
 - **"90% (28/31)" legacy recall from run `2026-10-30T03-16-09`:** post-tuning, on an earlier scoring policy.
 - **Per-dataset figures quoted alone:** they hide the other datasets.
 - **The 44/54 of `ed42763`** (rc-int-1, historical): superseded. Rescored with the later code on the same saved data, it reads 42/54 (41/54 without the credit) (`eval/ACCURACY-ITERATION-1-REPORT.md`). That engine was never deployed. Any earlier deck or speaker note quoting 44/54 is out of date.
-- **rc-full-1 (`2f54880`), 43/54, 71/77, 2/104:**
-  - a later candidate on the local branch `improve/round4-detection`;
-  - not deployed, and not part of the deployed release;
-  - see `eval/EVALUATION-full-rc-full-1.md` on that branch.
+- **rc-full-1, 43/54, 71/77, 2/104:**
+  - an **earlier** candidate: its server code `2f54880` (2026-10-30) is an ancestor of the deployed engine `d062b1d`, 30 commits earlier;
+  - its run records are on the local branch `improve/round4-detection` (`eval/EVALUATION-full-rc-full-1.md`);
+  - not the deployed engine.
