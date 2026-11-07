@@ -503,3 +503,9 @@ a.btn { text-decoration: none; }
 .judge-access.compact { margin-top: 8px; padding: 8px 10px; border: 1px dashed var(--line-2); border-radius: 8px; }
 .demo-notice { display: block; font-weight: 600; order: 3; flex-basis: 100%; }
 .footer { flex-wrap: wrap; }
+/* Up to 900 px the footer is a column (see the 900 px block above). Wrapping a column with a 100% basis pushed the
+   notice into a second column beside the footer, off-screen on phones; stack it normally instead. */
+@media (max-width: 900px) {
+  .footer { flex-wrap: nowrap; }
+  .demo-notice { flex-basis: auto; }
+}
