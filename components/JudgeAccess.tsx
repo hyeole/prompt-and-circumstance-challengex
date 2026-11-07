@@ -12,8 +12,10 @@ export default function JudgeAccess({ purpose, onGranted, compact }: { purpose: 
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  // Not a <form>: the new-case page shows this inside its own form, and a nested form made Unlock reload the page
+  // (no code check, attached PDF lost). Unlock is a plain button; Enter in the field is handled here and never
+  // submits a surrounding form.
+  async function submit() {
     if (!code.trim() || busy) return;
     setBusy(true); setErr(null);
     try {
@@ -29,14 +31,15 @@ export default function JudgeAccess({ purpose, onGranted, compact }: { purpose: 
     }
   }
   return (
-    <form className={`judge-access ${compact ? "compact" : ""}`} onSubmit={submit} aria-label="Judge access code">
+    <div className={`judge-access ${compact ? "compact" : ""}`} role="group" aria-label="Judge access code">
       <div className="judge-access-text"><Icon name="review" size={15} /> <span><strong>{purpose} need the judge access code.</strong> Everything else on this site is open.</span></div>
       <div className="judge-access-row">
         <label htmlFor="judge-code" className="sr-only">Judge access code</label>
-        <input id="judge-code" type="password" autoComplete="off" spellCheck={false} value={code} onChange={(e) => setCode(e.target.value)} placeholder="Judge access code" maxLength={200} />
-        <button className="btn btn-primary btn-sm" type="submit" disabled={busy || !code.trim()}>{busy ? "Checking…" : "Unlock"}</button>
+        <input id="judge-code" type="password" autoComplete="off" spellCheck={false} value={code} onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void submit(); } }} placeholder="Judge access code" maxLength={200} />
+        <button className="btn btn-primary btn-sm" type="button" onClick={() => void submit()} disabled={busy || !code.trim()}>{busy ? "Checking…" : "Unlock"}</button>
       </div>
       {err && <div className="judge-access-err" role="alert">{err}</div>}
-    </form>
+    </div>
   );
 }
