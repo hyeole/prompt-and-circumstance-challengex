@@ -63,5 +63,5 @@ Every record is kept where it was written. Files were not moved or renamed, so l
 
 ## Not on this branch (local branches, not pushed)
 - **Unmerged round-4 work, from before the deployed engine:** the rc-full-1 full run (`eval/EVALUATION-full-rc-full-1.md`), the detection investigation and the hedge experiment. They are on the local branch `improve/round4-detection` and not deployed.
-- **Later local branches:** `improve/round5-visa-chronology` and `improve/round6-person-event` hold bounded checks and a prototype, not evaluations.
+- **Round-5 and round-6 local branches (also from before the deployed engine):** `improve/round5-visa-chronology` and `improve/round6-person-event` hold bounded checks and a prototype, not evaluations.
 - **Demo videos and voice recordings:** kept outside Git.
