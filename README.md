@@ -2,155 +2,191 @@
 
 **Team: Prompt & Circumstance** · CHALLENGE X · Unissant use case: *GenAI-Assisted Gap Analysis for Investigative Charge Documentation*
 
-NarrativeCheck reviews an officer-written charge narrative, the case facts behind it, and the officer-selected Title 8 / INA charge. It points out missing required information, internal inconsistencies, unclear statements, and possible citation mismatches. Every flag links to the exact sentence or form field it came from.
+**Live demo:** https://project-7kvs7.vercel.app/ (public; live reviews and PDF uploads need the private judge code)
 
-It **never** rewrites the narrative, never picks or changes the charge, and never fills in missing facts. Ambiguous and multi-charge cases go to a person.
+NarrativeCheck reviews an officer-written charge narrative against the case facts from the form and the officer-selected Title 8 / INA charge. It points out:
+- missing required information;
+- internal inconsistencies;
+- unclear statements;
+- possible citation mismatches.
+
+Every flag links to the exact sentence or form field it came from.
+
+It **never** rewrites the narrative, never picks or changes the charge, and never fills in missing facts. Ambiguous and multi-charge cases go to a person. It is decision support, not a legal determination.
 
 ![NarrativeCheck review workspace after a live review of a team test case with a planted contradiction](docs/design/review-screen-v2.png)
 
 *Live review of team test case C012-X1. Two conflicting statements about the manner of entry are highlighted and linked to the form field. The case is routed to human review.*
 
-## Pages
+## Using the live demo
+1. **New case:** enter a title, mark where the text comes from (officer-written, transcribed, or **synthetic test text**), and paste the narrative.
+2. **Case facts and context:** enter the form fields as recorded, choose the context (interior encounter, port of entry, expedited removal) and enter the **officer-selected charge**. The app checks that charge; it never chooses one.
+3. **Source PDF (optional):** attach the PDF and note which pages hold the narrative. The stored PDF can be opened from the case.
+   - **It is for viewing and reference only.**
+   - NarrativeCheck does **not** read or extract text from it.
+   - The narrative is always the text you entered.
+4. **Run review:** the review checks required elements, consistency, clarity and the selected charge. A review usually takes 10–60 seconds.
+5. **Results:**
+   - **Findings:** each says whether it came from a rule-based check or the model (under *Technical details*). Findings that quote the narrative are highlighted in the text.
+   - **Elements checklist:** shows each required element and where it was found.
+   - A missing detail has no sentence to highlight, so it is listed instead.
+6. **History:** every review is saved as a new numbered version. Earlier versions are not changed.
+7. **Gap report:** a one-page summary, printed or saved as a PDF from the browser's print dialog ("Print or save as PDF").
 
+**Public-demo rules:**
+- **Synthetic or public redacted text only.** Text you review is sent to the shared Unissant model endpoint.
+- **Judge code:** live reviews and PDF uploads need the private judge code, shared with judges privately. Everything else is open.
+- **Retention:** saved work is visible only in the browser that created it, and is **deleted 30 days after the last change**.
+- **Limits:** usage limits apply. When a limit is reached, the app says so and runs nothing. The defaults are:
+  - 15 live reviews per judge session per hour;
+  - 30 per IP address per day;
+  - 60 per day and 400 in total;
+  - 3 at a time;
+  - a 3 MB PDF limit;
+  - storage caps.
+
+## Pages
 | Page | What it is for |
 |---|---|
-| **Workspace** `/` | Recent cases, pending officer actions, real review statuses, New case |
-| **Cases** `/cases` | Searchable, filterable library: adapted source records, synthetic test variants, entered cases. **New case** `/cases/new` has a preview step |
-| **Review** `/review/[id]` | Document workspace: narrative, form facts, findings, evidence explorer, officer decisions |
-| **Review history** `/review/[id]/history` | Immutable versions, word-level officer edits, new / persisting / resolved findings, notes |
-| **References** `/references` | Unissant guidance (verbatim), team checklist v2, team charge summaries (not sponsor-approved), glossary, versions |
-| **Report** `/report/[id]` and **Audit** `/audit/[id]` | One-page gap report; detailed multi-page audit export with decisions and notes |
+| **Workspace** `/` | Recent cases, pending officer actions, review statuses, New case |
+| **Cases** `/cases` | Case library. **New case** `/cases/new` has a preview step before anything is saved |
+| **Review** `/review/[id]` | Narrative, form facts, findings, evidence, Elements checklist, officer decisions |
+| **Review history** `/review/[id]/history` | Saved versions, officer edits, new / persisting / resolved findings |
+| **References** `/references` | Unissant guidance (verbatim), team checklist v2, team charge summaries (not sponsor-approved), glossary |
+| **Report** `/report/[id]` and **Audit** `/audit/[id]` | One-page gap report, and a detailed audit export with decisions and notes |
 
-Your work is saved on this computer in `data/local/`. That folder is git-ignored and excluded from sharing ZIPs; nothing is uploaded. Edits you have not reviewed yet are kept only for the browser session.
-
-## What it does
-
-| Area | Behavior |
-|---|---|
-| Document canvas | Original narrative with clickable highlights, source PDF page markers, redactions shown as labelled chips |
-| Findings panel | Human-review indicator, citation check, required-elements checklist, findings with verified evidence |
-| Case facts panel | Collapsible form fields with availability status (present, redacted, absent, unreadable), and the officer-selected charge |
-| Corrections | The officer edits their own text or facts. Earlier findings are marked outdated until a fresh review runs |
-| Report | One-page printable gap report per case (Export report, then Save as PDF) |
-
-### Review pipeline
-
+## Review pipeline
 1. **Rule checks** (deterministic code):
    - required elements already recorded in form fields;
    - redacted fields treated as unavailable rather than missing;
    - "Unknown" values qualified as *recorded as unknown*;
    - multiple selected charges;
+   - the selected charge's core requirement (for example, an overstay charge needs a documented admission);
    - encounter time on the form vs. the arrest time in the narrative.
-2. **Three parallel model requests** to the Unissant-hosted `gpt-oss-20b`:
-   - two independent review samples (elements, issues, citation opinion);
-   - one **fact extraction** (entry and removal statements with exact quotes).
-
-   Case text is passed as data, never as instructions.
-3. **Code compares the extracted facts** with the form fields and with each other: entry year, manner of entry, and prior removals. It also checks the selected charge's core requirement (for example, an overstay charge needs a documented admission).
+2. **Three parallel model requests** to the Unissant-hosted `gpt-oss-20b`: two independent review samples and one fact extraction (entry and removal statements with exact quotes). Case text is passed as data, never as instructions.
+3. **Code compares** the extracted facts with the form fields and with each other.
 4. **Verification:**
-   - every quote must match the reviewed text exactly (redaction markers normalized), or the statement is withheld;
+   - every quote must match the reviewed text exactly, or the statement is withheld;
    - contradictions need two verified sources;
-   - text that names or suggests another charge is removed from everything displayed;
-   - a charge that fits only one of two conflicting accounts is marked *needs human review*.
-5. **Honest status.** Each check reports *completed with findings*, *completed with no findings*, *partial*, or *unavailable*. If the model fails, the app says "Partial review" and substitutes nothing.
+   - text that suggests another charge is removed.
+5. **Honest status:** each check reports *completed with findings*, *completed with no findings*, *partial* or *unavailable*. If the model fails, the app says "Partial review" and substitutes nothing.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for request counts, timeouts and the measured latency.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for request counts, timeouts and latency.
 
 ## Evaluation (internal, team-created test cases)
+**Units used below:**
+- A **narrative** is a distinct narrative text.
+- A **case** is a narrative plus its form facts and selected charge (several cases can share a narrative).
+- A **review run** is one review of one case.
+- A **planted error** is one labelled defect.
 
-We built 37 test cases: 9 verified adapted public records and 28 copies, each with one documented planted issue. Answers are kept separately from the inputs, and the cases are split into dev and held-out sets by base case. Full detail is in [eval/README.md](eval/README.md) and [eval/RUNS.md](eval/RUNS.md).
+**The 77-case benchmark has:**
+- **56 unique narratives**: 15 adapted public CBP records, 20 synthetic variants with edited text, 21 fully synthetic;
+- **77 cases**: 15 source records, 40 synthetic variants (20 reuse their source narrative unchanged and change only facts, charge or citation), and 22 fully synthetic cases;
+- **54 planted errors** in 50 cases.
 
-| Measure | Internal held-out run (untouched, 21 cases) | Deck target |
+The 15 source records and 12 synthetic cases carry no planted error and only count toward incorrect flags. Each evaluation reviews every case once (77 review runs). A separate 12-case set (`gen-v1`) is reported on its own.
+
+**Deployed engine** (`d062b1d`): measured once, locally, on the same locked cases ([eval/measure-d062b1d/REPORT.md](eval/measure-d062b1d/REPORT.md)). This is **post-tuning on a reused development benchmark**, not a held-out result.
+
+| Measure | Result | Deck target |
 |---|---|---|
-| Strict detection of planted issues | 83% (15/18) | at least 90%: **not met** |
-| Incorrect flags (hand-adjudicated) | 28% (5/18) | at most 10%: **not met** |
-| Ambiguous / multi-charge cases routed to a person, for the planted reason | 100% (2/2 and 3/3) | 100%: met |
-| Evidence references reproduce the source text | 100% | every flag: met |
-| Review time, p50 / max | 22s / 55s | under 60s: met |
+| Strict detection of planted errors | **41/54 (76%)** excluding one clarification-only credit (C045-X1); the linked report's "strict" figure is 42/54 (78%) with it | at least 90%: **not met** |
+| Incorrect flags among issued flags | **2/94** in the claim-aware scoring layer; **4/94** in the stricter key-only layer | at most 10%: met in both layers |
+| Review completion | **74/77**: 3 partial reviews where both fact-extraction requests timed out | |
+| Routing: multi-charge / planted ambiguity | 6/6 / 3/4 | 100%: **not met** (ambiguity) |
+| Separate 12-case `gen-v1` set | detection 6/7 (5/7 without one checklist credit), incorrect flags 1/9, completion 12/12 | |
 
-Later runs after error analysis are **post-hoc** and do not replace this result. They are listed in `eval/RUNS.md`.
+**The only untouched results** come from earlier builds, each run once before any tuning on that set:
 
-## Reports and demo
+| Set | Build | Strict detection | Incorrect flags |
+|---|---|---|---|
+| Legacy set, 21-case held-out split (dataset v1; 18 planted errors) | `ae55a38` | 15/18 (83%) | 5/18 (28%) |
+| fresh-v1 (28 cases, 17 planted errors) | `ab6feb6` | 12/17 (71%) | 11/37 (30%) |
 
-- **One-page gap reports** for all 77 evaluation cases: [docs/reports/narrativecheck-case-reports.pdf](docs/reports/narrativecheck-case-reports.pdf).
-  - They were generated from the saved results of the final evaluation of build `7efb231`.
-  - Every report was checked automatically (`tools/verify_reports.py`): 77 of 77 pass, and the 2 partial reviews show the partial-review notice.
-- **Demo video:** a captioned walkthrough of the evaluated production build with live reviews. It is illustrative, since live output varies. The link will be added once it is uploaded. Beats were verified before recording ([docs/demo-verification.md](docs/demo-verification.md)); the shot list is in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
-- **Final planned evaluation** (post-tuning, not held-out) of the frozen build `7efb231` on all three datasets (77 cases): [eval/EVALUATION-closeout-7efb231.md](eval/EVALUATION-closeout-7efb231.md).
-  - **Strict detection: 78% (42/54).** The 90% target is **not met**. It is 74% (40/54) counting C003-AMB as routed (robustness caveat).
-  - **Incorrect flags: 2% (2/100)** in the claim-aware layer, 4% (4/100) in the original-record layer. The 10% target is met.
-  - **Other measures:** completion 97% (75/77), unnecessary routing 7% (3/43), 0 should-not-flag violations, evidence quotes match the source text 100%.
-  - **Remaining misses:** mostly genuine attribution uncertainty in multi-person narratives, routed to a person with the statement named.
+These are the figures to quote for generalisation. They do not meet the targets.
 
-## Important limitations
+**Why figures differ between documents:**
+- The often-quoted "**75/77**" completion and "**2/100**" incorrect flags belong to the closeout evaluation of an earlier build (`7efb231`).
+- The deployed engine `d062b1d` measured **74/77** and **2/94**.
+- These are two separate runs of two builds, not a counting error.
 
-- **References.** On 2026-10-30 Unissant confirmed that it will **not** provide a charge reference sheet or a checklist, and supplied a "Core elements to cover" table as guidance. That table is kept verbatim in [`config/sponsor/`](config/sponsor/).
-  - [`config/references.json`](config/references.json) (checklist v2) is the team's implementation of that guidance plus the Form I-213 instruction. Each item names its sponsor category and the contexts where it applies.
-  - The charge summaries are team paraphrases of public statutory text. They are **not** sponsor-approved and are not legal advice.
-  - See [docs/SPONSOR-ALIGNMENT.md](docs/SPONSOR-ALIGNMENT.md).
-- **Cases are adapted public records.** They come from a redacted public CBP release; see [Data and provenance](#data-and-provenance). The original records are not an answer key.
-- **Evaluation scores are internal.** Planted-error test cases are team-created until Unissant supplies its test set. The single untouched held-out run does not meet the detection and incorrect-flag targets.
-- **Fact extraction can time out.** 2 of 77 reviews in the final evaluation hit the 55-second limit and were reported as partial. Duration tracks the generated tokens (r = 0.96) at a steady rate, so long generations are the likely cause. This is not proven for the failed calls, and no limit was raised.
-- **Redacted names** often make it impossible to tell which person a statement belongs to. The app routes such statements to a person and names them; it does not assume. This is the main reason the detection target is not met.
-- The tool is decision support. Its output is not a legal determination.
+[docs/EVALUATION-SUMMARY.md](docs/EVALUATION-SUMMARY.md) reconciles every headline figure and links each to its run.
 
-## Run it
+## Limitations
+- **Detection target not met.** The deployed engine misses about one in four planted errors on the internal benchmark (most often conflicts within one narrative and attribution in multi-person narratives). The untouched results (83% and 71%, on smaller earlier sets) also miss the 90% target.
+- **Internal, team-made test cases.** The benchmark was used during development, so its scores are optimistic. Unissant has not supplied a test set.
+- **References are team-provisional.** Unissant supplied guidance (kept verbatim in [`config/sponsor/`](config/sponsor/)), not a charge reference sheet. The checklist and charge summaries in [`config/references.json`](config/references.json) are the team's implementation. They are not sponsor-approved and are not legal advice. See [docs/SPONSOR-ALIGNMENT.md](docs/SPONSOR-ALIGNMENT.md).
+- **Fact extraction can time out** (55-second limit). The review then reports "Partial review" rather than guessing.
+- **Redacted names** often make it impossible to tell whose statement is whose. Such statements are routed to a person, not assumed.
+- **Source PDFs** are stored for viewing only. Scanned pages are not read.
+- **Public-demo data** expires 30 days after the last change and is visible only in the browser that created it.
 
-See [docs/SETUP.md](docs/SETUP.md). In short:
+## Run it locally
+Requirements: Node.js 20 or later, and a Unissant model key for live reviews (tests and the UI run without one).
 
 ```bash
 npm install
-# create .env.local with CHALLENGEX_API_KEY (see docs/SETUP.md; never commit it)
-npm run check:api
-npm run dev
+cp .env.example .env.local   # then fill in values locally; never commit .env.local
+npm run check:api            # tests the model connection; the key is never printed
+npm run dev                  # http://localhost:3000
+npm test                     # unit tests, no key needed
 ```
 
-## Documentation
+**Environment variables** (placeholders only; full list in [`.env.example`](.env.example)):
 
-- [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md): beginner-friendly walkthrough of every part
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): request flow and design decisions
-- [DESIGN.md](DESIGN.md): visual and interaction rules
-- [eval/README.md](eval/README.md): test set, splits, and matching policy
-- [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md): demo shot list and narration
-- [docs/DEVLOG.md](docs/DEVLOG.md): development log
+| Name | Placeholder | Needed for |
+|---|---|---|
+| `CHALLENGEX_API_KEY` | `<model API key>` | live reviews (server only) |
+| `CHALLENGEX_BASE_URL` | `https://<model endpoint>/v1` | optional; has a default |
+| `CHALLENGEX_MODEL` | `<model name>` | optional; defaults to `gpt-oss-20b` |
+| `UPSTASH_REDIS_REST_URL` | `https://<database>.upstash.io` | public demo only |
+| `UPSTASH_REDIS_REST_TOKEN` | `<REST token>` | public demo only |
+| `NC_VISITOR_SECRET` | `<32+ random characters>` | public demo only |
+| `NC_JUDGE_CODE` | `<16+ characters>` | public demo only |
 
-## Useful commands
+- **Locally,** without the public-demo variables, work is saved on this computer in `data/local/` (git-ignored), and no judge code is needed.
+- **Hosting:** see [docs/SETUP.md](docs/SETUP.md) for local setup and [docs/DEPLOY-VERCEL.md](docs/DEPLOY-VERCEL.md) for the $0 Vercel + Upstash deployment.
 
 | Command | What it does |
 |---|---|
-| `npm run check:api` | Tests the model connection (the key is never printed) |
-| `npm run dev` | Starts the app at http://localhost:3000 (`/?set=eval` opens the evaluation cases) |
-| `npm test` | Unit tests, no key needed |
-| `npm run eval:build` | Rebuilds the test variants from `eval/variants.json` |
 | `npm run eval -- --split dev` | Runs live reviews for a split and saves the results |
 | `npm run eval:score -- eval/runs/<timestamp>` | Scores a run and writes `REPORT.md` |
+| `npm run eval:build` | Rebuilds the test variants from `eval/variants.json` |
 | `node scripts/export-reports.mjs eval/runs/<timestamp>` | Writes a one-page PDF report per case from saved results |
-| `npm run demo:record` | Records a captioned walkthrough video with Chrome (needs `npx playwright-core install ffmpeg` once) |
+
+## Documentation
+- [docs/HOW-IT-WAS-BUILT.md](docs/HOW-IT-WAS-BUILT.md): beginner-friendly walkthrough
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): request flow and design decisions
+- [DESIGN.md](DESIGN.md): visual and interaction rules
+- [docs/EVALUATION-SUMMARY.md](docs/EVALUATION-SUMMARY.md): reconciled evaluation figures
+- [eval/REPORTS-INDEX.md](eval/REPORTS-INDEX.md): index of every evaluation, deployment and audit record
+- [docs/DEPLOY-VERCEL.md](docs/DEPLOY-VERCEL.md): deployment configuration (names and placeholders only)
+- [docs/DEVLOG.md](docs/DEVLOG.md): development log
 
 ## Data and provenance
-
-- Source: CBP, *Detroit Sector Forms I-213 and I-44 FY 2012 – 2019 Part 5* (public, redacted), [cbp.gov link](https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf). The PDF itself is not committed.
-- `tools/extract/` holds the preparation scripts: embedded text plus local Apple Vision OCR, case grouping, and the case builder.
-- `data/manifests/` holds hand-verified transcriptions with page numbers. `data/cases/` holds the generated case files the app loads.
-- Each case records its source pages, extraction method, verification notes, and any synthetic replacements.
+- **Source:** CBP, *Detroit Sector Forms I-213 and I-44 FY 2012 – 2019 Part 5* (public, redacted), [cbp.gov link](https://www.cbp.gov/sites/default/files/assets/documents/2022-Jan/Detroit%20Sector%20Forms%20I-213%20and%20I-44%20FY%202012%20%E2%80%93%202019%20Part%205_0.pdf). The PDF itself is not committed.
+- **Preparation:** `tools/extract/` holds the scripts: embedded text plus local OCR, case grouping, and the case builder. `data/manifests/` holds hand-verified transcriptions with page numbers.
+- **Cases:** `data/cases/` holds the 13 sample cases the app loads.
+- **Recordings:** demo videos are kept outside Git.
 
 ## Repository layout
-
 ```
-app/                 Next.js app (page + /api/review server route)
+app/                 Next.js app (pages and API routes)
 components/          Review workspace UI
-lib/review/          Rules, prompt, schema, pipeline
-lib/llm.ts           Server-only model client (key never reaches the browser)
-config/              Versioned reference rules (provisional)
+lib/review/          Rules, prompts, schema, pipeline
+lib/llm.ts           Server-only model client (the key never reaches the browser)
+lib/kv.ts, store.ts  Storage (local file, or Upstash Redis in the public demo)
+config/              Versioned reference rules (team-provisional) and sponsor guidance
 data/                Case manifests and case files
+eval/                Test sets, runs, scored reports and records
 tools/extract/       PDF extraction and case preparation (Python)
 tests/               Unit tests
-docs/                Setup, architecture, design, development log
+docs/                Setup, architecture, design, deployment, development log
 ```
 
 ## Model
-
-Unissant-hosted `gpt-oss-20b` through its OpenAI-compatible endpoint. An OpenAI account is not used. The key is read from `CHALLENGEX_API_KEY` on the server only.
+Unissant-hosted `gpt-oss-20b` through its OpenAI-compatible endpoint. The key is read from `CHALLENGEX_API_KEY` on the server only.
 
 ---
 Built by **Prompt & Circumstance** for CHALLENGE X.

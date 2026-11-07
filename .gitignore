@@ -41,3 +41,10 @@ share/
 
 # local workspace store (user cases, review history, decisions, uploaded PDFs) - never committed
 data/local/
+
+# local session / browser-automation state and editor leftovers (never commit)
+.Rhistory
+*-state.json
+storage-state*.json
+*.cookies
+cookies*.txt

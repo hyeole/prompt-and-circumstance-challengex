@@ -1,6 +1,14 @@
 # Deploying NarrativeCheck to Vercel (Hobby, $0)
 
-**Status:** preparation only. Nothing has been pushed, imported or deployed. Every step below needs separate authorization.
+**Status (2026-11-07):** deployed.
+- **Production:** https://project-7kvs7.vercel.app runs `727e775` from `release/vercel-demo-1` (Vercel Hobby, $0).
+- **Previews:** behind Vercel login.
+- **Records:**
+  - [eval/vercel-setup-1/RECORD.md](../eval/vercel-setup-1/RECORD.md)
+  - [eval/preview-vercel-1/RECORD.md](../eval/preview-vercel-1/RECORD.md)
+  - [eval/production-vercel-1/RECORD.md](../eval/production-vercel-1/RECORD.md)
+- **Any further deployment** needs separate authorization.
+- **Ignored Build Step:** it is now **Automatic**. A push to `release/vercel-demo-1` goes live, and a push to any other branch builds a Preview.
 
 **Plan:** see `eval/ui-mobile-1/HOSTING-PLAN-FREE.md`. **Implementation and verification:** `eval/hosting-free-1/REPORT.md` and `FIXES-REPORT.md`.
 
