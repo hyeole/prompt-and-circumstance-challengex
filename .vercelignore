@@ -1,0 +1,30 @@
+# Files Vercel does not upload for this deployment (release/vercel-demo-1). They stay in Git as history and evidence;
+# nothing here is deleted. The deployed app needs only: app/, components/, lib/, config/, data/cases/, proxy.ts,
+# next.config.ts, package.json, package-lock.json, tsconfig.json.
+
+# Evaluation history, benchmark results, review evidence, offline test tooling and test-only values
+# (eval/hosting-free-1/local-test.env holds offline rehearsal values that must never be used in a deployment).
+eval/
+tests/
+scripts/
+tools/
+docs/
+DESIGN.md
+README.md
+
+# Local stores, credentials and temporary files (most are also git-ignored)
+data/local/
+data/manifests/
+.env
+.env.*
+*.env
+share/
+recordings/
+reference-materials/
+tmp/
+*.log
+*.pdf
+.Rhistory
+tsconfig.tsbuildinfo
+.claude/
+.worktrees/
