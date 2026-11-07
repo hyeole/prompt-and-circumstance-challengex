@@ -7,14 +7,15 @@ import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { ACCESS_ATTEMPTS, ACCESS_WINDOW_SECONDS, JUDGE_SESSION_SECONDS, publicDemo } from "./deploy";
 import { getKv } from "./kv";
 import { LimitError } from "./usage";
-import { sign, verify } from "./visitor";
+import { isKnownExampleValue, sign, verify } from "./visitor";
 
 export const accessRequired = () => publicDemo();
 
-/** The configured code, or null if missing or shorter than 16 characters (live reviews are then unavailable). */
+/** The configured code, or null if missing, shorter than 16 characters, or a value published in this repository
+ *  (live reviews are then unavailable). */
 export function judgeCode(): string | null {
   const c = process.env.NC_JUDGE_CODE;
-  return c && c.length >= 16 ? c : null;
+  return c && c.length >= 16 && !isKnownExampleValue(c) ? c : null;
 }
 
 export function codeMatches(input: string, code: string): boolean {

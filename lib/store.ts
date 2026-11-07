@@ -13,10 +13,10 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
 import { completionOf } from "./completion";
-import { MAX_PDF_BYTES, retentionSeconds } from "./deploy";
+import { MAX_PDF_BYTES, publicDemo, retentionSeconds, writeLimits } from "./deploy";
 import { getKv } from "./kv";
 import { SAVE_VERSION } from "./kvScripts";
-import { admitWrite } from "./usage";
+import { LimitError, admitWrite } from "./usage";
 import type { CaseRecord, ReviewResult } from "./types";
 import { sha } from "./hash";
 
@@ -127,15 +127,24 @@ export async function getHistory(vid: string, id: string): Promise<CaseHistory> 
   return { caseId: id, versions, decisions };
 }
 
-/** Bytes reserved for a version before the model runs (versions measured at about 36-44 KB). */
-export const VERSION_RESERVE_BYTES = 120_000;
+/** Room reserved for the review result on top of the snapshot when a live review is admitted. Measured versions are
+ *  about 21 KB in total; anything beyond the reservation is checked atomically at save (SAVE_VERSION). */
+export const REVIEW_RESULT_RESERVE_BYTES = 80_000;
+/** Stored bytes to reserve at admission for saving a review of this snapshot. */
+export const versionReserveBytes = (snapshot: Snapshot) => bytesOf(JSON.stringify(snapshot)) * 2 + REVIEW_RESULT_RESERVE_BYTES;
+
+export class SaveRefused extends Error {
+  constructor(public code: "duplicate", message: string) { super(message); this.name = "SaveRefused"; }
+}
 
 /**
- * Append a reviewed version atomically, unless `requestId` was cancelled on any instance (then null). Earlier
- * versions are never modified. Concurrent saves get distinct, consecutive numbers. With `reserved`, the limits were
- * already reserved before the model ran (see app/api/review/route.ts) and only bytes beyond the reservation are added.
+ * Append a reviewed version atomically. Returns null when `requestId` was cancelled first (on any instance). Earlier
+ * versions are never modified; concurrent saves get distinct, consecutive numbers; a second save of the same request
+ * is refused (SaveRefused "duplicate"). With `reservedBytes`, capacity was reserved at admission
+ * (app/api/review/route.ts) and any bytes beyond it are checked against the visitor and global byte limits inside the
+ * save script, so neither limit can be exceeded (LimitError, nothing saved).
  */
-export async function appendVersion(who: Who, id: string, snapshot: Snapshot, review: ReviewResult, opts: { requestId?: string; reserved?: boolean } = {}): Promise<number | null> {
+export async function appendVersion(who: Who, id: string, snapshot: Snapshot, review: ReviewResult, opts: { requestId?: string; reservedBytes?: number } = {}): Promise<number | null> {
   assertId(id);
   if (review.narrativeHash !== sha(snapshot.narrative.text)) throw new Error("Review does not match the reviewed narrative.");
   const reviewId = assertPart(review.reviewId);
@@ -145,11 +154,17 @@ export async function appendVersion(who: Who, id: string, snapshot: Snapshot, re
   const summary: Summary = { savedAt: version.savedAt, completion, humanReview: review.humanReview.required, reviewId, findingIds: review.findings.map((f) => f.id), snapshotHash: version.snapshotHash };
   const s = JSON.stringify(summary), idx = JSON.stringify(summary.findingIds);
   const bytes = bytesOf(v, s, idx);
-  if (!opts.reserved) await admitWrite(who, "version", bytes);
-  else if (bytes > VERSION_RESERVE_BYTES) await getKv().pipeline([["INCRBY", "q:g:bytes:total", bytes - VERSION_RESERVE_BYTES], ["INCRBY", `q:vb:${who.vid}`, bytes - VERSION_RESERVE_BYTES]]);
-  const rid = opts.requestId ?? "-";
-  const n = Number(await getKv().exec(["EVAL", SAVE_VERSION, 3, vkey(who.vid), `cancel:${rid}`, `saved:${rid}`, id, v, s, retentionSeconds(), 600, reviewId, idx]));
-  return n < 0 ? null : n;
+  if (opts.reservedBytes === undefined) await admitWrite(who, "version", bytes);
+  const extra = opts.reservedBytes === undefined || !publicDemo() ? 0 : Math.max(0, bytes - opts.reservedBytes);
+  const l = writeLimits();
+  // Without a request id the save still gets its own marker, so the duplicate check never blocks a later save.
+  const rid = opts.requestId ?? `anon-${randomBytes(9).toString("base64url")}`;
+  const n = Number(await getKv().exec(["EVAL", SAVE_VERSION, 5, vkey(who.vid), `cancel:${rid}`, `saved:${rid}`, `q:vb:${who.vid}`, "q:g:bytes:total",
+    id, v, s, retentionSeconds(), opts.requestId ? 24 * 3600 : 60, reviewId, idx, extra, l.visitorBytes, l.globalBytes]));
+  if (n === -1) return null;
+  if (n === -2) throw new SaveRefused("duplicate", "This review request was already saved. Nothing more was saved.");
+  if (n === -3) throw new LimitError("storage_full", "The review finished, but saving it would exceed the storage allowance. Nothing was saved.");
+  return n;
 }
 
 export class DecisionError extends Error { override name = "DecisionError"; }

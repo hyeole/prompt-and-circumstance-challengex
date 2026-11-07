@@ -40,11 +40,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (declared > MAX_PDF_BYTES + 64 * 1024) return fail(413, "too_large", `The PDF is larger than ${MAX_PDF_BYTES / 1024 / 1024} MB.`);
   try {
     const vid = await currentVisitor();
-    if (accessRequired()) {
-      if (!judgeCode()) return fail(503, "access_not_configured", "PDF upload is not available: the judge access code is not configured on the server.");
-      if (!(await judgeSession(vid, await judgeCookie()))) return fail(403, "judge_required", "PDF upload needs the judge access code.");
-    }
     return await metered(async () => {
+      if (accessRequired()) {
+        if (!judgeCode()) return fail(503, "access_not_configured", "PDF upload is not available: the judge access code is not configured on the server.");
+        if (!(await judgeSession(vid, await judgeCookie()))) return fail(403, "judge_required", "PDF upload needs the judge access code.");
+      }
       const c = await getUserCase(vid, id);
       if (!c) return fail(404, "not_found", "PDFs can only be attached to cases created in the app.");
       const form = await req.formData().catch(() => null);

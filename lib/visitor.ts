@@ -16,8 +16,18 @@ export class VisitorError extends Error {
 /** The signing secret; null in the public demo when it is missing or short (the app then refuses requests). */
 export function visitorSecret(): string | null {
   const s = process.env.NC_VISITOR_SECRET;
-  if (s && s.length >= 32) return s;
+  if (s && s.length >= 32 && !isKnownExampleValue(s)) return s;
   return publicDemo() ? null : LOCAL_SECRET;
+}
+
+/**
+ * Values published in this repository: the .env.example placeholders (in any deployment), and the offline-rehearsal
+ * test values in eval/hosting-free-1/local-test.env (on Vercel). The public demo refuses them as secrets or codes.
+ */
+export function isKnownExampleValue(v: string, env: NodeJS.ProcessEnv = process.env): boolean {
+  if (/replace-with|changeme|change-me|placeholder|example|your-?(key|secret|code)/i.test(v)) return true;
+  if (v === LOCAL_SECRET) return true;
+  return !!env.VERCEL && /^(local-judge-|local-test-visitor-secret-|local-shim-token-)/.test(v);
 }
 
 const mac = (secret: string, purpose: string, value: string) => createHmac("sha256", secret).update(`${purpose}:${value}`).digest("base64url");

@@ -30,13 +30,13 @@ for (const [name, make] of backends) {
     await fresh();
     setEnv({ NC_MAX_INFLIGHT: "3", NC_CAP_PER_DAY: "1000", NC_CAP_TOTAL: "1000", NC_RL_IP_PER_DAY: "1000", NC_RL_JUDGE_PER_HOUR: "1000" });
     const results = await Promise.allSettled(Array.from({ length: 40 }, (_, i) => admitReview({ vid: `v${i}`, ip: "198.51.100.1", judgeSid: `s${i}`, requestId: `req-inflight-${i}` })));
-    const ok = results.filter((r) => r.status === "fulfilled") as PromiseFulfilledResult<() => Promise<void>>[];
+    const ok = results.filter((r) => r.status === "fulfilled") as PromiseFulfilledResult<{ release: () => Promise<void> }>[];
     assert.equal(ok.length, 3);
     const refused = results.filter((r) => r.status === "rejected").map((r) => (r as PromiseRejectedResult).reason);
     assert.ok(refused.every((e) => e instanceof LimitError && e.code === "busy"));
     // Releasing one lease frees exactly one slot; a request only removes its own lease.
-    await ok[0].value();
-    await ok[0].value();
+    await ok[0].value.release();
+    await ok[0].value.release();
     const again = await Promise.allSettled([admitReview({ vid: "x", ip: "198.51.100.1", judgeSid: "sx", requestId: "req-after-1" }), admitReview({ vid: "y", ip: "198.51.100.1", judgeSid: "sy", requestId: "req-after-2" })]);
     assert.deepEqual(again.map((r) => r.status).sort(), ["fulfilled", "rejected"]);
   });

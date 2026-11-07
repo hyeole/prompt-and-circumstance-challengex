@@ -130,6 +130,8 @@ export class MemoryKv implements Kv {
       case "EXISTS": return r.reduce((n, k) => n + (this.live(k) ? 1 : 0), 0);
       case "INCR": return this.incrby(r[0], 1);
       case "INCRBY": return this.incrby(r[0], Number(r[1]));
+      case "DECR": return this.incrby(r[0], -1);
+      case "DECRBY": return this.incrby(r[0], -Number(r[1]));
       case "EXPIRE": case "PEXPIRE": {
         const e = this.live(r[0]);
         if (!e) return 0;
@@ -229,9 +231,14 @@ export function getKv(): Kv {
 }
 
 /**
- * Run one request's storage work under the monthly budget (public demo only). The budget is checked before any work
- * and the request's measured bandwidth and commands are added afterwards, so it can be overshot by at most the
- * requests already in flight.
+ * Run one request's storage work under the monthly budget (public demo only). APPROXIMATE, NOT A HARD CAP:
+ * - the budget is checked before the work and the measured usage is added afterwards, so requests in flight at the
+ *   moment it runs out all complete (overshoot grows with concurrency; 33% was measured with 60 parallel requests
+ *   against a deliberately tiny 200-command budget);
+ * - the one check command of a refused request, and accounting writes that fail, are not counted;
+ * - a script call is counted as SCRIPT_COMMAND_WEIGHT commands, because the provider's own counting is not documented.
+ * The provider's Free-plan limits remain the hard stop; this budget only keeps normal use well below them.
+ * Every storage-using API route and server page runs inside it (proxy.ts uses no storage).
  */
 export async function metered<T>(fn: () => Promise<T>): Promise<T> {
   if (!publicDemo()) return fn();
@@ -247,7 +254,8 @@ export async function metered<T>(fn: () => Promise<T>): Promise<T> {
       return await fn();
     } finally {
       const ttl = 40 * 86_400;
-      await kv.pipeline([["INCRBY", bk, acc.bytes + 200], ["EXPIRE", bk, ttl], ["INCRBY", ck, acc.commands + 4], ["EXPIRE", ck, ttl]]).catch(() => {});
+      await kv.pipeline([["INCRBY", bk, acc.bytes + 200], ["EXPIRE", bk, ttl], ["INCRBY", ck, acc.commands + 4], ["EXPIRE", ck, ttl]])
+        .catch((e) => console.warn(`[budget] usage not recorded (${acc.commands} commands, ${acc.bytes} bytes): ${(e as Error).message}`));
     }
   });
 }
